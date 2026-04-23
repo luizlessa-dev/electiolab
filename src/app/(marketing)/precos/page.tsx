@@ -20,18 +20,18 @@ const plans = [
     name: "Free",
     price: "R$ 0",
     period: "para sempre",
-    desc: "Dashboard publico",
-    features: ["Eleicao ativa", "Media ponderada", "Tendencia 30 dias", "Ranking basico"],
-    cta: "Acessar Gratis",
-    href: "/",
+    desc: "Dashboard público",
+    features: ["Eleição ativa", "Média ponderada", "Tendência 30 dias", "Ranking básico"],
+    cta: "Acessar Grátis",
+    href: "/dashboard",
     highlight: false,
   },
   {
     name: "Pro",
     price: "R$ 97",
-    period: "/mes",
+    period: "/mês",
     desc: "Para analistas e jornalistas",
-    features: ["Tudo do Free", "Historico completo", "Alertas inteligentes", "Filtros avancados", "Exportacao CSV/PDF", "API 1.000 req/mes", "Relatorio semanal"],
+    features: ["Tudo do Free", "Histórico completo", "Alertas inteligentes", "Filtros avançados", "Exportação CSV/PDF", "API 1.000 req/mês", "Relatório semanal"],
     cta: "Assinar Pro",
     href: "/auth/login",
     highlight: true,
@@ -40,9 +40,9 @@ const plans = [
   {
     name: "Business",
     price: "R$ 497",
-    period: "/mes",
-    desc: "Para redacoes e consultorias",
-    features: ["Tudo do Pro", "5 usuarios", "Embeds premium", "API 10.000 req/mes", "Dados realtime", "Suporte 4h"],
+    period: "/mês",
+    desc: "Para redações e consultorias",
+    features: ["Tudo do Pro", "5 usuários", "Embeds premium", "API 10.000 req/mês", "Dados em tempo real", "Suporte 4h"],
     cta: "Assinar Business",
     href: "/auth/login",
     highlight: false,
@@ -51,8 +51,8 @@ const plans = [
     name: "Enterprise",
     price: "Custom",
     period: "",
-    desc: "Para grandes operacoes",
-    features: ["Tudo do Business", "API ilimitada", "White-label", "SLA 99.9%", "Suporte dedicado", "Dados granulares"],
+    desc: "Para grandes operações",
+    features: ["Tudo do Business", "API ilimitada", "White-label", "SLA 99,9%", "Suporte dedicado", "Dados granulares"],
     cta: "Falar com vendas",
     href: "mailto:contato@electiolab.com",
     highlight: false,
@@ -66,12 +66,12 @@ export default function PrecosPage() {
       <header className="border-b border-border bg-sidebar/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="h-[2px] bg-gradient-to-r from-primary via-primary/60 to-transparent" />
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link href="/sobre" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5 text-primary" />
             <span className="font-bold text-sm tracking-tight">ElectioLab</span>
           </Link>
-          <Link href="/" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground rounded-sm text-xs font-medium uppercase tracking-wider">
-            Terminal <ArrowRight className="h-3 w-3" />
+          <Link href="/dashboard" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground rounded-sm text-xs font-medium uppercase tracking-wider">
+            Acessar Terminal <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
       </header>
@@ -80,10 +80,10 @@ export default function PrecosPage() {
         <div className="max-w-5xl mx-auto space-y-8">
           <div className="text-center space-y-2">
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
-              Inteligencia eleitoral para cada necessidade
+              Inteligência eleitoral para cada necessidade
             </h1>
             <p className="text-xs text-muted-foreground">
-              Dashboard gratuito para todos. Features premium para quem precisa ir alem.
+              Dashboard gratuito para todos. Features premium para quem precisa ir além.
             </p>
           </div>
 
@@ -139,10 +139,27 @@ export default function PrecosPage() {
           </div>
 
           <p className="text-center text-xs text-muted-foreground font-mono">
-            Cancele a qualquer momento · Sem multa · Dados publicos inclusos em todos os planos
+            Cancele a qualquer momento · Sem multa · Dados públicos incluídos em todos os planos
           </p>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="py-6 px-4 border-t border-border">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <BarChart3 className="h-3.5 w-3.5 text-muted-foreground" />
+            <span className="text-xs font-mono text-muted-foreground">
+              ElectioLab — Terminal de Inteligência Eleitoral
+            </span>
+          </div>
+          <div className="flex items-center gap-4 text-xs text-muted-foreground font-mono">
+            <Link href="/sobre" className="hover:text-foreground transition-colors">Sobre</Link>
+            <span>·</span>
+            <Link href="/privacidade" className="hover:text-foreground transition-colors">Privacidade</Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

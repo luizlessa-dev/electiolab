@@ -14,7 +14,6 @@ const geistMono = Geist_Mono({
 });
 
 const SITE_URL = "https://electiolab.com";
-const OG_IMAGE = `${SITE_URL}/og-image.png`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -32,14 +31,15 @@ export const metadata: Metadata = {
     title: "ElectioLab — Inteligência Eleitoral",
     description:
       "Agregador de pesquisas eleitorais do Brasil. Média ponderada por recência, amostra e acurácia dos institutos.",
-    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: "ElectioLab" }],
+    // Sem images aqui — opengraph-image.tsx é detectado automaticamente
+    // pelo Next.js e aplicado a todas as páginas do segmento /app
   },
   twitter: {
     card: "summary_large_image",
     title: "ElectioLab — Inteligência Eleitoral",
     description:
       "Agregador de pesquisas eleitorais do Brasil. Média ponderada por recência, amostra e acurácia dos institutos.",
-    images: [OG_IMAGE],
+    // images também não necessário — Next.js usa opengraph-image.tsx
   },
   alternates: {
     canonical: SITE_URL,

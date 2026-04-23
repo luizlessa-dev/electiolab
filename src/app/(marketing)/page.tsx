@@ -22,7 +22,7 @@ import {
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "ElectioLab — A verdade eleitoral está nos dados",
+  title: { absolute: "ElectioLab — A verdade eleitoral está nos dados" },
   description:
     "Agregador de pesquisas eleitorais do Brasil. Média ponderada por recência, amostra e acurácia dos institutos. O FiveThirtyEight brasileiro.",
   alternates: { canonical: "https://electiolab.com" },
