@@ -31,14 +31,58 @@ export const metadata: Metadata = {
   },
 };
 
-export default function LandingPage() {
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Como o ElectioLab calcula a média ponderada?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "O ElectioLab usa quatro fatores: recência (meia-vida de 10 dias, fórmula e^(-t/10)), tamanho da amostra (√n/1000), metodologia (presencial 1,0 > telefônica 0,8 > online 0,6) e histórico de acurácia do instituto (score baseado no Erro Médio Absoluto em eleições anteriores). A combinação produz uma estimativa mais estável que qualquer pesquisa individual.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Quais institutos o ElectioLab monitora?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "O ElectioLab monitora os principais institutos brasileiros, incluindo Quaest, Datafolha, Atlas Intel e Ipespe, entre outros. Cada instituto tem um score de confiabilidade baseado no histórico de acurácia em eleições anteriores.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Por que a média do ElectioLab é mais confiável que uma pesquisa individual?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Uma pesquisa individual tem margem de erro de ±2–3 pontos percentuais e pode ser outlier por variação amostral. Ao agregar múltiplas pesquisas com ponderação por recência, amostra e metodologia, o ElectioLab cancela ruídos aleatórios e amplifica o sinal real da opinião pública.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Os dados do ElectioLab são atualizados com que frequência?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "O banco de dados é atualizado semanalmente à medida que novos polls são publicados pelos institutos. Cada nova pesquisa entra no agregado automaticamente, atualizando a média ponderada de todos os candidatos.",
+      },
+    },
+  ],
+};
+
+export default function SobrePage() {
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+
       {/* Header */}
       <header className="border-b border-border bg-sidebar/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="h-[2px] bg-gradient-to-r from-primary via-primary/60 to-transparent" />
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link href="/sobre" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5 text-primary" />
             <span className="font-bold text-sm tracking-tight">ElectioLab</span>
             <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground ml-1">Terminal</span>
@@ -47,7 +91,7 @@ export default function LandingPage() {
             {[
               { href: "#como-funciona", label: "Metodologia" },
               { href: "#features", label: "Features" },
-              { href: "/precos", label: "Precos" },
+              { href: "/precos", label: "Preços" },
             ].map((item) => (
               <a key={item.href} href={item.href} className="text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
                 {item.label}
@@ -71,27 +115,27 @@ export default function LandingPage() {
           <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-sm bg-primary/10 border border-primary/20">
             <Activity className="h-3 w-3 text-primary" />
             <span className="text-xs font-mono uppercase tracking-wider text-primary">
-              Motor Analitico de Opiniao Publica
+              Motor Analítico de Opinião Pública
             </span>
           </div>
           <h1 className="text-3xl md:text-5xl font-bold tracking-tighter leading-[1.1]">
             A verdade eleitoral{" "}
             <br className="hidden md:block" />
-            esta nos{" "}
+            está nos{" "}
             <span className="text-primary">dados.</span>
           </h1>
           <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
             O ElectioLab agrega todas as pesquisas eleitorais do Brasil em uma
-            media ponderada inteligente — para voce enxergar a tendencia real.
+            média ponderada inteligente — para você enxergar a tendência real.
           </p>
 
           {/* Stats */}
           <div className="flex items-center justify-center gap-6 md:gap-10 pt-4">
             {[
               { value: "60.608", label: "Entrevistados" },
-              { value: "8", label: "Pesquisas 2026" },
+              { value: "9", label: "Pesquisas 2026" },
               { value: "13", label: "Institutos" },
-              { value: "3", label: "APIs Publicas" },
+              { value: "3", label: "APIs Públicas" },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
                 <p className="text-lg md:text-2xl font-mono font-bold tabular-nums text-foreground">
@@ -129,14 +173,14 @@ export default function LandingPage() {
             O Problema
           </h2>
           <p className="text-center text-xl font-bold tracking-tight max-w-lg mx-auto">
-            Pesquisa isolada e ruido.{" "}
-            <span className="text-primary">Tendencia agregada e sinal.</span>
+            Pesquisa isolada é ruído.{" "}
+            <span className="text-primary">Tendência agregada é sinal.</span>
           </p>
           <div className="grid md:grid-cols-3 gap-px bg-border rounded-sm overflow-hidden">
             {[
-              { icon: BarChart3, title: "Pesquisas contradizem", desc: "Um instituto diz 39%, outro diz 33%. Sem agregacao, impossivel saber." },
-              { icon: Newspaper, title: "Midia amplifica outliers", desc: "Manchetes sao do dado mais polemico, nao do mais preciso." },
-              { icon: Target, title: "Decisoes no escuro", desc: "Campanhas e analistas operam sem visao consolidada." },
+              { icon: BarChart3, title: "Pesquisas contradizem", desc: "Um instituto diz 39%, outro diz 33%. Sem agregação, impossível saber qual está certo." },
+              { icon: Newspaper, title: "Mídia amplifica outliers", desc: "Manchetes são do dado mais polêmico, não do mais preciso." },
+              { icon: Target, title: "Decisões no escuro", desc: "Campanhas e analistas operam sem visão consolidada." },
             ].map((item) => (
               <div key={item.title} className="bg-card px-4 py-5 space-y-2">
                 <item.icon className="h-4 w-4 text-muted-foreground" />
@@ -155,14 +199,14 @@ export default function LandingPage() {
             Metodologia
           </h2>
           <p className="text-center text-xl font-bold tracking-tight">
-            4 fatores de ponderacao em um unico numero
+            4 fatores de ponderação em um único número
           </p>
 
           <div className="grid md:grid-cols-4 gap-px bg-border rounded-sm overflow-hidden">
             {[
-              { icon: Clock, title: "Recencia", code: "e^(-t/10)", desc: "Meia-vida ~10 dias. Pesquisas velhas decaem." },
+              { icon: Clock, title: "Recência", code: "e^(-t/10)", desc: "Meia-vida ~10 dias. Pesquisas antigas decaem gradualmente." },
               { icon: Users, title: "Amostra", code: "sqrt(n/1000)", desc: "Amostras maiores pesam mais, com retorno decrescente." },
-              { icon: FlaskConical, title: "Metodologia", code: "0.6 — 1.0", desc: "Presencial > telefonica > online." },
+              { icon: FlaskConical, title: "Metodologia", code: "0.6 — 1.0", desc: "Presencial > telefônica > online." },
               { icon: Building2, title: "Instituto", code: "MAE → score", desc: "Quem acertou no passado pesa mais." },
             ].map((item) => (
               <div key={item.title} className="bg-card px-4 py-5 space-y-2 text-center">
@@ -179,11 +223,48 @@ export default function LandingPage() {
           <div className="flex items-center justify-center gap-2 text-xs font-mono text-muted-foreground">
             <span>COLETA</span>
             <span className="text-primary">→</span>
-            <span>PONDERACAO</span>
+            <span>PONDERAÇÃO</span>
             <span className="text-primary">→</span>
-            <span>CONSOLIDACAO</span>
+            <span>CONSOLIDAÇÃO</span>
             <span className="text-primary">→</span>
             <span className="text-foreground font-semibold">INSIGHT</span>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ — visível e indexável pelo Google */}
+      <section id="faq" className="py-14 px-4 border-t border-border">
+        <div className="max-w-3xl mx-auto space-y-6">
+          <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium text-center">
+            Perguntas Frequentes
+          </h2>
+          <div className="space-y-4">
+            {[
+              {
+                q: "Como o ElectioLab calcula a média ponderada?",
+                a: "Quatro fatores: recência (meia-vida de 10 dias), tamanho da amostra (√n), metodologia (presencial > telefônica > online) e histórico de acurácia do instituto. A combinação produz uma estimativa mais estável que qualquer pesquisa individual.",
+              },
+              {
+                q: "Quais institutos são monitorados?",
+                a: "Quaest, Datafolha, Atlas Intel, Ipespe e outros institutos registrados no TSE. Cada um tem um score de confiabilidade baseado no Erro Médio Absoluto em eleições anteriores.",
+              },
+              {
+                q: "Por que a média é mais confiável do que uma pesquisa individual?",
+                a: "Uma pesquisa individual tem margem de erro de ±2–3 pp e pode ser outlier por variação amostral. Ao agregar múltiplas pesquisas com ponderação, o ElectioLab cancela ruídos aleatórios e amplifica o sinal real da opinião pública.",
+              },
+              {
+                q: "Com que frequência os dados são atualizados?",
+                a: "Semanalmente, à medida que novos polls são publicados pelos institutos. Cada nova pesquisa entra no agregado automaticamente, atualizando a média ponderada de todos os candidatos.",
+              },
+            ].map((item) => (
+              <details key={item.q} className="border border-border rounded-sm bg-card group">
+                <summary className="px-4 py-3 text-sm font-medium cursor-pointer list-none flex items-center justify-between hover:text-primary transition-colors">
+                  {item.q}
+                  <span className="text-muted-foreground group-open:rotate-45 transition-transform ml-3">+</span>
+                </summary>
+                <p className="px-4 pb-4 text-sm text-muted-foreground leading-relaxed">{item.a}</p>
+              </details>
+            ))}
           </div>
         </div>
       </section>
@@ -196,12 +277,12 @@ export default function LandingPage() {
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-border rounded-sm overflow-hidden">
             {[
-              { icon: BarChart3, title: "Media Ponderada", desc: "Percentual consolidado por candidato. Mais estavel que pesquisa individual." },
-              { icon: TrendingUp, title: "Tendencia Temporal", desc: "Evolucao real ao longo do tempo. Sem zigue-zague." },
+              { icon: BarChart3, title: "Média Ponderada", desc: "Percentual consolidado por candidato. Mais estável que pesquisa individual." },
+              { icon: TrendingUp, title: "Tendência Temporal", desc: "Evolução real ao longo do tempo. Sem zigue-zague." },
               { icon: Building2, title: "Ranking de Institutos", desc: "Quem erra mais, quem acerta mais. Baseado em dados." },
-              { icon: FileSearch, title: "Base Exploravel", desc: "Todas as pesquisas com filtros por instituto, data e metodologia." },
-              { icon: DollarSign, title: "Financeiro Eleitoral", desc: "Prestacao de contas, gastos e fontes de financiamento." },
-              { icon: Shield, title: "Dados Abertos", desc: "Fonte primaria: TSE, Bacen, IBGE. Zero editorizacao." },
+              { icon: FileSearch, title: "Base Explorável", desc: "Todas as pesquisas com filtros por instituto, data e metodologia." },
+              { icon: DollarSign, title: "Financeiro Eleitoral", desc: "Prestação de contas, gastos e fontes de financiamento." },
+              { icon: Shield, title: "Dados Abertos", desc: "Fonte primária: TSE, Bacen, IBGE. Zero editorização." },
             ].map((item) => (
               <div key={item.title} className="bg-card px-4 py-4 flex gap-3">
                 <item.icon className="h-4 w-4 text-primary shrink-0 mt-0.5" />
@@ -224,11 +305,11 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-3 gap-2">
             {[
               { icon: Newspaper, title: "Jornalistas", desc: "Dashboard + embeds para matérias" },
-              { icon: Briefcase, title: "Campanhas", desc: "Tendencia + alertas para decisoes" },
-              { icon: TrendingUp, title: "Analistas", desc: "API + relatorios automatizados" },
+              { icon: Briefcase, title: "Campanhas", desc: "Tendência + alertas para decisões" },
+              { icon: TrendingUp, title: "Analistas", desc: "API + relatórios automatizados" },
               { icon: Building2, title: "Consultorias", desc: "White-label + dados premium" },
-              { icon: GraduationCap, title: "Academicos", desc: "Dataset limpo para pesquisa" },
-              { icon: Users, title: "Cidadaos", desc: "Dashboard gratuito e claro" },
+              { icon: GraduationCap, title: "Acadêmicos", desc: "Dataset limpo para pesquisa" },
+              { icon: Users, title: "Cidadãos", desc: "Dashboard gratuito e claro" },
             ].map((item) => (
               <div key={item.title} className="flex items-center gap-3 px-3 py-2.5 rounded-sm border border-border hover:border-primary/30 transition-colors">
                 <item.icon className="h-4 w-4 text-primary shrink-0" />
@@ -246,8 +327,8 @@ export default function LandingPage() {
       <section className="py-16 px-4 border-t border-border bg-gradient-to-b from-primary/5 to-transparent">
         <div className="max-w-3xl mx-auto text-center space-y-4">
           <p className="text-xl font-bold tracking-tight">
-            Pesquisa individual e ruido.{" "}
-            <span className="text-primary">Tendencia agregada e sinal.</span>
+            Pesquisa individual é ruído.{" "}
+            <span className="text-primary">Tendência agregada é sinal.</span>
           </p>
           <Link
             href="/dashboard"
@@ -265,12 +346,14 @@ export default function LandingPage() {
           <div className="flex items-center gap-2">
             <BarChart3 className="h-3.5 w-3.5 text-muted-foreground" />
             <span className="text-xs font-mono text-muted-foreground">
-              ElectioLab — Terminal de Inteligencia Eleitoral
+              ElectioLab — Terminal de Inteligência Eleitoral
             </span>
           </div>
-          <p className="text-xs text-muted-foreground font-mono">
-            Dados publicos: TSE · Bacen · IBGE · Meta Ad Library
-          </p>
+          <div className="flex items-center gap-4 text-xs text-muted-foreground font-mono">
+            <Link href="/privacidade" className="hover:text-foreground transition-colors">Privacidade</Link>
+            <span>·</span>
+            <span>Dados públicos: TSE · Bacen · IBGE</span>
+          </div>
         </div>
       </footer>
     </div>
