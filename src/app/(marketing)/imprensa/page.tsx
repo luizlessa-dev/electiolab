@@ -147,8 +147,9 @@ export default function ImprensaPage() {
 
               <p>
                 O banco de dados atual cobre as eleições presidenciais de 2022 (1º e 2º turnos) e 2026 (1º turno
-                em andamento), com {">"}9 pesquisas, 13 institutos monitorados e mais de 60.000 entrevistados
-                consolidados. A plataforma é gratuita e de acesso aberto.
+                em andamento), além das corridas para governador de SP, MG e RJ — com mais de 25 pesquisas,
+                13 institutos monitorados e mais de 120.000 entrevistados consolidados. A plataforma é gratuita
+                e de acesso aberto.
               </p>
 
               <div className="border-l-2 border-primary pl-4 py-1 my-4">

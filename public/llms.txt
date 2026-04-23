@@ -4,14 +4,24 @@
 
 ## O que é o ElectioLab
 
-O ElectioLab é uma plataforma de dados eleitorais que agrega pesquisas de intenção de voto publicadas pelos principais institutos brasileiros (Quaest, Datafolha, Atlas Intel, Ipespe, entre outros) e calcula uma estimativa consolidada usando metodologia ponderada.
+O ElectioLab é uma plataforma de dados eleitorais que agrega pesquisas de intenção de voto publicadas pelos principais institutos brasileiros (Quaest, Datafolha, Atlas Intel, Ipespe, Paraná Pesquisas, Real Time Big Data, entre outros) e calcula uma estimativa consolidada usando metodologia ponderada.
+
+## Eleições cobertas
+
+- **Presidencial 2026 — 1º Turno** (ativa): Lula, Flávio Bolsonaro, Caiado, Zema e outros
+- **Presidencial 2022 — 1º Turno**: Lula, Bolsonaro, Ciro, Tebet e outros
+- **Presidencial 2022 — 2º Turno**: Lula vs Bolsonaro
+- **Governador SP 2026 — 1º Turno** (ativa): Tarcísio de Freitas, Fernando Haddad e outros
+- **Governador MG 2026 — 1º Turno** (ativa): Cleitinho, Rodrigo Pacheco, Alexandre Kalil e outros
+- **Governador RJ 2026 — 1º Turno** (ativa): Eduardo Paes, Douglas Ruas e outros
 
 ## Dados disponíveis
 
-- Média ponderada de intenção de voto por candidato (eleições 2022 e 2026)
+- Média ponderada de intenção de voto por candidato
 - Tendência temporal com todas as pesquisas
 - Ranking de acurácia dos institutos (baseado em erro médio absoluto em eleições anteriores)
 - Base de pesquisas explorável com filtros por instituto, metodologia e data
+- Mais de 25 pesquisas · 13 institutos · 120.000+ entrevistados consolidados
 
 ## Metodologia de ponderação
 
@@ -24,12 +34,16 @@ Quatro fatores compõem o peso de cada pesquisa:
 ## Acesso
 
 - Dashboard: https://electiolab.com/dashboard
+- Pesquisas presidenciais 2026: https://electiolab.com/pesquisas-presidenciais-2026
+- Governador SP 2026: https://electiolab.com/eleicoes-governador-sp-2026
+- Governador MG 2026: https://electiolab.com/eleicoes-governador-mg-2026
+- Governador RJ 2026: https://electiolab.com/eleicoes-governador-rj-2026
 - API pública: https://electiolab.com/api/v1/polls
 - Sobre a metodologia: https://electiolab.com/sobre
 
 ## Última atualização de dados
 
-2026-04-15 (Quaest — Presidencial 2026 — 1º Turno)
+2026-04-15 (Paraná Pesquisas — Governador SP 2026 — 1º Turno)
 
 ## Fontes primárias
 

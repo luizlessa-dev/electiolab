@@ -48,5 +48,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.9,
     },
+    {
+      url: `${SITE_URL}/eleicoes-governador-sp-2026`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: `${SITE_URL}/eleicoes-governador-mg-2026`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: `${SITE_URL}/eleicoes-governador-rj-2026`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
   ];
 }

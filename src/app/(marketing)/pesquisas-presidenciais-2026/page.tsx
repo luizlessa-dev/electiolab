@@ -135,6 +135,28 @@ export default function PesquisasPresidenciais2026Page() {
           </div>
         </section>
 
+        {/* Links relacionados */}
+        <section className="space-y-3">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+            Eleições estaduais 2026
+          </h2>
+          <div className="grid sm:grid-cols-3 gap-px bg-border rounded-sm overflow-hidden">
+            {[
+              { label: "Governador SP 2026", href: "/eleicoes-governador-sp-2026" },
+              { label: "Governador MG 2026", href: "/eleicoes-governador-mg-2026" },
+              { label: "Governador RJ 2026", href: "/eleicoes-governador-rj-2026" },
+            ].map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="bg-card px-4 py-3 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors flex items-center justify-between"
+              >
+                {l.label} <span className="text-primary">→</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
         {/* CTA band */}
         <section className="border border-border rounded-sm bg-card px-6 py-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
