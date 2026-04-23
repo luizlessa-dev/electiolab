@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import {
   BarChart3,
@@ -16,6 +17,19 @@ import {
   FileSearch,
   Activity,
 } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Sobre a Metodologia",
+  description:
+    "Entenda como o ElectioLab calcula a média ponderada de pesquisas eleitorais. Metodologia baseada em recência, amostra e histórico de acurácia dos institutos.",
+  alternates: { canonical: "https://electiolab.com/sobre" },
+  openGraph: {
+    title: "Sobre a Metodologia — ElectioLab",
+    description:
+      "Como o ElectioLab agrega pesquisas eleitorais: recência, amostra, metodologia e acurácia dos institutos.",
+    url: "https://electiolab.com/sobre",
+  },
+};
 
 export default function LandingPage() {
   return (

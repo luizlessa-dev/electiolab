@@ -19,15 +19,60 @@ import {
   XCircle,
 } from "lucide-react";
 
-export const metadata = {
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
   title: "ElectioLab — A verdade eleitoral está nos dados",
   description:
-    "Agregador inteligente de pesquisas eleitorais do Brasil. Média ponderada por recência, amostra, metodologia e histórico de acurácia. O FiveThirtyEight brasileiro.",
+    "Agregador de pesquisas eleitorais do Brasil. Média ponderada por recência, amostra e acurácia dos institutos. O FiveThirtyEight brasileiro.",
+  alternates: { canonical: "https://electiolab.com" },
+  openGraph: {
+    title: "ElectioLab — A verdade eleitoral está nos dados",
+    description:
+      "Agregador de pesquisas eleitorais do Brasil. Média ponderada por recência, amostra e acurácia dos institutos.",
+    url: "https://electiolab.com",
+  },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://electiolab.com/#website",
+      "name": "ElectioLab",
+      "url": "https://electiolab.com",
+      "description": "Agregador inteligente de pesquisas eleitorais do Brasil",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://electiolab.com/dashboard?q={search_term_string}",
+        },
+        "query-input": "required name=search_term_string",
+      },
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://electiolab.com/#organization",
+      "name": "ElectioLab",
+      "url": "https://electiolab.com",
+      "description":
+        "Plataforma de agregação e análise de pesquisas eleitorais brasileiras",
+      "foundingDate": "2026",
+      "areaServed": "BR",
+      "inLanguage": "pt-BR",
+    },
+  ],
 };
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Header */}
       <header className="border-b border-border bg-sidebar/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="h-[2px] bg-gradient-to-r from-primary via-primary/60 to-transparent" />

@@ -12,10 +12,42 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_URL = "https://electiolab.com";
+const OG_IMAGE = `${SITE_URL}/og-image.png`;
+
 export const metadata: Metadata = {
-  title: "ElectioLab — Terminal de Inteligencia Eleitoral",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "ElectioLab — Inteligência Eleitoral",
+    template: "%s — ElectioLab",
+  },
   description:
-    "Pesquisa individual e ruido. Tendencia agregada e sinal. Plataforma de dados eleitorais com media ponderada inteligente, ranking de institutos e analise financeira de campanhas.",
+    "Agregador de pesquisas eleitorais do Brasil. Média ponderada por recência, amostra e acurácia dos institutos. O FiveThirtyEight brasileiro.",
+  openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    url: SITE_URL,
+    siteName: "ElectioLab",
+    title: "ElectioLab — Inteligência Eleitoral",
+    description:
+      "Agregador de pesquisas eleitorais do Brasil. Média ponderada por recência, amostra e acurácia dos institutos.",
+    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: "ElectioLab" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ElectioLab — Inteligência Eleitoral",
+    description:
+      "Agregador de pesquisas eleitorais do Brasil. Média ponderada por recência, amostra e acurácia dos institutos.",
+    images: [OG_IMAGE],
+  },
+  alternates: {
+    canonical: SITE_URL,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
 };
 
 export default function RootLayout({

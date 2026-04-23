@@ -1,0 +1,36 @@
+# ElectioLab
+
+> Agregador inteligente de pesquisas eleitorais do Brasil. Calcula a média ponderada por recência, tamanho de amostra, metodologia e histórico de acurácia dos institutos. O FiveThirtyEight brasileiro.
+
+## O que é o ElectioLab
+
+O ElectioLab é uma plataforma de dados eleitorais que agrega pesquisas de intenção de voto publicadas pelos principais institutos brasileiros (Quaest, Datafolha, Atlas Intel, Ipespe, entre outros) e calcula uma estimativa consolidada usando metodologia ponderada.
+
+## Dados disponíveis
+
+- Média ponderada de intenção de voto por candidato (eleições 2022 e 2026)
+- Tendência temporal com todas as pesquisas
+- Ranking de acurácia dos institutos (baseado em erro médio absoluto em eleições anteriores)
+- Base de pesquisas explorável com filtros por instituto, metodologia e data
+
+## Metodologia de ponderação
+
+Quatro fatores compõem o peso de cada pesquisa:
+1. **Recência**: meia-vida de ~10 dias (e^(-t/10))
+2. **Amostra**: raiz quadrada do tamanho da amostra normalizada (√n/1000)
+3. **Metodologia**: presencial (1,0) > telefônica (0,8) > online (0,6) > mista (0,75)
+4. **Instituto**: score de confiabilidade baseado no histórico de acurácia
+
+## Acesso
+
+- Dashboard: https://electiolab.com/dashboard
+- API pública: https://electiolab.com/api/v1/polls
+- Sobre a metodologia: https://electiolab.com/sobre
+
+## Última atualização de dados
+
+2026-04-15 (Quaest — Presidencial 2026 — 1º Turno)
+
+## Fontes primárias
+
+Todos os dados são derivados de pesquisas publicadas pelos institutos e registradas no TSE (Tribunal Superior Eleitoral).

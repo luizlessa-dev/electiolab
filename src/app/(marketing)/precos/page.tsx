@@ -1,5 +1,19 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { BarChart3, Check, ArrowRight } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Planos e Preços",
+  description:
+    "Escolha o plano ElectioLab ideal para você. Acesso ao dashboard de pesquisas, API de dados eleitorais e alertas de tendência em tempo real.",
+  alternates: { canonical: "https://electiolab.com/precos" },
+  openGraph: {
+    title: "Planos e Preços — ElectioLab",
+    description:
+      "Acesso ao dashboard de pesquisas eleitorais, API de dados e alertas de tendência em tempo real.",
+    url: "https://electiolab.com/precos",
+  },
+};
 
 const plans = [
   {
