@@ -1,15 +1,5 @@
 "use client";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-
 interface PollRow {
   id: string;
   publication_date: string;
@@ -20,81 +10,87 @@ interface PollRow {
   results: { candidate_name: string; percentage: number; color: string }[];
 }
 
-const methodBadge: Record<string, string> = {
-  presencial: "bg-emerald-100 text-emerald-800",
-  telefonica: "bg-blue-100 text-blue-800",
-  online: "bg-purple-100 text-purple-800",
-  mista: "bg-amber-100 text-amber-800",
-};
+function methodDot(method: string) {
+  switch (method) {
+    case "presencial": return "bg-emerald-400";
+    case "telefonica": return "bg-blue-400";
+    case "online": return "bg-purple-400";
+    case "mista": return "bg-amber-400";
+    default: return "bg-muted-foreground";
+  }
+}
 
 export function PollTable({ polls }: { polls: PollRow[] }) {
   if (polls.length === 0) {
     return (
-      <p className="text-sm text-muted-foreground py-8 text-center">
+      <p className="text-xs text-muted-foreground py-6 text-center">
         Nenhuma pesquisa encontrada.
       </p>
     );
   }
 
-  // Get top candidates from first poll
   const topCandidates = polls[0]?.results
     .sort((a, b) => b.percentage - a.percentage)
-    .slice(0, 4) ?? [];
+    .slice(0, 5) ?? [];
 
   return (
     <div className="overflow-x-auto">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[100px]">Data</TableHead>
-            <TableHead>Instituto</TableHead>
-            <TableHead className="w-[90px]">Metodo</TableHead>
-            <TableHead className="w-[70px] text-right">Amostra</TableHead>
-            {topCandidates.map((c) => (
-              <TableHead key={c.candidate_name} className="w-[70px] text-right">
-                {c.candidate_name}
-              </TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {polls.map((poll) => (
-            <TableRow key={poll.id}>
-              <TableCell className="font-mono text-xs">
-                {new Date(poll.publication_date).toLocaleDateString("pt-BR")}
-              </TableCell>
-              <TableCell className="font-medium text-sm">
-                {poll.institute_name}
-              </TableCell>
-              <TableCell>
-                <Badge
-                  variant="secondary"
-                  className={`text-xs ${methodBadge[poll.methodology] ?? ""}`}
-                >
-                  {poll.methodology}
-                </Badge>
-              </TableCell>
-              <TableCell className="text-right font-mono text-xs">
-                {poll.sample_size.toLocaleString("pt-BR")}
-              </TableCell>
-              {topCandidates.map((tc) => {
-                const result = poll.results.find(
-                  (r) => r.candidate_name === tc.candidate_name
-                );
-                return (
-                  <TableCell
-                    key={tc.candidate_name}
-                    className="text-right font-mono text-sm font-semibold"
-                    style={{ color: tc.color }}
-                  >
-                    {result ? `${result.percentage}%` : "—"}
-                  </TableCell>
-                );
-              })}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      {/* Header */}
+      <div className="flex items-center px-3 py-2.5 text-xs uppercase tracking-wider text-muted-foreground font-medium border-b border-border">
+        <span className="w-16">Data</span>
+        <span className="w-28">Instituto</span>
+        <span className="w-20">Metodo</span>
+        <span className="w-16 text-right">Amostra</span>
+        {topCandidates.map((c) => (
+          <span key={c.candidate_name} className="w-16 text-right">
+            {c.candidate_name.split(" ")[0]}
+          </span>
+        ))}
+      </div>
+
+      {/* Rows */}
+      {polls.map((poll, i) => (
+        <div
+          key={poll.id}
+          className={`flex items-center px-3 py-2 text-sm border-b border-border/30 hover:bg-accent/30 transition-colors ${
+            i % 2 === 0 ? "bg-transparent" : "bg-muted/15"
+          }`}
+        >
+          <span className="w-16 font-mono tabular-nums text-muted-foreground text-xs">
+            {(() => {
+              const d = new Date(poll.publication_date);
+              return `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getFullYear()).slice(2)}`;
+            })()}
+          </span>
+          <span className="w-28 font-medium text-foreground truncate">
+            {poll.institute_name}
+          </span>
+          <span className="w-20 flex items-center gap-1.5">
+            <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${methodDot(poll.methodology)}`} />
+            <span className="text-muted-foreground text-xs truncate">
+              {poll.methodology}
+            </span>
+          </span>
+          <span className="w-16 text-right font-mono tabular-nums text-muted-foreground text-xs">
+            {poll.sample_size.toLocaleString("pt-BR")}
+          </span>
+          {topCandidates.map((tc) => {
+            const result = poll.results.find(
+              (r) => r.candidate_name === tc.candidate_name
+            );
+            const pct = result?.percentage ?? 0;
+            return (
+              <span
+                key={tc.candidate_name}
+                className="w-16 text-right font-mono tabular-nums text-xs font-semibold"
+                style={{ color: pct > 0 ? tc.color : "oklch(0.35 0 0)" }}
+              >
+                {pct > 0 ? `${pct}%` : "—"}
+              </span>
+            );
+          })}
+        </div>
+      ))}
     </div>
   );
 }

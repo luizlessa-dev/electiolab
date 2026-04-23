@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ElectioLab — Inteligencia Eleitoral",
+  title: "ElectioLab — Terminal de Inteligencia Eleitoral",
   description:
-    "Pesquisa individual e ruido. Tendencia agregada e sinal. O ElectioLab transforma multiplas pesquisas eleitorais em uma leitura unica, confiavel e acionavel.",
+    "Pesquisa individual e ruido. Tendencia agregada e sinal. Plataforma de dados eleitorais com media ponderada inteligente, ranking de institutos e analise financeira de campanhas.",
 };
 
 export default function RootLayout({
@@ -25,10 +25,12 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      lang="pt-BR"
+      className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col bg-background text-foreground">
+        {children}
+      </body>
     </html>
   );
 }

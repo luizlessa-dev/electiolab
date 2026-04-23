@@ -1,7 +1,5 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-
 interface InstituteData {
   name: string;
   methodology_default: string | null;
@@ -10,17 +8,27 @@ interface InstituteData {
 }
 
 function scoreColor(score: number) {
-  if (score >= 0.85) return "bg-emerald-500";
-  if (score >= 0.75) return "bg-yellow-500";
-  if (score >= 0.65) return "bg-orange-500";
-  return "bg-red-500";
+  if (score >= 0.85) return "text-emerald-400";
+  if (score >= 0.75) return "text-yellow-400";
+  if (score >= 0.65) return "text-orange-400";
+  return "text-red-400";
 }
 
 function scoreLabel(score: number) {
-  if (score >= 0.85) return "Excelente";
-  if (score >= 0.75) return "Bom";
-  if (score >= 0.65) return "Regular";
-  return "Fraco";
+  if (score >= 0.85) return "A+";
+  if (score >= 0.75) return "A";
+  if (score >= 0.65) return "B";
+  return "C";
+}
+
+function methodColor(method: string | null) {
+  switch (method) {
+    case "presencial": return "bg-emerald-400";
+    case "telefonica": return "bg-blue-400";
+    case "online": return "bg-purple-400";
+    case "mista": return "bg-amber-400";
+    default: return "bg-muted-foreground";
+  }
 }
 
 export function InstituteRanking({ data }: { data: InstituteData[] }) {
@@ -29,36 +37,48 @@ export function InstituteRanking({ data }: { data: InstituteData[] }) {
   );
 
   return (
-    <div className="space-y-2">
+    <div>
+      {/* Header */}
+      <div className="flex items-center px-3 py-2.5 text-xs uppercase tracking-wider text-muted-foreground font-medium border-b border-border">
+        <span className="w-8">#</span>
+        <span className="flex-1">Instituto</span>
+        <span className="w-20 text-center">Metodo</span>
+        <span className="w-16 text-right">Pesquisas</span>
+        <span className="w-20 text-right">Score</span>
+        <span className="w-10 text-right">Nota</span>
+      </div>
+
+      {/* Rows */}
       {sorted.map((inst, i) => (
         <div
           key={inst.name}
-          className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+          className={`flex items-center px-3 py-2.5 text-xs border-b border-border/50 hover:bg-accent/30 transition-colors ${
+            i % 2 === 0 ? "bg-transparent" : "bg-muted/20"
+          }`}
         >
-          <div className="flex items-center gap-3">
-            <span className="text-sm font-mono text-muted-foreground w-6">
-              #{i + 1}
+          <span className="w-8 font-mono text-muted-foreground tabular-nums">
+            {i + 1}
+          </span>
+          <span className="flex-1 font-medium text-foreground">
+            {inst.name}
+          </span>
+          <span className="w-20 text-center flex items-center justify-center gap-1.5">
+            <span className={`w-1.5 h-1.5 rounded-full ${methodColor(inst.methodology_default)}`} />
+            <span className="text-muted-foreground text-xs">
+              {inst.methodology_default ?? "—"}
             </span>
-            <div>
-              <p className="font-medium text-sm">{inst.name}</p>
-              <p className="text-xs text-muted-foreground">
-                {inst.methodology_default ?? "—"} · {inst.total_polls} pesquisas
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-24 h-2 bg-muted rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full ${scoreColor(inst.reliability_score)}`}
-                style={{
-                  width: `${inst.reliability_score * 100}%`,
-                }}
-              />
-            </div>
-            <Badge variant="secondary" className="text-xs min-w-[70px] justify-center">
-              {(inst.reliability_score * 100).toFixed(0)}% — {scoreLabel(inst.reliability_score)}
-            </Badge>
-          </div>
+          </span>
+          <span className="w-16 text-right font-mono tabular-nums text-muted-foreground">
+            {inst.total_polls}
+          </span>
+          <span className="w-20 text-right">
+            <span className="font-mono tabular-nums font-semibold">
+              {(inst.reliability_score * 100).toFixed(0)}%
+            </span>
+          </span>
+          <span className={`w-10 text-right font-mono font-bold ${scoreColor(inst.reliability_score)}`}>
+            {scoreLabel(inst.reliability_score)}
+          </span>
         </div>
       ))}
     </div>

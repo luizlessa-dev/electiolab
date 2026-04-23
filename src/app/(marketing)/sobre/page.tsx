@@ -14,328 +14,248 @@ import {
   FlaskConical,
   DollarSign,
   FileSearch,
-  ChevronRight,
+  Activity,
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="border-b border-border bg-sidebar/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="h-[2px] bg-gradient-to-r from-primary via-primary/60 to-transparent" />
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link href="/sobre" className="flex items-center gap-2">
-            <BarChart3 className="h-6 w-6 text-primary" />
-            <span className="font-bold text-lg">ElectioLab</span>
+            <BarChart3 className="h-5 w-5 text-primary" />
+            <span className="font-bold text-sm tracking-tight">ElectioLab</span>
+            <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground ml-1">Terminal</span>
           </Link>
-          <nav className="hidden md:flex items-center gap-6 text-sm">
-            <a href="#como-funciona" className="text-muted-foreground hover:text-foreground transition-colors">
-              Como funciona
-            </a>
-            <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
-              Features
-            </a>
-            <a href="#para-quem" className="text-muted-foreground hover:text-foreground transition-colors">
-              Para quem
-            </a>
+          <nav className="hidden md:flex items-center gap-6">
+            {[
+              { href: "#como-funciona", label: "Metodologia" },
+              { href: "#features", label: "Features" },
+              { href: "/precos", label: "Precos" },
+            ].map((item) => (
+              <a key={item.href} href={item.href} className="text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
+                {item.label}
+              </a>
+            ))}
           </nav>
           <Link
-            href="/"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
+            href="/dashboard"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground rounded-sm text-xs font-medium uppercase tracking-wider hover:bg-primary/90 transition-colors"
           >
-            Acessar Dashboard
-            <ArrowRight className="h-4 w-4" />
+            Acessar Terminal
+            <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
       </header>
 
       {/* Hero */}
-      <section className="py-20 md:py-32 px-4">
-        <div className="max-w-4xl mx-auto text-center space-y-6">
-          <Badge variant="secondary" className="text-sm px-4 py-1">
-            Motor analitico de opiniao publica
-          </Badge>
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-tight">
-            A verdade eleitoral esta nos dados.{" "}
-            <span className="text-muted-foreground">Nao nas manchetes.</span>
+      <section className="py-20 md:py-28 px-4 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none" />
+        <div className="max-w-4xl mx-auto text-center space-y-6 relative">
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-sm bg-primary/10 border border-primary/20">
+            <Activity className="h-3 w-3 text-primary" />
+            <span className="text-xs font-mono uppercase tracking-wider text-primary">
+              Motor Analitico de Opiniao Publica
+            </span>
+          </div>
+          <h1 className="text-3xl md:text-5xl font-bold tracking-tighter leading-[1.1]">
+            A verdade eleitoral{" "}
+            <br className="hidden md:block" />
+            esta nos{" "}
+            <span className="text-primary">dados.</span>
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
             O ElectioLab agrega todas as pesquisas eleitorais do Brasil em uma
-            media ponderada inteligente — para voce enxergar a tendencia real,
-            nao o ruido.
+            media ponderada inteligente — para voce enxergar a tendencia real.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
-            <Link
-              href="/"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
-            >
-              Acessar Dashboard Gratuito
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <a
-              href="#como-funciona"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 border rounded-lg font-medium text-foreground hover:bg-accent transition-colors"
-            >
-              Ver como funciona
-              <ChevronRight className="h-4 w-4" />
-            </a>
-          </div>
-          <p className="text-sm text-muted-foreground pt-4">
-            +2.000 pesquisas analisadas · 47 institutos · Dados abertos do TSE
-          </p>
-        </div>
-      </section>
 
-      {/* O Problema */}
-      <section className="py-16 px-4 bg-muted/30">
-        <div className="max-w-5xl mx-auto space-y-8">
-          <div className="text-center space-y-2">
-            <h2 className="text-2xl md:text-3xl font-bold">
-              Pesquisa isolada e ruido. Tendencia agregada e sinal.
-            </h2>
-          </div>
-          <div className="grid md:grid-cols-3 gap-4">
-            <Card>
-              <CardContent className="pt-6 space-y-3">
-                <BarChart3 className="h-8 w-8 text-muted-foreground" />
-                <h3 className="font-semibold">Pesquisas contradizem</h3>
-                <p className="text-sm text-muted-foreground">
-                  Um instituto diz 35%, outro diz 28%. Quem esta certo? Sem
-                  agregacao, e impossivel saber.
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6 space-y-3">
-                <Newspaper className="h-8 w-8 text-muted-foreground" />
-                <h3 className="font-semibold">Midia amplifica outliers</h3>
-                <p className="text-sm text-muted-foreground">
-                  Manchetes sao feitas do dado mais polemico, nao do mais
-                  preciso. Voce le o ruido, nao o sinal.
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6 space-y-3">
-                <Target className="h-8 w-8 text-muted-foreground" />
-                <h3 className="font-semibold">Decisoes no escuro</h3>
-                <p className="text-sm text-muted-foreground">
-                  Campanhas, jornalistas e analistas operam sem visao
-                  consolidada. Cada pesquisa e um fragmento.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Como funciona */}
-      <section id="como-funciona" className="py-16 px-4">
-        <div className="max-w-5xl mx-auto space-y-8">
-          <div className="text-center space-y-2">
-            <h2 className="text-2xl md:text-3xl font-bold">
-              O motor analitico por tras da eleicao real
-            </h2>
-            <p className="text-muted-foreground">
-              4 fatores de ponderacao combinados em um unico numero
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-4 gap-4">
+          {/* Stats */}
+          <div className="flex items-center justify-center gap-6 md:gap-10 pt-4">
             {[
-              {
-                icon: Clock,
-                title: "Recencia",
-                desc: "Pesquisas recentes pesam mais. Meia-vida de ~10 dias.",
-                detail: "Decaimento exponencial",
-              },
-              {
-                icon: Users,
-                title: "Amostra",
-                desc: "Amostras maiores = mais confiavel. Peso via raiz quadrada.",
-                detail: "sqrt(n/1000)",
-              },
-              {
-                icon: FlaskConical,
-                title: "Metodologia",
-                desc: "Presencial > telefonica > online. Baseado em evidencia.",
-                detail: "Peso 0.6 a 1.0",
-              },
-              {
-                icon: Building2,
-                title: "Instituto",
-                desc: "Quem acertou no passado pesa mais. Score calculado automaticamente.",
-                detail: "MAE historico",
-              },
-            ].map((item) => (
-              <Card key={item.title}>
-                <CardContent className="pt-6 space-y-3 text-center">
-                  <item.icon className="h-8 w-8 mx-auto text-primary" />
-                  <h3 className="font-semibold">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground">{item.desc}</p>
-                  <Badge variant="secondary" className="text-xs">
-                    {item.detail}
-                  </Badge>
-                </CardContent>
-              </Card>
+              { value: "60.608", label: "Entrevistados" },
+              { value: "8", label: "Pesquisas 2026" },
+              { value: "13", label: "Institutos" },
+              { value: "3", label: "APIs Publicas" },
+            ].map((stat) => (
+              <div key={stat.label} className="text-center">
+                <p className="text-lg md:text-2xl font-mono font-bold tabular-nums text-foreground">
+                  {stat.value}
+                </p>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                  {stat.label}
+                </p>
+              </div>
             ))}
           </div>
 
-          <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-            <span>Coleta</span>
-            <ArrowRight className="h-3 w-3" />
-            <span>Ponderacao</span>
-            <ArrowRight className="h-3 w-3" />
-            <span>Consolidacao</span>
-            <ArrowRight className="h-3 w-3" />
-            <span className="font-semibold text-foreground">Insight</span>
+          <div className="flex flex-col sm:flex-row gap-2 justify-center pt-4">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-sm text-xs font-medium uppercase tracking-wider hover:bg-primary/90 transition-colors"
+            >
+              Acessar Terminal Gratuito
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+            <a
+              href="#como-funciona"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 border border-border rounded-sm text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
+            >
+              Ver Metodologia
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Problem */}
+      <section className="py-14 px-4 border-t border-border">
+        <div className="max-w-5xl mx-auto space-y-6">
+          <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium text-center">
+            O Problema
+          </h2>
+          <p className="text-center text-xl font-bold tracking-tight max-w-lg mx-auto">
+            Pesquisa isolada e ruido.{" "}
+            <span className="text-primary">Tendencia agregada e sinal.</span>
+          </p>
+          <div className="grid md:grid-cols-3 gap-px bg-border rounded-sm overflow-hidden">
+            {[
+              { icon: BarChart3, title: "Pesquisas contradizem", desc: "Um instituto diz 39%, outro diz 33%. Sem agregacao, impossivel saber." },
+              { icon: Newspaper, title: "Midia amplifica outliers", desc: "Manchetes sao do dado mais polemico, nao do mais preciso." },
+              { icon: Target, title: "Decisoes no escuro", desc: "Campanhas e analistas operam sem visao consolidada." },
+            ].map((item) => (
+              <div key={item.title} className="bg-card px-4 py-5 space-y-2">
+                <item.icon className="h-4 w-4 text-muted-foreground" />
+                <h3 className="text-sm font-semibold">{item.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section id="como-funciona" className="py-14 px-4 border-t border-border">
+        <div className="max-w-5xl mx-auto space-y-6">
+          <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium text-center">
+            Metodologia
+          </h2>
+          <p className="text-center text-xl font-bold tracking-tight">
+            4 fatores de ponderacao em um unico numero
+          </p>
+
+          <div className="grid md:grid-cols-4 gap-px bg-border rounded-sm overflow-hidden">
+            {[
+              { icon: Clock, title: "Recencia", code: "e^(-t/10)", desc: "Meia-vida ~10 dias. Pesquisas velhas decaem." },
+              { icon: Users, title: "Amostra", code: "sqrt(n/1000)", desc: "Amostras maiores pesam mais, com retorno decrescente." },
+              { icon: FlaskConical, title: "Metodologia", code: "0.6 — 1.0", desc: "Presencial > telefonica > online." },
+              { icon: Building2, title: "Instituto", code: "MAE → score", desc: "Quem acertou no passado pesa mais." },
+            ].map((item) => (
+              <div key={item.title} className="bg-card px-4 py-5 space-y-2 text-center">
+                <item.icon className="h-5 w-5 text-primary mx-auto" />
+                <h3 className="text-xs font-semibold">{item.title}</h3>
+                <code className="text-xs font-mono text-primary bg-primary/10 px-1.5 py-0.5 rounded-sm">
+                  {item.code}
+                </code>
+                <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex items-center justify-center gap-2 text-xs font-mono text-muted-foreground">
+            <span>COLETA</span>
+            <span className="text-primary">→</span>
+            <span>PONDERACAO</span>
+            <span className="text-primary">→</span>
+            <span>CONSOLIDACAO</span>
+            <span className="text-primary">→</span>
+            <span className="text-foreground font-semibold">INSIGHT</span>
           </div>
         </div>
       </section>
 
       {/* Features */}
-      <section id="features" className="py-16 px-4 bg-muted/30">
-        <div className="max-w-5xl mx-auto space-y-8">
-          <div className="text-center space-y-2">
-            <h2 className="text-2xl md:text-3xl font-bold">
-              Dashboard que revela, nao que confunde
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            {[
-              {
-                icon: BarChart3,
-                title: "Media Eleitoral Real",
-                desc: "Percentual consolidado por candidato. Muito mais estavel que qualquer pesquisa individual.",
-              },
-              {
-                icon: TrendingUp,
-                title: "Tendencia Temporal",
-                desc: "Grafico interativo mostrando subida e queda reais. Sem o zigue-zague de pesquisas isoladas.",
-              },
-              {
-                icon: Building2,
-                title: "Ranking de Institutos",
-                desc: "Quem erra mais, quem acerta mais. Transparencia total baseada em dados historicos.",
-              },
-              {
-                icon: FileSearch,
-                title: "Base de Dados Exploravel",
-                desc: "Todas as pesquisas com filtros por instituto, data, metodologia e regiao.",
-              },
-              {
-                icon: DollarSign,
-                title: "Dinheiro da Eleicao",
-                desc: "Prestacao de contas, gastos de campanha e fontes de financiamento por candidato.",
-              },
-              {
-                icon: Shield,
-                title: "Dados Abertos",
-                desc: "Fonte primaria: TSE, Bacen, IBGE. Transparencia total. Sem editorizacao.",
-              },
-            ].map((item) => (
-              <Card key={item.title}>
-                <CardContent className="pt-6 flex gap-4">
-                  <item.icon className="h-6 w-6 text-primary shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="font-semibold">{item.title}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {item.desc}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Para quem */}
-      <section id="para-quem" className="py-16 px-4">
-        <div className="max-w-5xl mx-auto space-y-8">
-          <div className="text-center space-y-2">
-            <h2 className="text-2xl md:text-3xl font-bold">
-              Inteligencia eleitoral para quem precisa acertar
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[
-              {
-                icon: Newspaper,
-                title: "Jornalistas",
-                desc: "Dashboard + embeds para contextualizar pesquisas em matérias",
-              },
-              {
-                icon: Briefcase,
-                title: "Campanhas",
-                desc: "Tendencia consolidada + alertas para decisoes estrategicas",
-              },
-              {
-                icon: TrendingUp,
-                title: "Analistas Politicos",
-                desc: "API + relatorios automatizados para analises profundas",
-              },
-              {
-                icon: Building2,
-                title: "Consultorias",
-                desc: "White-label + dados premium para clientes exigentes",
-              },
-              {
-                icon: GraduationCap,
-                title: "Academicos",
-                desc: "Dataset limpo e documentado para pesquisa cientifica",
-              },
-              {
-                icon: Users,
-                title: "Cidadao Informado",
-                desc: "Dashboard gratuito, simples e claro. Sem manipulacao.",
-              },
-            ].map((item) => (
-              <Card key={item.title}>
-                <CardContent className="pt-6 space-y-2">
-                  <item.icon className="h-6 w-6 text-primary" />
-                  <h3 className="font-semibold text-sm">{item.title}</h3>
-                  <p className="text-xs text-muted-foreground">{item.desc}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Final */}
-      <section className="py-20 px-4 bg-primary text-primary-foreground">
-        <div className="max-w-3xl mx-auto text-center space-y-6">
-          <h2 className="text-2xl md:text-3xl font-bold">
-            Pesquisa individual e ruido. Tendencia agregada e sinal.
+      <section id="features" className="py-14 px-4 border-t border-border">
+        <div className="max-w-5xl mx-auto space-y-6">
+          <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium text-center">
+            Features
           </h2>
-          <p className="text-primary-foreground/80">
-            Acesse o dashboard agora e veja a eleicao como ela realmente e.
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-border rounded-sm overflow-hidden">
+            {[
+              { icon: BarChart3, title: "Media Ponderada", desc: "Percentual consolidado por candidato. Mais estavel que pesquisa individual." },
+              { icon: TrendingUp, title: "Tendencia Temporal", desc: "Evolucao real ao longo do tempo. Sem zigue-zague." },
+              { icon: Building2, title: "Ranking de Institutos", desc: "Quem erra mais, quem acerta mais. Baseado em dados." },
+              { icon: FileSearch, title: "Base Exploravel", desc: "Todas as pesquisas com filtros por instituto, data e metodologia." },
+              { icon: DollarSign, title: "Financeiro Eleitoral", desc: "Prestacao de contas, gastos e fontes de financiamento." },
+              { icon: Shield, title: "Dados Abertos", desc: "Fonte primaria: TSE, Bacen, IBGE. Zero editorizacao." },
+            ].map((item) => (
+              <div key={item.title} className="bg-card px-4 py-4 flex gap-3">
+                <item.icon className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="text-xs font-semibold">{item.title}</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* For who */}
+      <section className="py-14 px-4 border-t border-border">
+        <div className="max-w-5xl mx-auto space-y-6">
+          <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium text-center">
+            Para Quem
+          </h2>
+          <div className="grid md:grid-cols-3 gap-2">
+            {[
+              { icon: Newspaper, title: "Jornalistas", desc: "Dashboard + embeds para matérias" },
+              { icon: Briefcase, title: "Campanhas", desc: "Tendencia + alertas para decisoes" },
+              { icon: TrendingUp, title: "Analistas", desc: "API + relatorios automatizados" },
+              { icon: Building2, title: "Consultorias", desc: "White-label + dados premium" },
+              { icon: GraduationCap, title: "Academicos", desc: "Dataset limpo para pesquisa" },
+              { icon: Users, title: "Cidadaos", desc: "Dashboard gratuito e claro" },
+            ].map((item) => (
+              <div key={item.title} className="flex items-center gap-3 px-3 py-2.5 rounded-sm border border-border hover:border-primary/30 transition-colors">
+                <item.icon className="h-4 w-4 text-primary shrink-0" />
+                <div>
+                  <p className="text-xs font-semibold">{item.title}</p>
+                  <p className="text-xs text-muted-foreground">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-16 px-4 border-t border-border bg-gradient-to-b from-primary/5 to-transparent">
+        <div className="max-w-3xl mx-auto text-center space-y-4">
+          <p className="text-xl font-bold tracking-tight">
+            Pesquisa individual e ruido.{" "}
+            <span className="text-primary">Tendencia agregada e sinal.</span>
           </p>
           <Link
-            href="/"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-primary-foreground text-primary rounded-lg font-medium hover:bg-primary-foreground/90 transition-colors text-lg"
+            href="/dashboard"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-sm text-xs font-medium uppercase tracking-wider hover:bg-primary/90 transition-colors"
           >
-            Acessar Dashboard Gratuito
-            <ArrowRight className="h-5 w-5" />
+            Acessar Terminal Gratuito
+            <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-4 border-t">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <footer className="py-6 px-4 border-t border-border">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">
-              ElectioLab — Inteligencia Eleitoral
+            <BarChart3 className="h-3.5 w-3.5 text-muted-foreground" />
+            <span className="text-xs font-mono text-muted-foreground">
+              ElectioLab — Terminal de Inteligencia Eleitoral
             </span>
           </div>
-          <p className="text-xs text-muted-foreground">
-            Dados publicos do TSE, Bacen e IBGE. Nenhum dado e gerado ou editorializado.
+          <p className="text-xs text-muted-foreground font-mono">
+            Dados publicos: TSE · Bacen · IBGE · Meta Ad Library
           </p>
         </div>
       </footer>

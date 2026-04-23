@@ -1,6 +1,4 @@
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { BarChart3, Check, ArrowRight } from "lucide-react";
 
 const plans = [
@@ -8,13 +6,8 @@ const plans = [
     name: "Free",
     price: "R$ 0",
     period: "para sempre",
-    description: "Dashboard publico para acompanhar a eleicao",
-    features: [
-      "Dashboard da eleicao ativa",
-      "Media ponderada atualizada",
-      "Tendencia ultimos 30 dias",
-      "Ranking simplificado de institutos",
-    ],
+    desc: "Dashboard publico",
+    features: ["Eleicao ativa", "Media ponderada", "Tendencia 30 dias", "Ranking basico"],
     cta: "Acessar Gratis",
     href: "/",
     highlight: false,
@@ -23,55 +16,31 @@ const plans = [
     name: "Pro",
     price: "R$ 97",
     period: "/mes",
-    description: "Para jornalistas, analistas e cidadaos informados",
-    features: [
-      "Tudo do Free",
-      "Historico completo (desde 2018)",
-      "Alertas inteligentes",
-      "Filtros avancados",
-      "Exportacao CSV/PDF/PNG",
-      "API basica (1.000 req/mes)",
-      "Relatorio semanal por email",
-      "Graficos embedaveis",
-    ],
+    desc: "Para analistas e jornalistas",
+    features: ["Tudo do Free", "Historico completo", "Alertas inteligentes", "Filtros avancados", "Exportacao CSV/PDF", "API 1.000 req/mes", "Relatorio semanal"],
     cta: "Assinar Pro",
     href: "/auth/login",
     highlight: true,
-    badge: "Mais popular",
+    badge: "Popular",
   },
   {
     name: "Business",
     price: "R$ 497",
     period: "/mes",
-    description: "Para redacoes, consultorias e assessorias",
-    features: [
-      "Tudo do Pro",
-      "Ate 5 usuarios",
-      "Embeds premium com marca",
-      "API expandida (10.000 req/mes)",
-      "Dados em tempo real (webhook)",
-      "Suporte prioritario (4h uteis)",
-    ],
+    desc: "Para redacoes e consultorias",
+    features: ["Tudo do Pro", "5 usuarios", "Embeds premium", "API 10.000 req/mes", "Dados realtime", "Suporte 4h"],
     cta: "Assinar Business",
     href: "/auth/login",
     highlight: false,
   },
   {
     name: "Enterprise",
-    price: "Sob consulta",
+    price: "Custom",
     period: "",
-    description: "Para grandes veiculos, fintechs e plataformas",
-    features: [
-      "Tudo do Business",
-      "API ilimitada",
-      "White-label",
-      "SLA 99.9%",
-      "Suporte dedicado",
-      "Dados granulares (microregiao)",
-      "Relatorios white-label",
-    ],
+    desc: "Para grandes operacoes",
+    features: ["Tudo do Business", "API ilimitada", "White-label", "SLA 99.9%", "Suporte dedicado", "Dados granulares"],
     cta: "Falar com vendas",
-    href: "mailto:contato@electiolab.com.br",
+    href: "mailto:contato@electiolab.com",
     highlight: false,
   },
 ];
@@ -80,84 +49,84 @@ export default function PrecosPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="border-b border-border bg-sidebar/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="h-[2px] bg-gradient-to-r from-primary via-primary/60 to-transparent" />
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link href="/sobre" className="flex items-center gap-2">
-            <BarChart3 className="h-6 w-6 text-primary" />
-            <span className="font-bold text-lg">ElectioLab</span>
+            <BarChart3 className="h-5 w-5 text-primary" />
+            <span className="font-bold text-sm tracking-tight">ElectioLab</span>
           </Link>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium"
-          >
-            Dashboard
-            <ArrowRight className="h-4 w-4" />
+          <Link href="/" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground rounded-sm text-xs font-medium uppercase tracking-wider">
+            Terminal <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
       </header>
 
       <section className="py-16 px-4">
-        <div className="max-w-6xl mx-auto space-y-8">
+        <div className="max-w-5xl mx-auto space-y-8">
           <div className="text-center space-y-2">
-            <h1 className="text-3xl md:text-4xl font-bold">
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
               Inteligencia eleitoral para cada necessidade
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Dashboard gratuito para todos. Features premium para quem precisa ir alem.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-px bg-border rounded-sm overflow-hidden">
             {plans.map((plan) => (
-              <Card
+              <div
                 key={plan.name}
-                className={`relative ${plan.highlight ? "border-primary shadow-lg" : ""}`}
+                className={`bg-card px-4 py-5 flex flex-col relative ${
+                  plan.highlight ? "ring-1 ring-primary/40 shadow-[0_0_30px_oklch(0.65_0.20_250/0.08)]" : ""
+                }`}
               >
                 {plan.badge && (
-                  <Badge className="absolute -top-2.5 left-1/2 -translate-x-1/2">
-                    {plan.badge}
-                  </Badge>
+                  <span className="absolute -top-px left-0 right-0 h-[2px] bg-primary" />
                 )}
-                <CardHeader>
-                  <CardTitle className="text-lg">{plan.name}</CardTitle>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-bold">{plan.price}</span>
-                    <span className="text-sm text-muted-foreground">
-                      {plan.period}
-                    </span>
+
+                <div className="space-y-1 mb-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xs font-bold uppercase tracking-wider">{plan.name}</h3>
+                    {plan.badge && (
+                      <span className="text-xs font-mono uppercase tracking-wider text-primary bg-primary/10 px-1.5 py-0.5 rounded-sm">
+                        {plan.badge}
+                      </span>
+                    )}
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    {plan.description}
-                  </p>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <ul className="space-y-2">
-                    {plan.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2 text-sm">
-                        <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                  <Link
-                    href={plan.href}
-                    className={`block w-full text-center px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                      plan.highlight
-                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                        : "border hover:bg-accent"
-                    }`}
-                  >
-                    {plan.cta}
-                  </Link>
-                </CardContent>
-              </Card>
+                  <div className="flex items-baseline gap-0.5">
+                    <span className="text-2xl font-mono font-bold tabular-nums">{plan.price}</span>
+                    <span className="text-xs text-muted-foreground">{plan.period}</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">{plan.desc}</p>
+                </div>
+
+                <ul className="space-y-1.5 flex-1 mb-4">
+                  {plan.features.map((f) => (
+                    <li key={f} className="flex items-start gap-1.5 text-xs">
+                      <Check className="h-3 w-3 text-primary shrink-0 mt-0.5" />
+                      <span className="text-muted-foreground">{f}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <Link
+                  href={plan.href}
+                  className={`block w-full text-center px-3 py-2 rounded-sm text-xs font-medium uppercase tracking-wider transition-colors ${
+                    plan.highlight
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                      : "border border-border text-muted-foreground hover:text-foreground hover:border-primary/40"
+                  }`}
+                >
+                  {plan.cta}
+                </Link>
+              </div>
             ))}
           </div>
 
-          <div className="text-center text-sm text-muted-foreground space-y-1">
-            <p>Todos os planos incluem acesso ao dashboard publico.</p>
-            <p>Cancele a qualquer momento. Sem multa, sem burocracia.</p>
-          </div>
+          <p className="text-center text-xs text-muted-foreground font-mono">
+            Cancele a qualquer momento · Sem multa · Dados publicos inclusos em todos os planos
+          </p>
         </div>
       </section>
     </div>
