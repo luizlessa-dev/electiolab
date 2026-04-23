@@ -491,7 +491,7 @@ export default function HomePage() {
 
       {/* States grid */}
       <section id="estados" className="py-16 px-4 border-t border-border">
-        <div className="max-w-5xl mx-auto space-y-6">
+        <div className="max-w-5xl mx-auto space-y-8">
           <div className="text-center space-y-2">
             <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium">
               Eleições Estaduais 2026
@@ -501,72 +501,106 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Region legend */}
-          <div className="flex flex-wrap gap-4 justify-center">
-            {[
-              { label: "Norte",        cls: "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20" },
-              { label: "Nordeste",     cls: "bg-amber-500/10 text-amber-400 border border-amber-500/20" },
-              { label: "Centro-Oeste", cls: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" },
-              { label: "Sudeste",      cls: "bg-violet-500/10 text-violet-400 border border-violet-500/20" },
-              { label: "Sul",          cls: "bg-rose-500/10 text-rose-400 border border-rose-500/20" },
-            ].map((r) => (
-              <span key={r.label} className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono">
-                <span className={`px-1.5 py-0.5 rounded-sm text-[10px] font-bold ${r.cls}`}>●</span>
-                {r.label}
-              </span>
+          <div className="space-y-5">
+            {([
+              {
+                region: "Norte", count: 7,
+                headerCls: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
+                lineCls:   "bg-cyan-500/20",
+                states: [
+                  { uf: "PA", name: "Pará",       href: "/eleicoes-governador-pa-2026" },
+                  { uf: "AM", name: "Amazonas",   href: "/eleicoes-governador-am-2026" },
+                  { uf: "TO", name: "Tocantins",  href: "/eleicoes-governador-to-2026" },
+                  { uf: "RO", name: "Rondônia",   href: "/eleicoes-governador-ro-2026" },
+                  { uf: "AC", name: "Acre",        href: "/eleicoes-governador-ac-2026" },
+                  { uf: "AP", name: "Amapá",       href: "/eleicoes-governador-ap-2026" },
+                  { uf: "RR", name: "Roraima",    href: "/eleicoes-governador-rr-2026" },
+                ],
+                badgeCls: "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20",
+              },
+              {
+                region: "Nordeste", count: 9,
+                headerCls: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+                lineCls:   "bg-amber-500/20",
+                states: [
+                  { uf: "BA", name: "Bahia",          href: "/eleicoes-governador-ba-2026" },
+                  { uf: "PE", name: "Pernambuco",     href: "/eleicoes-governador-pe-2026" },
+                  { uf: "CE", name: "Ceará",          href: "/eleicoes-governador-ce-2026" },
+                  { uf: "MA", name: "Maranhão",       href: "/eleicoes-governador-ma-2026" },
+                  { uf: "PB", name: "Paraíba",        href: "/eleicoes-governador-pb-2026" },
+                  { uf: "RN", name: "Rio Gr. Norte",  href: "/eleicoes-governador-rn-2026" },
+                  { uf: "PI", name: "Piauí",          href: "/eleicoes-governador-pi-2026" },
+                  { uf: "AL", name: "Alagoas",        href: "/eleicoes-governador-al-2026" },
+                  { uf: "SE", name: "Sergipe",        href: "/eleicoes-governador-se-2026" },
+                ],
+                badgeCls: "bg-amber-500/10 text-amber-400 border border-amber-500/20",
+              },
+              {
+                region: "Centro-Oeste", count: 4,
+                headerCls: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+                lineCls:   "bg-emerald-500/20",
+                states: [
+                  { uf: "GO", name: "Goiás",            href: "/eleicoes-governador-go-2026" },
+                  { uf: "MT", name: "Mato Grosso",      href: "/eleicoes-governador-mt-2026" },
+                  { uf: "MS", name: "Mato Gr. Sul",     href: "/eleicoes-governador-ms-2026" },
+                  { uf: "DF", name: "Dist. Federal",    href: "/eleicoes-governador-df-2026" },
+                ],
+                badgeCls: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
+              },
+              {
+                region: "Sudeste", count: 4,
+                headerCls: "bg-violet-500/10 text-violet-400 border-violet-500/20",
+                lineCls:   "bg-violet-500/20",
+                states: [
+                  { uf: "SP", name: "São Paulo",        href: "/eleicoes-governador-sp-2026" },
+                  { uf: "RJ", name: "Rio de Janeiro",   href: "/eleicoes-governador-rj-2026" },
+                  { uf: "MG", name: "Minas Gerais",     href: "/eleicoes-governador-mg-2026" },
+                  { uf: "ES", name: "Espírito Santo",   href: "/eleicoes-governador-es-2026" },
+                ],
+                badgeCls: "bg-violet-500/10 text-violet-400 border border-violet-500/20",
+              },
+              {
+                region: "Sul", count: 3,
+                headerCls: "bg-rose-500/10 text-rose-400 border-rose-500/20",
+                lineCls:   "bg-rose-500/20",
+                states: [
+                  { uf: "PR", name: "Paraná",           href: "/eleicoes-governador-pr-2026" },
+                  { uf: "SC", name: "Santa Catarina",   href: "/eleicoes-governador-sc-2026" },
+                  { uf: "RS", name: "Rio Gr. Sul",      href: "/eleicoes-governador-rs-2026" },
+                ],
+                badgeCls: "bg-rose-500/10 text-rose-400 border border-rose-500/20",
+              },
+            ] as const).map((grp) => (
+              <div key={grp.region} className="space-y-2">
+                {/* Region header */}
+                <div className="flex items-center gap-3">
+                  <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-sm border ${grp.headerCls}`}>
+                    {grp.region.toUpperCase()}
+                  </span>
+                  <span className="text-[10px] font-mono text-muted-foreground">{grp.count} estados</span>
+                  <div className={`flex-1 h-px ${grp.lineCls}`} />
+                </div>
+                {/* State buttons */}
+                <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-9 gap-px bg-border rounded-sm overflow-hidden">
+                  {grp.states.map((s) => (
+                    <Link
+                      key={s.uf}
+                      href={s.href}
+                      className="bg-card px-2 py-3 flex flex-col items-center gap-1.5 hover:bg-muted/30 transition-colors group"
+                    >
+                      <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-sm ${grp.badgeCls}`}>
+                        {s.uf}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground group-hover:text-foreground transition-colors text-center leading-tight font-mono">
+                        {s.name}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
 
-          {/* States */}
-          <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-9 gap-px bg-border rounded-sm overflow-hidden">
-            {[
-              // Norte
-              { uf: "PA", name: "Pará",                href: "/eleicoes-governador-pa-2026", badge: "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20" },
-              { uf: "AM", name: "Amazonas",            href: "/eleicoes-governador-am-2026", badge: "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20" },
-              { uf: "TO", name: "Tocantins",           href: "/eleicoes-governador-to-2026", badge: "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20" },
-              { uf: "RO", name: "Rondônia",            href: "/eleicoes-governador-ro-2026", badge: "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20" },
-              { uf: "AC", name: "Acre",                href: "/eleicoes-governador-ac-2026", badge: "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20" },
-              { uf: "AP", name: "Amapá",               href: "/eleicoes-governador-ap-2026", badge: "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20" },
-              { uf: "RR", name: "Roraima",             href: "/eleicoes-governador-rr-2026", badge: "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20" },
-              // Nordeste
-              { uf: "BA", name: "Bahia",               href: "/eleicoes-governador-ba-2026", badge: "bg-amber-500/10 text-amber-400 border border-amber-500/20" },
-              { uf: "PE", name: "Pernambuco",          href: "/eleicoes-governador-pe-2026", badge: "bg-amber-500/10 text-amber-400 border border-amber-500/20" },
-              { uf: "CE", name: "Ceará",               href: "/eleicoes-governador-ce-2026", badge: "bg-amber-500/10 text-amber-400 border border-amber-500/20" },
-              { uf: "MA", name: "Maranhão",            href: "/eleicoes-governador-ma-2026", badge: "bg-amber-500/10 text-amber-400 border border-amber-500/20" },
-              { uf: "PB", name: "Paraíba",             href: "/eleicoes-governador-pb-2026", badge: "bg-amber-500/10 text-amber-400 border border-amber-500/20" },
-              { uf: "RN", name: "Rio Gr. Norte",       href: "/eleicoes-governador-rn-2026", badge: "bg-amber-500/10 text-amber-400 border border-amber-500/20" },
-              { uf: "PI", name: "Piauí",               href: "/eleicoes-governador-pi-2026", badge: "bg-amber-500/10 text-amber-400 border border-amber-500/20" },
-              { uf: "AL", name: "Alagoas",             href: "/eleicoes-governador-al-2026", badge: "bg-amber-500/10 text-amber-400 border border-amber-500/20" },
-              { uf: "SE", name: "Sergipe",             href: "/eleicoes-governador-se-2026", badge: "bg-amber-500/10 text-amber-400 border border-amber-500/20" },
-              // Centro-Oeste
-              { uf: "GO", name: "Goiás",               href: "/eleicoes-governador-go-2026", badge: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" },
-              { uf: "MT", name: "Mato Grosso",         href: "/eleicoes-governador-mt-2026", badge: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" },
-              { uf: "MS", name: "Mato Gr. Sul",        href: "/eleicoes-governador-ms-2026", badge: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" },
-              { uf: "DF", name: "Distrito Federal",    href: "/eleicoes-governador-df-2026", badge: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" },
-              // Sudeste
-              { uf: "SP", name: "São Paulo",           href: "/eleicoes-governador-sp-2026", badge: "bg-violet-500/10 text-violet-400 border border-violet-500/20" },
-              { uf: "RJ", name: "Rio de Janeiro",      href: "/eleicoes-governador-rj-2026", badge: "bg-violet-500/10 text-violet-400 border border-violet-500/20" },
-              { uf: "MG", name: "Minas Gerais",        href: "/eleicoes-governador-mg-2026", badge: "bg-violet-500/10 text-violet-400 border border-violet-500/20" },
-              { uf: "ES", name: "Espírito Santo",      href: "/eleicoes-governador-es-2026", badge: "bg-violet-500/10 text-violet-400 border border-violet-500/20" },
-              // Sul
-              { uf: "PR", name: "Paraná",              href: "/eleicoes-governador-pr-2026", badge: "bg-rose-500/10 text-rose-400 border border-rose-500/20" },
-              { uf: "SC", name: "Santa Catarina",      href: "/eleicoes-governador-sc-2026", badge: "bg-rose-500/10 text-rose-400 border border-rose-500/20" },
-              { uf: "RS", name: "Rio Gr. Sul",         href: "/eleicoes-governador-rs-2026", badge: "bg-rose-500/10 text-rose-400 border border-rose-500/20" },
-            ].map((s) => (
-              <Link
-                key={s.uf}
-                href={s.href}
-                className="bg-card px-2 py-3 flex flex-col items-center gap-1.5 hover:bg-muted/30 transition-colors group"
-              >
-                <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-sm ${s.badge}`}>
-                  {s.uf}
-                </span>
-                <span className="text-[10px] text-muted-foreground group-hover:text-foreground transition-colors text-center leading-tight font-mono">
-                  {s.name}
-                </span>
-              </Link>
-            ))}
-          </div>
           <p className="text-center text-xs text-muted-foreground font-mono">
             Presidencial · <Link href="/pesquisas-presidenciais-2026" className="text-primary hover:underline">Lula vs Bolsonaro →</Link>
           </p>
