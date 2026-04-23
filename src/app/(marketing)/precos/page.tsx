@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BarChart3, Check, ArrowRight } from "lucide-react";
+import { CheckoutButton } from "@/components/marketing/checkout-button";
 
 export const metadata: Metadata = {
   title: "Planos e Preços",
@@ -124,16 +125,29 @@ export default function PrecosPage() {
                   ))}
                 </ul>
 
-                <Link
-                  href={plan.href}
-                  className={`block w-full text-center px-3 py-2 rounded-sm text-xs font-medium uppercase tracking-wider transition-colors ${
-                    plan.highlight
-                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                      : "border border-border text-muted-foreground hover:text-foreground hover:border-primary/40"
-                  }`}
-                >
-                  {plan.cta}
-                </Link>
+                {plan.name === "Pro" || plan.name === "Business" ? (
+                  <CheckoutButton
+                    tier={plan.name.toLowerCase() as "pro" | "business"}
+                    className={`block w-full text-center px-3 py-2 rounded-sm text-xs font-medium uppercase tracking-wider transition-colors ${
+                      plan.highlight
+                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                        : "border border-border text-muted-foreground hover:text-foreground hover:border-primary/40"
+                    }`}
+                  >
+                    {plan.cta}
+                  </CheckoutButton>
+                ) : (
+                  <Link
+                    href={plan.href}
+                    className={`block w-full text-center px-3 py-2 rounded-sm text-xs font-medium uppercase tracking-wider transition-colors ${
+                      plan.highlight
+                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                        : "border border-border text-muted-foreground hover:text-foreground hover:border-primary/40"
+                    }`}
+                  >
+                    {plan.cta}
+                  </Link>
+                )}
               </div>
             ))}
           </div>
