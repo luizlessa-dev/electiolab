@@ -524,6 +524,7 @@ export default function HomePage() {
               { href: "/sobre", label: "Sobre" },
               { href: "/precos", label: "Preços" },
               { href: "/dashboard", label: "Dashboard" },
+              { href: "/imprensa", label: "Imprensa" },
               { href: "/privacidade", label: "Privacidade" },
             ].map((item) => (
               <Link

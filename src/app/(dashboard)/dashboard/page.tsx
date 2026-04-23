@@ -140,8 +140,57 @@ export default async function DashboardPage({
   const topCandidate = [...candidateAverages].sort((a, b) => b.average - a.average)[0];
   const ipca = indicators.length > 0 ? Number(indicators[indicators.length - 1]?.value).toFixed(1) : null;
 
+  // Última pesquisa — para dateModified no JSON-LD
+  const lastPollDate = (polls as any[])
+    .map((p: any) => p.publication_date as string)
+    .sort()
+    .reverse()[0] ?? new Date().toISOString().slice(0, 10);
+
+  const datasetJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    name: `Pesquisas Eleitorais — ${election.name}`,
+    description: `Banco de dados com ${polls.length} pesquisas de intenção de voto agregadas de ${instituteCount} institutos brasileiros. Média ponderada por recência, tamanho de amostra, metodologia e histórico de acurácia.`,
+    url: "https://electiolab.com/dashboard",
+    creator: {
+      "@type": "Organization",
+      name: "ElectioLab",
+      url: "https://electiolab.com",
+    },
+    license: "https://creativecommons.org/licenses/by/4.0/",
+    temporalCoverage: "2022/2026",
+    spatialCoverage: "BR",
+    inLanguage: "pt-BR",
+    variableMeasured: "Intenção de voto (%)",
+    measurementTechnique: "Agregação ponderada por recência, amostra, metodologia e acurácia histórica do instituto",
+    dateModified: lastPollDate,
+    size: `${totalSample.toLocaleString("pt-BR")} entrevistados`,
+    keywords: [
+      "pesquisa eleitoral",
+      "intenção de voto",
+      "eleições 2026",
+      "presidente",
+      "Brasil",
+      "média ponderada",
+      "Quaest",
+      "Datafolha",
+      "Atlas Intel",
+    ],
+    distribution: [
+      {
+        "@type": "DataDownload",
+        encodingFormat: "application/json",
+        contentUrl: "https://electiolab.com/api/v1/polls",
+      },
+    ],
+  };
+
   return (
     <div className="space-y-5">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetJsonLd) }}
+      />
       {/* ── Cabeçalho ────────────────────────────── */}
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
