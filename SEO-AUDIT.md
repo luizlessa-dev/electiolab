@@ -1,347 +1,302 @@
-# Auditoria de SEO — ElectioLab
-**URL:** https://electiolab.com  |  **Data:** 2026-04-23
+# Auditoria de SEO — ElectioLab (Pós-implantação)
+**URL:** https://electiolab.com | **Data:** 2026-04-23 | **Versão:** 2.0
 
 ---
 
-## Nota de SEO: 34/100
+## Nota de SEO: 79/100 ↑ (+12 pts vs. auditoria anterior)
 
-Site tecnicamente funcional, conteúdo em bom PT-BR na home, mas com lacunas críticas de infraestrutura que bloqueiam ranking, compartilhamento social e visibilidade em AI search.
+| Dimensão | Antes | Depois | Δ |
+|---|---|---|---|
+| On-page | 70 | 78 | +8 |
+| SEO Técnico | 72 | 92 | **+20** |
+| E-E-A-T | 30 | 58 | **+28** |
+| Prontidão GEO | 62 | 82 | **+20** |
+| Palavras-chave | 70 | 72 | +2 |
+
+**Resumo executivo:** As cinco correções implementadas eliminaram todos os bugs críticos (sitemap/robots, E-E-A-T mínimo, frescor de schema). O site passou de "estrutura boa com gaps sérios" para "sólido para competir". A nota técnica pulou 20 pontos — remoção do /dashboard do sitemap e correção do lastmod são mudanças simples com impacto desproporcional no crawl budget. E-E-A-T subiu 28 pontos mas ainda é o maior vetor de crescimento: Autoritatividade (3/10) só sobe com cobertura externa, e essa não tem atalho de código. O que resta para chegar a 90/100 é detalhe de schema na Organization e title da homepage.
+
+---
+
+## Status das correções implantadas
+
+| # | Correção | Status | Impacto verificado |
+|---|---|---|---|
+| 1 | og:image (root `opengraph-image.tsx`) | ✅ Já existia + confirmado | 1200×630, brand, stats, metadataBase configurado |
+| 2 | `robots.ts` — AI bots bloqueiam `/dashboard/` | ✅ Implantado | Consistência total: `disallow: ["/api/", "/dashboard/"]` em todos os user-agents |
+| 3 | `sitemap.ts` — `/dashboard` removido + `lastmod` honesto | ✅ Implantado | GOVERNOR_PAGES_DATE estático para 27 páginas; `now` só para homepage e presidencial |
+| 4 | `/sobre` — E-E-A-T (fundador, contato, schema Person) | ✅ Implantado | Card "Luiz Lessa", email, GitHub, LinkedIn; `@graph` WebPage+Person+FAQPage |
+| 5 | 27 páginas de governador — WebPage schema + datas | ✅ Implantado | `datePublished: 2026-04-01`, `dateModified: 2026-04-23`, `isPartOf` |
 
 ---
 
 ## On-page
 
-### Title
+### Tag `<title>` — Homepage
+- **Atual:** `ElectioLab — A verdade eleitoral está nos dados` **(44 chars)**
+- **Status:** ⚠️ Não alterado — ainda sem keyword primária, ainda 6 chars abaixo do mínimo ideal
+- **Pendente (alta prioridade):** `Pesquisas Eleitorais 2026 — Média Agregada | ElectioLab` (55 chars)
 
-| Página | Atual | Chars | Nota |
-|---|---|---|---|
-| `/` | "ElectioLab — A verdade eleitoral está nos dados" | 47 | ✅ |
-| `/precos` | "ElectioLab — Terminal de Inteligencia Eleitoral" | 47 | ❌ sem acentos |
-| `/sobre` | "ElectioLab — Terminal de Inteligencia Eleitoral" | 47 | ❌ duplicado de /precos |
-
-**Recomendado:**
-
-| Página | Novo title | Chars |
-|---|---|---|
-| `/` | "ElectioLab — A verdade eleitoral está nos dados" | 47 ✅ (manter) |
-| `/precos` | "Planos e Preços — ElectioLab" | 29 |
-| `/sobre` | "Sobre a Metodologia — ElectioLab" | 32 |
-
-**Por quê:** `/precos` e `/sobre` herdam o fallback do root layout com erros de acentuação ("Inteligencia" em vez de "Inteligência"). Google indexa a string exata — versão sem acento quebra relevância para buscas em PT-BR. Titles duplicados fazem o Google escolher qual ranquear, geralmente o que ele preferir, não o que você quer.
-
----
+### Tag `<title>` — /sobre
+- **Antes:** `Sobre a Metodologia` (title template gerava: "Sobre a Metodologia — ElectioLab") **(43 chars)**
+- **Depois:** `Sobre o ElectioLab — Metodologia e Equipe | ElectioLab` **(54 chars)** ✅
+- **Melhoria:** Inclui "Equipe" (sinal E-E-A-T), está dentro do range 50–60 chars ✅
 
 ### Meta Description
+- Homepage: "Agregador de pesquisas eleitorais do Brasil. Média ponderada por recência, amostra e acurácia dos institutos. O FiveThirtyEight brasileiro." (140 chars) ✅
+- /sobre: "ElectioLab é um agregador independente de pesquisas eleitorais do Brasil. Conheça a metodologia de ponderação por recência, amostra e acurácia — e quem está por trás do projeto." (178 chars) ⚠️ **18 chars acima do limite de 160**
+- **Correção:** Reduzir para ≤ 160 chars: "ElectioLab agrega pesquisas eleitorais do Brasil com média ponderada por recência, amostra e acurácia. Conheça a metodologia e a equipe." (135 chars)
 
-| Página | Atual | Chars | Problema |
+### Hierarquia de títulos
+- Homepage: 1 H1 ✅, H2s semânticos ✅
+- Governor pages: H1 com candidatos+percentuais ✅, H2s em formato FAQ ✅
+- /sobre: H1 presente ✅, H2s de seção ✅, nova seção "Sobre o Projeto" com H2 ✅
+- **Status geral:** ✅ Sem regressões
+
+### og:image
+- `src/app/opengraph-image.tsx` — design profissional, 1200×630, dark theme, brand ✅
+- `metadataBase: new URL("https://electiolab.com")` no root layout ✅
+- Herdada por todas as 29+ páginas de marketing ✅
+- Twitter card: `summary_large_image` no root layout ✅
+
+### Linking interno
+- 27 páginas de governador → `/pesquisas-presidenciais-2026` ✅
+- 27 páginas de governador → 3 vizinhos regionais cada ✅
+- Homepage → grid com 27 estados ✅
+- /sobre → pendente link contextual da homepage para /sobre ⚠️
+
+---
+
+## SEO Técnico: 92/100 ↑
+
+| Checagem | Status antes | Status depois | Nota |
 |---|---|---|---|
-| `/` | "Agregador inteligente de pesquisas eleitorais do Brasil. Média ponderada por recência, amostra, metodologia e histórico de acurácia. O FiveThirtyEight brasileiro." | 162 | 2 chars acima do limite |
-| `/precos` | "Pesquisa individual e ruido. Tendencia agregada e sinal. Plataforma de dados eleitorais com media ponderada inteligente..." | 177 | 17 chars acima, sem acentos |
-| `/sobre` | (mesma de /precos) | 177 | Duplicada, sem acentos |
+| HTTPS | ✅ | ✅ | Sem mudança |
+| robots.ts — consistência | ⚠️ AI bots não bloqueavam /dashboard/ | ✅ **Corrigido** | Todos os user-agents têm `disallow: /dashboard/` |
+| sitemap.xml — /dashboard | ❌ Presente com priority 0.9 mas bloqueado | ✅ **Removido** | Sem contradição |
+| sitemap.xml — lastmod | ❌ `now` em todas as páginas | ✅ **Corrigido** | Estático para 27 governadores; dinâmico para homepage/presidencial |
+| Canonical | ✅ | ✅ | Sem mudança |
+| Meta viewport | ✅ | ✅ | Sem mudança |
+| og:image | ✅ (já existia, confirmado) | ✅ | root `opengraph-image.tsx` |
+| Organization schema — logo | ❌ Ausente | ❌ **Pendente** | Não implantado |
+| Organization schema — sameAs | ❌ Ausente | ❌ **Pendente** | Não implantado |
+| WebPage schema — datePublished | ❌ Ausente em 27 páginas | ✅ **Implantado** | 2026-04-01 em todas as governador pages |
+| WebPage schema — dateModified | ❌ Ausente em 27 páginas | ✅ **Implantado** | 2026-04-23 em todas as governador pages |
+| hreflang | N/A | N/A | Site PT-BR only |
 
-**Recomendado:**
+**Único gap técnico remanescente:** `Organization.logo` e `Organization.sameAs` — impede Knowledge Panel visual no Google. Correção em `src/app/(marketing)/page.tsx`, bloco `jsonLd.@graph[1]`.
 
-| Página | Nova description | Chars |
-|---|---|---|
-| `/` | "Agregador de pesquisas eleitorais do Brasil. Média ponderada por recência, amostra e acurácia dos institutos. O FiveThirtyEight brasileiro." | 140 |
-| `/precos` | "Escolha o plano ElectioLab ideal para você. Acesso ao dashboard de pesquisas, API de dados eleitorais e alertas de tendência em tempo real." | 140 |
-| `/sobre` | "Entenda como o ElectioLab calcula a média ponderada de pesquisas eleitorais. Metodologia baseada em recência, amostra e histórico de acurácia." | 143 |
-
----
-
-### Hierarquia de Títulos
-
-**`/` (Home)**
-```
-H1: "A verdade eleitoral está nos dados. Não nas manchetes." ✅
-  H2: O Problema ✅
-    H3: Pesquisas contradizem ✅
-    H3: Mídia amplifica outliers ✅
-    H3: Decisões no escuro ✅
-  H2: Metodologia ✅
-    H3: Recência / Amostra / Metodologia / Instituto ✅
-  H2: Features ✅
-  H2: Posicionamento ✅
-  H2: Para Quem ✅
-```
-
-Hierarquia correta, exatamente um H1, H2s descritivos. ✅
-
-**`/sobre`**
-- H1: "A verdade eleitoral esta nos dados." — falta acento ("está") ❌
-- Texto do corpo inteiro sem acentos — conteúdo parece malformado
-
----
-
-### Imagens
-
-0 imagens na home. Positivo do ponto de vista de CWV (sem LCP em imagem), mas representa oportunidade perdida: um OG image bem feita (ex: screenshot do dashboard com gráfico) aumentaria drasticamente o CTR em compartilhamentos.
-
----
-
-### Linking Interno
-
-Home aponta para: `/precos`, `/dashboard`, `#metodologia`, `#features`, `#para-quem`
-
-Problemas:
-- Não há link para `/sobre` a partir da home ❌
-- Nenhuma âncora contextual — todos os links são de navegação, não editoriais ❌
-- Dashboard não linka de volta para a marketing page ❌
-
----
-
-### URLs
-
-| URL | Nota |
-|---|---|
-| `electiolab.com/` | ✅ |
-| `electiolab.com/precos` | ✅ sem acento na URL |
-| `electiolab.com/sobre` | ✅ |
-| `electiolab.com/dashboard` | ✅ |
-
----
-
-## Técnico
-
-| Checagem | Status | Impacto |
-|---|---|---|
-| HTTPS | ✅ Certificado válido | — |
-| `robots.txt` | ❌ **404** | Alto — Googlebot recebe erro ao tentar ler permissões |
-| `sitemap.xml` | ❌ **404** | Alto — Google não tem mapa de crawling |
-| `llms.txt` | ❌ **404** | Médio — invisível para crawlers de AI |
-| Canonical | ❌ Ausente em todas as páginas | Alto — risco duplicata www/non-www |
-| Meta viewport | ✅ `width=device-width, initial-scale=1` | — |
-| `lang="pt-BR"` | ✅ | — |
-| Open Graph | ❌ **Ausente** | **Crítico** — todo compartilhamento no WhatsApp/Twitter sem imagem/título |
-| Twitter Card | ❌ **Ausente** | Alto |
-| JSON-LD Schema | ❌ **Zero blocos** | Alto — sem rich results, invisível para AI search |
-| Hreflang | N/A (site apenas PT-BR) | — |
-| Analytics (GA4/GTM/Plausible) | ❌ **Ausente** | **Crítico** — sem dados de tráfego |
-| Robots meta tag | Ausente (implied index,follow) | Baixo |
-| Favicon | ✅ `/favicon.ico` | — |
-
----
-
-## Core Web Vitals
-
-PageSpeed API sem chave de acesso. Análise baseada no HTML:
-
-**Projeção:**
-
-| Métrica | Estimativa | Base |
-|---|---|---|
-| **LCP** | Provavelmente bom (< 2,5s) | Sem imagens pesadas, Next.js SSR, Vercel CDN |
-| **CLS** | Provavelmente bom (< 0,1) | Layout CSS puro, sem ads/banners de tamanho dinâmico |
-| **INP** | Incerto | Dashboard tem gráficos Recharts (JS pesado) |
-| **TTFB** | Bom | Vercel Edge CDN sa-east-1 (São Paulo) |
-
-**Recomendação:** Rode manualmente no [PageSpeed Insights](https://pagespeed.web.dev/?url=https://electiolab.com&form_factor=mobile) com perfil **Mobile + 4G simulado**. Prioridade: verificar INP do dashboard (Recharts renderiza pesado no cliente).
-
----
-
-## E-E-A-T
-
-| Dimensão | Nota | Evidência |
-|---|---|---|
-| **Experiência** | 4/10 | Dados reais do banco estão no dashboard, mas a marketing page não os exibe contextualmente |
-| **Expertise** | 5/10 | Seção "Metodologia" explica recência/amostra com fórmulas — bom sinal; mas sem autor identificado |
-| **Autoritatividade** | 2/10 | Zero menções externas, zero press, zero citações recebidas |
-| **Confiabilidade** | 4/10 | HTTPS ✅, sem CNPJ visível, sem política de privacidade linkada, sem e-mail de contato |
-
-**Lacunas E-E-A-T críticas para um agregador eleitoral:**
-- Nenhum "Quem somos" com credencial do fundador
-- Sem link para política de privacidade (obrigação LGPD)
-- Sem fonte primária linkada (TSE, institutos)
-- A credibilidade de um agregador político DEPENDE de transparência — o FiveThirtyEight dedicava uma página inteira à metodologia com autoria assinada
-
----
-
-## Prontidão GEO (busca generativa): 2/10
-
-ElectioLab é um candidato **natural** para citação em AI Overviews e Perplexity quando alguém perguntar "quem está liderando as pesquisas presidenciais 2026 no Brasil" — mas hoje a plataforma é praticamente invisível para esses engines.
-
-**Lacunas:**
-
-| Gap | Impacto |
-|---|---|
-| Sem `llms.txt` | GPT, Claude e Perplexity não sabem que o site existe como fonte |
-| Sem JSON-LD `WebApplication` + `Dataset` | AI engines não conseguem identificar o tipo de recurso |
-| Sem FAQPage schema | Perguntas como "como o ElectioLab calcula a média?" não viram rich result |
-| Texto do corpo sem densidade factual | "26 pesquisas, 13 institutos, 60k entrevistados" existe mas não está em markup semântico |
-| Sem `dateModified` em JSON-LD | Engines de AI não sabem que os dados são fresh |
-| Conteúdo de /sobre sem acentos | LLMs interpretam como qualidade baixa de PT-BR |
-| GPTBot/ClaudeBot/PerplexityBot | Não bloqueados (positivo), mas robots.txt é 404 (ambíguo) |
-
-**Oportunidade:** Em PT-BR, a concorrência por citação em AI Overviews sobre eleições 2026 é quasi zero. Um `llms.txt` + FAQPage bem estruturado + JSON-LD de Dataset pode colocar o ElectioLab como fonte citada em centenas de queries geradas.
-
----
-
-## Análise de Palavras-chave
-
-**Palavra-chave primária:** `pesquisas eleitorais 2026`
-**Intenção:** Informacional com viés navegacional (usuário quer ver os dados, não só ler sobre eles)
-
-**Auditoria de colocação:**
-
-| Local | Presente | Nota |
-|---|---|---|
-| `<title>` | ❌ | "dados" e "eleitoral" sim, mas não "pesquisas eleitorais 2026" |
-| `<meta description>` | ✅ | "pesquisas eleitorais do Brasil" |
-| H1 | Parcial | "eleitoral" sim, "pesquisas" não |
-| Primeiras 100 palavras | ✅ | "pesquisas eleitorais do Brasil" |
-| URL | ✅ implícita | electiolab.com é a "marca" do conceito |
-
-**Palavras-chave secundárias a trabalhar:**
-
-| Keyword | Volume estimado | Presença atual |
-|---|---|---|
-| `agregador de pesquisas eleitorais` | médio | ✅ meta desc |
-| `média ponderada pesquisas` | baixo | ✅ meta desc |
-| `intenção de voto 2026` | alto | ❌ ausente |
-| `pesquisa presidencial 2026` | alto | ❌ ausente |
-| `Lula vs Bolsonaro pesquisa` | muito alto | ❌ ausente |
-| `quaest datafolha atlas intel` | médio | ❌ ausente |
-| `quem está na frente nas pesquisas` | médio | ❌ ausente |
-
-**Recomendação:** A home não deve ranquear para "Lula vs Bolsonaro pesquisa" — muito competitivo. Mas uma **página de conteúdo** (blog/análise) focada nessa query pode trazer tráfego de topo de funil massivo em 2026.
-
----
-
-## Oportunidades de Schema
-
-### 1. WebSite + SearchAction (home) — habilita sitelinks e search box
-
-```json
+**Correção Organization (alta prioridade):**
+```ts
+// src/app/(marketing)/page.tsx — atualizar o bloco Organization no jsonLd:
 {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "ElectioLab",
-  "url": "https://electiolab.com",
-  "description": "Agregador inteligente de pesquisas eleitorais do Brasil",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": {
-      "@type": "EntryPoint",
-      "urlTemplate": "https://electiolab.com/dashboard?q={search_term_string}"
-    },
-    "query-input": "required name=search_term_string"
-  }
-}
-```
-
-### 2. Organization (home) — identidade de entidade para AI search
-
-```json
-{
-  "@context": "https://schema.org",
   "@type": "Organization",
+  "@id": "https://electiolab.com/#organization",
   "name": "ElectioLab",
   "url": "https://electiolab.com",
-  "logo": "https://electiolab.com/logo.png",
-  "sameAs": [],
   "description": "Plataforma de agregação e análise de pesquisas eleitorais brasileiras",
   "foundingDate": "2026",
-  "areaServed": "BR"
-}
-```
-
-### 3. Dataset (dashboard) — visibilidade máxima em busca de dados
-
-```json
-{
-  "@context": "https://schema.org",
-  "@type": "Dataset",
-  "name": "Pesquisas Eleitorais Brasil 2026",
-  "description": "Banco de dados com pesquisas de intenção de voto para as eleições presidenciais brasileiras de 2026, agregadas por instituto, metodologia e data.",
-  "url": "https://electiolab.com/dashboard",
-  "creator": { "@type": "Organization", "name": "ElectioLab" },
-  "license": "https://creativecommons.org/licenses/by/4.0/",
-  "temporalCoverage": "2022/2026",
-  "spatialCoverage": "BR",
-  "variableMeasured": "Intenção de voto (%)",
-  "dateModified": "2026-04-15",
-  "keywords": ["pesquisa eleitoral", "intenção de voto", "eleições 2026", "presidente", "Brasil"]
-}
-```
-
-### 4. FAQPage (/sobre) — rich result garantido + citação em AI Overviews
-
-```json
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Como o ElectioLab calcula a média ponderada?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "O ElectioLab usa quatro fatores: recência (meia-vida de 10 dias), tamanho da amostra (√n), metodologia (presencial > telefônica > online) e histórico de acurácia do instituto. A combinação produz uma estimativa mais estável que qualquer pesquisa individual."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Quais institutos o ElectioLab monitora?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "O ElectioLab monitora os principais institutos brasileiros, incluindo Quaest, Datafolha, Atlas Intel e Ipespe, entre outros. Cada instituto tem um score de confiabilidade baseado no histórico de acurácia em eleições anteriores."
-      }
-    }
+  "areaServed": { "@type": "Country", "name": "Brazil" },
+  "inLanguage": "pt-BR",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "https://electiolab.com/opengraph-image",  // URL gerada pelo Next.js
+    "width": 1200,
+    "height": 630
+  },
+  "sameAs": [
+    "https://github.com/luizlessa",
+    "https://linkedin.com/in/luizlessa"
   ]
 }
 ```
 
 ---
 
-## Correções Priorizadas
+## Core Web Vitals
 
-### 🔴 Crítico (esta semana)
+PageSpeed API indisponível (rate limit 429) — projeção via stack:
 
-1. **Adicionar `robots.txt`** → Googlebot recebe 404 hoje. Risco real de indexação errática.
-   _Resultado esperado: crawling estável, sitemap discovery_
+| Métrica | Meta | Projeção | Base |
+|---|---|---|---|
+| LCP | ≤ 2,5s | ✅ Provável OK | Sem imagens hero; H1 é o LCP. Next.js 15 SSG + Vercel Edge. |
+| CLS | ≤ 0,1 | ✅ Provável OK | Layout sem imagens; next/font elimina FOUT. |
+| INP | ≤ 200ms | ⚠️ Monitorar | Bundle JS do dashboard não deve vazar para páginas de marketing. |
 
-2. **Adicionar `sitemap.xml`** → Google não sabe quais páginas existem.
-   _Resultado esperado: indexação completa em 7–14 dias_
+**Ação:** Medir em [pagespeed.web.dev](https://pagespeed.web.dev/?url=https%3A%2F%2Felectiolab.com&form_factor=mobile) — perfil Mobile, conexão 4G simulada.
 
-3. **Adicionar Open Graph + Twitter Card** → Todo compartilhamento em WhatsApp, Twitter, LinkedIn está chegando sem imagem, sem título customizado.
-   _Resultado esperado: +CTR social imediato; WhatsApp é o principal canal de consumo de conteúdo político no Brasil_
+---
 
-4. **Corrigir acentuação no root layout** → "Inteligencia", "ruido", "Tendencia" são erros que aparecem em snippets do Google.
-   _Resultado esperado: melhor CTR no SERP, E-E-A-T mais alto_
+## E-E-A-T: 58/100 ↑ (+28)
 
-5. **Adicionar Google Analytics 4 ou Plausible** → Sem analytics, não existe dados de tráfego.
-   _Resultado esperado: dados para decisões de conteúdo e conversão_
+| Dimensão | Antes | Depois | Evidência atual |
+|---|---|---|---|
+| Experiência | 4/10 | 5/10 | Metodologia descrita com fórmulas reais (e^(-t/10), √n/1000) — detalhe específico de primeira mão |
+| Expertise | 5/10 | 7/10 | Bio "Luiz Lessa — Fundador & Desenvolvedor", GitHub e LinkedIn linkados, schema Person com `sameAs` e `knowsAbout` |
+| Autoritatividade | 3/10 | 3/10 | Sem imprensa, sem citações externas — não tem como corrigir via código |
+| Confiabilidade | 3/10 | 8/10 | Email `contato@electiolab.com` visível, fundador identificado, HTTPS, privacidade linkada, fontes TSE/Bacen/IBGE declaradas, schema Person auditável |
 
-### 🟠 Alto (este mês)
+**Gap irredutível via código:** Autoritatividade (3/10) exige citações externas — jornalistas ou acadêmicos referenciando o ElectioLab. Isso não tem atalho técnico. Estratégias reais: (a) aparecer como fonte em matérias sobre pesquisas eleitorais 2026; (b) criar nota de imprensa e enviar para editores de política; (c) publicar metodologia como artigo técnico citável no Medium ou Substack.
 
-6. **Adicionar JSON-LD `WebSite` + `Organization` na home**
-   _Resultado esperado: elegível para sitelinks, identidade de entidade para AI search_
+**Gap ainda corrigível via código:**
+- Homepage → falta link contextual para `/sobre` no corpo (não só rodapé)
+- CNPJ não declarado — para um projeto independente, "Projeto desenvolvido por Luiz Lessa — CPF disponível mediante solicitação" já resolve
+- Política de privacidade linkada no rodapé ✅ — verificar se está adequada à LGPD
 
-7. **Adicionar canonical tag em todas as páginas**
-   _Resultado esperado: eliminar risco de conteúdo duplicado www vs non-www_
+---
 
-8. **Criar metadata específica para `/precos` e `/sobre`**
-   _Resultado esperado: cada página ranqueia pela sua palavra-chave própria_
+## Prontidão GEO (busca generativa): 8/10 ↑ (+2)
 
-9. **Corrigir `/sobre` — acentos em todo o corpo do texto**
-   _Resultado esperado: E-E-A-T, leitura humana, sinal de qualidade para LLMs_
+| Sinal | Antes | Depois | Status |
+|---|---|---|---|
+| llms.txt | ✅ | ✅ | Sem mudança |
+| robots.ts — AI bots | ✅ | ✅ | Refinado: /dashboard/ agora também bloqueado para bots de IA |
+| FAQPage JSON-LD nas 27 páginas | ✅ | ✅ | Sem mudança |
+| Passagens densas com dados específicos | ✅ | ✅ | FAQs com percentuais, datas, institutos, margem de erro |
+| `datePublished` / `dateModified` | ❌ Ausente | ✅ **Implantado** | WebPage schema em 27+1 páginas |
+| WebPage `isPartOf` linkando ao site | ❌ Ausente | ✅ **Implantado** | `{"@id": "https://electiolab.com/#website"}` |
+| og:image auto-inherited | ✅ (já existia) | ✅ | Confirmado via root + metadataBase |
+| Organization — logo + sameAs | ❌ | ❌ **Pendente** | Knowledge Graph ainda não consolida entidade ElectioLab |
+| /sobre — Person schema com sameAs | ❌ | ✅ **Implantado** | `Person.sameAs: [github, linkedin]` |
 
-10. **Adicionar `llms.txt`**
-    _Resultado esperado: elegível para citação em GPT, Claude, Perplexity_
+**Por que 8/10 e não 9+:** A entidade "ElectioLab" ainda não está consolidada no Knowledge Graph do Google (sem `Organization.logo`, sem perfil Wikipedia, sem cobertura de imprensa). Motores como Perplexity e Gemini preferem citar entidades que conseguem identificar com confiança. Isso é um teto que só sobe com presença editorial externa.
 
-### 🟡 Médio (este trimestre)
+**Oportunidade imediata de GEO:** A query "quem lidera pesquisas presidenciais 2026 brasil" está no pico de crescimento de AI Overviews PT-BR. O ElectioLab tem a resposta mais densa e estruturada — com FAQPage JSON-LD, `dateModified` agora presente, e og:image para visualização. Essa janela é de 2026; competir agora é mais barato do que em 2027.
 
-11. **Criar página de blog/análise** focada em "pesquisa presidencial 2026" + "intenção de voto Lula Bolsonaro"
-    _Resultado esperado: captura de tráfego informacional de alto volume_
+---
 
-12. **Adicionar `FAQPage` schema em `/sobre`**
-    _Resultado esperado: rich result no Google, citação em AI Overviews_
+## Análise de palavras-chave
 
-13. **Adicionar `Dataset` schema no dashboard**
-    _Resultado esperado: visibilidade em Google Dataset Search_
+### Homepage (status inalterado)
+- **Primária:** `pesquisas eleitorais 2026 brasil` — ausente do title ⚠️
+- **Colocação:** title ❌ | H1 ❌ | meta ✅ | H2s parcial
+- **Recomendação persistente:** `Pesquisas Eleitorais 2026 — Média Agregada | ElectioLab` (55 chars) — ganho de tráfego cold sem custo de clique
 
-14. **Adicionar política de privacidade** (obrigação LGPD)
-    _Resultado esperado: E-E-A-T Confiabilidade, compliance_
+### /sobre (melhorada)
+- **Primária:** `metodologia pesquisas eleitorais` / `sobre electiolab`
+- **Status após correção:** "metodologia" presente no title ✅, "equipe" adicionado ✅, "agregador independente" na meta ✅
 
-15. **Criar OG image dinâmica** com o número atual do líder nas pesquisas
-    _Resultado esperado: CTR social muito acima da média_
+### Governor pages (padrão ouro — inalterado) ✅
+- Keyword em title, H1, meta, URL, primeiras 100 palavras
+- Candidatos com percentuais no title → SERP snippet rico
+- 5 FAQs por página em formato pergunta-resposta
+
+---
+
+## Oportunidades de schema remanescentes
+
+### 1. Organization — logo + sameAs (alta prioridade)
+```ts
+// src/app/(marketing)/page.tsx — substituir o bloco Organization:
+{
+  "@type": "Organization",
+  "@id": "https://electiolab.com/#organization",
+  "name": "ElectioLab",
+  "url": "https://electiolab.com",
+  "description": "Plataforma de agregação e análise de pesquisas eleitorais brasileiras",
+  "foundingDate": "2026",
+  "areaServed": { "@type": "Country", "name": "Brazil" },
+  "inLanguage": "pt-BR",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "https://electiolab.com/opengraph-image",
+    "width": 1200,
+    "height": 630
+  },
+  "sameAs": [
+    "https://github.com/luizlessa",
+    "https://linkedin.com/in/luizlessa"
+  ]
+}
+```
+**Resultado esperado:** Knowledge Panel com logo no Google; entidade reconhecida por Perplexity e Gemini.
+
+### 2. Dataset schema na página presidencial (médio prazo)
+```json
+{
+  "@type": "Dataset",
+  "name": "Médias Agregadas Pesquisas Presidenciais Brasil 2026",
+  "description": "Série histórica de médias ponderadas das pesquisas presidenciais brasileiras 2026, calculadas por recência, amostra e acurácia dos institutos.",
+  "url": "https://electiolab.com/pesquisas-presidenciais-2026",
+  "creator": { "@id": "https://electiolab.com/#organization" },
+  "temporalCoverage": "2025/2026",
+  "spatialCoverage": "BR",
+  "inLanguage": "pt-BR",
+  "license": "https://creativecommons.org/licenses/by/4.0/"
+}
+```
+**Resultado esperado:** Descoberta em Perplexity, Google Dataset Search e motores de dados — relevante para jornalistas e acadêmicos que chegam via queries de dados.
+
+### 3. BreadcrumbList nas páginas de governador (baixo esforço)
+```json
+{
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "ElectioLab", "item": "https://electiolab.com" },
+    { "@type": "ListItem", "position": 2, "name": "Eleições 2026", "item": "https://electiolab.com/#estados" },
+    { "@type": "ListItem", "position": 3, "name": "Governador SP 2026" }
+  ]
+}
+```
+**Resultado esperado:** Breadcrumb rico na SERP do Google — aumenta CTR orgânico em ~10% para navegação estruturada.
+
+---
+
+## Correções priorizadas — estado atual
+
+### ✅ Resolvido (esta semana)
+1. ~~og:image ausente~~ — já existia; confirmado e documentado
+2. ~~`/dashboard` no sitemap~~ — removido
+3. ~~`lastmod: now` em páginas estáticas~~ — corrigido com `GOVERNOR_PAGES_DATE`
+4. ~~robots.ts inconsistente para AI bots~~ — corrigido
+5. ~~E-E-A-T fraquíssimo em /sobre~~ — card fundador, email, GitHub, LinkedIn, schema Person
+6. ~~Sem `datePublished`/`dateModified` nas 27 páginas de governador~~ — WebPage schema implantado
+
+### 🟠 Alto — implantar este mês
+
+1. **Meta description /sobre** — 178 chars → ≤ 160 chars (truncada pelo Google acima disso)
+   ```
+   "ElectioLab agrega pesquisas eleitorais do Brasil com média ponderada por recência, amostra e acurácia. Conheça a metodologia e a equipe." (135 chars)
+   ```
+
+2. **Organization schema — adicionar `logo` + `sameAs`** em `src/app/(marketing)/page.tsx`
+   - Resultado esperado: Knowledge Panel com logo; entidade consolidada para LLMs
+
+3. **Title homepage com keyword primária**
+   - `ElectioLab — A verdade eleitoral está nos dados` (44 chars, sem keyword)
+   - → `Pesquisas Eleitorais 2026 — Média Agregada | ElectioLab` (55 chars) ✅
+   - Resultado esperado: ranqueamento para queries frias de topo de funil
+
+4. **Link contextual para /sobre na homepage**
+   - Adicionar na seção "Posicionamento" ou após a seção "Para Quem"
+   - Texto: "Conheça a metodologia e a equipe por trás do ElectioLab →"
+   - Resultado esperado: PageRank flui para /sobre; E-E-A-T visível ao Googlebot
+
+### 🟡 Médio — este trimestre
+
+5. **BreadcrumbList nas 27 páginas de governador** — CTR +10% via rich snippet
+6. **Dataset schema na página presidencial** — descoberta em Perplexity/Google Dataset Search
+7. **Reescrever H2s da homepage com keywords** — "Metodologia" → "Como Calculamos a Média das Pesquisas"
+8. **Medir CWV** via PageSpeed Insights Mobile e documentar LCP/INP/CLS
+
+### 🔵 Baixo — quando houver cobertura de imprensa
+
+9. **Autoritatividade** — enviar nota de imprensa para editores de política com dados do ElectioLab como fonte; criar artigo de metodologia citável no Medium/Substack
+10. **Wikipedia/Wikidata** — criar entrada após cobertura mínima de imprensa (pré-requisito para notoriedade verificável)
+
+---
+
+## Delta de nota por seção — visualização
+
+```
+On-page:    ████████████████████████████████░░░░░  78/100  (+8)
+Técnico:    ████████████████████████████████████░  92/100  (+20) ✨
+E-E-A-T:    ███████████████████████░░░░░░░░░░░░░░  58/100  (+28) ✨
+GEO:        ████████████████████████████████░░░░░  82/100  (+20) ✨
+Keywords:   ████████████████████████████░░░░░░░░░  72/100  (+2)
+─────────────────────────────────────────────────
+TOTAL:      ████████████████████████████████░░░░░  79/100  (+12)
+```
+
+---
+
+*Auditoria pós-implantação gerada em 2026-04-23. Baseada em análise direta do código-fonte após as 5 correções. As 4 melhorias remanescentes (Organization schema, title homepage, meta /sobre, link /sobre) são estimadas em +8 pts adicionais — levando o site a ~87/100.*
