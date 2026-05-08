@@ -16,7 +16,8 @@ import {
   calculateWeightedAverage,
   type PollInput,
 } from "@/lib/weighting/calculate-weighted-average";
-import { BarChart3, TrendingUp, Building2, FileSearch, Users, Percent, TrendingDown, Activity } from "lucide-react";
+import { BarChart3, TrendingUp, Building2, FileSearch, Users, Percent, TrendingDown, Activity, ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 export default async function DashboardPage({
   searchParams,
@@ -75,6 +76,7 @@ export default async function DashboardPage({
 
     return {
       name: c.name,
+      slug: c.slug ?? null,
       party: c.party ?? "",
       average: result.average,
       confidenceLow: result.confidenceLow,
@@ -200,20 +202,75 @@ export default async function DashboardPage({
             <span className="text-slate-300">{totalSample.toLocaleString("pt-BR")}</span> entrevistados
           </p>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          {elections.map((e: any) => (
-            <a
-              key={e.id}
-              href={`/dashboard?election=${e.id}`}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
-                e.id === election.id
-                  ? "bg-blue-600/20 text-blue-300 border-blue-600/40"
-                  : "bg-transparent text-slate-400 border-slate-700 hover:text-white hover:border-slate-500"
-              }`}
-            >
-              {e.year} — {e.round}º Turno
-            </a>
-          ))}
+        <div className="flex flex-col items-end gap-2">
+          {(() => {
+            const sortByState = (a: any, b: any) =>
+              String(a.state ?? "").localeCompare(String(b.state ?? "")) ||
+              a.year - b.year;
+            const nationals = (elections as any[]).filter(
+              (e) => e.type === "presidente" || (!e.state && !e.city)
+            );
+            const govElections = (elections as any[])
+              .filter((e) => e.type === "governador")
+              .sort(sortByState);
+            const senElections = (elections as any[])
+              .filter((e) => e.type === "senador")
+              .sort(sortByState);
+
+            const Pill = ({ e, label }: { e: any; label: string }) => (
+              <a
+                key={e.id}
+                href={`/dashboard?election=${e.id}`}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
+                  e.id === election.id
+                    ? "bg-blue-600/20 text-blue-300 border-blue-600/40"
+                    : "bg-transparent text-slate-400 border-slate-700 hover:text-white hover:border-slate-500"
+                }`}
+              >
+                {label}
+              </a>
+            );
+
+            const Row = ({
+              label,
+              items,
+              fmt,
+            }: {
+              label: string;
+              items: any[];
+              fmt: (e: any) => string;
+            }) =>
+              items.length > 0 ? (
+                <div className="flex items-center gap-2 flex-wrap justify-end">
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-slate-500 font-mono mr-1 min-w-[5.5rem] text-right">
+                    {label}
+                  </span>
+                  {items.map((e: any) => (
+                    <Pill key={e.id} e={e} label={fmt(e)} />
+                  ))}
+                </div>
+              ) : null;
+
+            return (
+              <>
+                <Row
+                  label="Nacional"
+                  items={nationals}
+                  fmt={(e) => `${e.year} — ${e.round}º Turno`}
+                />
+                <Row
+                  label="Governador"
+                  items={govElections}
+                  fmt={(e) => `${e.state ?? "—"} ${e.year}`}
+                />
+                <Row
+                  label="Senador"
+                  items={senElections}
+                  fmt={(e) => `${e.state ?? "—"} ${e.year}`}
+                />
+              </>
+            );
+          })()}
         </div>
       </div>
 
@@ -332,25 +389,45 @@ export default async function DashboardPage({
                     {candidateAverages
                       .sort((a, b) => b.average - a.average)
                       .filter((c) => c.average > 1)
-                      .map((c) => (
-                        <div key={c.name} className="flex items-center justify-between">
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: c.color }} />
-                            <div>
-                              <span className="text-sm font-medium text-slate-200">{c.name}</span>
-                              <span className="text-xs text-slate-500 ml-2">{c.party}</span>
+                      .map((c) => {
+                        const inner = (
+                          <>
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: c.color }} />
+                              <div>
+                                <span className="text-sm font-medium text-slate-200">{c.name}</span>
+                                <span className="text-xs text-slate-500 ml-2">{c.party}</span>
+                              </div>
                             </div>
+                            <div className="text-right flex items-center gap-2">
+                              <div>
+                                <span className="text-lg font-bold tabular-nums" style={{ color: c.color }}>
+                                  {c.average}%
+                                </span>
+                                <span className="text-xs text-slate-500 ml-1">
+                                  ±{((c.confidenceHigh - c.confidenceLow) / 2).toFixed(1)}
+                                </span>
+                              </div>
+                              {c.slug && (
+                                <ChevronRight className="h-4 w-4 text-slate-500 group-hover:text-slate-300 transition-colors" />
+                              )}
+                            </div>
+                          </>
+                        );
+                        return c.slug ? (
+                          <Link
+                            key={c.name}
+                            href={`/candidato/${c.slug}`}
+                            className="group flex items-center justify-between rounded-md px-2 py-1.5 -mx-2 hover:bg-slate-800/50 transition-colors"
+                          >
+                            {inner}
+                          </Link>
+                        ) : (
+                          <div key={c.name} className="flex items-center justify-between px-2 py-1.5 -mx-2">
+                            {inner}
                           </div>
-                          <div className="text-right">
-                            <span className="text-lg font-bold tabular-nums" style={{ color: c.color }}>
-                              {c.average}%
-                            </span>
-                            <span className="text-xs text-slate-500 ml-1">
-                              ±{((c.confidenceHigh - c.confidenceLow) / 2).toFixed(1)}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                   </div>
                 )}
                 <div className="mt-4 pt-3 border-t border-slate-800 text-xs text-slate-500">
