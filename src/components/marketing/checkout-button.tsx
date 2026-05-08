@@ -27,11 +27,18 @@ export function CheckoutButton({ tier, interval = "monthly", className, children
         return;
       }
 
-      // Criar sessão Checkout
-      const res = await fetch("/api/checkout", {
+      // Mapeia tier+interval pro plan key esperado pela API
+      const plan =
+        tier === "pro" && interval === "yearly"
+          ? "pro_yearly"
+          : tier === "pro"
+          ? "pro_monthly"
+          : "business_monthly";
+
+      const res = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tier, interval }),
+        body: JSON.stringify({ plan }),
       });
       const data = await res.json();
 
