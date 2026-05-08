@@ -1,7 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
+import { authenticate, applyRateLimitHeaders } from "@/lib/api-auth";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
+  const auth = await authenticate(request);
+  if (!auth.ok) return auth.response;
+
   const { searchParams } = new URL(request.url);
   const electionId = searchParams.get("election_id");
 
@@ -27,5 +31,8 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ data, count: data.length });
+  return applyRateLimitHeaders(
+    NextResponse.json({ data, count: data?.length ?? 0 }),
+    auth
+  );
 }
