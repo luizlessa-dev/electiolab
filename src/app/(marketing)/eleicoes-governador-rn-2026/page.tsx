@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BarChart3, ArrowLeft, ExternalLink, HelpCircle, TrendingUp } from "lucide-react";
 
+import { getLatestStateGovPoll } from "@/lib/marketing-data";
+import { StatePollSnapshotCard } from "@/components/state-poll-snapshot";
+
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: { absolute: "Pesquisas Governador RN 2026 — Alysson Bezerra vs Rogério Marinho | ElectioLab" },
   description:
@@ -13,12 +18,6 @@ export const metadata: Metadata = {
     url: "https://electiolab.com/eleicoes-governador-rn-2026",
   },
 };
-
-const POLL_SNAPSHOT = [
-  { name: "Alysson Bezerra",   party: "União Brasil", pct: 36.0 },
-  { name: "Rogério Marinho",   party: "PL",           pct: 34.0 },
-  { name: "Álvaro Dias",       party: "Progressistas", pct: 17.0 },
-];
 
 const FAQ_ITEMS = [
   {
@@ -43,6 +42,17 @@ const FAQ_ITEMS = [
   },
 ];
 
+const webPageJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": "https://electiolab.com/eleicoes-governador-rn-2026",
+  "url": "https://electiolab.com/eleicoes-governador-rn-2026",
+  "datePublished": "2026-04-01",
+  "dateModified": "2026-04-23",
+  "inLanguage": "pt-BR",
+  "isPartOf": { "@id": "https://electiolab.com/#website" },
+};
+
 const faqJsonLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -53,9 +63,11 @@ const faqJsonLd = {
   })),
 };
 
-export default function GovernadorRN2026Page() {
+export default async function GovernadorRN2026Page() {
+  const snapshot = await getLatestStateGovPoll("RN");
   return (
     <div className="min-h-screen bg-background">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <header className="border-b border-border bg-sidebar/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="h-[2px] bg-gradient-to-r from-primary via-primary/60 to-transparent" />
@@ -82,34 +94,15 @@ export default function GovernadorRN2026Page() {
             <TrendingUp className="h-3.5 w-3.5" /> Ver média ao vivo →
           </Link>
         </div>
+        {/* Snapshot — fetch ao vivo do banco */}
         <section className="space-y-4">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Última pesquisa — Real Time Big Data · Dez/2025</h2>
-          <div className="border border-border rounded-sm bg-card overflow-hidden">
-            <div className="px-4 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
-              <span className="text-xs font-mono text-muted-foreground">1.600 entrevistados · ±2,5 pp · presencial</span>
-              <span className="text-xs font-mono text-muted-foreground">Dez/2025</span>
-            </div>
-            <div className="divide-y divide-border">
-              {POLL_SNAPSHOT.map((c, i) => (
-                <div key={c.name} className="px-4 py-3 flex items-center gap-4">
-                  <span className="text-xs font-mono text-muted-foreground w-4">{i + 1}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">{c.name}</p>
-                    <p className="text-xs text-muted-foreground">{c.party}</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-32 hidden sm:block">
-                      <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full bg-primary rounded-full" style={{ width: `${(c.pct / 41) * 100}%` }} />
-                      </div>
-                    </div>
-                    <span className="text-sm font-mono font-bold tabular-nums w-12 text-right">{c.pct}%</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <p className="text-xs text-muted-foreground font-mono">Fonte: Real Time Big Data · Cenário estimulado, 1º turno · Dado mais recente disponível</p>
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+            Última pesquisa indexada
+          </h2>
+          <StatePollSnapshotCard snapshot={snapshot} />
+          <p className="text-xs text-muted-foreground font-mono">
+            Fonte: pesquisa mais recente indexada no ElectioLab · Atualiza a cada 1h
+          </p>
         </section>
         <section className="space-y-4" id="faq">
           <div className="flex items-center gap-2">

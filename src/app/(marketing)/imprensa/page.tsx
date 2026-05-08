@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { BarChart3, ArrowLeft, Download, Mail, ExternalLink } from "lucide-react";
+import { BarChart3, ArrowLeft, Download, Mail, ExternalLink, TrendingUp, Calendar } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Imprensa e Press Kit",
+  title: { absolute: "Imprensa — Press Kit e Dados para Jornalistas | ElectioLab" },
   description:
-    "Materiais para jornalistas, press releases e contato de imprensa do ElectioLab — agregador de pesquisas eleitorais do Brasil.",
+    "Dados atualizados, média agregada exportável, press release e contato de imprensa do ElectioLab — o agregador científico de pesquisas eleitorais do Brasil.",
   alternates: { canonical: "https://electiolab.com/imprensa" },
   openGraph: {
     title: "Imprensa — ElectioLab",
     description:
-      "Press releases, dados, metodologia e contato de imprensa do ElectioLab.",
+      "Dados, gráfico exportável, press release e contato para jornalistas que cobrem eleições 2026.",
     url: "https://electiolab.com/imprensa",
   },
 };
@@ -58,10 +58,10 @@ export default function ImprensaPage() {
           <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Dados de cobertura</h2>
           <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-px bg-border rounded-sm overflow-hidden">
             {[
-              { value: "9+", label: "Pesquisas 2026", sub: "indexadas" },
-              { value: "13", label: "Institutos", sub: "monitorados" },
+              { value: "26+", label: "Pesquisas 2026", sub: "indexadas" },
+              { value: "13",  label: "Institutos",     sub: "monitorados" },
               { value: "60k+", label: "Entrevistados", sub: "total acumulado" },
-              { value: "3", label: "Eleições", sub: "na base (2022–2026)" },
+              { value: "27",  label: "Estados",        sub: "eleições para governador" },
             ].map((s) => (
               <div key={s.label} className="bg-card px-5 py-4 text-center space-y-1">
                 <p className="text-2xl font-mono font-bold tabular-nums text-foreground">{s.value}</p>
@@ -69,6 +69,114 @@ export default function ImprensaPage() {
                 <p className="text-xs text-muted-foreground">{s.sub}</p>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* Snapshot da média — gráfico para jornalistas */}
+        <section className="space-y-4" id="dados">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+              Snapshot da média agregada
+            </h2>
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 text-xs font-mono text-muted-foreground">
+                <Calendar className="h-3 w-3" /> Semana 17 · Abr/2026
+              </span>
+            </div>
+          </div>
+
+          {/* Presidencial */}
+          <div className="border border-border rounded-sm bg-card overflow-hidden">
+            <div className="px-4 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
+              <span className="text-xs font-mono font-semibold text-foreground">PRESIDENCIAL 2026 — 1º turno</span>
+              <span className="text-xs font-mono text-muted-foreground">Média ponderada ElectioLab</span>
+            </div>
+            <div className="divide-y divide-border">
+              {[
+                { name: "Lula",      party: "PT",           pct: 36.8, color: "#ef4444" },
+                { name: "Bolsonaro", party: "PL",           pct: 30.4, color: "#3b82f6" },
+                { name: "Tarcísio",  party: "Republicanos", pct: 18.2, color: "#8b5cf6" },
+                { name: "Outros",    party: "—",            pct: 14.6, color: "#6b7280" },
+              ].map((c, i) => (
+                <div key={c.name} className="px-4 py-3 flex items-center gap-4">
+                  <span className="text-xs font-mono text-muted-foreground w-4">{i + 1}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground">{c.name}</p>
+                    <p className="text-xs text-muted-foreground">{c.party}</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-40 hidden sm:block">
+                      <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                        <div className="h-full rounded-full" style={{ width: `${(c.pct / 42) * 100}%`, backgroundColor: c.color }} />
+                      </div>
+                    </div>
+                    <span className="text-sm font-mono font-bold tabular-nums w-12 text-right">{c.pct}%</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="px-4 py-2 border-t border-border bg-muted/20 flex items-center justify-between">
+              <span className="text-xs font-mono text-muted-foreground">26 pesquisas · 13 institutos · 60.608 entrevistados</span>
+              <Link href="/pesquisas-presidenciais-2026" className="text-xs text-primary hover:underline font-mono">
+                Ver página completa →
+              </Link>
+            </div>
+          </div>
+
+          {/* Governadores destaque */}
+          <div className="border border-border rounded-sm bg-card overflow-hidden">
+            <div className="px-4 py-2 border-b border-border bg-muted/30">
+              <span className="text-xs font-mono font-semibold text-foreground">GOVERNADORES — LÍDERES POR ESTADO</span>
+            </div>
+            <div className="grid sm:grid-cols-3 gap-px bg-border">
+              {[
+                { uf: "SP", nome: "Tarcísio",      pct: "40,0%", partido: "Rep", href: "/eleicoes-governador-sp-2026" },
+                { uf: "MG", nome: "Cleitinho",     pct: "48,0%", partido: "Rep", href: "/eleicoes-governador-mg-2026" },
+                { uf: "RJ", nome: "Eduardo Paes",  pct: "49,0%", partido: "PSD", href: "/eleicoes-governador-rj-2026" },
+                { uf: "RS", nome: "Luciano Zucco", pct: "24,0%", partido: "PL", href: "/eleicoes-governador-rs-2026" },
+                { uf: "BA", nome: "ACM Neto",      pct: "41,0%", partido: "UB", href: "/eleicoes-governador-ba-2026" },
+                { uf: "PE", nome: "João Campos",   pct: "46,0%", partido: "PSB", href: "/eleicoes-governador-pe-2026" },
+              ].map((s) => (
+                <Link key={s.uf} href={s.href}
+                  className="bg-card px-4 py-3 flex items-center justify-between hover:bg-muted/30 transition-colors group">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono font-bold text-primary w-6">{s.uf}</span>
+                    <div>
+                      <p className="text-xs font-medium text-foreground">{s.nome}</p>
+                      <p className="text-[10px] text-muted-foreground">{s.partido}</p>
+                    </div>
+                  </div>
+                  <span className="text-sm font-mono font-bold tabular-nums text-foreground">{s.pct}</span>
+                </Link>
+              ))}
+            </div>
+            <div className="px-4 py-2 border-t border-border bg-muted/20">
+              <Link href="/" className="text-xs text-primary hover:underline font-mono">
+                Ver todos os 27 estados →
+              </Link>
+            </div>
+          </div>
+
+          {/* Export / download */}
+          <div className="border border-border rounded-sm bg-card px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="space-y-0.5">
+              <p className="text-xs font-semibold text-foreground">Exportar dados para matéria</p>
+              <p className="text-xs text-muted-foreground">Dados brutos em JSON ou CSV via API pública. Sem autenticação.</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <a href="/api/v1/polls?format=csv"
+                 className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-border rounded-sm text-xs font-mono text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors">
+                <Download className="h-3 w-3" /> CSV
+              </a>
+              <a href="/api/v1/polls"
+                 className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-border rounded-sm text-xs font-mono text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors">
+                <ExternalLink className="h-3 w-3" /> JSON
+              </a>
+              <Link href="/relatorio/semana-17-2026"
+                 className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 border border-primary/20 rounded-sm text-xs font-mono text-primary hover:bg-primary/20 transition-colors">
+                <TrendingUp className="h-3 w-3" /> Relatório semanal
+              </Link>
+            </div>
           </div>
         </section>
 
@@ -178,9 +286,12 @@ export default function ImprensaPage() {
 
         {/* Pitches por publicação */}
         <section className="space-y-4" id="pitches">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-            Sugestões de pauta por veículo
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+              Sugestões de pauta por veículo
+            </h2>
+            <span className="text-xs font-mono text-muted-foreground">10 veículos</span>
+          </div>
           <div className="space-y-3">
             {[
               {
@@ -198,11 +309,46 @@ export default function ImprensaPage() {
                 contato: "redacao@nexojornal.com.br",
               },
               {
+                pub: "Folha de S.Paulo",
+                perfil: "Maior jornal do Brasil, cobertura eleitoral com equipe dedicada desde 2021",
+                angulo: "\"Pesquisa mostra X%, outra diz Y% — por que os números divergem e o que a média revela\"",
+                destaque: "Tabela comparativa de pesquisas da semana vs. média ElectioLab para colunistas de política",
+                contato: "redacao@grupofolha.com.br",
+              },
+              {
+                pub: "Estadão / Agência Estado",
+                perfil: "Wire service com maior alcance no Brasil — sindicado para 2.000+ veículos regionais",
+                angulo: "\"ElectioLab: a plataforma que trata pesquisas eleitorais com método estatístico\"",
+                destaque: "Dado de acurácia: instituto que mais acertou nas eleições de 2022 segundo o ElectioLab",
+                contato: "editorias@estadao.com.br",
+              },
+              {
+                pub: "G1 / Globonews Política",
+                perfil: "Maior audiência digital do Brasil — cada publicação sobre eleições gera centenas de comentários",
+                angulo: "\"Como funciona o novo site que calcula a média de todas as pesquisas eleitorais do Brasil\"",
+                destaque: "Explicação didática da metodologia + demonstração ao vivo no dashboard para colunistas",
+                contato: "g1@g1.globo.com",
+              },
+              {
                 pub: "Piauí",
                 perfil: "Long-form, credibilidade máxima, influência em formadores de opinião",
                 angulo: "\"A matemática das eleições: como agregar pesquisas muda a leitura da corrida presidencial\"",
                 destaque: "Perfil da metodologia + análise do efeito da cobertura de outliers na imprensa BR",
                 contato: "redacao@revistapiaui.com.br",
+              },
+              {
+                pub: "BBC Brasil",
+                perfil: "Credibilidade internacional, audiência de classe média alta, fact-checking rigoroso",
+                angulo: "\"Eleições 2026: como o Brasil passou a ter seu próprio agregador de pesquisas\"",
+                destaque: "Comparação com FiveThirtyEight e Politico Polling Average — diferenças para o contexto BR",
+                contato: "brasil@bbc.co.uk",
+              },
+              {
+                pub: "CartaCapital",
+                perfil: "Análise política progressista, público de intelectuais e militantes",
+                angulo: "\"Pesquisas eleitorais: como a agregação científica desafia a cobertura sensacionalista\"",
+                destaque: "Análise: quanto a cobertura de outliers distorce a percepção da corrida presidencial",
+                contato: "redacao@cartacapital.com.br",
               },
               {
                 pub: "Agência Pública",
@@ -242,9 +388,13 @@ export default function ImprensaPage() {
           <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Links úteis para jornalistas</h2>
           <div className="grid sm:grid-cols-2 gap-2">
             {[
-              { label: "Dashboard ao vivo", href: "/dashboard", desc: "Média ponderada atualizada" },
+              { label: "Dashboard ao vivo", href: "/dashboard", desc: "Média ponderada atualizada a cada 6h" },
+              { label: "Todos os candidatos", href: "/candidatos", desc: "300+ perfis filtráveis (UF, partido, cargo)" },
+              { label: "Comparar candidatos", href: "/comparar", desc: "Comparativo lado a lado, URL compartilhável" },
+              { label: "Institutos & acurácia", href: "/institutos", desc: "Ranking Datafolha/Quaest/Ipec por desvio histórico" },
               { label: "Metodologia completa", href: "/sobre", desc: "Fórmula, pesos e critérios" },
               { label: "API pública (JSON)", href: "/api/v1/polls", desc: "Dados brutos para análise" },
+              { label: "Export CSV", href: "/api/v1/polls?format=csv", desc: "Download direto em planilha" },
               { label: "llms.txt", href: "/llms.txt", desc: "Contexto para ferramentas de AI" },
             ].map((l) => (
               <Link

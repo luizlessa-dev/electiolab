@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-const LAST_UPDATED = "23 de abril de 2026";
+const LAST_UPDATED = "28 de abril de 2026";
 const CONTACT_EMAIL = "privacidade@electiolab.com";
 
 export default function PrivacidadePage() {
@@ -85,6 +85,21 @@ export default function PrivacidadePage() {
                   de crédito. Consultamos apenas o status da assinatura.
                 </p>
               </div>
+              <div className="border-l-2 border-border pl-4 space-y-1">
+                <p className="font-medium text-foreground">Newsletter (Sinal Eleitoral)</p>
+                <p>
+                  Apenas o e-mail. Inscrição via <strong>double opt-in</strong> (você precisa
+                  confirmar o link enviado por e-mail). Pode descadastrar a qualquer momento
+                  pelo link no rodapé de cada envio.
+                </p>
+              </div>
+              <div className="border-l-2 border-border pl-4 space-y-1">
+                <p className="font-medium text-foreground">Dados técnicos / erros</p>
+                <p>
+                  Para correção de bugs, capturamos stack traces de erros via Sentry e métricas de
+                  performance via Vercel Analytics — sem PII, sem fingerprinting individual.
+                </p>
+              </div>
             </div>
           </section>
 
@@ -135,8 +150,11 @@ export default function PrivacidadePage() {
             <ul className="list-disc ml-5 space-y-1">
               <li><strong className="text-foreground">Supabase</strong> — banco de dados e autenticação (servidores na região sa-east-1, São Paulo)</li>
               <li><strong className="text-foreground">Stripe</strong> — processamento de pagamentos (PCI DSS Level 1)</li>
-              <li><strong className="text-foreground">Vercel</strong> — hospedagem da aplicação (CDN global)</li>
-              <li><strong className="text-foreground">Google Analytics</strong> — analytics anonimizado</li>
+              <li><strong className="text-foreground">Vercel</strong> — hospedagem, CDN global e analytics de performance (sem PII)</li>
+              <li><strong className="text-foreground">Resend</strong> — envio de e-mails transacionais (confirmação de newsletter, recibos de assinatura)</li>
+              <li><strong className="text-foreground">Beehiiv</strong> — entrega da newsletter Sinal Eleitoral (apenas após double opt-in)</li>
+              <li><strong className="text-foreground">Google Analytics 4</strong> — analytics anonimizado, IP truncado</li>
+              <li><strong className="text-foreground">Sentry</strong> — captura de erros em produção (stack traces, sem dados pessoais identificáveis)</li>
             </ul>
             <p>
               Não vendemos, alugamos ou compartilhamos seus dados com terceiros para fins comerciais

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BarChart3, Check, ArrowRight } from "lucide-react";
 import { CheckoutButton } from "@/components/marketing/checkout-button";
+import { NewsletterSignup } from "@/components/newsletter/signup-form";
 
 export const metadata: Metadata = {
   title: "Planos e Preços",
@@ -13,6 +14,19 @@ export const metadata: Metadata = {
     description:
       "Acesso ao dashboard de pesquisas eleitorais, API de dados e alertas de tendência em tempo real.",
     url: "https://electiolab.com/precos",
+    images: [
+      {
+        url: "https://electiolab.com/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "ElectioLab — Planos e Preços",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Planos e Preços — ElectioLab",
+    images: ["https://electiolab.com/opengraph-image"],
   },
 };
 
@@ -155,6 +169,13 @@ export default function PrecosPage() {
           <p className="text-center text-xs text-muted-foreground font-mono">
             Cancele a qualquer momento · Sem multa · Dados públicos incluídos em todos os planos
           </p>
+        </div>
+      </section>
+
+      {/* Newsletter slot — engagement free tier */}
+      <section className="py-12 px-4 border-t border-border bg-muted/20">
+        <div className="max-w-md mx-auto">
+          <NewsletterSignup variant="card" source="precos" />
         </div>
       </section>
 
