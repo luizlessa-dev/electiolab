@@ -205,6 +205,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.75,
     },
     {
+      url: `${SITE_URL}/eleicao-2018`,
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.7,
+    },
+    {
+      url: `${SITE_URL}/eleicao-2022`,
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.75,
+    },
+    {
       url: `${SITE_URL}/imprensa`,
       lastModified: now,
       changeFrequency: "weekly",

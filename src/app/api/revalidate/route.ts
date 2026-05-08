@@ -37,6 +37,8 @@ const ALL_PATHS = [
   "/redes-sociais",
   "/institutos",
   "/candidatos",
+  "/eleicao-2018",
+  "/eleicao-2022",
   // Pages dinâmicas governador (27 UFs)
   ...["ac","al","am","ap","ba","ce","df","es","go","ma","mg","ms","mt","pa","pb","pe","pi","pr","rj","rn","ro","rr","rs","sc","se","sp","to"]
     .map((uf) => `/eleicoes-governador-${uf}-2026`),
