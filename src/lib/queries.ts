@@ -106,3 +106,70 @@ export async function getCampaignFinances(electionId: string) {
     .order("total_received", { ascending: false });
   return data ?? [];
 }
+
+export async function getCandidateBySlug(slug: string) {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("candidates")
+    .select(`
+      *,
+      election:elections(id, name, type, state, year, round, election_date),
+      poll_results(percentage, poll:polls(id, publication_date, sample_size, methodology, institute:institutes(name, slug))),
+      election_results(total_votes, percentage, is_elected, result_description),
+      campaign_finances(total_received, total_spent, fund_partidario, fund_especial, receita_pf, receita_pj),
+      digital_ads(id, platform, page_name, spend_lower, spend_upper, impressions_lower, impressions_upper, delivery_start, creative_text),
+      legislative_votes(id, vote_date, bill_title, vote, topic, importance),
+      judicial_proceedings(id, process_number, court, process_class, process_subject, current_status, is_relevant, source_url),
+      candidate_assets(id, election_year, asset_type_name, description, value_brl),
+      candidate_social_media(id, election_year, platform, url, handle),
+      candidate_fefc(id, election_year, amount_received, amount_spent, party_acronym),
+      prior_election_results(id, year, round, election_type, state, city, party, total_votes, result_status)
+    `)
+    .eq("slug", slug)
+    .eq("is_active", true)
+    .order("publication_date", { foreignTable: "poll_results.poll", ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return data;
+}
+
+export async function getCandidatesWithBio() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("candidates")
+    .select("id, name, slug, party, color, current_position, election:elections(state, type, year)")
+    .not("bio", "is", null)
+    .eq("is_active", true)
+    .order("name");
+  return data ?? [];
+}
+
+export async function getPartyFunds() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("party_fund_transfers")
+    .select("*")
+    .order("reference_year", { ascending: false })
+    .order("amount", { ascending: false });
+  return data ?? [];
+}
+
+export async function getDigitalAdsAggregate() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("digital_ads")
+    .select(`
+      id,
+      page_name,
+      platform,
+      spend_lower,
+      spend_upper,
+      impressions_lower,
+      impressions_upper,
+      delivery_start,
+      candidate:candidates(id, name, party, color),
+      election:elections(id, name, type, state)
+    `)
+    .order("spend_upper", { ascending: false, nullsFirst: false });
+  return data ?? [];
+}
