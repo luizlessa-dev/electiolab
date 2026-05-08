@@ -1,134 +1,133 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "ElectioLab — Inteligência Eleitoral";
+export const alt = "ElectioLab — A verdade eleitoral está nos dados";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default async function OgImage() {
+export default async function OG() {
   return new ImageResponse(
     (
       <div
         style={{
+          display: "flex",
           width: "100%",
           height: "100%",
-          display: "flex",
+          background: "linear-gradient(135deg,#0b1220 0%,#0f172a 60%,#111827 100%)",
+          color: "#f9fafb",
+          fontFamily: "system-ui, -apple-system, sans-serif",
           flexDirection: "column",
+          padding: 80,
           justifyContent: "space-between",
-          backgroundColor: "#0f1117",
-          padding: "64px",
-          fontFamily: "system-ui, sans-serif",
+          position: "relative",
         }}
       >
-        {/* Top bar accent */}
+        {/* Faixa lateral */}
         <div
           style={{
             position: "absolute",
-            top: 0,
             left: 0,
-            right: 0,
-            height: "4px",
-            background: "linear-gradient(90deg, #3b82f6, rgba(59,130,246,0.3), transparent)",
+            top: 0,
+            bottom: 0,
+            width: 12,
+            background: "#3b82f6",
+            display: "flex",
           }}
         />
 
-        {/* Logo + badge */}
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        {/* Top: brand */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 16,
+            color: "#94a3b8",
+            fontSize: 22,
+            letterSpacing: 2,
+            textTransform: "uppercase",
+          }}
+        >
           <div
             style={{
-              width: "40px",
-              height: "40px",
-              borderRadius: "8px",
-              backgroundColor: "rgba(59,130,246,0.15)",
-              border: "1px solid rgba(59,130,246,0.3)",
+              width: 36,
+              height: 36,
+              borderRadius: 8,
+              background: "#3b82f6",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              fontSize: 22,
+              fontWeight: 800,
+              color: "#0b1220",
             }}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <rect x="3" y="14" width="4" height="7" rx="1" fill="#3b82f6" />
-              <rect x="10" y="9" width="4" height="12" rx="1" fill="#3b82f6" opacity="0.7" />
-              <rect x="17" y="4" width="4" height="17" rx="1" fill="#3b82f6" opacity="0.5" />
-            </svg>
+            E
           </div>
-          <span style={{ color: "#ffffff", fontSize: "24px", fontWeight: "700", letterSpacing: "-0.5px" }}>
-            ElectioLab
-          </span>
+          ELECTIOLAB
+        </div>
+
+        {/* Center: headline */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           <div
             style={{
-              marginLeft: "8px",
-              padding: "4px 10px",
-              borderRadius: "4px",
-              backgroundColor: "rgba(59,130,246,0.1)",
-              border: "1px solid rgba(59,130,246,0.2)",
-              color: "#93c5fd",
-              fontSize: "12px",
-              fontWeight: "600",
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
+              fontSize: 84,
+              fontWeight: 800,
+              lineHeight: 1.05,
+              maxWidth: 980,
+              color: "#f9fafb",
             }}
           >
-            AO VIVO
+            A verdade eleitoral está nos dados.
+          </div>
+          <div
+            style={{
+              fontSize: 28,
+              color: "#cbd5e1",
+              maxWidth: 920,
+              lineHeight: 1.4,
+            }}
+          >
+            Agregador de pesquisas, média ponderada por recência e acurácia dos
+            institutos. Eleições 2026.
           </div>
         </div>
 
-        {/* Main content */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          <div style={{ color: "#94a3b8", fontSize: "16px", fontWeight: "500", letterSpacing: "0.05em", textTransform: "uppercase" }}>
-            Pesquisas Eleitorais Brasil 2026
+        {/* Bottom: stats */}
+        <div
+          style={{
+            display: "flex",
+            gap: 60,
+            fontSize: 18,
+            color: "#94a3b8",
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <span style={{ fontSize: 32, fontWeight: 800, color: "#f9fafb" }}>
+              27
+            </span>
+            <span>governadores</span>
           </div>
-          <div
-            style={{
-              color: "#ffffff",
-              fontSize: "56px",
-              fontWeight: "800",
-              letterSpacing: "-2px",
-              lineHeight: "1.1",
-            }}
-          >
-            A verdade eleitoral
-            <br />
-            está nos{" "}
-            <span style={{ color: "#3b82f6" }}>dados.</span>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <span style={{ fontSize: 32, fontWeight: 800, color: "#f9fafb" }}>
+              280+
+            </span>
+            <span>candidatos</span>
           </div>
-        </div>
-
-        {/* Bottom row */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", gap: "32px" }}>
-            {[
-              { value: "26+", label: "Pesquisas" },
-              { value: "13", label: "Institutos" },
-              { value: "60k+", label: "Entrevistados" },
-            ].map((s) => (
-              <div key={s.label} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                <span style={{ color: "#ffffff", fontSize: "28px", fontWeight: "700", fontFamily: "monospace" }}>
-                  {s.value}
-                </span>
-                <span style={{ color: "#64748b", fontSize: "13px", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-                  {s.label}
-                </span>
-              </div>
-            ))}
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <span style={{ fontSize: 32, fontWeight: 800, color: "#f9fafb" }}>
+              média
+            </span>
+            <span>ponderada</span>
           </div>
-          <div
-            style={{
-              padding: "10px 20px",
-              backgroundColor: "#3b82f6",
-              borderRadius: "6px",
-              color: "#ffffff",
-              fontSize: "14px",
-              fontWeight: "700",
-              letterSpacing: "0.05em",
-              textTransform: "uppercase",
-            }}
-          >
-            electiolab.com
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <span style={{ fontSize: 32, fontWeight: 800, color: "#3b82f6" }}>
+              electiolab.com
+            </span>
+            <span>API · Newsletter · Dashboard</span>
           </div>
         </div>
       </div>
     ),
-    { ...size }
+    size
   );
 }
