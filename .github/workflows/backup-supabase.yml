@@ -1,0 +1,79 @@
+name: Backup Supabase (daily)
+
+on:
+  schedule:
+    # Diariamente 03:00 UTC (00:00 BRT)
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        run: |
+          curl -fsSL https://github.com/supabase/cli/releases/latest/download/supabase_linux_amd64.tar.gz | tar -xz
+          sudo mv supabase /usr/local/bin/
+          supabase --version
+
+      - name: Run pg_dump (schema + data) → R2/S3
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.BACKUP_S3_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.BACKUP_S3_SECRET_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.BACKUP_S3_REGION || 'auto' }}
+          AWS_ENDPOINT_URL: ${{ secrets.BACKUP_S3_ENDPOINT }}
+          BUCKET: ${{ secrets.BACKUP_S3_BUCKET }}
+        run: |
+          set -euo pipefail
+          DATE=$(date -u +%Y-%m-%d)
+          TIMESTAMP=$(date -u +%Y%m%d-%H%M%S)
+          FILE="electiolab-backup-${TIMESTAMP}.sql.gz"
+
+          echo "==> pg_dump"
+          # Usa psql client (já vem na ubuntu-latest)
+          PGSSLMODE=require pg_dump "$DATABASE_URL" \
+            --no-owner --no-privileges --clean --if-exists \
+            --exclude-schema=auth \
+            --exclude-schema=storage \
+            --exclude-schema=realtime \
+            --exclude-schema=supabase_functions \
+            --exclude-schema=net \
+            --exclude-schema=cron \
+            --exclude-schema=vault \
+            | gzip > "$FILE"
+
+          SIZE=$(du -h "$FILE" | cut -f1)
+          echo "Backup file: $FILE ($SIZE)"
+
+          # Upload via aws s3 (suporta R2/B2/Wasabi via endpoint)
+          if [[ -n "${BUCKET:-}" ]]; then
+            echo "==> uploading to s3://$BUCKET/electiolab/$DATE/"
+            aws s3 cp "$FILE" "s3://$BUCKET/electiolab/$DATE/$FILE" \
+              ${AWS_ENDPOINT_URL:+--endpoint-url "$AWS_ENDPOINT_URL"}
+            echo "✅ uploaded"
+          else
+            echo "⚠️ BACKUP_S3_BUCKET not set — backup só local (perdido após este job)"
+          fi
+
+      - name: Notify on failure
+        if: failure()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          if [[ -z "${RESEND_API_KEY:-}" ]]; then exit 0; fi
+          curl -s -X POST https://api.resend.com/emails \
+            -H "Authorization: Bearer $RESEND_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "from": "ElectioLab Ops <noreply@electiolab.com>",
+              "to": ["lc.lessa@gmail.com"],
+              "subject": "[ALERTA] Backup Supabase falhou",
+              "html": "<p>Job de backup diário falhou. Veja os logs em GitHub Actions:</p><p><a href=\"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\">Ver run</a></p>"
+            }'
