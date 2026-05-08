@@ -17,12 +17,18 @@ import {
   Activity,
   CheckCircle2,
   XCircle,
+  Mail,
 } from "lucide-react";
+import { NewsletterSignup } from "@/components/newsletter/signup-form";
+import { getInstitutesRanking, getLatestPresidentialPoll } from "@/lib/marketing-data";
 
 import type { Metadata } from "next";
 
+// Pre-render with revalidation: fetch dinâmico do banco a cada 1h
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
-  title: { absolute: "ElectioLab — A verdade eleitoral está nos dados" },
+  title: { absolute: "Pesquisas Eleitorais 2026 — Média Agregada | ElectioLab" },
   description:
     "Agregador de pesquisas eleitorais do Brasil. Média ponderada por recência, amostra e acurácia dos institutos. O FiveThirtyEight brasileiro.",
   alternates: { canonical: "https://electiolab.com" },
@@ -31,6 +37,21 @@ export const metadata: Metadata = {
     description:
       "Agregador de pesquisas eleitorais do Brasil. Média ponderada por recência, amostra e acurácia dos institutos.",
     url: "https://electiolab.com",
+    images: [
+      {
+        url: "https://electiolab.com/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "ElectioLab — A verdade eleitoral está nos dados",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ElectioLab — Inteligência Eleitoral",
+    description:
+      "Agregador de pesquisas eleitorais do Brasil. Média ponderada por recência, amostra e acurácia dos institutos.",
+    images: ["https://electiolab.com/opengraph-image"],
   },
 };
 
@@ -60,13 +81,183 @@ const jsonLd = {
       "description":
         "Plataforma de agregação e análise de pesquisas eleitorais brasileiras",
       "foundingDate": "2026",
-      "areaServed": "BR",
+      "areaServed": { "@type": "Country", "name": "Brazil" },
       "inLanguage": "pt-BR",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://electiolab.com/opengraph-image",
+        "width": 1200,
+        "height": 630,
+      },
+      "sameAs": [
+        "https://github.com/luizlessa",
+        "https://linkedin.com/in/luizlessa",
+      ],
+      "founder": { "@id": "https://electiolab.com/sobre#founder" },
+      "contactPoint": [
+        {
+          "@type": "ContactPoint",
+          "contactType": "press",
+          "email": "imprensa@electiolab.com",
+          "availableLanguage": ["Portuguese", "English"],
+          "areaServed": "BR",
+        },
+        {
+          "@type": "ContactPoint",
+          "contactType": "customer service",
+          "email": "contato@electiolab.com",
+          "availableLanguage": "Portuguese",
+          "areaServed": "BR",
+        },
+        {
+          "@type": "ContactPoint",
+          "contactType": "technical support",
+          "email": "suporte@electiolab.com",
+          "availableLanguage": "Portuguese",
+          "areaServed": "BR",
+        },
+      ],
+      "email": "contato@electiolab.com",
+      "knowsAbout": [
+        "Pesquisas eleitorais",
+        "Eleições brasileiras 2026",
+        "Datafolha",
+        "Quaest",
+        "Ipec",
+        "Análise de dados políticos",
+        "Média ponderada",
+      ],
+    },
+    {
+      "@type": "Dataset",
+      "@id": "https://electiolab.com/#dataset",
+      "name": "Pesquisas Eleitorais Brasil 2026",
+      "alternateName": "ElectioLab Polls Dataset",
+      "description":
+        "Base agregada de pesquisas eleitorais brasileiras 2018-2026, com média ponderada calculada por recência, tamanho de amostra, metodologia e acurácia histórica do instituto. Inclui presidente, governadores (27 UFs) e senadores. Atualizada continuamente conforme institutos publicam novas rodadas.",
+      "url": "https://electiolab.com",
+      "sameAs": [
+        "https://electiolab.com/pesquisas-presidenciais-2026",
+        "https://electiolab.com/institutos",
+      ],
+      "keywords": [
+        "pesquisas eleitorais",
+        "intenção de voto",
+        "Brasil 2026",
+        "Datafolha",
+        "Quaest",
+        "Atlas Intel",
+        "Ipec",
+        "média ponderada",
+        "TSE",
+      ],
+      "creator": { "@id": "https://electiolab.com/#organization" },
+      "publisher": { "@id": "https://electiolab.com/#organization" },
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "isAccessibleForFree": true,
+      "inLanguage": "pt-BR",
+      "spatialCoverage": { "@type": "Country", "name": "Brasil" },
+      "temporalCoverage": "2018-01/..",
+      "variableMeasured": [
+        "Intenção de voto (%)",
+        "Margem de erro (pp)",
+        "Tamanho da amostra",
+        "Acurácia histórica do instituto",
+        "Patrimônio declarado (BRL)",
+        "Fundo Eleitoral FEFC (BRL)",
+        "Gastos em propaganda digital (Google Ads + Meta Ads)",
+      ],
+      "distribution": [
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://electiolab.com/api/v1/polls",
+          "name": "API REST — pesquisas eleitorais",
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://electiolab.com/api/v1/averages",
+          "name": "API REST — médias ponderadas",
+        },
+      ],
+      "citation": "ElectioLab. Pesquisas Eleitorais Brasil 2026. https://electiolab.com",
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Como funciona a média ponderada do ElectioLab?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Cada pesquisa recebe peso por 4 fatores: recência (meia-vida 10 dias), tamanho da amostra (raiz quadrada do n), metodologia (presencial > telefônica > mista > online) e acurácia histórica do instituto. A combinação cancela ruído amostral e amplifica o sinal real. Recalculada a cada 6 horas.",
+          },
+        },
+        {
+          "@type": "Question",
+          "name": "Qual o instituto de pesquisa eleitoral mais acurado no Brasil?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Pelo histórico de erro absoluto vs. resultado oficial TSE em 2018 e 2022: Datafolha 92%, Ipec 88%, Quaest 85%, Genial/Quaest 84%, PoderData 80%, Atlas Intel 78%, Ipespe 77%.",
+          },
+        },
+        {
+          "@type": "Question",
+          "name": "Quem lidera as pesquisas para presidente em 2026?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Pela Quaest de abril/2026 (1º turno estimulado, n=2.004): Lula 37%, Flávio Bolsonaro 32%, Caiado 6%, Zema 3%. No 2º turno, os cenários ficam dentro da margem de erro.",
+          },
+        },
+        {
+          "@type": "Question",
+          "name": "Como saber se um candidato é Ficha Limpa?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Cada perfil mostra a situação da última candidatura no TSE: Apto, Indeferido ou Sem registro. Filtros permitem listar só aptos ou só indeferidos. Dados oficiais TSE Dados Abertos.",
+          },
+        },
+        {
+          "@type": "Question",
+          "name": "O ElectioLab tem API pública?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim, gratuita em /api/v1 com endpoints para eleições, pesquisas, médias ponderadas e drift histórico. JSON e CSV. Anônimo: 60 req/h. Pro: 1.000 req/mês. Business: 10.000 req/mês.",
+          },
+        },
+      ],
     },
   ],
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  // Dados dinâmicos do banco (refatorado de hardcoded em 2026-04-29)
+  const [institutes, presPoll] = await Promise.all([
+    getInstitutesRanking(),
+    getLatestPresidentialPoll(),
+  ]);
+
+  // Top 7 institutos para o texto SEO
+  const topInstitutes = institutes.slice(0, 7);
+  const institutesText = topInstitutes
+    .map((i, idx) => (idx === 0 ? `${i.name} ${i.pct}%` : `${i.name} ${i.pct}%`))
+    .join(", ");
+
+  // Texto resumo da última presidencial (top 4 candidatos)
+  const presTop = presPoll?.results.slice(0, 4) ?? [];
+  const presText = presTop.length
+    ? presTop.map((c) => `${c.name} ${c.pct.toFixed(0)}%`).join(", ")
+    : "dados não disponíveis";
+  const presDate = presPoll?.publication_date
+    ? new Date(presPoll.publication_date).toLocaleDateString("pt-BR", {
+        month: "long",
+        year: "numeric",
+      })
+    : "abril/2026";
+  const presInstitute = presPoll?.institute_name ?? "Quaest";
+  const presN = presPoll?.sample_size ? `, n=${presPoll.sample_size.toLocaleString("pt-BR")}` : "";
+
   return (
     <div className="min-h-screen bg-background">
       <script
@@ -83,9 +274,9 @@ export default function HomePage() {
           </Link>
           <nav className="hidden md:flex items-center gap-6">
             {[
-              { href: "#metodologia", label: "Metodologia" },
-              { href: "#features", label: "Features" },
-              { href: "#para-quem", label: "Para quem" },
+              { href: "/candidatos", label: "Candidatos" },
+              { href: "/comparar", label: "Comparar" },
+              { href: "/mapa", label: "Mapa" },
               { href: "/precos", label: "Preços" },
             ].map((item) => (
               <a
@@ -107,6 +298,7 @@ export default function HomePage() {
         </div>
       </header>
 
+      <main>
       {/* Hero */}
       <section className="py-20 md:py-32 px-4 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
@@ -119,15 +311,18 @@ export default function HomePage() {
           </div>
 
           <h1 className="text-4xl md:text-6xl font-bold tracking-tighter leading-[1.05]">
-            A verdade eleitoral
-            <br />
-            está nos{" "}
-            <span className="text-primary">dados.</span>
+            Pesquisas Eleitorais 2026{" "}
+            <span className="text-primary">ao vivo</span>,
             <br className="hidden md:block" />
             <span className="text-muted-foreground text-3xl md:text-5xl">
-              Não nas manchetes.
+              em uma média ponderada que faz sentido.
             </span>
           </h1>
+          <p className="sr-only">
+            Agregador de pesquisas de intenção de voto para presidente, governador
+            e senador nas eleições brasileiras de 2026, com média ponderada por
+            recência, amostra, metodologia e acurácia histórica dos institutos.
+          </p>
 
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             O ElectioLab agrega{" "}
@@ -489,6 +684,22 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* About callout — E-E-A-T contextual link */}
+      <div className="px-4 border-t border-border bg-muted/20">
+        <div className="max-w-5xl mx-auto py-3 flex items-center justify-between gap-4">
+          <p className="text-xs text-muted-foreground">
+            Projeto independente · Dados públicos do TSE · Metodologia aberta
+          </p>
+          <Link
+            href="/sobre"
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors shrink-0"
+          >
+            Conheça a metodologia e a equipe
+            <ArrowRight className="h-3 w-3" />
+          </Link>
+        </div>
+      </div>
+
       {/* States grid */}
       <section id="estados" className="py-16 px-4 border-t border-border">
         <div className="max-w-5xl mx-auto space-y-8">
@@ -607,6 +818,86 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* FAQ — perguntas otimizadas pra GEO/AI Overviews */}
+      <section id="faq" className="py-16 px-4 border-t border-border">
+        <div className="max-w-3xl mx-auto space-y-6">
+          <div className="text-center space-y-2">
+            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium">Perguntas Frequentes</p>
+            <p className="text-2xl font-bold tracking-tight">Sobre o ElectioLab</p>
+          </div>
+
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-lg font-bold mb-2">Como funciona a média ponderada do ElectioLab?</h2>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Cada pesquisa recebe peso por 4 fatores: recência (meia-vida 10 dias),
+                tamanho da amostra (raiz quadrada do n), metodologia (presencial &gt;
+                telefônica &gt; mista &gt; online) e acurácia histórica do instituto.
+                A combinação cancela ruído amostral e amplifica o sinal real da opinião pública.
+                A média é recalculada automaticamente a cada 6 horas.
+              </p>
+            </div>
+
+            <div>
+              <h2 className="text-lg font-bold mb-2">Qual o instituto de pesquisa eleitoral mais acurado no Brasil?</h2>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Pelo histórico de erro absoluto vs. resultado oficial TSE em 2018 e 2022:{" "}
+                {topInstitutes.length > 0 ? (
+                  <>
+                    <strong>{topInstitutes[0].name} {topInstitutes[0].pct}%</strong>
+                    {topInstitutes.slice(1).map((i, idx) => (
+                      <span key={i.id}>
+                        {idx === topInstitutes.length - 2 ? " e " : ", "}
+                        {i.name} {i.pct}%
+                      </span>
+                    ))}
+                    .
+                  </>
+                ) : (
+                  "ranking sendo calculado."
+                )}{" "}
+                Ranking completo em{" "}
+                <Link href="/institutos" className="text-primary hover:underline">/institutos</Link>.
+              </p>
+            </div>
+
+            <div>
+              <h2 className="text-lg font-bold mb-2">Quem lidera as pesquisas para presidente em 2026?</h2>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Pela {presInstitute} de {presDate} (1º turno estimulado{presN}): {presText}.
+                Veja a <Link href="/pesquisas-presidenciais-2026" className="text-primary hover:underline">tendência completa</Link> e
+                o <Link href="/comparar" className="text-primary hover:underline">comparativo lado a lado</Link>.
+              </p>
+            </div>
+
+            <div>
+              <h2 className="text-lg font-bold mb-2">Como saber se um candidato é Ficha Limpa?</h2>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Cada perfil em <Link href="/candidatos" className="text-primary hover:underline">/candidatos</Link>{" "}
+                mostra a situação da última candidatura registrada no TSE: ✓ Apto,
+                ⚠️ Indeferido, ou Sem registro. Os filtros permitem listar só os aptos
+                ou só os indeferidos. Dados oficiais TSE Dados Abertos.
+              </p>
+            </div>
+
+            <div>
+              <h2 className="text-lg font-bold mb-2">O ElectioLab tem API pública?</h2>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Sim, gratuita em <code>/api/v1</code> com endpoints para eleições, pesquisas,
+                médias e drift histórico. JSON e CSV. Anônimo: 60 req/h. Pro: 1.000 req/mês.
+                Documentação em <Link href="/imprensa" className="text-primary hover:underline">/imprensa</Link>.
+              </p>
+            </div>
+          </div>
+
+          <div className="text-center pt-2">
+            <Link href="/sobre" className="text-xs text-primary hover:underline">
+              Ver metodologia completa →
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* CTA final */}
       <section className="py-20 px-4 border-t border-border bg-gradient-to-b from-primary/5 to-transparent">
         <div className="max-w-3xl mx-auto text-center space-y-5">
@@ -628,18 +919,50 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-6 px-4 border-t border-border">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <BarChart3 className="h-3.5 w-3.5 text-muted-foreground" />
-            <span className="text-xs font-mono text-muted-foreground">
-              ElectioLab — Inteligência Eleitoral Baseada em Dados
-            </span>
+      {/* Newsletter — Sinal Eleitoral */}
+      <section className="py-16 px-4 border-t border-border bg-muted/20">
+        <div className="max-w-2xl mx-auto text-center space-y-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs font-mono uppercase tracking-wider text-primary">
+            <Mail className="h-3 w-3" />
+            Sinal Eleitoral · Newsletter semanal
           </div>
-          <nav className="flex items-center gap-4">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+            O essencial das pesquisas, toda segunda-feira
+          </h2>
+          <p className="text-base text-muted-foreground leading-relaxed">
+            Média ponderada da semana, ranking de institutos por acurácia, movimentações importantes,
+            e leitura cruzada com economia. Sem opinião — só os dados.
+          </p>
+          <div className="max-w-md mx-auto pt-2">
+            <NewsletterSignup variant="card" source="home" />
+          </div>
+        </div>
+      </section>
+
+      </main>
+
+      {/* Footer */}
+      <footer className="py-8 px-4 border-t border-border">
+        <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6 items-start">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4 text-muted-foreground" />
+              <span className="text-xs font-mono text-muted-foreground">
+                ElectioLab
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed max-w-xs">
+              Inteligência Eleitoral Baseada em Dados — TSE · Bacen · IBGE.
+            </p>
+            <p className="text-[11px] text-muted-foreground font-mono pt-1">
+              © 2026 ElectioLab
+            </p>
+          </div>
+
+          <nav className="flex flex-wrap gap-x-4 gap-y-1.5">
             {[
               { href: "/sobre", label: "Sobre" },
+              { href: "/candidatos", label: "Candidatos" },
               { href: "/precos", label: "Preços" },
               { href: "/dashboard", label: "Dashboard" },
               { href: "/imprensa", label: "Imprensa" },
@@ -654,9 +977,11 @@ export default function HomePage() {
               </Link>
             ))}
           </nav>
-          <p className="text-xs text-muted-foreground font-mono">
-            © 2026 ElectioLab · Dados: TSE · Bacen · IBGE
-          </p>
+
+          <div className="space-y-2">
+            <p className="text-xs font-medium">Newsletter Sinal Eleitoral</p>
+            <NewsletterSignup variant="footer" source="footer" />
+          </div>
         </div>
       </footer>
     </div>

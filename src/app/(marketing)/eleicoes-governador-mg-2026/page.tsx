@@ -1,50 +1,44 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BarChart3, ArrowLeft, ExternalLink, HelpCircle, TrendingUp } from "lucide-react";
+import { getLatestStateGovPoll } from "@/lib/marketing-data";
+import { StatePollSnapshotCard } from "@/components/state-poll-snapshot";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: { absolute: "Pesquisas Governador MG 2026 — Cleitinho vs Pacheco | ElectioLab" },
+  title: { absolute: "Pesquisas Governador MG 2026 — Cleitinho lidera | ElectioLab" },
   description:
-    "Média agregada das pesquisas para governador de Minas Gerais 2026. Cleitinho 32,7%, Rodrigo Pacheco 28,6% — Atlas Intel mar/2026. Atualizado semanalmente.",
+    "Média agregada das pesquisas para governador de Minas Gerais 2026. Cleitinho (Rep) 48%, Alexandre Kalil (PDT) 26%, Rodrigo Pacheco (PSB) 23% — Quaest abr/2026. Atualizado semanalmente.",
   alternates: { canonical: "https://electiolab.com/eleicoes-governador-mg-2026" },
   openGraph: {
-    title: "Pesquisas Governador MG 2026 — Cleitinho vs Pacheco | ElectioLab",
+    title: "Pesquisas Governador MG 2026 — Cleitinho lidera | ElectioLab",
     description:
-      "Média agregada das pesquisas para governador de Minas Gerais 2026. Cleitinho 32,7%, Rodrigo Pacheco 28,6% — Atlas Intel mar/2026.",
+      "Cleitinho 48%, Kalil 26%, Pacheco 23% — Quaest abr/2026. Zema (atual governador) é inelegível ao 3º mandato.",
     url: "https://electiolab.com/eleicoes-governador-mg-2026",
   },
 };
-
-const POLL_SNAPSHOT = [
-  { name: "Cleitinho",       party: "Republicanos", pct: 32.7 },
-  { name: "Rodrigo Pacheco", party: "PSB",          pct: 28.6 },
-  { name: "Alexandre Kalil", party: "PDT",          pct: 11.7 },
-  { name: "Carlos Viana",    party: "Podemos",      pct:  7.5 },
-  { name: "Mateus Simões",   party: "PSD",          pct:  6.2 },
-  { name: "Gabriel Azevedo", party: "MDB",          pct:  4.0 },
-  { name: "Ben Mendes",      party: "Missão",       pct:  3.7 },
-];
 
 const FAQ_ITEMS = [
   {
     question: "Quem lidera as pesquisas para governador de Minas Gerais em 2026?",
     answer:
-      "Cleitinho (Republicanos) lidera as pesquisas para governador de Minas Gerais 2026 com 32,7% na sondagem da Atlas Intel de março de 2026 (2.195 entrevistas online, margem de erro ±2 pp). Rodrigo Pacheco (PSB) aparece em segundo com 28,6%. A diferença de 4,1 pontos percentuais indica uma corrida competitiva, dentro da margem de erro, o que torna o quadro de MG 2026 um dos mais disputados do Brasil.",
+      "Cleitinho (Republicanos) lidera as pesquisas para governador de Minas Gerais 2026 com 48% na Genial/Quaest de abril de 2026. Alexandre Kalil (PDT, ex-prefeito de BH) aparece em segundo com 26%, e Rodrigo Pacheco (PSB, presidente do Senado) em terceiro com 23%. A vantagem de Cleitinho é confortável, mas a corrida pelo segundo lugar — vaga de eventual 2º turno — está dentro da margem de erro entre Kalil e Pacheco.",
   },
   {
     question: "Quais candidatos disputam o governo de Minas Gerais em 2026?",
     answer:
-      "As pesquisas de intenção de voto para governador MG 2026 testam Cleitinho (Republicanos, atual governador), Rodrigo Pacheco (PSB, presidente do Senado), Alexandre Kalil (PDT, ex-prefeito de BH), Carlos Viana (Podemos), Mateus Simões (PSD, vice-governador atual), Gabriel Azevedo (MDB) e Ben Mendes (Missão), entre outros. O ElectioLab monitora todos os candidatos com registro de pesquisa no TSE.",
+      "As pesquisas de intenção de voto para governador MG 2026 testam Cleitinho (Republicanos, atual senador por MG), Alexandre Kalil (PDT, ex-prefeito de Belo Horizonte), Rodrigo Pacheco (PSB, presidente do Senado), Mateus Simões (PSD, atual vice-governador e candidato da continuidade do governo Zema), Carlos Viana (Podemos), Gabriel Azevedo (MDB), Ben Mendes (Missão), Flávio Roscoe (PL), Maria da Consolação (PSOL), entre outros. O ElectioLab monitora todos os candidatos com registro de pesquisa no TSE.",
   },
   {
-    question: "Cleitinho disputa a reeleição ao governo de Minas Gerais?",
+    question: "Romeu Zema disputa a reeleição ao governo de Minas Gerais?",
     answer:
-      "Cleitinho (Carlos Bernardo Viana de Melo, Republicanos) foi eleito governador de Minas Gerais em 2022 com 56,18% no segundo turno. Em 2026, pode disputar a reeleição — e as pesquisas o colocam como favorito. Contudo, Minas Gerais tem tradição de viradas eleitorais tardias, e candidatos fortes como Rodrigo Pacheco tornam o cenário incerto. O ElectioLab atualiza a tendência agregada assim que novas pesquisas são publicadas.",
+      "Não. Romeu Zema (NOVO) cumpriu dois mandatos consecutivos como governador de Minas Gerais — 2019-2022 e 2023-2026 — e a Constituição brasileira veda um terceiro mandato consecutivo no mesmo cargo. Zema está articulado como pré-candidato à Presidência da República em 2026. A continuidade do projeto político do governo MG é representada por seu vice, Mateus Simões (PSD), que aparece com 4% nas pesquisas — bem abaixo de Cleitinho, que rompeu com o grupo de Zema.",
   },
   {
     question: "Como é a metodologia das pesquisas eleitorais para MG 2026?",
     answer:
-      "A pesquisa de referência atual é da Atlas Intel (mar/2026), que usa metodologia online com painel proprietário — 2.195 entrevistas, margem de erro ±2 pp, nível de confiança 95%. A Atlas Intel teve uma das menores taxas de erro médio absoluto nas eleições de 2022. O ElectioLab pondera cada pesquisa pelo histórico de acurácia do instituto, além de recência e tamanho da amostra, para gerar a média agregada.",
+      "A pesquisa mais recente é da Genial/Quaest (abr/2026), com metodologia presencial em domicílio. A Quaest teve uma das menores taxas de erro médio absoluto nas eleições de 2022 (score ElectioLab: 85%). O ElectioLab pondera cada pesquisa pelo histórico de acurácia do instituto, além de recência e tamanho da amostra, para gerar a média agregada. Pesquisas anteriores incluem Atlas Intel (mar/2026) e Futura Inteligência (mar/2026).",
   },
   {
     question: "Quando é a eleição para governador de Minas Gerais em 2026?",
@@ -52,6 +46,17 @@ const FAQ_ITEMS = [
       "As eleições estaduais de 2026, incluindo o governo de Minas Gerais, ocorrem em 4 de outubro de 2026 (1º turno) e, se necessário, 25 de outubro de 2026 (2º turno). Minas Gerais é o segundo maior colégio eleitoral do Brasil, com mais de 16 milhões de eleitores, e tem forte influência no resultado nacional. O ElectioLab monitora SP, MG e RJ como os três estados com maior impacto sobre o cenário presidencial 2026.",
   },
 ];
+
+const webPageJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": "https://electiolab.com/eleicoes-governador-mg-2026",
+  "url": "https://electiolab.com/eleicoes-governador-mg-2026",
+  "datePublished": "2026-04-01",
+  "dateModified": "2026-04-23",
+  "inLanguage": "pt-BR",
+  "isPartOf": { "@id": "https://electiolab.com/#website" },
+};
 
 const faqJsonLd = {
   "@context": "https://schema.org",
@@ -66,9 +71,14 @@ const faqJsonLd = {
   })),
 };
 
-export default function GovernadorMG2026Page() {
+export default async function GovernadorMG2026Page() {
+  const snapshot = await getLatestStateGovPoll("MG");
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
@@ -99,13 +109,13 @@ export default function GovernadorMG2026Page() {
             Governador Minas Gerais · Eleições 2026
           </p>
           <h1 className="text-3xl font-bold tracking-tight">
-            Pesquisas Governador MG 2026 — Cleitinho vs Pacheco
+            Pesquisas Governador MG 2026 — Cleitinho lidera com 48%
           </h1>
           <p className="text-muted-foreground max-w-2xl leading-relaxed">
             O ElectioLab agrega todas as pesquisas eleitorais para governador de Minas Gerais 2026.
-            A mais recente — Atlas Intel, 25–30 mar/2026, 2.195 entrevistas online, ±2 pp —
-            aponta Cleitinho com 32,7% e Rodrigo Pacheco com 28,6% no cenário estimulado de 1º turno.
-            Corrida dentro da margem de erro.
+            A mais recente — Genial/Quaest, abr/2026 — aponta Cleitinho (Rep) com 48%, Alexandre Kalil (PDT)
+            com 26% e Rodrigo Pacheco (PSB) com 23%. Romeu Zema, atual governador, é inelegível para um
+            3º mandato consecutivo e disputa a Presidência da República.
           </p>
           <Link
             href="/dashboard"
@@ -116,43 +126,14 @@ export default function GovernadorMG2026Page() {
           </Link>
         </div>
 
-        {/* Snapshot */}
+        {/* Snapshot — fetch ao vivo do banco */}
         <section className="space-y-4">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-            Última pesquisa — Atlas Intel · Mar/2026
+            Última pesquisa indexada
           </h2>
-          <div className="border border-border rounded-sm bg-card overflow-hidden">
-            <div className="px-4 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
-              <span className="text-xs font-mono text-muted-foreground">2.195 entrevistas · ±2,0 pp · online</span>
-              <span className="text-xs font-mono text-muted-foreground">25–30 mar/2026</span>
-            </div>
-            <div className="divide-y divide-border">
-              {POLL_SNAPSHOT.map((c, i) => (
-                <div key={c.name} className="px-4 py-3 flex items-center gap-4">
-                  <span className="text-xs font-mono text-muted-foreground w-4">{i + 1}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">{c.name}</p>
-                    <p className="text-xs text-muted-foreground">{c.party}</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-32 hidden sm:block">
-                      <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-primary rounded-full"
-                          style={{ width: `${(c.pct / 35) * 100}%` }}
-                        />
-                      </div>
-                    </div>
-                    <span className="text-sm font-mono font-bold tabular-nums w-12 text-right">
-                      {c.pct}%
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <StatePollSnapshotCard snapshot={snapshot} />
           <p className="text-xs text-muted-foreground font-mono">
-            Fonte: Atlas Intel · Cenário estimulado, 1º turno
+            Fonte: pesquisa mais recente indexada no ElectioLab · Atualiza a cada 1h
           </p>
         </section>
 

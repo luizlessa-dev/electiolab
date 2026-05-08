@@ -16,25 +16,56 @@ import {
   DollarSign,
   FileSearch,
   Activity,
+  Mail,
+  ExternalLink,
 } from "lucide-react";
+import { getInstitutesRanking } from "@/lib/marketing-data";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Sobre a Metodologia",
+  title: { absolute: "Sobre o ElectioLab — Metodologia e Equipe | ElectioLab" },
   description:
-    "Entenda como o ElectioLab calcula a média ponderada de pesquisas eleitorais. Metodologia baseada em recência, amostra e histórico de acurácia dos institutos.",
+    "ElectioLab agrega pesquisas eleitorais do Brasil com média ponderada por recência, amostra e acurácia. Conheça a metodologia e a equipe.",
   alternates: { canonical: "https://electiolab.com/sobre" },
   openGraph: {
-    title: "Sobre a Metodologia — ElectioLab",
+    title: "Sobre o ElectioLab — Metodologia e Equipe",
     description:
-      "Como o ElectioLab agrega pesquisas eleitorais: recência, amostra, metodologia e acurácia dos institutos.",
+      "Agregador independente de pesquisas eleitorais. Metodologia: recência, amostra, metodologia e acurácia dos institutos.",
     url: "https://electiolab.com/sobre",
   },
 };
 
-const faqJsonLd = {
+function buildJsonLd(institutesText: string) {
+  return {
   "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: [
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://electiolab.com/sobre",
+      "name": "Sobre o ElectioLab — Metodologia e Equipe",
+      "url": "https://electiolab.com/sobre",
+      "datePublished": "2026-04-01",
+      "dateModified": "2026-04-29",
+      "inLanguage": "pt-BR",
+      "isPartOf": { "@id": "https://electiolab.com/#website" },
+      "author": { "@id": "https://electiolab.com/sobre#founder" },
+    },
+    {
+      "@type": "Person",
+      "@id": "https://electiolab.com/sobre#founder",
+      "name": "Luiz Lessa",
+      "url": "https://electiolab.com/sobre",
+      "sameAs": [
+        "https://github.com/luizlessa",
+        "https://linkedin.com/in/luizlessa"
+      ],
+      "worksFor": { "@id": "https://electiolab.com/#organization" },
+      "knowsAbout": ["Eleições brasileiras", "Análise de dados", "Pesquisas eleitorais"],
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
     {
       "@type": "Question",
       name: "Como o ElectioLab calcula a média ponderada?",
@@ -64,18 +95,59 @@ const faqJsonLd = {
       name: "Os dados do ElectioLab são atualizados com que frequência?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "O banco de dados é atualizado semanalmente à medida que novos polls são publicados pelos institutos. Cada nova pesquisa entra no agregado automaticamente, atualizando a média ponderada de todos os candidatos.",
+        text: "As médias ponderadas são recalculadas automaticamente a cada 6 horas via cron. Pesquisas novas são ingeridas em até 24 horas após publicação dos institutos, e o sistema dispara alertas semanais quando alguma UF fica sem pesquisa nova por mais de 30 dias.",
       },
     },
+    {
+      "@type": "Question",
+      name: "Qual o instituto de pesquisa eleitoral mais acurado no Brasil?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: `Pelo score histórico do ElectioLab (calculado pelo Erro Médio Absoluto vs resultado oficial TSE em 2018 e 2022): ${institutesText}. O ranking completo está em /institutos.`,
+      },
+    },
+    {
+      "@type": "Question",
+      name: "O ElectioLab cobre eleições para governador e senador?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Sim. Cobertura completa das 27 corridas para governador 2026 (todas as UFs: AC, AL, AM, AP, BA, CE, DF, ES, GO, MA, MG, MS, MT, PA, PB, PE, PI, PR, RJ, RN, RO, RR, RS, SC, SE, SP, TO) e 27 corridas para senador 2026, além da presidência (1º e 2º turno simulado).",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "O ElectioLab tem API pública para jornalistas e desenvolvedores?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Sim, API REST gratuita em /api/v1 com endpoints para eleições, pesquisas, médias ponderadas e drift histórico. Suporta JSON e CSV. Acesso anônimo (60 req/h) ou autenticado via Bearer token (planos Pro 1.000 req/mês ou Business 10.000 req/mês). Documentação completa em /imprensa.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Como saber se um candidato está apto pelo TSE (Ficha Limpa)?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Cada perfil em /candidato/[slug] mostra a situação da última candidatura registrada no TSE: ✓ Apto, ⚠️ Indeferido, ou Sem registro. Os filtros em /candidatos permitem listar apenas candidatos aptos ou apenas indeferidos. Os dados vêm direto do TSE Dados Abertos.",
+      },
+    },
+      ],
+    },
   ],
-};
+  };
+}
 
-export default function SobrePage() {
+export default async function SobrePage() {
+  const institutes = await getInstitutesRanking();
+  const top7 = institutes.slice(0, 7);
+  const institutesText = top7.length
+    ? top7.map((i) => `${i.name} ${i.pct}%`).join(", ")
+    : "ranking sendo calculado";
+  const jsonLd = buildJsonLd(institutesText);
   return (
     <div className="min-h-screen bg-background">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
       {/* Header */}
@@ -323,6 +395,100 @@ export default function SobrePage() {
         </div>
       </section>
 
+      {/* Sobre o Projeto — E-E-A-T section */}
+      <section id="projeto" className="py-14 px-4 border-t border-border">
+        <div className="max-w-3xl mx-auto space-y-8">
+          <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium text-center">
+            Sobre o Projeto
+          </h2>
+
+          {/* Founder card */}
+          <div className="border border-border rounded-sm bg-card overflow-hidden">
+            <div className="px-6 py-5 flex flex-col sm:flex-row items-start gap-4">
+              <div className="w-12 h-12 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                <span className="text-lg font-bold text-primary font-mono">LL</span>
+              </div>
+              <div className="flex-1 space-y-1">
+                <p className="text-sm font-semibold text-foreground">Luiz Lessa</p>
+                <p className="text-xs text-muted-foreground">Fundador &amp; Desenvolvedor — ElectioLab</p>
+                <p className="text-xs text-muted-foreground leading-relaxed pt-1 max-w-xl">
+                  Desenvolvedor independente apaixonado por dados públicos e transparência eleitoral.
+                  O ElectioLab nasceu da frustração com a cobertura fragmentada de pesquisas eleitorais
+                  na mídia brasileira — e da crença de que dados abertos do TSE merecem uma interface à altura.
+                </p>
+                <div className="flex items-center gap-4 pt-2">
+                  <a
+                    href="mailto:contato@electiolab.com"
+                    className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label="E-mail de contato"
+                  >
+                    <Mail className="h-3 w-3" />
+                    contato@electiolab.com
+                  </a>
+                  <a
+                    href="https://github.com/luizlessa"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label="GitHub de Luiz Lessa"
+                  >
+                    <ExternalLink className="h-3 w-3" />
+                    GitHub
+                  </a>
+                  <a
+                    href="https://linkedin.com/in/luizlessa"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label="LinkedIn de Luiz Lessa"
+                  >
+                    <ExternalLink className="h-3 w-3" />
+                    LinkedIn
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div className="px-6 py-3 border-t border-border bg-muted/20 flex flex-wrap items-center gap-x-6 gap-y-1">
+              <span className="text-xs font-mono text-muted-foreground">Fundado em 2026</span>
+              <span className="text-muted-foreground text-xs">·</span>
+              <span className="text-xs font-mono text-muted-foreground">Projeto independente</span>
+              <span className="text-muted-foreground text-xs">·</span>
+              <span className="text-xs font-mono text-muted-foreground">Dados: TSE · Bacen · IBGE (públicos)</span>
+            </div>
+          </div>
+
+          {/* Mission statement */}
+          <div className="space-y-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Missão</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              O ElectioLab acredita que a democracia funciona melhor quando cidadãos, jornalistas e analistas
+              têm acesso a dados eleitorais consolidados e metodologicamente sólidos — sem precisar filtrar
+              manualmente dezenas de pesquisas contraditórias.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Todo o conteúdo é baseado exclusivamente em fontes primárias públicas (TSE, institutos registrados)
+              e a metodologia de ponderação é descrita abertamente nesta página. Não fazemos editorização
+              nem interpolação de dados não publicados.
+            </p>
+          </div>
+
+          {/* Contact */}
+          <div className="border border-border rounded-sm bg-card px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="space-y-0.5">
+              <p className="text-xs font-semibold text-foreground">Contato &amp; Parcerias</p>
+              <p className="text-xs text-muted-foreground">Imprensa, API, dados ou sugestões de pesquisas:</p>
+            </div>
+            <a
+              href="mailto:contato@electiolab.com"
+              className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-sm text-xs font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
+            >
+              <Mail className="h-3 w-3" />
+              contato@electiolab.com
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-16 px-4 border-t border-border bg-gradient-to-b from-primary/5 to-transparent">
         <div className="max-w-3xl mx-auto text-center space-y-4">
@@ -352,7 +518,9 @@ export default function SobrePage() {
           <div className="flex items-center gap-4 text-xs text-muted-foreground font-mono">
             <Link href="/privacidade" className="hover:text-foreground transition-colors">Privacidade</Link>
             <span>·</span>
-            <span>Dados públicos: TSE · Bacen · IBGE</span>
+            <a href="mailto:contato@electiolab.com" className="hover:text-foreground transition-colors">contato@electiolab.com</a>
+            <span>·</span>
+            <span>Dados: TSE · Bacen · IBGE</span>
           </div>
         </div>
       </footer>

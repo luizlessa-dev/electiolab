@@ -47,58 +47,100 @@
   --radius-xl: calc(var(--radius) * 1.5);
 }
 
-/* ─── Paleta Moderna — Dark Slate ────────────────────────────── */
+/* ───────────────────────────────────────────────────────────────
+   LIGHT MODE — Editorial / Decision Desk-inspired
+   Tipografia editorial com alta legibilidade
+   ─────────────────────────────────────────────────────────────── */
 :root {
-  /* Backgrounds */
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+
+  --card: #ffffff;
+  --card-foreground: #0a0a0a;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0a;
+
+  --primary: #2563eb;
+  --primary-foreground: #ffffff;
+
+  --secondary: #f5f5f5;
+  --secondary-foreground: #404040;
+
+  --muted: #fafafa;
+  --muted-foreground: #525252;
+
+  --accent: #f0f7ff;
+  --accent-foreground: #1e40af;
+
+  --destructive: #dc2626;
+
+  --border: #e5e5e5;
+  --input: #f5f5f5;
+  --ring: #2563eb;
+
+  --positive: #16a34a;
+  --negative: #dc2626;
+  --warning: #d97706;
+
+  --chart-1: #2563eb;
+  --chart-2: #16a34a;
+  --chart-3: #d97706;
+  --chart-4: #9333ea;
+  --chart-5: #0891b2;
+
+  --radius: 0.5rem;
+
+  --sidebar: #fafafa;
+  --sidebar-foreground: #525252;
+  --sidebar-primary: #2563eb;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f0f7ff;
+  --sidebar-accent-foreground: #1e40af;
+  --sidebar-border: #e5e5e5;
+  --sidebar-ring: #2563eb;
+}
+
+/* ───────────────────────────────────────────────────────────────
+   DARK MODE — Bloomberg Terminal
+   Mantém o "look profissional de dados" para usuários power
+   ─────────────────────────────────────────────────────────────── */
+.dark {
   --background: #0f1117;
   --foreground: #f1f5f9;
 
-  /* Cards e superfícies */
   --card: #161b27;
   --card-foreground: #f1f5f9;
   --popover: #1e2433;
   --popover-foreground: #f1f5f9;
 
-  /* Primária — azul elétrico */
   --primary: #3b82f6;
   --primary-foreground: #ffffff;
 
-  /* Secundária */
   --secondary: #1e2433;
   --secondary-foreground: #94a3b8;
 
-  /* Muted */
   --muted: #1a2030;
-  --muted-foreground: #64748b;
+  --muted-foreground: #94a3b8;
 
-  /* Accent */
   --accent: #1e2d47;
   --accent-foreground: #93c5fd;
 
-  /* Destructive */
   --destructive: #ef4444;
 
-  /* Bordas e inputs */
   --border: #1e2d47;
   --input: #1e2433;
   --ring: #3b82f6;
 
-  /* Dados semânticos */
   --positive: #22c55e;
   --negative: #ef4444;
   --warning: #f59e0b;
 
-  /* Gráficos */
   --chart-1: #3b82f6;
   --chart-2: #22c55e;
   --chart-3: #f59e0b;
   --chart-4: #a855f7;
   --chart-5: #06b6d4;
 
-  /* Raio */
-  --radius: 0.5rem;
-
-  /* Sidebar */
   --sidebar: #0c1020;
   --sidebar-foreground: #94a3b8;
   --sidebar-primary: #3b82f6;
@@ -115,13 +157,42 @@
   }
   body {
     @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   html {
     @apply font-sans;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* ─── Tipografia editorial — Decision Desk + Núcleo Jornalismo ─ */
+  h1 {
+    @apply text-4xl md:text-5xl font-bold tracking-tighter;
+    letter-spacing: -0.025em;
+  }
+  h2 {
+    @apply text-2xl md:text-3xl font-bold tracking-tight;
+    letter-spacing: -0.02em;
+  }
+  h3 {
+    @apply text-xl md:text-2xl font-semibold tracking-tight;
+  }
+  h4 {
+    @apply text-lg font-semibold;
+  }
+
+  /* Numeric tabular alignment everywhere por padrão */
+  .tabular-nums,
+  td.font-mono,
+  span.font-mono,
+  .font-mono {
+    font-variant-numeric: tabular-nums;
   }
 }
 
-/* ─── Animações ───────────────────────────────────────────────── */
+/* ───────────────────────────────────────────────────────────────
+   ANIMAÇÕES
+   ─────────────────────────────────────────────────────────────── */
 @keyframes pulse-live {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.35; }
@@ -138,30 +209,109 @@
   animation: slide-up 0.4s ease-out forwards;
 }
 
-/* ─── Scrollbar customizada ───────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #1e2d47; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #2d3f5c; }
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-count-up {
+  animation: count-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
 
-/* ─── Utilitários globais ─────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--muted) 0%,
+    var(--accent) 50%,
+    var(--muted) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+}
+
+/* ───────────────────────────────────────────────────────────────
+   SCROLLBAR
+   ─────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-foreground);
+  opacity: 0.5;
+}
+
+/* ───────────────────────────────────────────────────────────────
+   UTILITÁRIOS GLOBAIS
+   ─────────────────────────────────────────────────────────────── */
 .gradient-text {
-  background: linear-gradient(135deg, #3b82f6 0%, #818cf8 50%, #a78bfa 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--chart-4) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
+/* Card com glow sutil — referência Linear/Vercel */
 .card-glow {
-  box-shadow: 0 0 0 1px #1e2d47, 0 4px 24px -4px rgba(59, 130, 246, 0.08);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04),
+              0 4px 12px -4px rgba(0, 0, 0, 0.08);
+}
+.dark .card-glow {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04),
+              0 4px 24px -4px rgba(59, 130, 246, 0.08);
 }
 
+/* Stat card com hover refinado */
 .stat-card {
-  background: linear-gradient(135deg, #161b27 0%, #1a2030 100%);
-  border: 1px solid #1e2d47;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  background: var(--card);
+  border: 1px solid var(--border);
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
 }
 .stat-card:hover {
-  border-color: #2d4a7a;
-  box-shadow: 0 0 20px -4px rgba(59, 130, 246, 0.15);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary), 0 8px 24px -8px var(--primary);
+  transform: translateY(-1px);
+}
+
+/* Glass effect — Linear/Vercel inspired */
+.glass {
+  background: color-mix(in srgb, var(--card) 80%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
+/* Editorial divider — Núcleo Jornalismo */
+.editorial-rule {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--border) 20%,
+    var(--border) 80%,
+    transparent
+  );
+}
+
+/* Number focus — para destacar números importantes */
+.number-hero {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum", "lnum";
+  letter-spacing: -0.04em;
+  font-weight: 700;
+}
+
+/* Smooth transitions globally */
+*,
+*::before,
+*::after {
+  transition-property: color, background-color, border-color, fill, stroke;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }

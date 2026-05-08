@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BarChart3, ArrowLeft, ExternalLink, HelpCircle, TrendingUp } from "lucide-react";
 
+import { getLatestStateGovPoll } from "@/lib/marketing-data";
+import { StatePollSnapshotCard } from "@/components/state-poll-snapshot";
+
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: { absolute: "Pesquisas Governador GO 2026 — Daniel Vilela Favorito | ElectioLab" },
   description:
@@ -13,13 +18,6 @@ export const metadata: Metadata = {
     url: "https://electiolab.com/eleicoes-governador-go-2026",
   },
 };
-
-const POLL_SNAPSHOT = [
-  { name: "Daniel Vilela",   party: "MDB",  pct: 43.4 },
-  { name: "Marconi Perillo", party: "PSDB", pct: 24.4 },
-  { name: "Wilder Morais",   party: "PL",   pct: 11.5 },
-  { name: "Adriana Accorsi", party: "PT",   pct:  9.2 },
-];
 
 const FAQ_ITEMS = [
   {
@@ -44,6 +42,17 @@ const FAQ_ITEMS = [
   },
 ];
 
+const webPageJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": "https://electiolab.com/eleicoes-governador-go-2026",
+  "url": "https://electiolab.com/eleicoes-governador-go-2026",
+  "datePublished": "2026-04-01",
+  "dateModified": "2026-04-23",
+  "inLanguage": "pt-BR",
+  "isPartOf": { "@id": "https://electiolab.com/#website" },
+};
+
 const faqJsonLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -54,9 +63,11 @@ const faqJsonLd = {
   })),
 };
 
-export default function GovernadorGO2026Page() {
+export default async function GovernadorGO2026Page() {
+  const snapshot = await getLatestStateGovPoll("GO");
   return (
     <div className="min-h-screen bg-background">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <header className="border-b border-border bg-sidebar/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="h-[2px] bg-gradient-to-r from-primary via-primary/60 to-transparent" />
@@ -83,34 +94,15 @@ export default function GovernadorGO2026Page() {
             <TrendingUp className="h-3.5 w-3.5" /> Ver média ao vivo →
           </Link>
         </div>
+        {/* Snapshot — fetch ao vivo do banco */}
         <section className="space-y-4">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Última pesquisa — Paraná Pesquisas · Abr/2026</h2>
-          <div className="border border-border rounded-sm bg-card overflow-hidden">
-            <div className="px-4 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
-              <span className="text-xs font-mono text-muted-foreground">1.310 entrevistas · ±2,8 pp · presencial</span>
-              <span className="text-xs font-mono text-muted-foreground">1–3 abr/2026</span>
-            </div>
-            <div className="divide-y divide-border">
-              {POLL_SNAPSHOT.map((c, i) => (
-                <div key={c.name} className="px-4 py-3 flex items-center gap-4">
-                  <span className="text-xs font-mono text-muted-foreground w-4">{i + 1}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">{c.name}</p>
-                    <p className="text-xs text-muted-foreground">{c.party}</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-32 hidden sm:block">
-                      <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full bg-primary rounded-full" style={{ width: `${(c.pct / 48) * 100}%` }} />
-                      </div>
-                    </div>
-                    <span className="text-sm font-mono font-bold tabular-nums w-12 text-right">{c.pct}%</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <p className="text-xs text-muted-foreground font-mono">Fonte: Paraná Pesquisas · Cenário estimulado, 1º turno</p>
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+            Última pesquisa indexada
+          </h2>
+          <StatePollSnapshotCard snapshot={snapshot} />
+          <p className="text-xs text-muted-foreground font-mono">
+            Fonte: pesquisa mais recente indexada no ElectioLab · Atualiza a cada 1h
+          </p>
         </section>
         <section className="space-y-4" id="faq">
           <div className="flex items-center gap-2">
