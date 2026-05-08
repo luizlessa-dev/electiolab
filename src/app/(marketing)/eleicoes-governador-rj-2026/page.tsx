@@ -2,43 +2,44 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BarChart3, ArrowLeft, ExternalLink, HelpCircle, TrendingUp } from "lucide-react";
 
+import { getLatestStateGovPoll } from "@/lib/marketing-data";
+import { StatePollSnapshotCard } from "@/components/state-poll-snapshot";
+
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: { absolute: "Pesquisas Governador RJ 2026 — Eduardo Paes Favorito | ElectioLab" },
   description:
-    "Média agregada das pesquisas para governador do Rio de Janeiro 2026. Eduardo Paes 46%, Douglas Ruas 13% — Real Time Big Data mar/2026. Atualizado semanalmente.",
+    "Média agregada das pesquisas para governador do Rio de Janeiro 2026. Eduardo Paes (PSD, prefeito do Rio) 49%, Douglas Ruas (PL) 16% — Genial/Quaest abr/2026. Atualizado semanalmente.",
   alternates: { canonical: "https://electiolab.com/eleicoes-governador-rj-2026" },
   openGraph: {
     title: "Pesquisas Governador RJ 2026 — Eduardo Paes Favorito | ElectioLab",
     description:
-      "Média agregada das pesquisas para governador do Rio de Janeiro 2026. Eduardo Paes 46%, Douglas Ruas 13% — Real Time Big Data mar/2026.",
+      "Eduardo Paes lidera com 49% — Genial/Quaest abr/2026. Cláudio Castro (atual gov, PL) decide se disputa reeleição.",
     url: "https://electiolab.com/eleicoes-governador-rj-2026",
   },
 };
-
-const POLL_SNAPSHOT = [
-  { name: "Eduardo Paes",   party: "PSD",    pct: 46 },
-  { name: "Douglas Ruas",   party: "PL",     pct: 13 },
-  { name: "Ítalo Marsili",  party: "Indep.", pct:  5 },
-  { name: "Wilson Witzel",  party: "Indep.", pct:  5 },
-  { name: "William Siri",   party: "PSOL",   pct:  3 },
-  { name: "Rafa Luz",       party: "Missão", pct:  2 },
-];
 
 const FAQ_ITEMS = [
   {
     question: "Quem lidera as pesquisas para governador do Rio de Janeiro em 2026?",
     answer:
-      "Eduardo Paes (PSD) lidera com ampla vantagem as pesquisas para governador do Rio de Janeiro 2026, com 46% na pesquisa da Real Time Big Data de março de 2026 (2.000 entrevistas, margem de erro ±2 pp). Douglas Ruas (PL) aparece em segundo com 13%. A diferença de 33 pontos percentuais coloca Eduardo Paes como forte favorito para disputar a reeleição ao governo do RJ.",
+      "Eduardo Paes (PSD), atual prefeito da cidade do Rio de Janeiro, lidera com ampla vantagem as pesquisas para governador do Rio de Janeiro 2026, com 49% na Genial/Quaest de abril de 2026. Douglas Ruas (PL) aparece em segundo com 16%. A diferença de 33 pontos percentuais coloca Paes como forte favorito para sair da prefeitura e disputar o governo do estado.",
   },
   {
-    question: "Eduardo Paes vai disputar a reeleição ao governo do Rio em 2026?",
+    question: "Eduardo Paes é o atual governador do Rio de Janeiro?",
     answer:
-      "Eduardo Paes governa o estado do Rio de Janeiro desde janeiro de 2023, após vencer Cláudio Castro no primeiro turno com 56,5% dos votos. Em 2026, pode disputar a reeleição, e as pesquisas o colocam com números dominantes — 33 pontos acima do segundo colocado. O ElectioLab monitora o cenário RJ 2026 e atualiza os dados assim que novas pesquisas são registradas no TSE.",
+      "Não. Eduardo Paes é o prefeito da cidade do Rio de Janeiro, eleito em 2020 e reeleito em 2024. O atual governador do estado do Rio de Janeiro é Cláudio Castro (PL), que assumiu em 2020 (após o impeachment de Wilson Witzel) e foi eleito em 2022 com cerca de 58% dos votos no primeiro turno. Em 2026, Paes deixa a prefeitura para disputar o governo estadual e aparece como favorito nas pesquisas.",
+  },
+  {
+    question: "Cláudio Castro disputa a reeleição em 2026?",
+    answer:
+      "Cláudio Castro (PL), atual governador do RJ, ainda não confirmou candidatura à reeleição em 2026. Castro pode disputar — só cumpriu um mandato eleito (2023-2026), embora tenha assumido o cargo em 2020 substituindo Wilson Witzel. Nas pesquisas atuais, Castro não aparece como candidato testado, e o nome do PL no estado é Douglas Ruas (deputado estadual), com 16% pela Genial/Quaest abr/2026.",
   },
   {
     question: "Quais candidatos aparecem nas pesquisas para governador do RJ 2026?",
     answer:
-      "As pesquisas para governador RJ 2026 testam Eduardo Paes (PSD), Douglas Ruas (PL), Ítalo Marsili (independente), Wilson Witzel (ex-governador, independente), William Siri (PSOL) e Bombeiro Rafa Luz (Missão), entre outros. A candidatura de Wilson Witzel é incerta, pois ele passou por processo de impeachment em 2021. O ElectioLab inclui todos os nomes testados nos institutos registrados.",
+      "As pesquisas para governador RJ 2026 testam Eduardo Paes (PSD, prefeito do Rio), Douglas Ruas (PL), Ítalo Marsili (independente), Wilson Witzel (ex-governador impedido em 2021), William Siri (PSOL) e Bombeiro Rafa Luz (Missão), entre outros. A candidatura de Witzel ainda enfrenta dúvidas jurídicas pelo processo de impeachment. O ElectioLab inclui todos os nomes testados nos institutos registrados.",
   },
   {
     question: "Quais institutos fazem pesquisas para governador do RJ 2026?",
@@ -51,6 +52,17 @@ const FAQ_ITEMS = [
       "As eleições estaduais de 2026 ocorrem em 4 de outubro de 2026 (1º turno) e 25 de outubro de 2026 (2º turno, se necessário). O Rio de Janeiro tem mais de 12 milhões de eleitores aptos e é o terceiro maior colégio eleitoral do país. A eleição estadual do RJ costuma ter forte influência do cenário nacional — a polarização presidencial tende a refletir nas corridas estaduais. O ElectioLab monitora SP, MG e RJ simultaneamente.",
   },
 ];
+
+const webPageJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": "https://electiolab.com/eleicoes-governador-rj-2026",
+  "url": "https://electiolab.com/eleicoes-governador-rj-2026",
+  "datePublished": "2026-04-01",
+  "dateModified": "2026-04-23",
+  "inLanguage": "pt-BR",
+  "isPartOf": { "@id": "https://electiolab.com/#website" },
+};
 
 const faqJsonLd = {
   "@context": "https://schema.org",
@@ -65,9 +77,14 @@ const faqJsonLd = {
   })),
 };
 
-export default function GovernadorRJ2026Page() {
+export default async function GovernadorRJ2026Page() {
+  const snapshot = await getLatestStateGovPoll("RJ");
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
@@ -102,9 +119,9 @@ export default function GovernadorRJ2026Page() {
           </h1>
           <p className="text-muted-foreground max-w-2xl leading-relaxed">
             O ElectioLab agrega todas as pesquisas eleitorais para governador do Rio de Janeiro 2026.
-            A mais recente — Real Time Big Data, 9–10 mar/2026, 2.000 entrevistas, ±2 pp —
-            aponta Eduardo Paes (PSD) com 46% e Douglas Ruas (PL) com 13% no cenário estimulado
-            de 1º turno. Diferença de 33 pontos.
+            A mais recente — Genial/Quaest, abr/2026 — aponta Eduardo Paes (PSD), atual prefeito do
+            Rio, com 49% e Douglas Ruas (PL) com 16% no cenário estimulado de 1º turno. Cláudio
+            Castro (PL), atual governador, ainda não confirmou candidatura à reeleição.
           </p>
           <Link
             href="/dashboard"
@@ -115,43 +132,14 @@ export default function GovernadorRJ2026Page() {
           </Link>
         </div>
 
-        {/* Snapshot */}
+        {/* Snapshot — fetch ao vivo do banco */}
         <section className="space-y-4">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-            Última pesquisa — Real Time Big Data · Mar/2026
+            Última pesquisa indexada
           </h2>
-          <div className="border border-border rounded-sm bg-card overflow-hidden">
-            <div className="px-4 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
-              <span className="text-xs font-mono text-muted-foreground">2.000 entrevistas · ±2,0 pp · telefônica</span>
-              <span className="text-xs font-mono text-muted-foreground">9–10 mar/2026</span>
-            </div>
-            <div className="divide-y divide-border">
-              {POLL_SNAPSHOT.map((c, i) => (
-                <div key={c.name} className="px-4 py-3 flex items-center gap-4">
-                  <span className="text-xs font-mono text-muted-foreground w-4">{i + 1}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">{c.name}</p>
-                    <p className="text-xs text-muted-foreground">{c.party}</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-32 hidden sm:block">
-                      <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-primary rounded-full"
-                          style={{ width: `${(c.pct / 50) * 100}%` }}
-                        />
-                      </div>
-                    </div>
-                    <span className="text-sm font-mono font-bold tabular-nums w-12 text-right">
-                      {c.pct}%
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <StatePollSnapshotCard snapshot={snapshot} />
           <p className="text-xs text-muted-foreground font-mono">
-            Fonte: Real Time Big Data · Cenário estimulado, 1º turno
+            Fonte: pesquisa mais recente indexada no ElectioLab · Atualiza a cada 1h
           </p>
         </section>
 
