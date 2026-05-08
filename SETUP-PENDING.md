@@ -1,6 +1,6 @@
 # Setup pendente — ações que dependem de você
 
-3 itens operacionais. **Tempo total estimado: 25 min** (Sentry 5min + R2 10min + Beehiiv 5min).
+5 itens operacionais. **Tempo total estimado: ~50 min** (Sentry 5min + R2 10min + Beehiiv 5min + Stripe 20min + Resend 10min).
 
 ---
 
@@ -146,12 +146,72 @@ echo "pub_c3bcbc9a-500b-4f27-8a5b-ba341b4d9970" | vercel env add BEEHIIV_PUBLICA
 
 ---
 
+## 4. Stripe — Subscriptions ativas (20 min, conta gratuita)
+
+### Por que importa
+PR-4 já implementou `/api/stripe/checkout` e `/api/webhooks/stripe`. Sem as envs, o checkout falha com 500 e o site não monetiza. **Sem isso o `<CheckoutButton>` não funciona.**
+
+### Passos
+
+1. https://dashboard.stripe.com/register → conta brasileira (precisa CNPJ se for cobrar BRL via Brasil; pra teste use mode sandbox).
+2. **Test mode primeiro**:
+   - Toggle no canto superior direito → **Test mode**.
+   - **Developers → API keys** → copia `Secret key` (`sk_test_...`).
+3. **Criar produtos** (pode usar o script `scripts/setup-stripe-products.ts`):
+   ```bash
+   STRIPE_SECRET_KEY=sk_test_... npm run stripe:setup
+   ```
+   Saída: 3 price IDs (PRO_MONTHLY, PRO_YEARLY, BUSINESS_MONTHLY).
+4. **Webhook endpoint**:
+   - Stripe → Developers → Webhooks → **Add endpoint**.
+   - URL: `https://electiolab.com/api/webhooks/stripe`
+   - Events: `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.paid`, `invoice.payment_failed`.
+   - Copia o **Signing secret** (`whsec_...`).
+5. Adiciona no Vercel:
+   ```bash
+   echo "sk_test_..."   | vercel env add STRIPE_SECRET_KEY production
+   echo "whsec_..."     | vercel env add STRIPE_WEBHOOK_SECRET production
+   echo "price_..."     | vercel env add STRIPE_PRICE_PRO_MONTHLY production
+   echo "price_..."     | vercel env add STRIPE_PRICE_PRO_YEARLY production
+   echo "price_..."     | vercel env add STRIPE_PRICE_BUSINESS_MONTHLY production
+   # repetir para preview se quiser testar em previews
+   ```
+6. Redeploy e teste o fluxo completo:
+   - Acesse `/precos` → clica num plano → vai pro Stripe Checkout (test mode com cartão `4242 4242 4242 4242`).
+   - Verifica se webhook foi recebido em Stripe Dashboard → Webhooks → Events.
+
+### Quando ir pra **live mode**
+Só depois de validar o fluxo completo em test mode. No live, repete os passos 2-5 com `sk_live_...` e `whsec_...` da live mode. **Nunca** misture chaves de test e live no mesmo environment.
+
+---
+
+## 5. Resend — E-mails transacionais (10 min, gratuito até 3k/mês)
+
+### Por que importa
+Newsletter confirmation, welcome emails, alertas — todos via Resend. Sem `RESEND_API_KEY`, o opt-in da newsletter não chega ao inbox do utilizador.
+
+### Passos
+
+1. https://resend.com/signup → free tier (3000 e-mails/mês).
+2. **Domains → Add Domain** → `electiolab.com` (ou `mail.electiolab.com` se preferir subdomínio).
+3. Configura os DNS records (DKIM, SPF) que o Resend mostra no seu provedor de DNS. Aguarda verificação (alguns minutos a 1h).
+4. **API Keys → Create API Key** → escopo "Full access" → copia (`re_...`).
+5. Adiciona no Vercel:
+   ```bash
+   echo "re_..."                    | vercel env add RESEND_API_KEY production
+   echo "ElectioLab <oi@electiolab.com>" | vercel env add RESEND_FROM_EMAIL production
+   # repetir para preview
+   ```
+6. Redeploy. Testa: form de newsletter na home → deve receber e-mail de confirmação no seu inbox.
+
+---
+
 ## Status de cada item
 
-- [ ] Sentry DSN configurado
-- [ ] Cloudflare R2 + GitHub secrets
-- [ ] Decisão Beehiiv (upgrade ou Resend DIY)
+- [ ] **Sentry DSN** configurado (item 1) — desbloqueia error tracking.
+- [ ] **Cloudflare R2** + GitHub secrets (item 2) — desbloqueia backup automático Supabase.
+- [ ] **Decisão Beehiiv** (item 3) — upgrade Scale, Resend DIY, ou Substack.
+- [ ] **Stripe envs** (item 4) — desbloqueia checkout/billing em produção.
+- [ ] **Resend** (item 5) — desbloqueia transacionais (confirmação newsletter, welcome).
 
-Quando completar 1 e 2, me avise — eu valido fazendo um deploy de teste e checando o Sentry capturar o erro + checando o backup no R2.
-
-Pra item 3, me diz qual rota escolheu (A/B/C/Beehiiv) que eu termino o setup ou refatoro pra Resend DIY.
+Quando completar cada um, me avise — eu valido com deploy de teste e check end-to-end.
