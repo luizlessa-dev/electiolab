@@ -42,3 +42,6 @@ next-env.d.ts
 
 # supabase CLI cache
 supabase/.temp/
+
+# SEO drift snapshots (gerados localmente)
+tools/seo-baselines/
