@@ -45,7 +45,7 @@ function publicClient() {
   );
 }
 
-export async function getHistoricElectionData(year: number): Promise<HistoricElectionData> {
+export async function getHistoricElectionData(year: number, stateFilter?: string): Promise<HistoricElectionData> {
   const sb = publicClient();
   const PAGE = 1000;
   const rows: Array<{
@@ -60,12 +60,14 @@ export async function getHistoricElectionData(year: number): Promise<HistoricEle
   }> = [];
 
   for (let from = 0; from < 200_000; from += PAGE) {
-    const { data, error } = await sb
+    let q = sb
       .from("prior_election_results")
       .select("candidate_id, election_type, state, party, total_votes, result_status, round, candidate:candidates(name, slug)")
       .eq("year", year)
       .eq("round", 1)
       .range(from, from + PAGE - 1);
+    if (stateFilter) q = q.eq("state", stateFilter);
+    const { data, error } = await q;
     if (error) throw error;
     if (!data?.length) break;
     rows.push(...(data as typeof rows));

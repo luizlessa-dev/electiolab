@@ -384,5 +384,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.85,
     },
+    // Drilldowns por UF: /eleicao-{2018,2022}/{uf} — 54 páginas SEO de cauda longa
+    ...["ac","al","am","ap","ba","ce","df","es","go","ma","mg","ms","mt","pa","pb","pe","pi","pr","rj","rn","ro","rr","rs","sc","se","sp","to"].flatMap(
+      (uf) => [
+        {
+          url: `${SITE_URL}/eleicao-2018/${uf}`,
+          lastModified: now,
+          changeFrequency: "yearly" as const,
+          priority: 0.6,
+        },
+        {
+          url: `${SITE_URL}/eleicao-2022/${uf}`,
+          lastModified: now,
+          changeFrequency: "yearly" as const,
+          priority: 0.65,
+        },
+      ],
+    ),
   ];
 }
