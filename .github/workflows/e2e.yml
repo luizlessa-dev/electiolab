@@ -39,22 +39,39 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      # PRODUÇÃO (cron diário ou manual): roda full suite contra electiolab.com
       - name: Run E2E tests against production
         if: github.event_name == 'schedule' || github.event.inputs.target == 'production'
         run: npm run test:e2e:prod
         env:
           E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
 
-      - name: Run E2E tests locally
-        if: github.event_name != 'schedule' && github.event.inputs.target != 'production'
-        run: npm run test:e2e
+      # PR/PUSH: roda apenas testes públicos (não exige envs Stripe/Beehiiv)
+      # Aguarda deploy do Vercel preview e roda contra a URL
+      - name: Get Vercel preview URL
+        id: vercel
+        if: github.event_name == 'pull_request' || github.event_name == 'push'
+        uses: zentered/vercel-preview-url@v1.5.0
+        continue-on-error: true
+        with:
+          vercel_team_id: ${{ secrets.VERCEL_TEAM_ID }}
         env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-          STRIPE_PRICE_PRO_MONTHLY: ${{ secrets.STRIPE_PRICE_PRO_MONTHLY }}
-          STRIPE_PRICE_PRO_YEARLY: ${{ secrets.STRIPE_PRICE_PRO_YEARLY }}
-          STRIPE_PRICE_BUSINESS_MONTHLY: ${{ secrets.STRIPE_PRICE_BUSINESS_MONTHLY }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+      - name: Run public E2E tests against Vercel preview
+        if: |
+          (github.event_name == 'pull_request' || github.event_name == 'push')
+          && steps.vercel.outputs.preview_url != ''
+        run: npx playwright test public-pages
+        env:
+          E2E_BASE_URL: https://${{ steps.vercel.outputs.preview_url }}
+
+      - name: Skip E2E (no Vercel preview available)
+        if: |
+          (github.event_name == 'pull_request' || github.event_name == 'push')
+          && steps.vercel.outputs.preview_url == ''
+        run: |
+          echo "::warning::Vercel preview not detected. Skipping E2E. Configure VERCEL_TOKEN + VERCEL_TEAM_ID secrets to enable."
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
