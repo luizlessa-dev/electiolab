@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
+import { checkIpRate } from "@/lib/ip-rate-limit";
 
 const BEEHIIV_API_KEY = process.env.BEEHIIV_API_KEY;
 const BEEHIIV_PUBLICATION_ID = process.env.BEEHIIV_PUBLICATION_ID;
@@ -18,10 +19,19 @@ function generateToken(): string {
 
 export async function POST(req: Request) {
   try {
+    // Rate limit: 5 inscrições por IP por hora (anti-bot).
+    const rl = await checkIpRate(req, "newsletter", { limit: 5, windowSeconds: 3600 });
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: "Muitas inscrições deste IP. Aguarde antes de tentar de novo." },
+        { status: 429, headers: rl.headers },
+      );
+    }
+
     const { email, source = "site" } = (await req.json()) as { email: string; source?: string };
 
     if (!email || !email.includes("@")) {
-      return NextResponse.json({ error: "Email inválido" }, { status: 400 });
+      return NextResponse.json({ error: "Email inválido" }, { status: 400, headers: rl.headers });
     }
 
     const cleanEmail = email.toLowerCase().trim();
