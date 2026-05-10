@@ -1,0 +1,364 @@
+openapi: 3.1.0
+info:
+  title: ElectioLab API
+  version: "1.0.0"
+  description: |
+    API pública do ElectioLab — dados eleitorais brasileiros consolidados:
+    eleições, pesquisas, médias ponderadas, candidatos e drift histórico.
+
+    **Posicionamento:** infraestrutura de dados para jornalistas, devs e
+    analistas. Não substitui auditoria editorial.
+
+    **Auth:** Bearer token no formato `el_<tier>_<hex>`. Sem token, acesso
+    anônimo limitado a 60 req/mês.
+
+    **Documentação metodológica:**
+    - Médias ponderadas: https://electiolab.com/docs/weighted-averages
+    - Reliability score dos institutos: https://electiolab.com/docs/reliability-score
+  contact:
+    email: api@electiolab.com
+    url: https://electiolab.com/api
+  license:
+    name: Use editorial — citação obrigatória ("Fonte: ElectioLab").
+    url: https://electiolab.com/sobre
+
+servers:
+  - url: https://electiolab.com
+    description: Produção
+
+security:
+  - bearerAuth: []
+  - {}  # auth opcional (anônimo)
+
+tags:
+  - name: Eleições
+  - name: Pesquisas
+  - name: Médias
+  - name: Candidatos
+  - name: Conta
+
+paths:
+  /api/v1/elections:
+    get:
+      tags: [Eleições]
+      summary: Lista todas as eleições
+      description: Retorna eleições ordenadas por ano descendente.
+      responses:
+        '200':
+          description: Lista de eleições
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ElectionListResponse'
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  /api/v1/polls:
+    get:
+      tags: [Pesquisas]
+      summary: Lista pesquisas
+      description: |
+        Retorna pesquisas com resultados por candidato. Suporta CSV via
+        `Accept: text/csv` ou `?format=csv`.
+      parameters:
+        - in: query
+          name: election_id
+          schema: { type: string, format: uuid }
+          description: Filtra por eleição.
+        - in: query
+          name: format
+          schema: { type: string, enum: [json, csv] }
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 500, default: 100 }
+      responses:
+        '200':
+          description: Lista de pesquisas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PollListResponse'
+            text/csv:
+              schema: { type: string }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  /api/v1/averages:
+    get:
+      tags: [Médias]
+      summary: Médias ponderadas
+      description: |
+        Retorna médias ponderadas por candidato. Fórmula completa em
+        https://electiolab.com/docs/weighted-averages.
+      parameters:
+        - in: query
+          name: election_id
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Médias ponderadas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AveragesListResponse'
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  /api/v1/candidates-by-slug:
+    get:
+      tags: [Candidatos]
+      summary: Candidato(s) por slug
+      description: |
+        Retorna até 3 candidatos com média ponderada agregada e última
+        pesquisa. Usado pela página /comparar.
+      parameters:
+        - in: query
+          name: slug
+          required: true
+          schema: { type: array, items: { type: string }, maxItems: 3 }
+          style: form
+          explode: true
+      responses:
+        '200':
+          description: Candidatos consolidados
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateConsolidatedListResponse'
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  /api/v1/drift:
+    get:
+      tags: [Pesquisas]
+      summary: Drift histórico de um candidato
+      description: |
+        Retorna série temporal de % nas pesquisas (1º turno) ao longo do
+        tempo. Útil para gráficos de evolução.
+      parameters:
+        - in: query
+          name: candidate_id
+          required: true
+          schema: { type: string, format: uuid }
+        - in: query
+          name: days
+          schema: { type: integer, minimum: 1, maximum: 365, default: 120 }
+      responses:
+        '200':
+          description: Série temporal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriftListResponse'
+        '400':
+          description: candidate_id inválido
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  /api/v1/me:
+    get:
+      tags: [Conta]
+      summary: Status da API key
+      description: |
+        Retorna tier, rate_limit, requests_used e período de reset.
+        **Requer Bearer token** (anônimo recebe 401).
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Status da chave
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeResponse'
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: el_<tier>_<hex>
+      description: |
+        Tokens são gerados em https://electiolab.com/dashboard/api.
+        **Tiers e limites mensais (`X-RateLimit-Limit` no response):**
+        - `anonymous` (sem token): 60 req/mês
+        - `free`: 1.000 req/mês
+        - `pro`: 50.000 req/mês
+        - `business`: 500.000 req/mês
+
+  responses:
+    Unauthorized:
+      description: Token inválido ou ausente quando obrigatório.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    RateLimited:
+      description: Limite mensal atingido.
+      headers:
+        X-RateLimit-Limit:
+          schema: { type: integer }
+        X-RateLimit-Remaining:
+          schema: { type: integer }
+        X-RateLimit-Reset:
+          schema: { type: string, format: date-time }
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error: { type: string }
+
+    Election:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        type:
+          type: string
+          enum: [presidente, governador, senador, deputado_federal, deputado_estadual, deputado_distrital, prefeito, vereador]
+        state: { type: string, nullable: true, example: SP }
+        city: { type: string, nullable: true }
+        year: { type: integer, example: 2026 }
+        round: { type: integer, example: 1 }
+        election_date: { type: string, format: date, nullable: true }
+        is_active: { type: boolean }
+
+    ElectionListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Election' }
+        count: { type: integer }
+
+    Poll:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        election_id: { type: string, format: uuid }
+        publication_date: { type: string, format: date }
+        fieldwork_start: { type: string, format: date, nullable: true }
+        fieldwork_end: { type: string, format: date, nullable: true }
+        sample_size: { type: integer, nullable: true }
+        margin_of_error: { type: number, nullable: true }
+        methodology:
+          type: string
+          enum: [presencial, telefonica, mista, online]
+          nullable: true
+        scope: { type: string, nullable: true }
+        poll_type: { type: string, nullable: true }
+        institute:
+          type: object
+          nullable: true
+          properties:
+            id: { type: string, format: uuid }
+            name: { type: string }
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              candidate_id: { type: string, format: uuid }
+              percentage: { type: number, example: 32.5 }
+              candidate:
+                type: object
+                properties:
+                  name: { type: string }
+                  party: { type: string, nullable: true }
+
+    PollListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Poll' }
+        count: { type: integer }
+
+    WeightedAverage:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        election_id: { type: string, format: uuid }
+        candidate_id: { type: string, format: uuid }
+        calculated_at: { type: string, format: date-time }
+        weighted_average: { type: number, description: "Média ponderada em %, 1 decimal" }
+        confidence_interval_low: { type: number }
+        confidence_interval_high: { type: number }
+        polls_included: { type: integer }
+        total_sample_size: { type: integer }
+        candidate:
+          type: object
+          properties:
+            name: { type: string }
+            party: { type: string, nullable: true }
+            color: { type: string, nullable: true, example: "#ED1C24" }
+            number: { type: integer, nullable: true }
+
+    AveragesListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/WeightedAverage' }
+        count: { type: integer }
+
+    CandidateConsolidated:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        slug: { type: string }
+        name: { type: string }
+        full_name: { type: string, nullable: true }
+        party: { type: string, nullable: true }
+        color: { type: string, nullable: true }
+        current_position: { type: string, nullable: true }
+        photo_url: { type: string, format: uri, nullable: true }
+        birth_date: { type: string, format: date, nullable: true }
+        net_worth: { type: number, nullable: true }
+        bio: { type: string, nullable: true }
+        weighted_average: { type: number, nullable: true }
+        last_poll_pct: { type: number, nullable: true }
+        last_poll_institute: { type: string, nullable: true }
+        last_poll_date: { type: string, format: date, nullable: true }
+
+    CandidateConsolidatedListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/CandidateConsolidated' }
+        count: { type: integer }
+
+    DriftPoint:
+      type: object
+      properties:
+        publication_date: { type: string, format: date }
+        institute_name: { type: string }
+        percentage: { type: number }
+        sample_size: { type: integer, nullable: true }
+        methodology: { type: string, nullable: true }
+
+    DriftListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/DriftPoint' }
+        count: { type: integer }
+
+    MeResponse:
+      type: object
+      properties:
+        authenticated: { type: boolean }
+        tier:
+          type: string
+          enum: [free, pro, business]
+        rate_limit: { type: integer }
+        requests_used: { type: integer }
+        requests_remaining: { type: integer }
+        period_resets_at: { type: string, format: date-time }
