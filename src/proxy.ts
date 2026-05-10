@@ -1,33 +1,37 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-function checkBasicAuth(request: NextRequest) {
-  const basicAuth = request.headers.get("authorization");
-
+/**
+ * Basic Auth opcional, opt-in via env. Quando BASIC_AUTH_USER + BASIC_AUTH_PASSWORD
+ * estão setados, o site exige auth (modo "staging fechado"). Sem essas envs, o site
+ * é público — comportamento padrão de produção, indexável pelo Google.
+ *
+ * Histórico: anteriormente o middleware exigia auth incondicionalmente, bloqueando
+ * indexação. Corrigido em 2026-05-09.
+ */
+function basicAuthGate(request: NextRequest): NextResponse | null {
   const username = process.env.BASIC_AUTH_USER;
   const password = process.env.BASIC_AUTH_PASSWORD;
 
-  if (!username || !password) return false;
+  // Sem credenciais configuradas → site público.
+  if (!username || !password) return null;
 
+  const basicAuth = request.headers.get("authorization");
   if (basicAuth) {
     const authValue = basicAuth.split(" ")[1];
     const [user, pwd] = atob(authValue).split(":");
-
-    return user === username && pwd === password;
+    if (user === username && pwd === password) return null; // auth ok → segue
   }
 
-  return false;
+  return new NextResponse("Autenticação necessária", {
+    status: 401,
+    headers: { "WWW-Authenticate": 'Basic realm="Área protegida"' },
+  });
 }
 
 export async function proxy(request: NextRequest) {
-  if (!checkBasicAuth(request)) {
-    return new NextResponse("Autenticação necessária", {
-      status: 401,
-      headers: {
-        "WWW-Authenticate": 'Basic realm="Área protegida"',
-      },
-    });
-  }
+  const authResp = basicAuthGate(request);
+  if (authResp) return authResp;
 
   let supabaseResponse = NextResponse.next({ request });
 
