@@ -1,8 +1,10 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createAdmin } from "@supabase/supabase-js";
-import { Key, AlertTriangle, RefreshCw, Code2 } from "lucide-react";
+import { Key, AlertTriangle, RefreshCw, Code2, BookOpen, FileJson } from "lucide-react";
 import { RegenerateKeyButton } from "./regenerate-button";
+import { CopyButton } from "./copy-button";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +30,24 @@ function fmtDate(iso: string | null) {
   });
 }
 
+function daysUntil(iso: string | null): number | null {
+  if (!iso) return null;
+  const ms = new Date(iso).getTime() - Date.now();
+  return Math.max(0, Math.ceil(ms / 86400000));
+}
+
+function usageColor(pct: number): string {
+  if (pct >= 90) return "bg-red-500";
+  if (pct >= 70) return "bg-amber-500";
+  return "bg-emerald-500";
+}
+
+function usageLabel(pct: number): { text: string; tone: string } {
+  if (pct >= 90) return { text: "Atenção: próximo do limite", tone: "text-red-600 dark:text-red-400" };
+  if (pct >= 70) return { text: "Uso intenso", tone: "text-amber-600 dark:text-amber-400" };
+  return { text: "Saudável", tone: "text-emerald-600 dark:text-emerald-400" };
+}
+
 export default async function ApiKeyPage() {
   const supabase = await createClient();
   const {
@@ -46,17 +66,40 @@ export default async function ApiKeyPage() {
     .eq("user_id", user.id)
     .maybeSingle();
 
+  const usagePct = apiKey?.is_active
+    ? Math.min(100, (apiKey.requests_used / apiKey.rate_limit) * 100)
+    : 0;
+  const resetIso = apiKey?.period_start
+    ? new Date(new Date(apiKey.period_start).getTime() + 30 * 86400000).toISOString()
+    : null;
+  const daysToReset = daysUntil(resetIso);
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-          <Key className="h-5 w-5 text-primary" />
-          API Key
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Acesse os dados do ElectioLab via API REST. Bearer token no header
-          Authorization.
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+            <Key className="h-5 w-5 text-primary" />
+            API Key
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Acesse os dados do ElectioLab via API REST. Bearer token no header Authorization.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/api"
+            className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-accent"
+          >
+            <BookOpen className="h-3.5 w-3.5" /> Documentação
+          </Link>
+          <a
+            href="/openapi.yaml"
+            className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-accent"
+          >
+            <FileJson className="h-3.5 w-3.5" /> OpenAPI
+          </a>
+        </div>
       </div>
 
       {!apiKey || !apiKey.is_active ? (
@@ -111,34 +154,29 @@ export default async function ApiKeyPage() {
                   Próximo reset
                 </p>
                 <p className="text-lg font-mono font-bold tabular-nums">
-                  {fmtDate(
-                    apiKey.period_start
-                      ? new Date(
-                          new Date(apiKey.period_start).getTime() +
-                            30 * 24 * 60 * 60 * 1000
-                        ).toISOString()
-                      : null
-                  )}
+                  {daysToReset !== null ? `${daysToReset}d` : "—"}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {apiKey.last_used_at
-                    ? `Última: ${fmtDate(apiKey.last_used_at)}`
-                    : "Sem uso ainda"}
+                  {fmtDate(resetIso)}
+                  {apiKey.last_used_at ? ` · última: ${fmtDate(apiKey.last_used_at)}` : ""}
                 </p>
               </div>
             </div>
 
-            {/* Barra de progresso */}
-            <div>
+            {/* Barra de progresso colorida + label de status */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between text-xs">
+                <span className={`font-medium ${usageLabel(usagePct).tone}`}>
+                  {usageLabel(usagePct).text}
+                </span>
+                <span className="font-mono tabular-nums text-muted-foreground">
+                  {usagePct.toFixed(1)}%
+                </span>
+              </div>
               <div className="h-2 rounded-full bg-muted overflow-hidden">
                 <div
-                  className="h-full bg-primary transition-all"
-                  style={{
-                    width: `${Math.min(
-                      100,
-                      (apiKey.requests_used / apiKey.rate_limit) * 100
-                    )}%`,
-                  }}
+                  className={`h-full transition-all ${usageColor(usagePct)}`}
+                  style={{ width: `${usagePct}%` }}
                 />
               </div>
             </div>
@@ -162,27 +200,48 @@ export default async function ApiKeyPage() {
           </div>
 
           {/* Como usar */}
-          <div className="rounded-lg border border-border bg-card p-5">
-            <p className="font-semibold flex items-center gap-2 mb-3">
-              <Code2 className="h-4 w-4" />
-              Como usar
-            </p>
+          <div className="rounded-lg border border-border bg-card p-5 space-y-4">
+            <div className="flex items-center justify-between gap-2">
+              <p className="font-semibold flex items-center gap-2">
+                <Code2 className="h-4 w-4" />
+                Como usar
+              </p>
+              <CopyButton
+                text={`curl https://electiolab.com/api/v1/averages -H "Authorization: Bearer el_${apiKey.tier}_..."`}
+                label="Copiar curl"
+              />
+            </div>
             <pre className="bg-muted/40 rounded-md p-3 text-xs overflow-x-auto font-mono">
               {`curl https://electiolab.com/api/v1/averages \\
-  -H "Authorization: Bearer el_${apiKey.tier}_..."
+  -H "Authorization: Bearer el_${apiKey.tier}_..."`}
+            </pre>
 
-# Endpoints disponíveis
-GET /api/v1/elections          → lista todas as eleições
-GET /api/v1/averages           → média ponderada por candidato
-GET /api/v1/polls              → pesquisas brutas (?format=csv também)
-GET /api/v1/me                 → status da sua key (uso, limit, reset)
+            <div className="space-y-2">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium">Endpoints disponíveis</p>
+              <pre className="bg-muted/40 rounded-md p-3 text-xs overflow-x-auto font-mono leading-relaxed">
+                {`GET /api/v1/elections             → lista todas as eleições
+GET /api/v1/polls                 → pesquisas brutas (?format=csv também)
+GET /api/v1/averages              → média ponderada por candidato
+GET /api/v1/candidates-by-slug    → consolida até 3 candidatos
+GET /api/v1/drift                 → série temporal % p/ candidato
+GET /api/v1/me                    → status da sua key (uso, limit, reset)`}
+              </pre>
+            </div>
 
-# Headers de retorno
-X-RateLimit-Limit              → seu limite mensal
+            <div className="space-y-2">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium">Headers de retorno</p>
+              <pre className="bg-muted/40 rounded-md p-3 text-xs overflow-x-auto font-mono leading-relaxed">
+                {`X-RateLimit-Limit              → seu limite mensal
 X-RateLimit-Remaining          → quanto resta
 X-RateLimit-Reset              → quando reseta (ISO)
 X-API-Tier                     → plano detectado (pro/business)`}
-            </pre>
+              </pre>
+            </div>
+
+            <p className="text-xs text-muted-foreground">
+              Documentação completa: <Link href="/api" className="text-primary underline-offset-4 hover:underline">/api</Link>{" "}
+              · Spec OpenAPI 3.1: <a href="/openapi.yaml" className="text-primary underline-offset-4 hover:underline">/openapi.yaml</a>
+            </p>
           </div>
         </>
       )}
