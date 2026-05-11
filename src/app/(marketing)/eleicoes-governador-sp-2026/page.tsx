@@ -10,7 +10,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: { absolute: "Pesquisas Governador SP 2026 — Tarcísio vs Haddad | ElectioLab" },
   description:
-    "Média agregada das pesquisas para governador de São Paulo 2026. Tarcísio de Freitas 47,8%, Fernando Haddad 33,1% — Paraná Pesquisas abr/2026. Atualizado semanalmente.",
+    "Média agregada das pesquisas para governador de SP 2026: Tarcísio 47,8%, Haddad 33,1% — Paraná Pesquisas abr/2026.",
   alternates: { canonical: "https://electiolab.com/eleicoes-governador-sp-2026" },
   openGraph: {
     title: "Pesquisas Governador SP 2026 — Tarcísio vs Haddad | ElectioLab",

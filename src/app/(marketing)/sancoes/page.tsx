@@ -6,9 +6,9 @@ import { createClient } from "@supabase/supabase-js";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Empresas sancionadas que abastecem políticos brasileiros — CEIS",
+  title: "Empresas sancionadas (CEIS) que abastecem políticos",
   description:
-    "Cruzamento entre o CEIS (Cadastro Nacional de Empresas Inidôneas e Suspensas) e fornecedores de Cota Parlamentar / propaganda política / doadores de campanha no Brasil.",
+    "Cruzamento entre CEIS (empresas inidôneas/suspensas) e fornecedores de cota parlamentar, propaganda e doações. Risco reputacional explicado.",
   alternates: { canonical: "https://electiolab.com/sancoes" },
   openGraph: {
     title: "Empresas sancionadas que abastecem políticos brasileiros",

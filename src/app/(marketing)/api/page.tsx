@@ -5,7 +5,7 @@ import { ArrowLeft, Code, Key, Zap, FileJson, BookOpen } from "lucide-react";
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
-  title: "ElectioLab API — Dados eleitorais brasileiros como infraestrutura | ElectioLab",
+  title: "ElectioLab API — Dados eleitorais como infraestrutura",
   description: "API pública REST com eleições, pesquisas, médias ponderadas e drift histórico de candidatos brasileiros. OpenAPI 3.1, autenticação Bearer, free tier 1k req/mês.",
   alternates: { canonical: "https://electiolab.com/api" },
   openGraph: {
@@ -62,9 +62,35 @@ const TIERS = [
   { name: "business", limit: "500.000 req/mês", price: "R$ 199/mês", note: "Inclui SLA + suporte por e-mail" },
 ];
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebAPI",
+      name: "ElectioLab API",
+      description: "REST API com eleições, pesquisas, médias ponderadas e drift histórico de candidatos brasileiros.",
+      url: "https://electiolab.com/api",
+      documentation: "https://electiolab.com/openapi.yaml",
+      provider: { "@type": "Organization", name: "ElectioLab", url: "https://electiolab.com" },
+      termsOfService: "https://electiolab.com/sobre",
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Início", item: "https://electiolab.com/" },
+        { "@type": "ListItem", position: 2, name: "API", item: "https://electiolab.com/api" },
+      ],
+    },
+  ],
+};
+
 export default function ApiPage() {
   return (
     <div className="container mx-auto max-w-5xl space-y-12 px-4 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Link href="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
         <ArrowLeft className="h-4 w-4" /> Voltar ao início
       </Link>

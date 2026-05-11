@@ -9,7 +9,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: { absolute: "Pesquisas Governador MG 2026 — Cleitinho lidera | ElectioLab" },
   description:
-    "Média agregada das pesquisas para governador de Minas Gerais 2026. Cleitinho (Rep) 48%, Alexandre Kalil (PDT) 26%, Rodrigo Pacheco (PSB) 23% — Quaest abr/2026. Atualizado semanalmente.",
+    "Média agregada das pesquisas para governador de MG 2026: Cleitinho 48%, Kalil 26%, Pacheco 23% — Quaest abr/2026.",
   alternates: { canonical: "https://electiolab.com/eleicoes-governador-mg-2026" },
   openGraph: {
     title: "Pesquisas Governador MG 2026 — Cleitinho lidera | ElectioLab",

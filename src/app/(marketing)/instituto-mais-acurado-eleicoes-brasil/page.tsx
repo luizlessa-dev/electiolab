@@ -6,9 +6,9 @@ import { ArrowLeft, Award } from "lucide-react";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Qual o instituto de pesquisa mais acurado do Brasil? Ranking 2026",
+  title: "Instituto de pesquisa mais acurado do Brasil — 2026",
   description:
-    "Datafolha, Quaest, Ipec, Atlas Intel e Paraná Pesquisas comparados pelo erro vs. resultado oficial TSE em 2018 e 2022. Score de acurácia atualizado, com metodologia transparente.",
+    "Datafolha, Quaest, Ipec, Atlas e Paraná Pesquisas comparados pelo erro vs. resultado oficial do TSE. Score de acurácia transparente.",
   alternates: {
     canonical: "https://electiolab.com/instituto-mais-acurado-eleicoes-brasil",
   },

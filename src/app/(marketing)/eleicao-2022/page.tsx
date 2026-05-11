@@ -5,9 +5,9 @@ import { HistoricElectionPage, buildJsonLd } from "@/components/historic-electio
 export const revalidate = 86400; // 24h
 
 export const metadata: Metadata = {
-  title: "Eleição de 2022 — Resultados, Eleitos e Mais Votados | ElectioLab",
+  title: "Eleição 2022 — Resultados Completos do TSE",
   description:
-    "Resultados oficiais da eleição de 2022: governadores, senadores e deputados federais eleitos por estado, com votação total e perfil de cada candidato.",
+    "Resultados oficiais 2022: governadores, senadores e deputados eleitos por estado, com votação total e perfil de cada candidato.",
   alternates: { canonical: "https://electiolab.com/eleicao-2022" },
   openGraph: {
     title: "Eleição de 2022 — Resultados Completos",

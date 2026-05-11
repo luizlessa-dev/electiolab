@@ -6,9 +6,9 @@ import { ArrowLeft, BarChart3 } from "lucide-react";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Quem vence no 2º turno da Presidência 2026? Pesquisas atualizadas",
+  title: "Quem vence no 2º turno da Presidência 2026?",
   description:
-    "Comparativo dos cenários simulados de 2º turno presidencial 2026 segundo Datafolha, Quaest e demais institutos. Lula vs Flávio Bolsonaro, Caiado, Zema e Tarcísio — análise atualizada.",
+    "Cenários simulados de 2º turno 2026: Lula vs Flávio, Caiado, Zema e Tarcísio. Datafolha, Quaest, Atlas e Paraná Pesquisas comparados.",
   alternates: {
     canonical: "https://electiolab.com/quem-vence-no-segundo-turno-presidencia-2026",
   },
