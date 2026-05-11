@@ -7,7 +7,7 @@ import * as Sentry from "@sentry/nextjs";
 const dsn = process.env.SENTRY_DSN ?? process.env.NEXT_PUBLIC_SENTRY_DSN;
 
 // TEMP DEBUG — remover quando Sentry estiver capturando
-console.log("[sentry-server-config] LOADED", {
+console.error("[sentry-server-config] LOADED", {
   has_SENTRY_DSN: Boolean(process.env.SENTRY_DSN),
   SENTRY_DSN_length: process.env.SENTRY_DSN?.length ?? 0,
   has_NEXT_PUBLIC: Boolean(process.env.NEXT_PUBLIC_SENTRY_DSN),
@@ -17,7 +17,7 @@ console.log("[sentry-server-config] LOADED", {
 });
 
 if (dsn) {
-  console.log("[sentry-server-config] calling Sentry.init");
+  console.error("[sentry-server-config] calling Sentry.init");
   Sentry.init({
     dsn,
     environment: process.env.VERCEL_ENV ?? "development",
@@ -29,7 +29,7 @@ if (dsn) {
       "AbortError",
     ],
   });
-  console.log("[sentry-server-config] Sentry.init returned");
+  console.error("[sentry-server-config] Sentry.init returned");
 } else {
-  console.log("[sentry-server-config] SKIPPED — no DSN resolved");
+  console.error("[sentry-server-config] SKIPPED — no DSN resolved");
 }

@@ -3,14 +3,14 @@
  * Só funciona se SENTRY_DSN estiver definido (configs são env-gated).
  */
 export async function register() {
-  console.log("[instrumentation] register() called, NEXT_RUNTIME =", process.env.NEXT_RUNTIME);
+  console.error("[instrumentation] register() called, NEXT_RUNTIME =", process.env.NEXT_RUNTIME);
   if (process.env.NEXT_RUNTIME === "nodejs") {
-    console.log("[instrumentation] importing sentry.server.config");
+    console.error("[instrumentation] importing sentry.server.config");
     await import("./sentry.server.config");
-    console.log("[instrumentation] sentry.server.config imported");
+    console.error("[instrumentation] sentry.server.config imported");
   }
   if (process.env.NEXT_RUNTIME === "edge") {
-    console.log("[instrumentation] importing sentry.edge.config");
+    console.error("[instrumentation] importing sentry.edge.config");
     await import("./sentry.edge.config");
   }
 }
