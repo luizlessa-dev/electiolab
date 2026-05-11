@@ -1,0 +1,56 @@
+name: Ingest TSE PesqEle (daily)
+
+on:
+  schedule:
+    # Diário 11:00 UTC (08:00 BRT) — TSE atualiza às madrugadas
+    - cron: "0 11 * * *"
+  workflow_dispatch:
+    inputs:
+      year:
+        description: "Ano do PesqEle (default 2026)"
+        required: false
+        default: "2026"
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Ingest pesqele_registry
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          YEAR_ARG=""
+          if [ -n "${{ inputs.year }}" ]; then YEAR_ARG="--year=${{ inputs.year }}"; fi
+          npx tsx scripts/ingest-pesqele.ts --apply $YEAR_ARG
+
+      - name: Match drafts → PesqEle
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npx tsx scripts/match-drafts-to-pesqele.ts --apply
+
+      - name: Summary
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npx tsx scripts/check-poll-freshness.ts | tee freshness-report.txt
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pesqele-daily-report
+          path: freshness-report.txt
+          retention-days: 30
