@@ -74,9 +74,43 @@ const plans = [
   },
 ];
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Product",
+      name: "ElectioLab",
+      description: "Plataforma de dados eleitorais brasileiros — dashboard, API e alertas.",
+      brand: { "@type": "Brand", name: "ElectioLab" },
+      offers: plans
+        .filter((p) => p.price.startsWith("R$") && p.price !== "R$ 0")
+        .map((p) => ({
+          "@type": "Offer",
+          name: `Plano ${p.name}`,
+          description: p.desc,
+          price: p.price.replace(/[^0-9]/g, ""),
+          priceCurrency: "BRL",
+          availability: "https://schema.org/InStock",
+          url: `https://electiolab.com${p.href}`,
+        })),
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Início", item: "https://electiolab.com/" },
+        { "@type": "ListItem", position: 2, name: "Preços", item: "https://electiolab.com/precos" },
+      ],
+    },
+  ],
+};
+
 export default function PrecosPage() {
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Header */}
       <header className="border-b border-border bg-sidebar/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="h-[2px] bg-gradient-to-r from-primary via-primary/60 to-transparent" />

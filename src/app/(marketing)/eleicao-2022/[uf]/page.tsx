@@ -18,8 +18,8 @@ export async function generateMetadata({ params }: { params: Promise<{ uf: strin
   const stateName = UF_NAMES[ufUpper];
   if (!stateName) return {};
   return {
-    title: `Eleição de 2022 em ${stateName} — Resultados Oficiais | ElectioLab`,
-    description: `Resultados oficiais da eleição de 2022 em ${stateName} (${ufUpper}): governador, senadores, deputados federais com votação total e perfil de cada candidato.`,
+    title: `Eleição 2022 em ${stateName} — Resultados Oficiais`,
+    description: `Resultados oficiais 2022 em ${stateName}: governador, senadores e deputados eleitos com votação total.`,
     alternates: { canonical: `https://electiolab.com/eleicao-2022/${uf}` },
     openGraph: {
       title: `Eleição de 2022 em ${stateName}`,

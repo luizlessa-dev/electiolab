@@ -6,9 +6,9 @@ import { createClient } from "@supabase/supabase-js";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Redes sociais oficiais dos políticos brasileiros — TSE",
+  title: "Redes sociais dos políticos brasileiros — TSE",
   description:
-    "Lista das redes sociais declaradas oficialmente ao TSE pelos candidatos brasileiros. Instagram, Twitter, Facebook, TikTok e mais — fonte primária TSE Dados Abertos.",
+    "Instagram, X, Facebook, TikTok e mais — URLs declaradas oficialmente ao TSE pelos candidatos brasileiros.",
   alternates: { canonical: "https://electiolab.com/redes-sociais" },
   openGraph: {
     title: "Redes sociais oficiais dos políticos brasileiros (TSE)",

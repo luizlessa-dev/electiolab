@@ -10,7 +10,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: { absolute: "Pesquisas Governador RJ 2026 — Eduardo Paes Favorito | ElectioLab" },
   description:
-    "Média agregada das pesquisas para governador do Rio de Janeiro 2026. Eduardo Paes (PSD, prefeito do Rio) 49%, Douglas Ruas (PL) 16% — Genial/Quaest abr/2026. Atualizado semanalmente.",
+    "Média agregada das pesquisas para governador do RJ 2026: Eduardo Paes 49%, Douglas Ruas 16% — Quaest abr/2026.",
   alternates: { canonical: "https://electiolab.com/eleicoes-governador-rj-2026" },
   openGraph: {
     title: "Pesquisas Governador RJ 2026 — Eduardo Paes Favorito | ElectioLab",

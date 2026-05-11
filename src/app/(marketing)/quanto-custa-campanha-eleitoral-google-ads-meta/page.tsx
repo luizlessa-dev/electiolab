@@ -6,9 +6,9 @@ import { ArrowLeft, Megaphone } from "lucide-react";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Quanto custa uma campanha eleitoral em Google Ads e Meta? Dados 2022",
+  title: "Custo de campanha em Google Ads e Meta — 2022",
   description:
-    "Veja quanto Lula, Bolsonaro, Tarcísio, Ciro Gomes e outros candidatos gastaram em propaganda digital nas eleições 2022. Dados oficiais do Google Ads Transparency Center e Meta Ad Library.",
+    "Quanto Lula, Bolsonaro, Tarcísio, Ciro e outros gastaram em ads em 2022. Dados oficiais do Google Transparency e Meta Ad Library.",
   alternates: {
     canonical:
       "https://electiolab.com/quanto-custa-campanha-eleitoral-google-ads-meta",

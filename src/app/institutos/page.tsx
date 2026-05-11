@@ -6,9 +6,9 @@ import { ArrowLeft, Building2, Award, ChevronRight } from "lucide-react";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Institutos de Pesquisa Eleitoral 2026 — Ranking de Acurácia",
+  title: "Institutos de Pesquisa Eleitoral 2026 — Ranking",
   description:
-    "Lista completa dos institutos de pesquisa eleitoral brasileiros, ranqueados pela acurácia histórica das projeções vs. resultado oficial TSE. Datafolha, Quaest, Ipec e mais.",
+    "Institutos brasileiros ranqueados pela acurácia histórica vs. TSE: Datafolha, Quaest, Ipec, Atlas e mais.",
   alternates: { canonical: "https://electiolab.com/institutos" },
   openGraph: {
     title: "Institutos de Pesquisa 2026 — ElectioLab",
@@ -52,11 +52,45 @@ async function getInstitutes(): Promise<Institute[]> {
   return insts2;
 }
 
+function buildJsonLd(institutes: Institute[]) {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ItemList",
+        name: "Institutos de Pesquisa Eleitoral 2026",
+        description: "Ranking de institutos brasileiros pela acurácia histórica.",
+        numberOfItems: institutes.length,
+        itemListElement: institutes.slice(0, 20).map((i, idx) => ({
+          "@type": "ListItem",
+          position: idx + 1,
+          item: {
+            "@type": "Organization",
+            name: i.name,
+            url: `https://electiolab.com/instituto/${i.slug}`,
+          },
+        })),
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Início", item: "https://electiolab.com/" },
+          { "@type": "ListItem", position: 2, name: "Institutos", item: "https://electiolab.com/institutos" },
+        ],
+      },
+    ],
+  };
+}
+
 export default async function InstitutosPage() {
   const institutes = await getInstitutes();
 
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildJsonLd(institutes)) }}
+      />
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-30">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-sm font-semibold">

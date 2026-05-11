@@ -101,8 +101,40 @@ export default async function CandidatosIndexPage({
     com_bio: all.filter((c) => c.bio).length,
   };
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ItemList",
+        name: "Candidatos eleições 2026",
+        description: "Lista completa de candidatos brasileiros a Presidente, Governador e Senador.",
+        numberOfItems: stats.total,
+        itemListElement: all.slice(0, 50).map((c, idx) => ({
+          "@type": "ListItem",
+          position: idx + 1,
+          item: {
+            "@type": "Person",
+            name: c.name,
+            url: `https://electiolab.com/candidato/${c.slug}`,
+          },
+        })),
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Início", item: "https://electiolab.com/" },
+          { "@type": "ListItem", position: 2, name: "Candidatos", item: "https://electiolab.com/candidatos" },
+        ],
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-30">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
