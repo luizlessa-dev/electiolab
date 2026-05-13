@@ -37,10 +37,48 @@ function authorize(req: Request): NextResponse | null {
 export async function GET(req: Request) {
   const denied = authorize(req); if (denied) return denied;
   const url = new URL(req.url);
+  const source = url.searchParams.get("source");
+
+  const sb = admin();
+
+  // Modo: ?source=missing → retorna pesqele_missing enriquecido com elections candidatas
+  if (source === "missing") {
+    const { data: missing, error: e1 } = await sb
+      .from("pesqele_missing")
+      .select("protocolo, ano, uf, cargos, instituto, fieldwork_end, publication_date, sample_size, days_since_fieldwork")
+      .limit(100);
+    if (e1) return NextResponse.json({ error: e1.message }, { status: 500 });
+
+    // Para cada missing, encontra elections candidatas (mesmo uf + ano + cargo inferido)
+    const enriched = await Promise.all((missing ?? []).map(async (m) => {
+      const cargosLower = (m.cargos as string).toLowerCase();
+      const inferredTypes: string[] = [];
+      if (cargosLower.includes("presidente")) inferredTypes.push("presidente");
+      if (cargosLower.includes("governador")) inferredTypes.push("governador");
+      if (cargosLower.includes("senador")) inferredTypes.push("senador");
+      if (cargosLower.includes("deputado federal")) inferredTypes.push("deputado_federal");
+      if (cargosLower.includes("deputado estadual")) inferredTypes.push("deputado_estadual");
+
+      const ufFilter = m.uf === "BR" ? null : m.uf;
+      let q = sb
+        .from("elections")
+        .select("id, name, type, state, year, round")
+        .eq("year", m.ano)
+        .eq("is_active", true);
+      if (inferredTypes.length) q = q.in("type", inferredTypes);
+      if (ufFilter) q = q.eq("state", ufFilter);
+      const { data: candidates } = await q;
+
+      return { ...m, election_candidates: candidates ?? [] };
+    }));
+
+    return NextResponse.json({ data: enriched, count: enriched.length });
+  }
+
+  // Modo padrão: lista poll_drafts
   const status = url.searchParams.get("status");
   const electionId = url.searchParams.get("election_id");
 
-  const sb = admin();
   let q = sb
     .from("poll_drafts")
     .select(
