@@ -49,16 +49,14 @@ async function check(name: string, fn: () => Promise<{ ok: boolean; status?: num
   console.log(`   Base: ${BASE}`);
   console.log(`   Email: ${SMOKE_EMAIL}\n`);
 
-  // 1. Sentry: hit /api/test-sentry e confirma 500 (Sentry captura via SDK no servidor)
+  // 1. Sentry: hit /api/test-sentry?confirm=YES e confirma 500 (Sentry captura via SDK)
   await check("sentry test endpoint", async () => {
-    const res = await fetch(`${BASE}/api/test-sentry`);
+    const res = await fetch(`${BASE}/api/test-sentry?confirm=YES`);
     return {
-      ok: res.status === 500 || res.status === 200,
+      ok: res.status === 500,
       status: res.status,
       note: res.status === 500
         ? "500 esperado — confere no Sentry dashboard se evento aparece (~30s)"
-        : res.status === 200
-        ? "200 — endpoint não força erro neste mode; sem ação"
         : `inesperado ${res.status}`,
     };
   });
