@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Check, X, Trash2, ExternalLink, Filter, Tag } from "lucide-react";
+import { MissingSection } from "./missing-section";
 
 type DraftRow = {
   id: string;
@@ -136,6 +137,8 @@ export function DraftsClient({ drafts, summary }: { drafts: DraftRow[]; summary:
           className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
         />
       </section>
+
+      <MissingSection secret={secret} setToast={setToast} />
 
       {summary.length > 0 && (
         <section className="space-y-2">
