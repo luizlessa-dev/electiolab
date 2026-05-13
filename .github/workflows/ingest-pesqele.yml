@@ -54,3 +54,49 @@ jobs:
           name: pesqele-daily-report
           path: freshness-report.txt
           retention-days: 30
+
+      - name: Open issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const today = new Date().toISOString().slice(0, 10);
+            const title = `🚨 Cron PesqEle falhou — ${today}`;
+            // Dedupe: se já existe issue aberta com o mesmo título, comenta nela
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              labels: "cron-failure",
+              per_page: 50,
+            });
+            const existing = issues.find((i) => i.title.includes("Cron PesqEle falhou"));
+            const body = [
+              `Workflow **Ingest TSE PesqEle (daily)** falhou.`,
+              ``,
+              `**Run:** ${runUrl}`,
+              `**Quando:** ${new Date().toISOString()}`,
+              `**Disparo:** ${context.eventName}`,
+              ``,
+              `Investigar logs e, se necessário, rodar manual:`,
+              `\`\`\`bash`,
+              `gh workflow run ingest-pesqele.yml`,
+              `\`\`\``,
+            ].join("\n");
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body: `Nova falha — ${runUrl}`,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ["cron-failure", "automated"],
+              });
+            }
