@@ -1,0 +1,38 @@
+name: smoke-tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Cancela runs antigos quando novo push chega ao mesmo branch
+concurrency:
+  group: smoke-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke-tests:
+    name: smoke-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Smoke tests against production
+        run: |
+          # Pula stripe (precisa price IDs reais) e sentry (force 500 só faz sentido após merge,
+          # não em PRs que ainda não foram deployados).
+          npx tsx scripts/smoke-tests.ts --skip=stripe,sentry
