@@ -109,6 +109,28 @@ export async function getCampaignFinances(electionId: string) {
 
 export async function getCandidateBySlug(slug: string) {
   const supabase = await createClient();
+
+  // Resolver primeiro o registro mais recente (eleição mais nova) para o slug.
+  // Slugs podem ser duplicados em múltiplas eleições (ex.: Lula 2022 1T, 2022 2T,
+  // 2026 1T, 2026 2T). Sem ordenação aqui, .limit(1) pegava registro aleatório
+  // e a rota /candidato/lula servia dados de 2022 em vez de 2026.
+  const { data: latest } = await supabase
+    .from("candidates")
+    .select("id, election:elections(year, round)")
+    .eq("slug", slug)
+    .eq("is_active", true);
+
+  if (!latest?.length) return null;
+
+  const byRecency = latest
+    .map((c) => {
+      const e = Array.isArray(c.election) ? c.election[0] : c.election;
+      return { id: c.id as string, year: e?.year ?? 0, round: e?.round ?? 0 };
+    })
+    .sort((a, b) => (b.year - a.year) || (b.round - a.round));
+
+  const candidateId = byRecency[0].id;
+
   const { data } = await supabase
     .from("candidates")
     .select(`
@@ -125,10 +147,8 @@ export async function getCandidateBySlug(slug: string) {
       candidate_fefc(id, election_year, amount_received, amount_spent, party_acronym),
       prior_election_results(id, year, round, election_type, state, city, party, total_votes, result_status)
     `)
-    .eq("slug", slug)
-    .eq("is_active", true)
+    .eq("id", candidateId)
     .order("publication_date", { foreignTable: "poll_results.poll", ascending: false })
-    .limit(1)
     .maybeSingle();
   return data;
 }
