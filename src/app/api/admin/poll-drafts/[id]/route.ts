@@ -33,6 +33,10 @@ function authorize(req: Request): NextResponse | null {
 function normalize(s: string): string {
   return s.toUpperCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^A-Z0-9 ]+/g, " ").replace(/\s+/g, " ").trim();
 }
+/** Versão sem espaços para comparar "AtlasIntel" com "Atlas Intel" etc. */
+function squash(s: string): string {
+  return normalize(s).replace(/\s+/g, "");
+}
 
 async function approve(draftId: string) {
   const sb = admin();
@@ -49,19 +53,30 @@ async function approve(draftId: string) {
   let instituteId: string | null = d.institute_id;
   if (!instituteId) {
     const target = normalize(d.institute_name);
+    const targetSquashed = squash(d.institute_name);
     const { data: insts } = await sb.from("institutes").select("id, name");
     for (const inst of insts ?? []) {
       const ni = normalize(inst.name);
-      // Substring qualquer direção
-      if (ni.includes(target) || target.includes(ni)) {
+      const niSquashed = squash(inst.name);
+      // Substring qualquer direção (com e sem espaços — pega "AtlasIntel" vs "Atlas Intel")
+      if (
+        ni.includes(target) || target.includes(ni) ||
+        niSquashed.includes(targetSquashed) || targetSquashed.includes(niSquashed)
+      ) {
         instituteId = inst.id;
         break;
       }
-      // Match por token chave
-      const ta = new Set(target.split(" ").filter((t) => t.length > 3));
-      const tb = new Set(ni.split(" ").filter((t) => t.length > 3));
-      for (const t of ta) if (tb.has(t)) { instituteId = inst.id; break; }
-      if (instituteId) break;
+      // Match por token chave (threshold 3 para pegar siglas tipo CNT, MDA)
+      const ta = new Set(target.split(" ").filter((t) => t.length >= 3));
+      const tb = new Set(ni.split(" ").filter((t) => t.length >= 3));
+      // Conta tokens compartilhados; precisa de pelo menos 2 OU todos os tokens do menor lado
+      let shared = 0;
+      for (const t of ta) if (tb.has(t)) shared++;
+      const minSize = Math.min(ta.size, tb.size);
+      if (shared >= 2 || (minSize > 0 && shared === minSize)) {
+        instituteId = inst.id;
+        break;
+      }
     }
   }
   if (!instituteId) {
