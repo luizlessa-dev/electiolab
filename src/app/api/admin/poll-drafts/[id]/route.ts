@@ -107,7 +107,8 @@ async function approve(draftId: string) {
       publication_date: d.publication_date,
       sample_size: d.sample_size,
       margin_of_error: d.margin_of_error,
-      methodology: d.methodology,
+      // methodology é NOT NULL em polls — usa fallback quando draft veio sem (ex.: Wikipedia)
+      methodology: (d.methodology as string | null) ?? "não-informado",
       scope: d.scope,
       round: d.round,
       source_url: d.source_url,
