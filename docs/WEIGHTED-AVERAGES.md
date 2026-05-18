@@ -1,7 +1,9 @@
 # Médias ponderadas de pesquisas eleitorais
 
-**Fonte canónica:** Edge Function `recalculate-averages` no projeto Supabase **xoxztzologqeqbajlhya** (versão 3, atualizada 2026-04-28).
-**Tabela alvo:** `weighted_averages` (uma linha por par `election_id × candidate_id` em modo *snapshot*).
+**Fonte canónica:** Edge Function `recalculate-averages` no projeto Supabase **xoxztzologqeqbajlhya** (versão 5, atualizada 2026-05-18).
+**Tabela alvo:** `weighted_averages` (chave: `election_id × candidate_id × scenario_label` em modo *snapshot*).
+
+> **Atualização v5 (2026-05-18):** 2º turno agora calculado por **cenário** (par de candidatos), não como média global agregada. Cada cenário (Lula × Flávio, Lula × Zema, etc.) é uma pergunta independente da pesquisa e tem média própria. 1º turno permanece com agregação global por candidato.
 
 Este documento descreve **exatamente** como o ElectioLab calcula as médias ponderadas exibidas no dashboard, comparador e páginas SEO. Está versionado para que jornalistas, analistas e o próprio time possam auditar a metodologia sem precisar ler o código da Edge Function.
 
@@ -83,9 +85,9 @@ instituteWeight = institutes.reliability_score ?? 0.7
 
 ---
 
-## 3. Saída por candidato
+## 3. Saída por candidato (1º turno) e por cenário (2º turno)
 
-Cada linha em `weighted_averages` contém:
+### 3.1 Schema da linha
 
 | Campo                       | Significado                                             |
 |-----------------------------|---------------------------------------------------------|
@@ -94,8 +96,33 @@ Cada linha em `weighted_averages` contém:
 | `confidence_interval_high`  | `min(100, média + 1.96σ)`, 1 decimal                    |
 | `polls_included`            | Número de pesquisas que tinham resultado p/ o candidato |
 | `total_sample_size`         | Soma das amostras das pesquisas incluídas               |
-| `calculation_params`        | `{ half_life: 10, reference_date: ISO }`                |
+| `scenario_label`            | `NULL` em 1T; `"{slug_a}-vs-{slug_b}"` em 2T            |
+| `calculation_params`        | `{ half_life: 10, reference_date: ISO, scenario?: ... }`|
 | `calculated_at`             | Timestamp da execução                                   |
+
+### 3.2 Por que 2T é por cenário (não agregado)
+
+No 2º turno, cada cenário é uma pergunta **independente** da pesquisa:
+
+- "Se for **Lula × Flávio**, em quem você vota?"
+- "Se for **Lula × Zema**, em quem você vota?"
+- "Se for **Lula × Caiado**, em quem você vota?"
+
+Agregar "Lula" como média única destes cenários produz um número **sem
+significado interpretativo** — mistura comportamentos de eleitores em
+disputas diferentes. Por isso, no 2T:
+
+- Cada **par de candidatos** vira um grupo distinto, identificado por
+  `scenario_label` (formato canônico: slugs ordenados alfabeticamente,
+  joined por `-vs-`, ex.: `caiado-vs-lula`).
+- Polls com `round = 2` e exatamente **2 resultados** são agrupados por par.
+- Cada cenário tem sua própria média ponderada, calculada pela mesma
+  fórmula do §2 mas restrita ao subset de polls daquele par.
+- Resultado: para cada cenário, duas linhas em `weighted_averages` (uma
+  por candidato) compartilhando o mesmo `scenario_label`.
+
+Polls 2T com nº de candidatos ≠ 2 (ex.: três nomes em uma só pergunta)
+são ignorados. Esses são casos editorialmente inválidos.
 
 ---
 
