@@ -45,3 +45,4 @@ supabase/.temp/
 
 # SEO drift snapshots (gerados localmente)
 tools/seo-baselines/
+tmp/
