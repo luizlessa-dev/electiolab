@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@supabase/supabase-js";
-import { ArrowLeft, BarChart3 } from "lucide-react";
+import { ArrowLeft, BarChart3, TrendingUp } from "lucide-react";
 
 export const revalidate = 3600;
 
@@ -22,66 +22,195 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
 };
 
-type Scenario = {
-  scenario_label: string | null;
-  publication_date: string;
-  institute: string;
-  results: { name: string; party: string | null; pct: number; color: string | null }[];
+// ─── Tipos ────────────────────────────────────────────────────────────
+type Avg = {
+  scenario_label: string;
+  candidate: { name: string; party: string | null; color: string | null; slug: string };
+  weighted_average: number;
+  confidence_interval_low: number;
+  confidence_interval_high: number;
+  polls_included: number;
 };
 
-async function getScenarios(): Promise<Scenario[]> {
+type PollLine = {
+  publication_date: string;
+  institute: string;
+  results: { name: string; pct: number; color: string | null }[];
+};
+
+type ScenarioBlock = {
+  label: string;           // "lula-vs-zema"
+  display: string;         // "Lula × Zema"
+  candidates: Avg[];       // 2 avgs (uma por candidato)
+  pollsCount: number;
+  status: "empate" | "vantagem" | "folga" | "raso";
+  history: PollLine[];
+};
+
+// ─── Helpers ──────────────────────────────────────────────────────────
+
+/**
+ * Classifica o status do cenário com base no gap e na sobreposição de IC.
+ * - empate: IC do líder se sobrepõe com IC do segundo
+ * - vantagem: gap > 0 mas IC quase encosta (≤2pp de folga acima do limite)
+ * - folga: gap claro, IC não se sobrepõe e nem encosta
+ * - raso: < 3 pesquisas, qualquer leitura é pouco robusta
+ */
+function classify(a: Avg, b: Avg): ScenarioBlock["status"] {
+  if (a.polls_included < 3) return "raso";
+  const lead = a.weighted_average >= b.weighted_average ? a : b;
+  const trail = a.weighted_average >= b.weighted_average ? b : a;
+  const overlap = lead.confidence_interval_low <= trail.confidence_interval_high;
+  if (overlap) return "empate";
+  const margin = lead.confidence_interval_low - trail.confidence_interval_high;
+  if (margin < 2) return "vantagem";
+  return "folga";
+}
+
+function statusBadge(s: ScenarioBlock["status"]) {
+  const map = {
+    empate:   { label: "Empate técnico",  cls: "bg-amber-500/15 text-amber-400 border-amber-500/30" },
+    vantagem: { label: "Vantagem do líder", cls: "bg-blue-500/15 text-blue-400 border-blue-500/30" },
+    folga:    { label: "Folga clara",     cls: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30" },
+    raso:     { label: "Poucos dados",    cls: "bg-slate-500/15 text-slate-400 border-slate-500/30" },
+  };
+  return map[s];
+}
+
+function prettyLabel(slug: string, candidates: Avg[]): string {
+  // "caiado-vs-lula" → "Caiado × Lula" (preserva ordem do par)
+  const byName = new Map(candidates.map((c) => [c.candidate.slug, c.candidate.name]));
+  const [a, b] = slug.split("-vs-");
+  const na = byName.get(a) ?? a;
+  const nb = byName.get(b) ?? b;
+  return `${na} × ${nb}`;
+}
+
+// ─── Data fetch ───────────────────────────────────────────────────────
+
+async function getData(): Promise<{ blocks: ScenarioBlock[]; updated: string | null }> {
   const sb = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     { auth: { persistSession: false } }
   );
 
-  const { data } = await sb
+  const PRES_2T_ID = "cd7032c5-06ed-4eb9-8702-ddd6c75d83de";
+
+  // 1) Médias ponderadas por cenário (já calculadas pela Edge Function v5)
+  const { data: avgs } = await sb
+    .from("weighted_averages")
+    .select(
+      `scenario_label, weighted_average, confidence_interval_low, confidence_interval_high,
+       polls_included, calculated_at,
+       candidate:candidates(name, party, color, slug)`
+    )
+    .eq("election_id", PRES_2T_ID)
+    .not("scenario_label", "is", null);
+
+  // 2) Histórico bruto de polls 2T (pra accordion)
+  const { data: polls } = await sb
     .from("polls")
     .select(
-      `id, scenario_label, publication_date, sample_size, source_url,
+      `scenario_label, publication_date,
        institute:institutes(name),
-       results:poll_results(percentage, candidate:candidates(name, party, color))`
+       results:poll_results(percentage, candidate:candidates(name, color))`
     )
-    .eq("election_id", "21f8e9a3-5ff8-4baf-b0ae-6b00d2614248") // Pres 2026 1T
     .eq("round", 2)
     .order("publication_date", { ascending: false });
 
-  return ((data ?? []) as unknown as Array<{
+  // ─── Agrupa ─────────────────────────────────────────────────────────
+  const blocks = new Map<string, ScenarioBlock>();
+  for (const a of (avgs ?? []) as unknown as Array<
+    Omit<Avg, "candidate"> & {
+      candidate:
+        | { name: string; party: string | null; color: string | null; slug: string }[]
+        | { name: string; party: string | null; color: string | null; slug: string };
+      calculated_at: string;
+    }
+  >) {
+    const cand = Array.isArray(a.candidate) ? a.candidate[0] : a.candidate;
+    if (!cand || !a.scenario_label) continue;
+    const block = blocks.get(a.scenario_label) ?? {
+      label: a.scenario_label,
+      display: "",
+      candidates: [],
+      pollsCount: a.polls_included,
+      status: "raso" as ScenarioBlock["status"],
+      history: [],
+    };
+    block.candidates.push({ ...a, candidate: cand });
+    block.pollsCount = Math.max(block.pollsCount, a.polls_included);
+    blocks.set(a.scenario_label, block);
+  }
+
+  // Histórico por cenário
+  const historyByScenario = new Map<string, PollLine[]>();
+  for (const p of (polls ?? []) as unknown as Array<{
     scenario_label: string | null;
     publication_date: string;
     institute: { name: string }[] | { name: string } | null;
     results: Array<{
       percentage: number;
-      candidate:
-        | { name: string; party: string | null; color: string | null }[]
-        | { name: string; party: string | null; color: string | null }
-        | null;
+      candidate: { name: string; color: string | null }[] | { name: string; color: string | null } | null;
     }>;
-  }>).map((p) => ({
-    scenario_label: p.scenario_label,
-    publication_date: p.publication_date,
-    institute: (Array.isArray(p.institute) ? p.institute[0] : p.institute)?.name ?? "?",
-    results: (p.results ?? []).map((r) => {
-      const cand = Array.isArray(r.candidate) ? r.candidate[0] : r.candidate;
-      return {
-        name: cand?.name ?? "?",
-        party: cand?.party ?? null,
-        color: cand?.color ?? null,
-        pct: Number(r.percentage),
-      };
-    }),
-  }));
+  }>) {
+    if (!p.scenario_label) continue;
+    const inst = (Array.isArray(p.institute) ? p.institute[0] : p.institute)?.name ?? "?";
+    const line: PollLine = {
+      publication_date: p.publication_date,
+      institute: inst,
+      results: (p.results ?? []).map((r) => {
+        const cand = Array.isArray(r.candidate) ? r.candidate[0] : r.candidate;
+        return { name: cand?.name ?? "?", pct: Number(r.percentage), color: cand?.color ?? null };
+      }),
+    };
+    const arr = historyByScenario.get(p.scenario_label) ?? [];
+    arr.push(line);
+    historyByScenario.set(p.scenario_label, arr);
+  }
+
+  // Finaliza
+  const finalBlocks: ScenarioBlock[] = [];
+  for (const [label, block] of blocks) {
+    // Ordena candidatos por % desc
+    block.candidates.sort((a, b) => b.weighted_average - a.weighted_average);
+    if (block.candidates.length === 2) {
+      block.status = classify(block.candidates[0], block.candidates[1]);
+    }
+    block.display = prettyLabel(label, block.candidates);
+    block.history = historyByScenario.get(label) ?? [];
+    finalBlocks.push(block);
+  }
+
+  // Ordena cenários: empate primeiro (mais interessante), depois por nº de polls
+  const priority: Record<ScenarioBlock["status"], number> = { empate: 0, vantagem: 1, folga: 2, raso: 3 };
+  finalBlocks.sort((a, b) => priority[a.status] - priority[b.status] || b.pollsCount - a.pollsCount);
+
+  // Última atualização
+  const lastDate = (polls ?? [])
+    .map((p) => (p as unknown as { publication_date?: string }).publication_date)
+    .filter(Boolean)
+    .sort()
+    .reverse()[0] ?? null;
+
+  return { blocks: finalBlocks, updated: lastDate };
 }
+
+// ─── FAQ ──────────────────────────────────────────────────────────────
 
 const FAQS = [
   {
+    q: "Por que as porcentagens não somam 100%?",
+    a: "Cada pesquisa tem ~8-15% de eleitores indecisos, brancos, nulos ou que não souberam responder. No ElectioLab essa parcela aparece explícita como 'Indecisos / Brancos / Nulos' fechando os 100% — diferente da maioria dos veículos que só mostra os 2 candidatos.",
+  },
+  {
     q: "Lula vai vencer Flávio Bolsonaro no 2º turno?",
-    a: "Pelas pesquisas mais recentes de abril/2026, Lula e Flávio Bolsonaro aparecem dentro da margem de erro — Datafolha (45×46), Quaest (40×42). Em média ponderada, o cenário é tecnicamente empatado.",
+    a: "Pelas pesquisas mais recentes de abril/2026, Lula e Flávio Bolsonaro aparecem dentro da margem de erro — em média ponderada o cenário é tecnicamente empatado, com Flávio levemente à frente (≈1.3pp).",
   },
   {
     q: "Lula bate Caiado no 2º turno?",
-    a: "Pela Quaest abril/2026, Lula lidera contra Caiado com vantagem ampla (43-44% vs 30%+). Caiado tem maior potencial em Goiás e Centro-Oeste, mas pouco capital nacional comparado a Lula ou Flávio.",
+    a: "Sim, com vantagem de aproximadamente 6 pontos pela média ponderada de 7 pesquisas. Caiado tem força em Goiás e Centro-Oeste, mas pouco capital nacional.",
   },
   {
     q: "Tarcísio entra no 2º turno presidencial?",
@@ -93,10 +222,68 @@ const FAQS = [
   },
 ];
 
-export default async function Quem2TurnoPage() {
-  const scenarios = await getScenarios();
+// ─── Componente de barra ───────────────────────────────────────────────
 
-  // FAQPage schema pra esta página específica
+function BarRow({
+  name,
+  party,
+  pct,
+  color,
+  ic,
+  muted,
+}: {
+  name: string;
+  party?: string | null;
+  pct: number;
+  color?: string | null;
+  ic?: { low: number; high: number };
+  muted?: boolean;
+}) {
+  return (
+    <div className="space-y-1">
+      <div className="flex items-baseline justify-between text-sm gap-2">
+        <span className={muted ? "text-muted-foreground" : "font-medium"}>
+          {name}
+          {party && (
+            <span className="text-xs text-muted-foreground ml-1.5">{party}</span>
+          )}
+        </span>
+        <span
+          className="font-mono font-bold tabular-nums"
+          style={{ color: !muted && color ? color : undefined }}
+        >
+          {pct.toFixed(1)}%
+        </span>
+      </div>
+      <div className="relative h-2 bg-muted/50 rounded-full overflow-hidden">
+        <div
+          className="absolute inset-y-0 left-0 rounded-full"
+          style={{
+            width: `${pct}%`,
+            backgroundColor: muted ? "var(--muted-foreground)" : color ?? "#6b7280",
+            opacity: muted ? 0.4 : 0.9,
+          }}
+        />
+        {ic && (
+          <div
+            className="absolute inset-y-0 border-x border-white/40"
+            style={{
+              left: `${ic.low}%`,
+              width: `${Math.max(0, ic.high - ic.low)}%`,
+            }}
+            title={`IC 95% · ${ic.low}–${ic.high}%`}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Página ────────────────────────────────────────────────────────────
+
+export default async function Quem2TurnoPage() {
+  const { blocks, updated } = await getData();
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -106,7 +293,7 @@ export default async function Quem2TurnoPage() {
           "https://electiolab.com/quem-vence-no-segundo-turno-presidencia-2026#article",
         headline: "Quem vence no 2º turno da Presidência 2026?",
         description:
-          "Comparativo dos cenários simulados de 2º turno presidencial 2026.",
+          "Comparativo dos cenários simulados de 2º turno presidencial 2026, com média ponderada por cenário.",
         author: { "@id": "https://electiolab.com/sobre#founder" },
         publisher: { "@id": "https://electiolab.com/#organization" },
         datePublished: "2026-04-29",
@@ -163,52 +350,122 @@ export default async function Quem2TurnoPage() {
             Quem vence no 2º turno da Presidência 2026?
           </h1>
           <p className="text-base text-muted-foreground leading-relaxed mb-6">
-            Os principais institutos brasileiros — Datafolha, Quaest, Ipec, Atlas Intel —
-            já testam cenários simulados de 2º turno entre Lula e seus prováveis
-            adversários (Flávio Bolsonaro, Caiado, Zema, Tarcísio). Aqui consolidamos os
-            últimos números, com média ponderada por recência, amostra e acurácia
-            histórica do instituto.
+            Cada cenário de 2º turno é uma <strong>pergunta independente</strong> da
+            pesquisa (&quot;se for Lula × Flávio&quot;, &quot;se for Lula × Zema&quot;, etc.).
+            Aqui mostramos a média ponderada de cada cenário separadamente — somando
+            indecisos para fechar os 100% — em vez de misturar tudo numa lista
+            cronológica de polls.
           </p>
 
-          {scenarios.length > 0 && (
-            <section>
-              <h2 className="text-xl font-bold mb-3">Cenários atuais</h2>
-              <div className="space-y-3">
-                {scenarios.slice(0, 8).map((s, i) => (
-                  <div key={i} className="rounded-lg border border-border bg-card p-4">
-                    <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
-                      <span className="font-mono">
-                        {s.scenario_label ?? "Cenário 2T"}
-                      </span>
-                      <span>
-                        {s.institute} · {new Date(s.publication_date).toLocaleDateString("pt-BR")}
+          {blocks.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Sem cenários disponíveis no momento.</p>
+          ) : (
+            <section className="space-y-5">
+              {blocks.map((b) => {
+                const [lead, trail] = b.candidates;
+                if (!lead || !trail) return null;
+                const total = lead.weighted_average + trail.weighted_average;
+                const indef = Math.max(0, 100 - total);
+                const badge = statusBadge(b.status);
+                const gap = Math.abs(lead.weighted_average - trail.weighted_average);
+
+                return (
+                  <div
+                    key={b.label}
+                    className="rounded-xl border border-border bg-card overflow-hidden"
+                  >
+                    {/* Header */}
+                    <div className="px-5 py-3 border-b border-border flex items-center justify-between gap-3 flex-wrap">
+                      <div className="flex items-center gap-2">
+                        <span className="text-base font-bold">{b.display}</span>
+                        <span className="text-xs text-muted-foreground font-mono">
+                          {b.pollsCount} {b.pollsCount === 1 ? "pesquisa" : "pesquisas"}
+                        </span>
+                      </div>
+                      <span
+                        className={`text-[11px] px-2 py-0.5 rounded-md border font-medium ${badge.cls}`}
+                      >
+                        {badge.label}
                       </span>
                     </div>
-                    <div className="space-y-2">
-                      {s.results
-                        .sort((a, b) => b.pct - a.pct)
-                        .map((r, ri) => (
-                          <div key={ri} className="flex items-center justify-between text-sm">
-                            <span>
-                              {r.name}
-                              {r.party && (
-                                <span className="text-xs text-muted-foreground ml-2">
-                                  {r.party}
-                                </span>
-                              )}
+
+                    {/* Bars */}
+                    <div className="px-5 py-4 space-y-3">
+                      <BarRow
+                        name={lead.candidate.name}
+                        party={lead.candidate.party}
+                        pct={lead.weighted_average}
+                        color={lead.candidate.color}
+                        ic={{ low: lead.confidence_interval_low, high: lead.confidence_interval_high }}
+                      />
+                      <BarRow
+                        name={trail.candidate.name}
+                        party={trail.candidate.party}
+                        pct={trail.weighted_average}
+                        color={trail.candidate.color}
+                        ic={{ low: trail.confidence_interval_low, high: trail.confidence_interval_high }}
+                      />
+                      {indef > 0 && (
+                        <BarRow
+                          name="Indecisos / Brancos / Nulos"
+                          pct={indef}
+                          muted
+                        />
+                      )}
+
+                      <div className="pt-2 border-t border-border flex items-center justify-between text-xs text-muted-foreground font-mono">
+                        <span>
+                          Soma: {(total + indef).toFixed(1)}%
+                        </span>
+                        <span>
+                          Diferença líder: {gap.toFixed(1)}pp
+                        </span>
+                      </div>
+
+                      {/* Histórico em accordion */}
+                      {b.history.length > 0 && (
+                        <details className="group pt-2">
+                          <summary className="cursor-pointer text-xs text-primary hover:underline list-none flex items-center gap-1.5">
+                            <TrendingUp className="h-3 w-3" />
+                            <span className="group-open:hidden">
+                              Ver histórico ({b.history.length} {b.history.length === 1 ? "pesquisa" : "pesquisas"})
                             </span>
-                            <span
-                              className="font-mono font-bold tabular-nums"
-                              style={{ color: r.color ?? undefined }}
-                            >
-                              {r.pct.toFixed(1)}%
-                            </span>
+                            <span className="hidden group-open:inline">Ocultar histórico</span>
+                          </summary>
+                          <div className="mt-3 space-y-2 text-xs">
+                            {b.history.map((p, i) => (
+                              <div
+                                key={i}
+                                className="rounded-md border border-border/60 bg-muted/20 px-3 py-2"
+                              >
+                                <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1">
+                                  <span>{p.institute}</span>
+                                  <span>
+                                    {new Date(p.publication_date).toLocaleDateString("pt-BR")}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-3 flex-wrap">
+                                  {p.results
+                                    .sort((a, b) => b.pct - a.pct)
+                                    .map((r, ri) => (
+                                      <span
+                                        key={ri}
+                                        className="font-mono tabular-nums"
+                                        style={{ color: r.color ?? undefined }}
+                                      >
+                                        {r.name}: <strong>{r.pct.toFixed(1)}%</strong>
+                                      </span>
+                                    ))}
+                                </div>
+                              </div>
+                            ))}
                           </div>
-                        ))}
+                        </details>
+                      )}
                     </div>
                   </div>
-                ))}
-              </div>
+                );
+              })}
             </section>
           )}
 
@@ -254,7 +511,8 @@ export default async function Quem2TurnoPage() {
 
       <footer className="border-t border-border py-6 mt-12">
         <div className="max-w-3xl mx-auto px-4 text-xs text-muted-foreground font-mono text-center">
-          ElectioLab · Última atualização das pesquisas: {new Date().toLocaleDateString("pt-BR")}
+          ElectioLab · Última pesquisa indexada:{" "}
+          {updated ? new Date(updated).toLocaleDateString("pt-BR") : new Date().toLocaleDateString("pt-BR")}
         </div>
       </footer>
     </div>
