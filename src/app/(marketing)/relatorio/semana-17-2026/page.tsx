@@ -191,7 +191,7 @@ export default function RelatorioSemana17Page() {
                   <div className="flex items-center gap-3">
                     <div className="w-36 hidden sm:block">
                       <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full rounded-full transition-all" style={{ width: `${(c.pct / 42) * 100}%`, backgroundColor: c.cor }} />
+                        <div className="h-full rounded-full" style={{ width: `${(c.pct / 42) * 100}%`, backgroundColor: c.cor }} />
                       </div>
                     </div>
                     <span className="text-sm font-mono font-bold tabular-nums w-12 text-right">{c.pct}%</span>
