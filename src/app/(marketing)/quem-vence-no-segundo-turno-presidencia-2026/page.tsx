@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@supabase/supabase-js";
-import { ArrowLeft, BarChart3, TrendingUp } from "lucide-react";
+import { ArrowLeft, BarChart3 } from "lucide-react";
 
 export const revalidate = 3600;
 
@@ -201,8 +201,12 @@ async function getData(): Promise<{ blocks: ScenarioBlock[]; updated: string | n
 
 const FAQS = [
   {
-    q: "Por que as porcentagens não somam 100%?",
-    a: "Cada pesquisa tem ~8-15% de eleitores indecisos, brancos, nulos ou que não souberam responder. No ElectioLab essa parcela aparece explícita como 'Indecisos / Brancos / Nulos' fechando os 100% — diferente da maioria dos veículos que só mostra os 2 candidatos.",
+    q: "Por que cada cenário aparece em uma linha separada?",
+    a: "Porque cada cenário é uma pergunta independente da pesquisa. Os institutos perguntam 'se for Lula × Flávio, em quem você vota?' e 'se for Lula × Zema, em quem você vota?' — duas perguntas diferentes, com respostas diferentes. Misturar tudo num único gráfico de 6 candidatos é matematicamente errado: Lula varia conforme o adversário (43,7% contra Flávio vs 45,6% contra Renan), e os adversários nunca foram testados entre si.",
+  },
+  {
+    q: "Por que as porcentagens dos 2 candidatos não somam 100%?",
+    a: "Cada pesquisa tem ~8-15% de eleitores indecisos, brancos, nulos ou que não souberam responder. Não mostramos essa parcela na tabela pra manter o foco no cenário; ela aparece implícita na diferença entre a soma das % exibidas e 100.",
   },
   {
     q: "Lula vai vencer Flávio Bolsonaro no 2º turno?",
@@ -222,67 +226,45 @@ const FAQS = [
   },
 ];
 
-// ─── Componente de barra ───────────────────────────────────────────────
+// ─── Identifica o candidato comum (presente em todos os cenários) ──────
+// Em 2026 esse é Lula (presidente em exercício, oponente em todos os
+// cenários testados). Generaliza pra qualquer eleição futura.
 
-function BarRow({
-  name,
-  party,
-  pct,
-  color,
-  ic,
-  muted,
-}: {
-  name: string;
-  party?: string | null;
-  pct: number;
-  color?: string | null;
-  ic?: { low: number; high: number };
-  muted?: boolean;
-}) {
-  return (
-    <div className="space-y-1">
-      <div className="flex items-baseline justify-between text-sm gap-2">
-        <span className={muted ? "text-muted-foreground" : "font-medium"}>
-          {name}
-          {party && (
-            <span className="text-xs text-muted-foreground ml-1.5">{party}</span>
-          )}
-        </span>
-        <span
-          className="font-mono font-bold tabular-nums"
-          style={{ color: !muted && color ? color : undefined }}
-        >
-          {pct.toFixed(1)}%
-        </span>
-      </div>
-      <div className="relative h-2 bg-muted/50 rounded-full overflow-hidden">
-        <div
-          className="absolute inset-y-0 left-0 rounded-full"
-          style={{
-            width: `${pct}%`,
-            backgroundColor: muted ? "var(--muted-foreground)" : color ?? "#6b7280",
-            opacity: muted ? 0.4 : 0.9,
-          }}
-        />
-        {ic && (
-          <div
-            className="absolute inset-y-0 border-x border-white/40"
-            style={{
-              left: `${ic.low}%`,
-              width: `${Math.max(0, ic.high - ic.low)}%`,
-            }}
-            title={`IC 95% · ${ic.low}–${ic.high}%`}
-          />
-        )}
-      </div>
-    </div>
-  );
+function findCommonCandidate(blocks: ScenarioBlock[]): string | null {
+  if (blocks.length === 0) return null;
+  const sets = blocks.map((b) => new Set(b.candidates.map((c) => c.candidate.slug)));
+  const first = sets[0];
+  for (const slug of first) {
+    if (sets.every((s) => s.has(slug))) return slug;
+  }
+  return null;
 }
+
 
 // ─── Página ────────────────────────────────────────────────────────────
 
 export default async function Quem2TurnoPage() {
   const { blocks, updated } = await getData();
+  const commonSlug = findCommonCandidate(blocks);
+
+  // Linhas da tabela: 1 por adversário (não-comum), ordenadas pela % do adversário desc
+  // = "do mais difícil pro mais fácil pro candidato comum"
+  type Row = {
+    block: ScenarioBlock;
+    common: Avg;
+    adversary: Avg;
+  };
+  const rows: Row[] = [];
+  for (const b of blocks) {
+    if (b.candidates.length !== 2) continue;
+    const common = b.candidates.find((c) => c.candidate.slug === commonSlug);
+    const adversary = b.candidates.find((c) => c.candidate.slug !== commonSlug);
+    if (!common || !adversary) continue;
+    rows.push({ block: b, common, adversary });
+  }
+  rows.sort((a, b) => b.adversary.weighted_average - a.adversary.weighted_average);
+
+  const commonName = rows[0]?.common.candidate.name ?? "—";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -350,123 +332,138 @@ export default async function Quem2TurnoPage() {
             Quem vence no 2º turno da Presidência 2026?
           </h1>
           <p className="text-base text-muted-foreground leading-relaxed mb-6">
-            Cada cenário de 2º turno é uma <strong>pergunta independente</strong> da
-            pesquisa (&quot;se for Lula × Flávio&quot;, &quot;se for Lula × Zema&quot;, etc.).
-            Aqui mostramos a média ponderada de cada cenário separadamente — somando
-            indecisos para fechar os 100% — em vez de misturar tudo numa lista
-            cronológica de polls.
+            Cada linha abaixo é um <strong>cenário independente</strong> de pesquisa:
+            os institutos perguntam &quot;se o 2º turno for {commonName} × adversário X&quot;.
+            Os adversários nunca foram testados entre si — por isso a tabela mostra um
+            par por linha, com {commonName} como oponente comum.
           </p>
 
-          {blocks.length === 0 ? (
+          {rows.length === 0 ? (
             <p className="text-sm text-muted-foreground">Sem cenários disponíveis no momento.</p>
           ) : (
-            <section className="space-y-5">
-              {blocks.map((b) => {
-                const [lead, trail] = b.candidates;
-                if (!lead || !trail) return null;
-                const total = lead.weighted_average + trail.weighted_average;
-                const indef = Math.max(0, 100 - total);
-                const badge = statusBadge(b.status);
-                const gap = Math.abs(lead.weighted_average - trail.weighted_average);
+            <section className="rounded-xl border border-border bg-card overflow-hidden">
+              {/* Header da tabela */}
+              <div className="px-4 py-2.5 border-b border-border bg-muted/30 grid grid-cols-[1fr_auto_auto] md:grid-cols-[1fr_140px_120px_auto] gap-3 text-[11px] uppercase tracking-wider text-muted-foreground font-medium">
+                <span>Adversário</span>
+                <span className="text-right">Cenário (% × %)</span>
+                <span className="hidden md:block text-right">Pesquisas</span>
+                <span className="text-right md:text-left">Status</span>
+              </div>
+
+              {rows.map((r) => {
+                const badge = statusBadge(r.block.status);
+                const adv = r.adversary.candidate;
+                const com = r.common.candidate;
+                const gap = r.adversary.weighted_average - r.common.weighted_average;
+                const gapStr = gap >= 0 ? `+${gap.toFixed(1)}` : gap.toFixed(1);
 
                 return (
                   <div
-                    key={b.label}
-                    className="rounded-xl border border-border bg-card overflow-hidden"
+                    key={r.block.label}
+                    className="px-4 py-3 border-b border-border/60 last:border-b-0 grid grid-cols-[1fr_auto_auto] md:grid-cols-[1fr_140px_120px_auto] gap-3 items-center"
                   >
-                    {/* Header */}
-                    <div className="px-5 py-3 border-b border-border flex items-center justify-between gap-3 flex-wrap">
-                      <div className="flex items-center gap-2">
-                        <span className="text-base font-bold">{b.display}</span>
-                        <span className="text-xs text-muted-foreground font-mono">
-                          {b.pollsCount} {b.pollsCount === 1 ? "pesquisa" : "pesquisas"}
-                        </span>
-                      </div>
-                      <span
-                        className={`text-[11px] px-2 py-0.5 rounded-md border font-medium ${badge.cls}`}
-                      >
-                        {badge.label}
-                      </span>
-                    </div>
-
-                    {/* Bars */}
-                    <div className="px-5 py-4 space-y-3">
-                      <BarRow
-                        name={lead.candidate.name}
-                        party={lead.candidate.party}
-                        pct={lead.weighted_average}
-                        color={lead.candidate.color}
-                        ic={{ low: lead.confidence_interval_low, high: lead.confidence_interval_high }}
+                    {/* Adversário */}
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div
+                        className="w-2.5 h-2.5 rounded-full shrink-0"
+                        style={{ backgroundColor: adv.color ?? "#6b7280" }}
                       />
-                      <BarRow
-                        name={trail.candidate.name}
-                        party={trail.candidate.party}
-                        pct={trail.weighted_average}
-                        color={trail.candidate.color}
-                        ic={{ low: trail.confidence_interval_low, high: trail.confidence_interval_high }}
-                      />
-                      {indef > 0 && (
-                        <BarRow
-                          name="Indecisos / Brancos / Nulos"
-                          pct={indef}
-                          muted
-                        />
-                      )}
-
-                      <div className="pt-2 border-t border-border flex items-center justify-between text-xs text-muted-foreground font-mono">
-                        <span>
-                          Soma: {(total + indef).toFixed(1)}%
-                        </span>
-                        <span>
-                          Diferença líder: {gap.toFixed(1)}pp
-                        </span>
-                      </div>
-
-                      {/* Histórico em accordion */}
-                      {b.history.length > 0 && (
-                        <details className="group pt-2">
-                          <summary className="cursor-pointer text-xs text-primary hover:underline list-none flex items-center gap-1.5">
-                            <TrendingUp className="h-3 w-3" />
-                            <span className="group-open:hidden">
-                              Ver histórico ({b.history.length} {b.history.length === 1 ? "pesquisa" : "pesquisas"})
-                            </span>
-                            <span className="hidden group-open:inline">Ocultar histórico</span>
-                          </summary>
-                          <div className="mt-3 space-y-2 text-xs">
-                            {b.history.map((p, i) => (
-                              <div
-                                key={i}
-                                className="rounded-md border border-border/60 bg-muted/20 px-3 py-2"
-                              >
-                                <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1">
-                                  <span>{p.institute}</span>
-                                  <span>
-                                    {new Date(p.publication_date).toLocaleDateString("pt-BR")}
-                                  </span>
-                                </div>
-                                <div className="flex items-center gap-3 flex-wrap">
-                                  {p.results
-                                    .sort((a, b) => b.pct - a.pct)
-                                    .map((r, ri) => (
-                                      <span
-                                        key={ri}
-                                        className="font-mono tabular-nums"
-                                        style={{ color: r.color ?? undefined }}
-                                      >
-                                        {r.name}: <strong>{r.pct.toFixed(1)}%</strong>
-                                      </span>
-                                    ))}
-                                </div>
-                              </div>
-                            ))}
+                      <div className="min-w-0">
+                        <div className="text-sm font-semibold truncate">{adv.name}</div>
+                        {adv.party && (
+                          <div className="text-[11px] text-muted-foreground font-mono">
+                            {adv.party}
                           </div>
-                        </details>
-                      )}
+                        )}
+                      </div>
                     </div>
+
+                    {/* Cenário % × % */}
+                    <div className="text-right font-mono tabular-nums text-sm whitespace-nowrap">
+                      <span style={{ color: adv.color ?? undefined }} className="font-bold">
+                        {r.adversary.weighted_average.toFixed(1)}
+                      </span>
+                      <span className="text-muted-foreground mx-1">×</span>
+                      <span style={{ color: com.color ?? undefined }} className="font-bold">
+                        {r.common.weighted_average.toFixed(1)}
+                      </span>
+                      <div className="text-[10px] text-muted-foreground font-normal mt-0.5">
+                        gap {gapStr}pp
+                      </div>
+                    </div>
+
+                    {/* Pesquisas */}
+                    <div className="hidden md:block text-right text-xs text-muted-foreground font-mono">
+                      {r.block.pollsCount}
+                    </div>
+
+                    {/* Status badge */}
+                    <span
+                      className={`text-[10px] md:text-[11px] px-2 py-0.5 rounded-md border font-medium whitespace-nowrap text-right ${badge.cls}`}
+                    >
+                      {badge.label}
+                    </span>
                   </div>
                 );
               })}
+
+              {/* Footer explicativo */}
+              <div className="px-4 py-3 border-t border-border bg-muted/20 text-[11px] text-muted-foreground leading-relaxed">
+                <strong className="text-foreground">Notas:</strong> Os ~10-15% restantes
+                em cada cenário são eleitores indecisos, brancos, nulos ou que não souberam
+                responder. &quot;Empate técnico&quot; significa que o IC 95% do líder se sobrepõe
+                ao do segundo colocado — qualquer um pode estar à frente dentro da margem
+                de erro. &quot;Poucos dados&quot; sinaliza cenários com menos de 3 pesquisas.
+              </div>
             </section>
+          )}
+
+          {/* Histórico de polls em accordion único */}
+          {rows.length > 0 && (
+            <details className="group mt-6">
+              <summary className="cursor-pointer text-sm text-primary hover:underline list-none flex items-center gap-1.5">
+                <BarChart3 className="h-3.5 w-3.5" />
+                <span className="group-open:hidden">
+                  Ver pesquisas individuais por cenário
+                </span>
+                <span className="hidden group-open:inline">Ocultar pesquisas individuais</span>
+              </summary>
+              <div className="mt-4 space-y-5">
+                {rows.map((r) => (
+                  <div key={r.block.label}>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
+                      {r.block.display}
+                    </h3>
+                    <div className="space-y-1.5">
+                      {r.block.history.map((p, i) => (
+                        <div
+                          key={i}
+                          className="rounded-md border border-border/60 bg-muted/20 px-3 py-2 text-xs"
+                        >
+                          <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1">
+                            <span>{p.institute}</span>
+                            <span>{new Date(p.publication_date).toLocaleDateString("pt-BR")}</span>
+                          </div>
+                          <div className="flex items-center gap-3 flex-wrap">
+                            {p.results
+                              .sort((a, b) => b.pct - a.pct)
+                              .map((rr, ri) => (
+                                <span
+                                  key={ri}
+                                  className="font-mono tabular-nums"
+                                  style={{ color: rr.color ?? undefined }}
+                                >
+                                  {rr.name}: <strong>{rr.pct.toFixed(1)}%</strong>
+                                </span>
+                              ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </details>
           )}
 
           <section className="mt-10">
