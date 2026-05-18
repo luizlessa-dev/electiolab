@@ -21,7 +21,7 @@ async function fetchCandidates(slugs: string[]): Promise<ComparedCandidate[]> {
       `id, slug, name, full_name, party, color, current_position, photo_url,
        birth_date, profession, education, net_worth, bio, tse_last_situation,
        election:elections(type, state, year, name),
-       averages:weighted_averages(weighted_average, calculated_at, polls_included),
+       averages:weighted_averages(weighted_average, calculated_at, polls_included, scenario_label),
        polls:poll_results(percentage, poll:polls(publication_date, institute:institutes(name)))`
     )
     .in("slug", slugs)
@@ -44,7 +44,7 @@ async function fetchCandidates(slugs: string[]): Promise<ComparedCandidate[]> {
     bio: string | null;
     tse_last_situation: string | null;
     election: ElectionInfo | ElectionInfo[] | null;
-    averages?: Array<{ weighted_average: number; calculated_at: string; polls_included: number }>;
+    averages?: Array<{ weighted_average: number; calculated_at: string; polls_included: number; scenario_label: string | null }>;
     polls?: Array<{
       percentage: number;
       poll: { publication_date: string; institute: { name: string } | null } | null;
@@ -53,7 +53,10 @@ async function fetchCandidates(slugs: string[]): Promise<ComparedCandidate[]> {
   const map = new Map<string, ComparedCandidate>();
   for (const raw of (data ?? []) as unknown as RawRow[]) {
     const elec = Array.isArray(raw.election) ? raw.election[0] : raw.election;
+    // Filtra apenas 1T (scenario_label = null). 2T tem N linhas por cenário,
+    // não dá pra reduzir a número único aqui.
     const latestAvg = (raw.averages ?? [])
+      .filter((a) => a.scenario_label === null)
       .slice()
       .sort((a, b) => (b.calculated_at ?? "").localeCompare(a.calculated_at ?? ""))[0];
     const latestPoll = (raw.polls ?? [])

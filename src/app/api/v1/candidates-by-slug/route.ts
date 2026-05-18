@@ -30,7 +30,7 @@ export async function GET(request: Request) {
       `id, slug, name, full_name, party, color, current_position, photo_url,
        birth_date, profession, education, net_worth, bio, tse_last_situation,
        election:elections(type, state, year, name),
-       averages:weighted_averages(weighted_average, calculated_at, polls_included),
+       averages:weighted_averages(weighted_average, calculated_at, polls_included, scenario_label),
        polls:poll_results(percentage, poll:polls(publication_date, institute:institutes(name)))`
     )
     .in("slug", slugs)
@@ -45,12 +45,16 @@ export async function GET(request: Request) {
       weighted_average: number;
       calculated_at: string;
       polls_included: number;
+      scenario_label: string | null;
     }>;
     const polls = (raw.polls ?? []) as Array<{
       percentage: number;
       poll: { publication_date: string; institute: { name: string } | null } | null;
     }>;
+    // Filtra apenas 1T (scenario_label = null). 2T precisa endpoint dedicado
+    // por cenário — não dá pra reduzir N cenários a número único aqui.
     const latestAvg = averages
+      .filter((a) => a.scenario_label === null)
       .slice()
       .sort((a, b) => (b.calculated_at ?? "").localeCompare(a.calculated_at ?? ""))[0];
     const latestPoll = polls
