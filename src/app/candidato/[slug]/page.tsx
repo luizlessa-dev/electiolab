@@ -26,7 +26,7 @@ import {
   Trophy,
   XCircle as XCircleIcon,
 } from "lucide-react";
-import { DriftChart } from "./drift-chart";
+import { DriftChartLazy as DriftChart } from "./drift-chart-lazy";
 
 export const revalidate = 3600; // 1h ISR — gera sob demanda na primeira request
 
