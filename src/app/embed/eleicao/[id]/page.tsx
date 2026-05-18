@@ -16,6 +16,8 @@ export const dynamic = "force-dynamic";
 
 type Average = {
   weighted_average: number;
+  polls_included: number;
+  scenario_label: string | null;
   candidate: { name: string; party: string | null; color: string | null; slug: string };
 };
 
@@ -28,7 +30,7 @@ async function getData(id: string) {
 
   const { data: election } = await sb
     .from("elections")
-    .select("id, name, type, state, year, election_date")
+    .select("id, name, type, state, year, election_date, round")
     .eq("id", id)
     .maybeSingle();
   if (!election) return null;
@@ -36,30 +38,66 @@ async function getData(id: string) {
   const { data: averages } = await sb
     .from("weighted_averages")
     .select(
-      "weighted_average, candidate:candidates(name, party, color, slug)"
+      "weighted_average, polls_included, scenario_label, candidate:candidates(name, party, color, slug)"
     )
     .eq("election_id", id)
-    .order("weighted_average", { ascending: false })
-    .limit(8);
+    .order("weighted_average", { ascending: false });
+
+  const isSecondRound = election.round === 2;
 
   const { data: pollsCount } = await sb
     .from("polls")
     .select("id", { count: "exact", head: true })
     .eq("election_id", id)
-    .eq("round", 1);
+    .eq("round", isSecondRound ? 2 : 1);
 
   const flat: Average[] = ((averages ?? []) as unknown as Array<{
     weighted_average: number;
+    polls_included: number;
+    scenario_label: string | null;
     candidate: { name: string; party: string | null; color: string | null; slug: string }[] | { name: string; party: string | null; color: string | null; slug: string };
   }>).map((a) => ({
     weighted_average: a.weighted_average,
+    polls_included: a.polls_included,
+    scenario_label: a.scenario_label,
     candidate: Array.isArray(a.candidate) ? a.candidate[0] : a.candidate,
   }));
 
+  // 2T: agrupa por scenario_label e escolhe o cenário mais pesquisado
+  // (proxy razoável de "principal"). Renderizar todos cenários numa lista
+  // só de barras quebra a UX porque duplica candidatos entre cenários.
+  let displayAverages = flat;
+  let scenarioLabel: string | null = null;
+  if (isSecondRound) {
+    const byScenario = new Map<string, Average[]>();
+    for (const a of flat.filter((x) => x.scenario_label !== null)) {
+      const key = a.scenario_label!;
+      if (!byScenario.has(key)) byScenario.set(key, []);
+      byScenario.get(key)!.push(a);
+    }
+    let bestKey: string | null = null;
+    let bestPolls = -1;
+    for (const [key, rows] of byScenario) {
+      const polls = rows[0]?.polls_included ?? 0;
+      if (polls > bestPolls) {
+        bestPolls = polls;
+        bestKey = key;
+      }
+    }
+    if (bestKey) {
+      displayAverages = byScenario.get(bestKey) ?? [];
+      scenarioLabel = bestKey;
+    }
+  } else {
+    // 1T: filtra só scenario_label = null
+    displayAverages = flat.filter((a) => a.scenario_label === null);
+  }
+
   return {
     election,
-    averages: flat,
+    averages: displayAverages.slice(0, 8),
     polls_count: (pollsCount as unknown as { count?: number })?.count ?? 0,
+    scenario_label: scenarioLabel,
   };
 }
 
@@ -92,7 +130,7 @@ export default async function EmbedEleicaoPage({
     );
   }
 
-  const { election, averages, polls_count } = data;
+  const { election, averages, polls_count, scenario_label } = data;
   const total = averages.reduce((s, a) => s + (a.weighted_average ?? 0), 0);
 
   return (
@@ -100,7 +138,7 @@ export default async function EmbedEleicaoPage({
       <header className="embed-header">
         <div>
           <p className="embed-eyebrow">
-            ElectioLab · Média ponderada
+            ElectioLab · Média ponderada{scenario_label ? ` · ${scenario_label}` : ""}
           </p>
           <h1 className="embed-title">{election.name}</h1>
         </div>

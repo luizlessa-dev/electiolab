@@ -46,7 +46,7 @@ async function getAll(): Promise<CandidateRow[]> {
     .select(
       `id, slug, name, party, color, current_position, bio, photo_url, tse_last_situation, birth_date,
        election:elections!inner(type, state, year, name),
-       averages:weighted_averages(weighted_average, calculated_at)`
+       averages:weighted_averages(weighted_average, calculated_at, scenario_label)`
     )
     .eq("is_active", true)
     .eq("election.year", 2026)
@@ -54,11 +54,15 @@ async function getAll(): Promise<CandidateRow[]> {
 
   // Achata a média mais recente por candidato
   return ((data ?? []) as unknown as Array<
-    CandidateRow & { averages?: Array<{ weighted_average: number; calculated_at: string }> }
+    CandidateRow & { averages?: Array<{ weighted_average: number; calculated_at: string; scenario_label: string | null }> }
   >)
     .filter((c) => c.slug && c.election?.type !== undefined)
     .map((c) => {
+      // Filtra apenas 1T (scenario_label = null). 2T tem 1 linha por cenário
+      // (par de candidatos) e não tem número único interpretável aqui — pra
+      // ver 2T detalhado, ir pra página dedicada do candidato/eleição.
       const latest = (c.averages ?? [])
+        .filter((a) => a.scenario_label === null)
         .slice()
         .sort((a, b) => (b.calculated_at ?? "").localeCompare(a.calculated_at ?? ""))[0];
       return {
