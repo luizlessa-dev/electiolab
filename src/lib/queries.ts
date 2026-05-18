@@ -114,20 +114,50 @@ export async function getCandidateBySlug(slug: string) {
   // Slugs podem ser duplicados em múltiplas eleições (ex.: Lula 2022 1T, 2022 2T,
   // 2026 1T, 2026 2T). Sem ordenação aqui, .limit(1) pegava registro aleatório
   // e a rota /candidato/lula servia dados de 2022 em vez de 2026.
-  const { data: latest } = await supabase
+  // Filtra primeiro is_active=true (caso Tarcísio: governador active vs presidente inactive)
+  // Se nenhum active, faz fallback pegando o mais recente histórico.
+  let { data: latest } = await supabase
     .from("candidates")
-    .select("id, election:elections(year, round)")
+    .select("id, election:elections(year, round, type)")
     .eq("slug", slug)
     .eq("is_active", true);
 
-  if (!latest?.length) return null;
+  if (!latest?.length) {
+    // fallback: histórico (ex.: Bolsonaro pai inativo em 2026 mas registros 2022 ativos)
+    const fb = await supabase
+      .from("candidates")
+      .select("id, election:elections(year, round, type)")
+      .eq("slug", slug);
+    latest = fb.data;
+    if (!latest?.length) return null;
+  }
 
+  // Tiebreaker quando slug aparece em múltiplas eleições (caso Roberto Claudio,
+  // Rogério Marinho — concorrendo a governador E senador no mesmo ciclo):
+  //   1) year DESC (mais recente)
+  //   2) round DESC (2T > 1T pra mesma eleição)
+  //   3) type priority: presidente > governador > senador > deputado_federal > ...
+  //   4) id ASC (estável)
+  const TYPE_PRIORITY: Record<string, number> = {
+    presidente: 5, governador: 4, senador: 3,
+    deputado_federal: 2, deputado_estadual: 1, deputado_distrital: 1,
+  };
   const byRecency = latest
     .map((c) => {
       const e = Array.isArray(c.election) ? c.election[0] : c.election;
-      return { id: c.id as string, year: e?.year ?? 0, round: e?.round ?? 0 };
+      return {
+        id: c.id as string,
+        year: e?.year ?? 0,
+        round: e?.round ?? 0,
+        prio: TYPE_PRIORITY[e?.type ?? ""] ?? 0,
+      };
     })
-    .sort((a, b) => (b.year - a.year) || (b.round - a.round));
+    .sort((a, b) =>
+      (b.year - a.year) ||
+      (b.round - a.round) ||
+      (b.prio - a.prio) ||
+      a.id.localeCompare(b.id)
+    );
 
   const candidateId = byRecency[0].id;
 
