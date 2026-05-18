@@ -56,7 +56,7 @@ export function WeightedAverageChart({
                 />
                 {/* Main bar */}
                 <div
-                  className="absolute top-1/2 -translate-y-1/2 h-5 rounded-sm transition-all"
+                  className="absolute top-1/2 -translate-y-1/2 h-5 rounded-sm"
                   style={{
                     width: `${barWidth}%`,
                     backgroundColor: entry.color || "#6b7280",
