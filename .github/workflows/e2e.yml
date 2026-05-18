@@ -51,7 +51,7 @@ jobs:
       - name: Get Vercel preview URL
         id: vercel
         if: github.event_name == 'pull_request' || github.event_name == 'push'
-        uses: zentered/vercel-preview-url@v1.5.0
+        uses: zentered/vercel-preview-url@v1.4.0
         continue-on-error: true
         with:
           vercel_team_id: ${{ secrets.VERCEL_TEAM_ID }}
