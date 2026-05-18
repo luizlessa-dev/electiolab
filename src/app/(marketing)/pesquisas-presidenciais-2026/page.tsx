@@ -12,6 +12,21 @@ export const metadata: Metadata = {
     description:
       "Acompanhe a média agregada de todas as pesquisas presidenciais de 2026. Dados de Datafolha, Quaest, Atlas Intel e outros institutos. Atualizado semanalmente.",
     url: "https://electiolab.com/pesquisas-presidenciais-2026",
+    images: [
+      {
+        url: "https://electiolab.com/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "ElectioLab — Pesquisas Presidenciais 2026",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pesquisas Presidenciais 2026 — Média Agregada | ElectioLab",
+    description:
+      "Acompanhe a média agregada de todas as pesquisas presidenciais de 2026. Datafolha, Quaest, Atlas Intel.",
+    images: ["https://electiolab.com/opengraph-image"],
   },
 };
 
