@@ -14,6 +14,12 @@ interface ResultRow {
   percentage: number;
 }
 
+interface CandidateRow {
+  id: string;
+  name: string;
+  slug: string;
+}
+
 const METHODOLOGY_WEIGHTS: Record<string, number> = {
   presencial: 1.0,
   telefonica: 0.85,
@@ -74,14 +80,43 @@ function calculateWeightedAverage(
   };
 }
 
+/**
+ * Para eleições 2T, agrupa polls por par de candidatos (cenário).
+ * Cada cenário 2T é uma pergunta INDEPENDENTE — agregar todos como
+ * média única é matematicamente errado (mistura "Lula vs A" com "Lula vs B").
+ *
+ * Retorna Map<scenarioLabel, polls[]> onde label é "{slug_a}-vs-{slug_b}"
+ * (slugs ordenados alfabeticamente pra estabilidade).
+ */
+function groupPollsByScenario(
+  polls: (PollRow & { results: ResultRow[] })[],
+  candidatesById: Map<string, CandidateRow>,
+): Map<string, { polls: typeof polls; candidateIds: [string, string] }> {
+  const groups = new Map<string, { polls: typeof polls; candidateIds: [string, string] }>();
+  for (const poll of polls) {
+    if (poll.results.length !== 2) continue; // 2T válido tem exatamente 2 candidatos
+    const [r1, r2] = poll.results;
+    const c1 = candidatesById.get(r1.candidate_id);
+    const c2 = candidatesById.get(r2.candidate_id);
+    if (!c1 || !c2) continue;
+    const [a, b] = [c1, c2].sort((x, y) => x.slug.localeCompare(y.slug));
+    const label = `${a.slug}-vs-${b.slug}`;
+    const ids: [string, string] = [a.id, b.id];
+    if (!groups.has(label)) groups.set(label, { polls: [], candidateIds: ids });
+    groups.get(label)!.polls.push(poll);
+  }
+  return groups;
+}
+
 async function recalculateForElection(
-  supabase: ReturnType<typeof createClient>,
+  // deno-lint-ignore no-explicit-any
+  supabase: any,
   electionId: string,
   keepHistory: boolean,
 ) {
   const { data: election } = await supabase
     .from("elections")
-    .select("id, name, election_date")
+    .select("id, name, election_date, round")
     .eq("id", electionId)
     .single();
 
@@ -89,7 +124,7 @@ async function recalculateForElection(
 
   const { data: candidates } = await supabase
     .from("candidates")
-    .select("id, name")
+    .select("id, name, slug")
     .eq("election_id", electionId)
     .eq("is_active", true);
 
@@ -111,15 +146,13 @@ async function recalculateForElection(
     ? new Date(election.election_date)
     : new Date();
 
+  // deno-lint-ignore no-explicit-any
   const enrichedPolls = polls.map((p: any) => ({
     ...p,
     institute_reliability: p.institute?.reliability_score ?? 0.7,
   }));
 
-  // FIX: snapshot mode (default) — limpa entradas anteriores antes de inserir.
-  // Antes, o upsert usava (election_id, candidate_id, calculated_at) como
-  // conflict target — como calculated_at é sempre `now()`, nunca colidia,
-  // poluindo a tabela com duplicatas a cada chamada.
+  // Snapshot: limpa entradas anteriores antes de inserir.
   if (!keepHistory) {
     const { error: delErr } = await supabase
       .from("weighted_averages")
@@ -129,23 +162,60 @@ async function recalculateForElection(
   }
 
   const now = new Date().toISOString();
+  // deno-lint-ignore no-explicit-any
   const rows: any[] = [];
+  // deno-lint-ignore no-explicit-any
   const summary: any[] = [];
 
-  for (const cand of candidates) {
-    const avg = calculateWeightedAverage(enrichedPolls, cand.id, referenceDate);
-    if (!avg) continue;
-    rows.push({
-      election_id: electionId,
-      candidate_id: cand.id,
-      calculated_at: now,
-      ...avg,
-      calculation_params: {
-        half_life: 10,
-        reference_date: referenceDate.toISOString(),
-      },
-    });
-    summary.push({ candidate: cand.name, ...avg });
+  const isSecondRound = election.round === 2;
+
+  if (isSecondRound) {
+    // ─── 2T: agrupa por cenário (par de candidatos) ───
+    // Cada cenário (A vs B) é independente — média por cenário, não global.
+    const candById = new Map<string, CandidateRow>(
+      // deno-lint-ignore no-explicit-any
+      candidates.map((c: any) => [c.id, c]),
+    );
+    const scenarios = groupPollsByScenario(enrichedPolls, candById);
+
+    for (const [scenarioLabel, { polls: scenarioPolls, candidateIds }] of scenarios) {
+      for (const cid of candidateIds) {
+        const avg = calculateWeightedAverage(scenarioPolls, cid, referenceDate);
+        if (!avg) continue;
+        const cand = candById.get(cid)!;
+        rows.push({
+          election_id: electionId,
+          candidate_id: cid,
+          scenario_label: scenarioLabel,
+          calculated_at: now,
+          ...avg,
+          calculation_params: {
+            half_life: 10,
+            reference_date: referenceDate.toISOString(),
+            scenario: scenarioLabel,
+          },
+        });
+        summary.push({ candidate: cand.name, scenario: scenarioLabel, ...avg });
+      }
+    }
+  } else {
+    // ─── 1T (e demais): lógica clássica, média global por candidato ───
+    for (const cand of candidates) {
+      const avg = calculateWeightedAverage(enrichedPolls, cand.id, referenceDate);
+      if (!avg) continue;
+      rows.push({
+        election_id: electionId,
+        candidate_id: cand.id,
+        scenario_label: null,
+        calculated_at: now,
+        ...avg,
+        calculation_params: {
+          half_life: 10,
+          reference_date: referenceDate.toISOString(),
+        },
+      });
+      summary.push({ candidate: cand.name, ...avg });
+    }
   }
 
   if (rows.length === 0) {
@@ -155,7 +225,14 @@ async function recalculateForElection(
   const { error: insErr } = await supabase.from("weighted_averages").insert(rows);
   if (insErr) return { error: "Insert failed: " + insErr.message, electionId };
 
-  return { election: election.name, count: rows.length, results: summary, timestamp: now };
+  return {
+    election: election.name,
+    round: election.round,
+    count: rows.length,
+    scenarios: isSecondRound ? summary.length / 2 : null,
+    results: summary,
+    timestamp: now,
+  };
 }
 
 Deno.serve(async (req: Request) => {
@@ -170,15 +247,16 @@ Deno.serve(async (req: Request) => {
     const allFlag = url.searchParams.get("all");
     const keepHistory = url.searchParams.get("keep_history") === "true";
 
-    // Modo "all" — recalcula todas as eleições ativas com pelo menos uma poll.
     if (allFlag === "true") {
       const { data: pollElections } = await supabase
         .from("polls")
         .select("election_id")
         .order("election_id");
       const uniqIds = Array.from(
+        // deno-lint-ignore no-explicit-any
         new Set((pollElections ?? []).map((p: any) => p.election_id as string)),
       );
+      // deno-lint-ignore no-explicit-any
       const out: any[] = [];
       for (const id of uniqIds) {
         out.push(await recalculateForElection(supabase, id, keepHistory));
