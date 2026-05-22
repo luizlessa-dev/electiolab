@@ -224,29 +224,56 @@ function statusLabel(s: ScenarioSummary["status"]): { label: string; cls: string
   }[s];
 }
 
-const faqJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: FAQ_ITEMS.map((item) => ({
-    "@type": "Question",
-    name: item.question,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: item.answer,
-    },
-  })),
-};
+// Schema combinado: Article (corpo editorial) + FAQPage + BreadcrumbList.
+// dateModified puxa da última publication_date no banco quando disponível.
+function buildJsonLd(lastUpdated: string | null) {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        "@id": "https://electiolab.com/pesquisas-presidenciais-2026#article",
+        headline: "Média Agregada de Pesquisas Presidenciais 2026",
+        description:
+          "Acompanhe a média agregada de todas as pesquisas presidenciais de 2026. Datafolha, Quaest, Atlas Intel e outros.",
+        url: "https://electiolab.com/pesquisas-presidenciais-2026",
+        mainEntityOfPage: "https://electiolab.com/pesquisas-presidenciais-2026",
+        author: { "@id": "https://electiolab.com/sobre#founder" },
+        publisher: { "@id": "https://electiolab.com/#organization" },
+        datePublished: "2026-04-01",
+        dateModified: lastUpdated ?? new Date().toISOString().slice(0, 10),
+        inLanguage: "pt-BR",
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: FAQ_ITEMS.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: { "@type": "Answer", text: item.answer },
+        })),
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "ElectioLab", item: "https://electiolab.com" },
+          { "@type": "ListItem", position: 2, name: "Pesquisas Presidenciais 2026" },
+        ],
+      },
+    ],
+  };
+}
 
 export default async function PesquisasPresidenciais2026Page() {
   const { averages1t, scenarios2t, updated } = await getData();
   const top1t = averages1t.filter((c) => c.pct >= 0.5).slice(0, 10);
   const maxPct = top1t.length > 0 ? Math.max(...top1t.map((c) => c.pct)) : 50;
+  const jsonLd = buildJsonLd(updated);
 
   return (
     <div className="min-h-screen bg-background">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
       {/* Header */}
