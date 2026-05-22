@@ -56,12 +56,25 @@ function buildJsonLd(institutesText: string) {
       "@id": "https://electiolab.com/sobre#founder",
       "name": "Luiz Lessa",
       "url": "https://electiolab.com/sobre",
+      "jobTitle": "Fundador e Editor",
+      "description": "Fundador e editor do ElectioLab, agregador de pesquisas eleitorais brasileiras com ponderação por recência, amostra, metodologia e acurácia histórica dos institutos.",
       "sameAs": [
         "https://github.com/luizlessa",
         "https://linkedin.com/in/luizlessa"
       ],
       "worksFor": { "@id": "https://electiolab.com/#organization" },
-      "knowsAbout": ["Eleições brasileiras", "Análise de dados", "Pesquisas eleitorais"],
+      "knowsAbout": [
+        "Eleições brasileiras",
+        "Pesquisas eleitorais",
+        "Estatística aplicada à política",
+        "Análise de dados públicos",
+        "Sistema PesqEle TSE",
+        "Média ponderada de pesquisas",
+        "Margem de erro estatística",
+        "Metodologia de coleta",
+      ],
+      "knowsLanguage": ["pt-BR", "en"],
+      "nationality": { "@type": "Country", "name": "Brasil" },
     },
     {
       "@type": "FAQPage",
@@ -469,6 +482,25 @@ export default async function SobrePage() {
               Todo o conteúdo é baseado exclusivamente em fontes primárias públicas (TSE, institutos registrados)
               e a metodologia de ponderação é descrita abertamente nesta página. Não fazemos editorização
               nem interpolação de dados não publicados.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Para quem está chegando agora, mantemos um{" "}
+              <Link href="/glossario-pesquisa-eleitoral" className="text-primary hover:underline font-medium">
+                glossário de pesquisa eleitoral
+              </Link>{" "}
+              explicando termos como{" "}
+              <Link href="/margem-de-erro-pesquisa-eleitoral" className="text-primary hover:underline">
+                margem de erro
+              </Link>
+              ,{" "}
+              <Link href="/empate-tecnico-pesquisa-eleitoral" className="text-primary hover:underline">
+                empate técnico
+              </Link>{" "}
+              e{" "}
+              <Link href="/pesquisa-estimulada-vs-espontanea" className="text-primary hover:underline">
+                estimulada vs espontânea
+              </Link>{" "}
+              — base mínima pra interpretar qualquer pesquisa publicada na mídia.
             </p>
           </div>
 

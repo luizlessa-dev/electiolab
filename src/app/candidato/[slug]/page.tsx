@@ -429,6 +429,16 @@ export default async function CandidatoPage({
                 </div>
               ))}
             </div>
+            <p className="text-[11px] text-muted-foreground mt-3 leading-relaxed">
+              Cada linha é uma pesquisa individual com sua{" "}
+              <Link href="/margem-de-erro-pesquisa-eleitoral" className="text-primary hover:underline">
+                margem de erro
+              </Link>
+              . Diferenças pequenas entre pesquisas geralmente são variação amostral, não tendência.{" "}
+              <Link href="/glossario-pesquisa-eleitoral" className="text-primary hover:underline">
+                Glossário →
+              </Link>
+            </p>
           </section>
         )}
 
