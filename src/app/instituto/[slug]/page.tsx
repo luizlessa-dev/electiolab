@@ -119,17 +119,96 @@ export default async function InstitutoPage({
     ? Math.round(institute.reliability_score * 100)
     : null;
 
-  // JSON-LD: Organization + BreadcrumbList
+  // FAQs dinâmicas — geradas a partir do nome do instituto + dados disponíveis.
+  // Atinge queries long-tail tipo "Quaest é confiável?", "Quem é o Datafolha?".
+  const lastPoll = polls[0];
+  const lastPollDate = lastPoll?.publication_date
+    ? new Date(lastPoll.publication_date).toLocaleDateString("pt-BR", {
+        day: "2-digit", month: "long", year: "numeric",
+      })
+    : null;
+
+  const FAQS: { q: string; a: string }[] = [
+    {
+      q: `O ${institute.name} é confiável?`,
+      a: reliabilityPct
+        ? `O ${institute.name} tem score de acurácia ElectioLab de ${reliabilityPct}%, calculado pelo desvio histórico entre suas projeções pré-eleitorais e o resultado oficial publicado pelo TSE. Quanto mais próximo de 100%, menor a diferença média entre o número final da pesquisa e o resultado real da urna.`
+        : `O score de acurácia do ${institute.name} ainda não foi calculado pelo ElectioLab — depende de o instituto ter histórico de pesquisas comparáveis a resultados oficiais TSE em eleições anteriores.`,
+    },
+    {
+      q: `Quantas pesquisas o ${institute.name} já publicou?`,
+      a: `${polls.length} ${polls.length === 1 ? "pesquisa indexada" : "pesquisas indexadas"} no ElectioLab até hoje${
+        lastPollDate ? `, sendo a mais recente publicada em ${lastPollDate}` : ""
+      }. Todas as pesquisas listadas aqui possuem registro no PesqEle, sistema oficial do TSE.`,
+    },
+    ...(institute.methodology_default
+      ? [
+          {
+            q: `Qual a metodologia padrão usada pelo ${institute.name}?`,
+            a: `O ${institute.name} costuma usar pesquisa ${institute.methodology_default}. Metodologias diferentes carregam vieses diferentes — pesquisas presenciais alcançam camadas socioeconômicas que pesquisas online não alcançam, enquanto pesquisas telefônicas tendem a sub-representar jovens. O ElectioLab pondera cada pesquisa por metodologia ao calcular a média agregada.`,
+          },
+        ]
+      : []),
+    {
+      q: `Como o ElectioLab pondera as pesquisas do ${institute.name}?`,
+      a: `Cada pesquisa do ${institute.name} entra na média ponderada do ElectioLab com peso baseado em quatro fatores: (1) recência (meia-vida de 10 dias), (2) tamanho da amostra (raiz quadrada do n), (3) metodologia, e (4) histórico de acurácia do instituto. O score de acurácia funciona como multiplicador final — institutos com menor erro vs resultado oficial ganham mais peso.`,
+    },
+  ];
+
+  const orgUrl = institute.website ?? `https://electiolab.com/instituto/${slug}`;
+
+  // JSON-LD: Article (wrapping) + Organization (com aggregateRating quando disponível)
+  //          + FAQPage + BreadcrumbList
+  // aggregateRating usa reliability_score normalizado pra escala 0-100 (ratingValue)
+  // com bestRating=100/worstRating=0, refletindo histórico vs TSE.
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
+        "@type": "Article",
+        "@id": `https://electiolab.com/instituto/${slug}#article`,
+        headline: `${institute.name} — Histórico de Pesquisas Eleitorais`,
+        description:
+          institute.description ??
+          `Histórico completo de pesquisas do ${institute.name}, score de acurácia ElectioLab e metodologia.`,
+        url: `https://electiolab.com/instituto/${slug}`,
+        author: { "@id": "https://electiolab.com/sobre#founder" },
+        publisher: { "@id": "https://electiolab.com/#organization" },
+        mainEntityOfPage: `https://electiolab.com/instituto/${slug}`,
+        about: { "@id": `https://electiolab.com/instituto/${slug}#org` },
+        dateModified: lastPoll?.publication_date ?? new Date().toISOString().slice(0, 10),
+        inLanguage: "pt-BR",
+      },
+      {
         "@type": "Organization",
         "@id": `https://electiolab.com/instituto/${slug}#org`,
         name: institute.name,
-        description: institute.description ?? `Instituto de pesquisa eleitoral brasileiro`,
-        url: institute.website ?? `https://electiolab.com/instituto/${slug}`,
+        description:
+          institute.description ?? `Instituto de pesquisa eleitoral brasileiro`,
+        url: orgUrl,
+        ...(institute.website ? { sameAs: [institute.website] } : {}),
         nationality: { "@type": "Country", name: "Brasil" },
+        ...(reliabilityPct !== null
+          ? {
+              aggregateRating: {
+                "@type": "AggregateRating",
+                ratingValue: reliabilityPct,
+                bestRating: 100,
+                worstRating: 0,
+                ratingCount: polls.length,
+                reviewCount: polls.length,
+                description: `Score de acurácia ElectioLab calculado por desvio histórico vs. resultado oficial TSE em ${polls.length} pesquisas.`,
+              },
+            }
+          : {}),
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: FAQS.map((f) => ({
+          "@type": "Question",
+          name: f.q,
+          acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
       },
       {
         "@type": "BreadcrumbList",
@@ -279,6 +358,31 @@ export default async function InstitutoPage({
             )}
           </section>
         )}
+
+        {/* FAQ */}
+        <section className="space-y-3">
+          <h2 className="text-xl font-bold flex items-center gap-2">
+            Perguntas frequentes
+          </h2>
+          <div className="space-y-2">
+            {FAQS.map((f, i) => (
+              <details
+                key={i}
+                className="border border-border rounded-lg bg-card overflow-hidden group"
+              >
+                <summary className="cursor-pointer px-5 py-3.5 text-sm font-medium hover:text-primary transition-colors list-none flex items-center justify-between gap-3">
+                  {f.q}
+                  <span className="text-muted-foreground text-xs shrink-0 group-open:rotate-180 transition-transform">
+                    ▾
+                  </span>
+                </summary>
+                <div className="px-5 pb-4 text-sm text-muted-foreground leading-relaxed border-t border-border pt-3">
+                  {f.a}
+                </div>
+              </details>
+            ))}
+          </div>
+        </section>
 
         {/* Footer com links cruzados */}
         <section className="rounded-lg border border-border bg-muted/20 p-6">
