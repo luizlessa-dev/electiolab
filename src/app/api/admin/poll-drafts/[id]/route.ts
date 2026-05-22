@@ -10,6 +10,7 @@
  */
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { pingIndexNow } from "@/lib/indexnow";
 
 export const dynamic = "force-dynamic";
 
@@ -152,11 +153,45 @@ async function approve(draftId: string) {
     reviewed_at: new Date().toISOString(),
   }).eq("id", draftId);
 
+  // 6. IndexNow ping — Bing/Yandex re-crawleam em minutos as páginas que
+  //    consomem essa poll. Lista de URLs afetadas (todas servidas com
+  //    revalidate=3600 ou dynamic). Best-effort: erro não bloqueia aprovação.
+  const affectedPaths = [
+    "/",
+    "/pesquisas-presidenciais-2026",
+    "/quem-vence-no-segundo-turno-presidencia-2026",
+    "/dashboard",
+    "/pesquisas",
+    "/institutos",
+  ];
+  // Adiciona perfis dos candidatos afetados por essa pesquisa
+  const { data: candSlugs } = await sb
+    .from("candidates")
+    .select("slug")
+    .in("id", resolved.map((r) => r.candidate_id));
+  for (const c of candSlugs ?? []) {
+    if (c.slug) affectedPaths.push(`/candidato/${c.slug}`);
+  }
+  // Adiciona a página do instituto
+  const { data: inst } = await sb
+    .from("institutes")
+    .select("slug")
+    .eq("id", instituteId)
+    .maybeSingle();
+  if (inst?.slug) affectedPaths.push(`/instituto/${inst.slug}`);
+
+  const indexNowResult = await pingIndexNow(affectedPaths);
+
   return {
     success: true,
     poll_id: poll.id,
     results_created: resultRows.length,
     candidates_missing: missing,
+    indexnow: {
+      ok: indexNowResult.ok,
+      urls_sent: indexNowResult.urls_sent,
+      status: indexNowResult.status,
+    },
   };
 }
 
