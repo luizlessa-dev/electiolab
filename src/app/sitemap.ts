@@ -198,6 +198,37 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.75,
     },
+    // Glossário de pesquisa eleitoral — hub + 4 spokes (evergreen educacional)
+    {
+      url: `${SITE_URL}/glossario-pesquisa-eleitoral`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${SITE_URL}/margem-de-erro-pesquisa-eleitoral`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.75,
+    },
+    {
+      url: `${SITE_URL}/empate-tecnico-pesquisa-eleitoral`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.75,
+    },
+    {
+      url: `${SITE_URL}/pesquisa-estimulada-vs-espontanea`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.75,
+    },
+    {
+      url: `${SITE_URL}/pesquisa-presencial-vs-online`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.75,
+    },
     {
       url: `${SITE_URL}/relatorio/semana-17-2026`,
       lastModified: "2026-04-27T00:00:00.000Z",
