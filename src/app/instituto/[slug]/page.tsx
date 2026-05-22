@@ -393,12 +393,26 @@ export default async function InstitutoPage({
             da amostra e cargo (presidência tem mais peso). O score vai de 0 a 1 (multiplicado por 100
             na exibição).
           </p>
-          <Link
-            href="/sobre#metodologia"
-            className="text-sm text-primary hover:underline inline-flex items-center gap-1"
-          >
-            Ver metodologia completa <ExternalLink className="h-3 w-3" />
-          </Link>
+          <div className="flex flex-wrap gap-x-4 gap-y-2">
+            <Link
+              href="/sobre#metodologia"
+              className="text-sm text-primary hover:underline inline-flex items-center gap-1"
+            >
+              Metodologia completa <ExternalLink className="h-3 w-3" />
+            </Link>
+            <Link
+              href="/glossario-pesquisa-eleitoral"
+              className="text-sm text-primary hover:underline inline-flex items-center gap-1"
+            >
+              Glossário de pesquisa eleitoral <ExternalLink className="h-3 w-3" />
+            </Link>
+            <Link
+              href="/instituto-mais-acurado-eleicoes-brasil"
+              className="text-sm text-primary hover:underline inline-flex items-center gap-1"
+            >
+              Ranking de acurácia <ExternalLink className="h-3 w-3" />
+            </Link>
+          </div>
         </section>
       </main>
 

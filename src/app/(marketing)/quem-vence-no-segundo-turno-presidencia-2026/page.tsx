@@ -411,9 +411,17 @@ export default async function Quem2TurnoPage() {
               <div className="px-4 py-3 border-t border-border bg-muted/20 text-[11px] text-muted-foreground leading-relaxed">
                 <strong className="text-foreground">Notas:</strong> Os ~10-15% restantes
                 em cada cenário são eleitores indecisos, brancos, nulos ou que não souberam
-                responder. &quot;Empate técnico&quot; significa que o IC 95% do líder se sobrepõe
-                ao do segundo colocado — qualquer um pode estar à frente dentro da margem
-                de erro. &quot;Poucos dados&quot; sinaliza cenários com menos de 3 pesquisas.
+                responder.{" "}
+                <Link href="/empate-tecnico-pesquisa-eleitoral" className="text-primary hover:underline">
+                  &quot;Empate técnico&quot;
+                </Link>{" "}
+                significa que o{" "}
+                <Link href="/margem-de-erro-pesquisa-eleitoral" className="text-primary hover:underline">
+                  IC 95%
+                </Link>{" "}
+                do líder se sobrepõe ao do segundo colocado — qualquer um pode estar à frente
+                dentro da margem de erro. &quot;Poucos dados&quot; sinaliza cenários com menos de
+                3 pesquisas.
               </div>
             </section>
           )}
@@ -495,6 +503,12 @@ export default async function Quem2TurnoPage() {
                 <Link href="/institutos" className="text-primary hover:underline">
                   Ranking de acurácia dos institutos
                 </Link>
+              </li>
+              <li>
+                <Link href="/glossario-pesquisa-eleitoral" className="text-primary hover:underline">
+                  Glossário de pesquisa eleitoral
+                </Link>{" "}
+                — margem de erro, empate técnico, estimulada vs espontânea
               </li>
               <li>
                 <Link href="/sobre" className="text-primary hover:underline">

@@ -391,9 +391,17 @@ export default async function PesquisasPresidenciais2026Page() {
             </div>
             <p className="text-[11px] text-muted-foreground leading-relaxed">
               Margens (±) representam o intervalo de confiança 95% sobre a média ponderada.
-              Cada % é a média ponderada por recência (meia-vida 10 dias), tamanho da amostra
-              (raiz quadrada), metodologia (presencial &gt; telefônica &gt; online) e acurácia
-              histórica do instituto. <Link href="/sobre" className="text-primary hover:underline">
+              Veja{" "}
+              <Link href="/margem-de-erro-pesquisa-eleitoral" className="text-primary hover:underline">
+                margem de erro
+              </Link>
+              {" "}pra entender. Cada % é a média ponderada por recência (meia-vida 10 dias), tamanho
+              da amostra (raiz quadrada),{" "}
+              <Link href="/pesquisa-presencial-vs-online" className="text-primary hover:underline">
+                metodologia
+              </Link>
+              {" "}(presencial &gt; telefônica &gt; online) e acurácia histórica do instituto.{" "}
+              <Link href="/sobre" className="text-primary hover:underline">
                 Como funciona →
               </Link>
             </p>
@@ -475,6 +483,35 @@ export default async function PesquisasPresidenciais2026Page() {
                   {item.answer}
                 </div>
               </details>
+            ))}
+          </div>
+        </section>
+
+        {/* Glossário — base teórica */}
+        <section className="space-y-3">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+            Entenda pesquisa eleitoral
+          </h2>
+          <div className="grid sm:grid-cols-2 gap-2">
+            {[
+              { label: "Glossário completo", href: "/glossario-pesquisa-eleitoral", sub: "Todos os termos" },
+              { label: "Margem de erro", href: "/margem-de-erro-pesquisa-eleitoral", sub: "Como ler ±3pp e IC 95%" },
+              { label: "Empate técnico", href: "/empate-tecnico-pesquisa-eleitoral", sub: "Quando 45×43 é empate" },
+              { label: "Estimulada vs espontânea", href: "/pesquisa-estimulada-vs-espontanea", sub: "Por que números variam" },
+            ].map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="bg-card border border-border rounded-sm px-4 py-3 hover:border-primary/40 hover:shadow-sm transition-all group"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-sm font-medium group-hover:text-primary transition-colors">
+                    {l.label}
+                  </span>
+                  <span className="text-primary text-xs">→</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-0.5">{l.sub}</p>
+              </Link>
             ))}
           </div>
         </section>
