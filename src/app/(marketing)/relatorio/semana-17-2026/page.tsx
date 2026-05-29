@@ -296,10 +296,10 @@ export default function RelatorioSemana17Page() {
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <p className="text-sm font-semibold text-foreground">Próximo relatório</p>
-              <p className="text-xs text-muted-foreground">Semana 18 · 28 abr – 4 mai 2026 · Publicação prevista: 4 mai</p>
+              <p className="text-xs text-muted-foreground">Semana 18 · 28 abr – 4 mai 2026</p>
             </div>
-            <Link href="/dashboard" className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-sm text-xs font-medium uppercase tracking-wider hover:bg-primary/90 transition-colors shrink-0">
-              <TrendingUp className="h-3.5 w-3.5" /> Dashboard ao vivo
+            <Link href="/relatorio/semana-18-2026" className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-sm text-xs font-medium uppercase tracking-wider hover:bg-primary/90 transition-colors shrink-0">
+              <TrendingUp className="h-3.5 w-3.5" /> Semana 18 →
             </Link>
           </div>
           <div className="pt-2 border-t border-border flex flex-wrap gap-3">
