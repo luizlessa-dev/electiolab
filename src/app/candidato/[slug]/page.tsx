@@ -39,10 +39,10 @@ export async function generateMetadata({
   const c = await getCandidateBySlug(slug);
   if (!c) return { title: "Candidato não encontrado" };
 
-  const title = `${c.name}${c.party ? ` (${c.party})` : ""} — Perfil completo`;
+  const title = `${c.name}${c.party ? ` (${c.party})` : ""} — Pesquisas Eleitorais 2026`;
   const description = c.bio
     ? c.bio.slice(0, 160)
-    : `Perfil de ${c.name}: trajetória, atividade legislativa, prestação de contas, pesquisas eleitorais e processos judiciais.`;
+    : `Pesquisas eleitorais, trajetória, atividade legislativa, patrimônio e financiamento de campanha de ${c.name} nas eleições 2026.`;
 
   return {
     title,
@@ -284,7 +284,10 @@ export default async function CandidatoPage({
                 </>
               )}
             </div>
-            <h1 className="mb-2">{c.name}</h1>
+            <h1 className="mb-1">{c.name}</h1>
+            <p className="text-xs font-mono text-muted-foreground uppercase tracking-wider mb-2">
+              Pesquisas Eleitorais 2026
+            </p>
             <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mb-4">
               {c.party && (
                 <span className="px-2 py-0.5 rounded-md text-xs font-mono uppercase border" style={{ borderColor: c.color, color: c.color }}>

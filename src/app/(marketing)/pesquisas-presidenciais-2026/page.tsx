@@ -224,12 +224,58 @@ function statusLabel(s: ScenarioSummary["status"]): { label: string; cls: string
   }[s];
 }
 
-// Schema combinado: Article (corpo editorial) + FAQPage + BreadcrumbList.
+// Schema combinado: Dataset + Article (corpo editorial) + FAQPage + BreadcrumbList.
 // dateModified puxa da última publication_date no banco quando disponível.
 function buildJsonLd(lastUpdated: string | null) {
+  const dateModified = lastUpdated ?? new Date().toISOString().slice(0, 10);
   return {
     "@context": "https://schema.org",
     "@graph": [
+      {
+        "@type": "Dataset",
+        "@id": "https://electiolab.com/pesquisas-presidenciais-2026#dataset",
+        "name": "Média Agregada de Pesquisas Presidenciais 2026 — Brasil",
+        "description":
+          "Média ponderada ao vivo de todas as pesquisas presidenciais do Brasil em 2026, calculada por recência (meia-vida 10 dias), tamanho amostral (√n), metodologia de coleta (presencial > online) e acurácia histórica do instituto. Atualizada a cada 6 horas.",
+        "url": "https://electiolab.com/pesquisas-presidenciais-2026",
+        "sameAs": "https://electiolab.com/#dataset",
+        "keywords": [
+          "pesquisas presidenciais 2026",
+          "intenção de voto presidente",
+          "média eleitoral 2026",
+          "Datafolha presidente 2026",
+          "Quaest presidente 2026",
+          "Atlas Intel presidente 2026",
+        ],
+        "creator": { "@id": "https://electiolab.com/#organization" },
+        "publisher": { "@id": "https://electiolab.com/#organization" },
+        "license": "https://creativecommons.org/licenses/by/4.0/",
+        "isAccessibleForFree": true,
+        "inLanguage": "pt-BR",
+        "spatialCoverage": { "@type": "Country", "name": "Brasil" },
+        "temporalCoverage": "2025-01/..",
+        "dateModified": dateModified,
+        "variableMeasured": [
+          "Intenção de voto 1º turno (%)",
+          "Intenção de voto 2º turno (%)",
+          "Margem de erro (pp)",
+          "Tamanho da amostra (n)",
+        ],
+        "distribution": [
+          {
+            "@type": "DataDownload",
+            "encodingFormat": "application/json",
+            "contentUrl": "https://electiolab.com/api/v1/averages",
+            "name": "API REST — médias ponderadas presidenciais",
+          },
+          {
+            "@type": "DataDownload",
+            "encodingFormat": "application/json",
+            "contentUrl": "https://electiolab.com/api/v1/polls",
+            "name": "API REST — pesquisas individuais",
+          },
+        ],
+      },
       {
         "@type": "Article",
         "@id": "https://electiolab.com/pesquisas-presidenciais-2026#article",
@@ -241,7 +287,7 @@ function buildJsonLd(lastUpdated: string | null) {
         author: { "@id": "https://electiolab.com/sobre#founder" },
         publisher: { "@id": "https://electiolab.com/#organization" },
         datePublished: "2026-04-01",
-        dateModified: lastUpdated ?? new Date().toISOString().slice(0, 10),
+        dateModified: dateModified,
         inLanguage: "pt-BR",
       },
       {

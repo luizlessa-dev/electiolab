@@ -249,7 +249,10 @@ export default async function InstitutoPage({
             <Building2 className="h-3.5 w-3.5" />
             <span>Instituto de Pesquisa</span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-3">{institute.name}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-1">{institute.name}</h1>
+          <p className="text-xs font-mono text-muted-foreground uppercase tracking-wider mb-3">
+            Pesquisas Eleitorais 2026
+          </p>
           {institute.description && (
             <p className="text-base text-muted-foreground max-w-prose leading-relaxed">
               {institute.description}
