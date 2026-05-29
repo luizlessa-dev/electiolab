@@ -719,6 +719,83 @@ export default async function HomePage() {
         </div>
       </div>
 
+      {/* Press section */}
+      <section className="py-12 px-4 border-t border-border bg-muted/10">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
+            {/* Left — heading + cta */}
+            <div className="space-y-3 md:max-w-xs">
+              <p className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground">
+                Para a imprensa
+              </p>
+              <h2 className="text-xl font-bold tracking-tight">
+                Dados abertos para jornalistas
+              </h2>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Médias ponderadas, histórico de pesquisas, perfis de candidatos e dados de
+                financiamento — tudo com metodologia auditável e livre para citar.
+              </p>
+              <div className="flex flex-col gap-2 pt-1">
+                <a
+                  href="mailto:imprensa@electiolab.com"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+                >
+                  <Mail className="h-4 w-4" />
+                  imprensa@electiolab.com
+                </a>
+                <Link
+                  href="/imprensa"
+                  className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Kit de imprensa completo
+                  <ArrowRight className="h-3 w-3" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Right — how to cite + data points */}
+            <div className="flex-1 grid sm:grid-cols-2 gap-4">
+              {/* Como citar */}
+              <div className="bg-card border border-border rounded-lg p-4 space-y-2 sm:col-span-2">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Como citar o ElectioLab
+                </p>
+                <p className="text-xs text-muted-foreground font-mono bg-muted/40 rounded px-3 py-2 leading-relaxed">
+                  &quot;Segundo a média ponderada do ElectioLab (electiolab.com), baseada em
+                  pesquisas registradas no TSE...&quot;
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  A metodologia de ponderação está descrita em{" "}
+                  <Link href="/metodologia" className="underline hover:text-foreground">
+                    electiolab.com/metodologia
+                  </Link>
+                  .
+                </p>
+              </div>
+
+              {/* Data points */}
+              {[
+                { label: "Pesquisas indexadas em 2026", value: "26+", icon: BarChart3 },
+                { label: "Institutos monitorados", value: "13", icon: Building2 },
+                { label: "Candidatos com perfil completo", value: "100+", icon: Users },
+                { label: "Dados disponíveis via API", value: "Gratuito", icon: Shield },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className="bg-card border border-border rounded-lg px-4 py-3 flex items-center gap-3"
+                >
+                  <item.icon className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <div>
+                    <p className="text-sm font-bold">{item.value}</p>
+                    <p className="text-xs text-muted-foreground">{item.label}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* States grid */}
       <section id="estados" className="py-16 px-4 border-t border-border">
         <div className="max-w-5xl mx-auto space-y-8">

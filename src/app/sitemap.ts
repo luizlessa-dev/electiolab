@@ -242,6 +242,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.80,
     },
     {
+      url: `${SITE_URL}/dinheiro-e-votos-pesquisas-2026`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.80,
+    },
+    {
       url: `${SITE_URL}/relatorio/semana-17-2026`,
       lastModified: "2026-04-27T00:00:00.000Z",
       changeFrequency: "never",
