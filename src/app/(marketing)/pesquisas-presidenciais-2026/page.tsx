@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@supabase/supabase-js";
 import { BarChart3, ArrowLeft, ExternalLink, HelpCircle, TrendingUp, Vote } from "lucide-react";
+import { SecondRoundTabs, type TabScenario } from "./second-round-tabs";
 
 export const revalidate = 3600;
 
@@ -76,8 +77,7 @@ type CandidateAvg = {
 type ScenarioSummary = {
   label: string;        // "lula-vs-zema"
   display: string;      // "Lula × Zema"
-  leader: { name: string; pct: number; color: string | null };
-  trailer: { name: string; pct: number; color: string | null };
+  cands: { name: string; party: string | null; color: string | null; slug: string; pct: number }[]; // 2, desc
   polls: number;
   gap: number;
   status: "empate" | "vantagem" | "folga" | "raso";
@@ -190,8 +190,9 @@ async function getData(): Promise<{
     scenarios2t.push({
       label,
       display: `${lead.name} × ${trail.name}`,
-      leader: { name: lead.name, pct: lead.pct, color: lead.color },
-      trailer: { name: trail.name, pct: trail.pct, color: trail.color },
+      cands: sorted.map((c) => ({
+        name: c.name, party: c.party, color: c.color, slug: c.slug, pct: c.pct,
+      })),
       polls,
       gap: lead.pct - trail.pct,
       status,
@@ -213,15 +214,6 @@ async function getData(): Promise<{
   const updated = (lastPoll?.[0] as { publication_date?: string })?.publication_date ?? null;
 
   return { averages1t, scenarios2t, updated };
-}
-
-function statusLabel(s: ScenarioSummary["status"]): { label: string; cls: string } {
-  return {
-    empate:   { label: "Empate técnico",  cls: "text-amber-500" },
-    vantagem: { label: "Vantagem",        cls: "text-blue-400" },
-    folga:    { label: "Folga clara",     cls: "text-emerald-400" },
-    raso:     { label: "Poucos dados",    cls: "text-muted-foreground" },
-  }[s];
 }
 
 // Schema combinado: Dataset + Article (corpo editorial) + FAQPage + BreadcrumbList.
@@ -314,6 +306,41 @@ export default async function PesquisasPresidenciais2026Page() {
   const top1t = averages1t.filter((c) => c.pct >= 0.5).slice(0, 10);
   const maxPct = top1t.length > 0 ? Math.max(...top1t.map((c) => c.pct)) : 50;
   const jsonLd = buildJsonLd(updated);
+
+  // ── 2º turno: candidato comum (presente em todos os cenários) + abas ──
+  // Em 2026 é Lula. Mantém o oponente comum fixo à esquerda em cada aba.
+  let commonName = "";
+  let commonColor: string | null = null;
+  let tabScenarios: TabScenario[] = [];
+  if (scenarios2t.length > 0) {
+    const slugSets = scenarios2t.map((s) => new Set(s.cands.map((c) => c.slug)));
+    const commonSlug =
+      [...slugSets[0]].find((slug) => slugSets.every((set) => set.has(slug))) ?? null;
+
+    if (commonSlug) {
+      tabScenarios = scenarios2t
+        .map((s) => {
+          const common = s.cands.find((c) => c.slug === commonSlug);
+          const adversary = s.cands.find((c) => c.slug !== commonSlug);
+          if (!common || !adversary) return null;
+          commonName = common.name;
+          commonColor = common.color;
+          const undecided = Math.max(0, 100 - common.pct - adversary.pct);
+          return {
+            label: s.label,
+            adversaryName: adversary.name,
+            adversaryParty: adversary.party,
+            adversaryColor: adversary.color,
+            adversaryPct: adversary.pct,
+            commonPct: common.pct,
+            undecided,
+            polls: s.polls,
+            status: s.status,
+          } satisfies TabScenario;
+        })
+        .filter((x): x is TabScenario => x !== null);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -471,37 +498,17 @@ export default async function PesquisasPresidenciais2026Page() {
                 Ver análise completa →
               </Link>
             </div>
-            <div className="rounded-sm border border-border bg-card overflow-hidden">
-              {scenarios2t.map((s, i) => {
-                const st = statusLabel(s.status);
-                return (
-                  <div
-                    key={s.label}
-                    className={`px-4 py-3 ${
-                      i > 0 ? "border-t border-border/60" : ""
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-3 flex-wrap">
-                      <div className="text-sm font-semibold min-w-0">
-                        {s.display}
-                      </div>
-                      <div className="flex items-center gap-3 font-mono tabular-nums text-sm">
-                        <span style={{ color: s.leader.color ?? undefined }} className="font-bold">
-                          {s.leader.pct.toFixed(1)}
-                        </span>
-                        <span className="text-muted-foreground">×</span>
-                        <span style={{ color: s.trailer.color ?? undefined }} className="font-bold">
-                          {s.trailer.pct.toFixed(1)}
-                        </span>
-                        <span className={`text-[11px] font-medium ${st.cls} min-w-[100px] text-right`}>
-                          {st.label}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <SecondRoundTabs
+              commonName={commonName}
+              commonColor={commonColor}
+              scenarios={tabScenarios}
+            />
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              Cada aba é um <strong>cenário independente</strong>: os institutos perguntam
+              &quot;se o 2º turno for {commonName || "o titular"} × adversário X&quot;. Os adversários
+              nunca foram testados entre si. As percentuais não somam 100% porque o restante são
+              eleitores indecisos, brancos ou nulos — mostrado em cada aba.
+            </p>
           </section>
         )}
 
