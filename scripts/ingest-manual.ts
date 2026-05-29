@@ -99,6 +99,85 @@ const PENDING_POLLS: Array<{
     ],
   },
 
+  // ─── GOVERNADORES — Tier 2 (estados-chave) ────────────────────────────────
+
+  // PE · Datafolha · 25-27 mai 2026 · TSE PE-07888/2026 · n=1.022 · presencial
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador PE 2026 - 1º Turno",
+    publication_date: "2026-05-28",
+    fieldwork_start: "2026-05-25",
+    fieldwork_end: "2026-05-27",
+    sample_size: 1022,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-governador-senador-pernambuco-maio-2026/",
+    results: [
+      { candidate_name: "Raquel Lyra",  percentage: 48 },
+      { candidate_name: "João Campos",  percentage: 43 },
+      { candidate_name: "Ivan Moraes",  percentage:  2 },
+    ],
+  },
+
+  // PR · Paraná Pesquisas · 8-10 mai 2026 · TSE PR-00323/2026 · n=1.500 · presencial
+  {
+    institute_name: "Paraná Pesquisas",
+    election_name: "Governador Parana 2026",
+    publication_date: "2026-05-11",
+    fieldwork_start: "2026-05-08",
+    fieldwork_end: "2026-05-10",
+    sample_size: 1500,
+    margin_of_error: 2.6,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/parana-pesquisas-governador-parana-maio-2026/",
+    results: [
+      { candidate_name: "Sergio Moro",    percentage: 42.6 },
+      { candidate_name: "Requiao Filho",  percentage: 19.7 },
+      { candidate_name: "Rafael Greca",   percentage: 16.3 },
+      { candidate_name: "Sandro Alex",    percentage:  8.6 },
+    ],
+  },
+
+  // RS · Real Time Big Data · 14-16 mai 2026 · TSE RS-02550/2026 · n=1.500 · telefônica
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador RS 2026 - 1º Turno",
+    publication_date: "2026-05-17",
+    fieldwork_start: "2026-05-14",
+    fieldwork_end: "2026-05-16",
+    sample_size: 1500,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.cartacapital.com.br/politica/as-intencoes-de-voto-para-o-governo-e-o-senado-no-rs-segundo-nova-pesquisa/",
+    results: [
+      { candidate_name: "Luciano Zucco",     percentage: 31 },
+      { candidate_name: "Juliana Brizola",   percentage: 24 },
+      { candidate_name: "Edegar Pretto",     percentage: 19 },
+      { candidate_name: "Gabriel Souza",     percentage: 13 },
+      { candidate_name: "Covatti Filho",     percentage:  3 },
+      { candidate_name: "Marcelo Maranata",  percentage:  1 },
+    ],
+  },
+
+  // CE · Genial/Quaest · 24-28 abr 2026 · TSE CE-01725/2026 · n=1.002 · presencial
+  {
+    institute_name: "Genial/Quaest",
+    election_name: "Governador CE 2026 - 1º Turno",
+    publication_date: "2026-04-30",
+    fieldwork_start: "2026-04-24",
+    fieldwork_end: "2026-04-28",
+    sample_size: 1002,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://diariodonordeste.verdesmares.com.br/pontopoder/pesquisa-quaest-ce-para-o-governo-ciro-tem-41-elmano-tem-32-girao-4-1.3760826",
+    results: [
+      { candidate_name: "Ciro Gomes",          percentage: 41 },
+      { candidate_name: "Elmano de Freitas",   percentage: 32 },
+      { candidate_name: "Eduardo Girao",       percentage:  4 },
+      { candidate_name: "Jarir",               percentage:  1 },
+    ],
+  },
+
   // ─── Atlas Intel · Latam Pulse · 13-18 mai 2026 ───────────────────────────
   // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-presidente-maio-2026/
   // TSE: BR-06939/2026 · n=5.032 · online · ME: ±1pp
