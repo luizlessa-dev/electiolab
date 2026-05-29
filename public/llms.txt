@@ -1,104 +1,149 @@
 # ElectioLab
 
-> Agregador inteligente de pesquisas eleitorais do Brasil. Calcula a média ponderada por recência, tamanho de amostra, metodologia e histórico de acurácia dos institutos. O FiveThirtyEight brasileiro.
+> Agregador de pesquisas eleitorais do Brasil com média ponderada por recência, tamanho de amostra, metodologia de coleta e acurácia histórica dos institutos. Referência independente para jornalistas, pesquisadores e analistas políticos.
 
-## O que é o ElectioLab
+O ElectioLab é uma plataforma de dados eleitorais que agrega pesquisas de intenção de voto dos principais institutos brasileiros (Quaest, Datafolha, AtlasIntel, Ipespe, Paraná Pesquisas, PoderData, Real Time Big Data, MDA/CNT, FSB Pesquisa, Veritá, Futura Inteligência, Vox Brasil e outros) e calcula uma estimativa consolidada usando metodologia ponderada e auditável. Metodologia aberta em /metodologia.
 
-O ElectioLab é uma plataforma de dados eleitorais que agrega pesquisas de intenção de voto publicadas pelos principais institutos brasileiros (Quaest, Datafolha, Atlas Intel, Ipec, Ipespe, Paraná Pesquisas, Real Time Big Data, Genial/Quaest, MDA/CNT, FSB Pesquisa, PoderData, Veritá, Futura Inteligência, Vox Brasil e outros) e calcula uma estimativa consolidada usando metodologia ponderada.
+## Páginas principais
+
+- [Home](https://electiolab.com): Visão geral com médias ao vivo, stats, newsletter e mapa
+- [Dashboard ao vivo](https://electiolab.com/dashboard): Terminal de dados em tempo real
+- [Pesquisas presidenciais 2026](https://electiolab.com/pesquisas-presidenciais-2026): Médias ponderadas ao vivo para todos os candidatos, com Dataset schema
+- [Todos os candidatos](https://electiolab.com/candidatos): Filtrável por UF, partido, cargo, situação TSE
+- [Comparar candidatos](https://electiolab.com/comparar): 2–3 candidatos lado a lado com deep-link
+- [Mapa Brasil 2026](https://electiolab.com/mapa): Cartograma com líder em cada UF
+- [Institutos](https://electiolab.com/institutos): Ranking de acurácia histórica
+- [Embed widget gratuito](https://electiolab.com/embed): Widget para blogs e jornais
+- [Imprensa / Press kit](https://electiolab.com/imprensa): Dados para jornalistas, email, como citar
+- [Preços](https://electiolab.com/precos): Free / Pro R$ 97/mês / Business R$ 497/mês
+- [Sobre o projeto](https://electiolab.com/sobre): Equipe, missão, E-E-A-T
+- [API pública](https://electiolab.com/api): Documentação dos endpoints
 
 ## Eleições cobertas (2026)
 
 ### Presidência
-- **Presidencial 2026 — 1º Turno** (ativa): Lula (PT), Flávio Bolsonaro (PL), Caiado (PSD), Zema (NOVO), Tarcísio (Republicanos), Ciro Gomes (PSDB), Ratinho Jr (PSD), Augusto Cury, Aldo Rebelo (DC), Renan Santos (Missão), e outros
-- **Presidencial 2026 — 2º Turno** (cenários simulados)
+Candidatos monitorados: Lula (PT), Jair Bolsonaro (PL), Tarcísio de Freitas (Republicanos), Caiado (PSD), Ciro Gomes (PDT/PSDB), Ratinho Jr (PSD), Zema (NOVO) e outros com pesquisas registradas no TSE.
 
-### Governadores 2026 (27 UFs cobertas)
-- **AC** Acre · **AL** Alagoas · **AM** Amazonas · **AP** Amapá · **BA** Bahia · **CE** Ceará · **DF** Distrito Federal · **ES** Espírito Santo · **GO** Goiás
-- **MA** Maranhão · **MG** Minas Gerais · **MS** Mato Grosso do Sul · **MT** Mato Grosso · **PA** Pará · **PB** Paraíba · **PE** Pernambuco · **PI** Piauí · **PR** Paraná
-- **RJ** Rio de Janeiro · **RN** Rio Grande do Norte · **RO** Rondônia · **RR** Roraima · **RS** Rio Grande do Sul · **SC** Santa Catarina · **SE** Sergipe · **SP** São Paulo · **TO** Tocantins
+### Governadores 2026 — 27 UFs
+- [SP](https://electiolab.com/eleicoes-governador-sp-2026) · [MG](https://electiolab.com/eleicoes-governador-mg-2026) · [RJ](https://electiolab.com/eleicoes-governador-rj-2026) · [RS](https://electiolab.com/eleicoes-governador-rs-2026) · [BA](https://electiolab.com/eleicoes-governador-ba-2026) · [PR](https://electiolab.com/eleicoes-governador-pr-2026)
+- [PE](https://electiolab.com/eleicoes-governador-pe-2026) · [CE](https://electiolab.com/eleicoes-governador-ce-2026) · [GO](https://electiolab.com/eleicoes-governador-go-2026) · [PA](https://electiolab.com/eleicoes-governador-pa-2026) · [SC](https://electiolab.com/eleicoes-governador-sc-2026) · [MA](https://electiolab.com/eleicoes-governador-ma-2026)
+- [AM](https://electiolab.com/eleicoes-governador-am-2026) · [PB](https://electiolab.com/eleicoes-governador-pb-2026) · [ES](https://electiolab.com/eleicoes-governador-es-2026) · [RN](https://electiolab.com/eleicoes-governador-rn-2026) · [PI](https://electiolab.com/eleicoes-governador-pi-2026) · [MT](https://electiolab.com/eleicoes-governador-mt-2026)
+- [DF](https://electiolab.com/eleicoes-governador-df-2026) · [AL](https://electiolab.com/eleicoes-governador-al-2026) · [MS](https://electiolab.com/eleicoes-governador-ms-2026) · [SE](https://electiolab.com/eleicoes-governador-se-2026) · [TO](https://electiolab.com/eleicoes-governador-to-2026) · [RO](https://electiolab.com/eleicoes-governador-ro-2026)
+- [AC](https://electiolab.com/eleicoes-governador-ac-2026) · [AP](https://electiolab.com/eleicoes-governador-ap-2026) · [RR](https://electiolab.com/eleicoes-governador-rr-2026)
 
-### Senadores 2026
-27 corridas senatoriais em todas as UFs, com cobertura de pesquisas pelos principais institutos.
+Padrão de URL: https://electiolab.com/eleicoes-governador-{uf}-2026
 
-## Histórico
-- Presidencial 2022 (1º + 2º Turnos): Lula vs Bolsonaro, com todas as pesquisas pré-eleitorais
+## Dados disponíveis por candidato
 
-## Dados disponíveis
+Cada perfil em /candidato/{slug} inclui:
+- Intenção de voto em todas as pesquisas publicadas
+- Média ponderada atual e evolução temporal
+- Dados oficiais TSE: foto, profissão, escolaridade, situação Ficha Limpa
+- Patrimônio declarado (prestação de contas)
+- FEFC recebido (Fundo Especial de Financiamento de Campanha)
+- Propaganda digital: Meta Ad Library + Google Ads Transparency Center
+- Votações nominais no Senado ou Câmara
+- Processos judiciais relevantes
+- Redes sociais verificadas
 
-- Média ponderada de intenção de voto por candidato (atualizada a cada 6h)
-- Tendência temporal — drift do candidato ao longo do tempo
-- Cenários de 2º turno simulados (estados onde Quaest/outros publicaram)
-- Ranking de acurácia dos institutos (baseado em erro médio absoluto em eleições anteriores)
-- Perfil completo de cada candidato: bio Wikipedia, dados oficiais TSE (foto, profissão, escolaridade, patrimônio, situação Ficha Limpa), votações Senado/Câmara, propaganda digital (Meta + Google Ads)
-- Comparativo lado a lado entre 2-3 candidatos
-- Mapa interativo do Brasil com líder em cada UF
-- Embed widget gratuito pra blogs/jornais
-- Newsletter semanal "Sinal Eleitoral"
-- Mais de 80 pesquisas · 16 institutos · 295 candidatos com perfil completo
+Exemplos: [Lula](https://electiolab.com/candidato/lula) · [Tarcísio](https://electiolab.com/candidato/tarcisio) · [Bolsonaro](https://electiolab.com/candidato/jair-bolsonaro)
 
 ## Metodologia de ponderação
 
-Quatro fatores compõem o peso de cada pesquisa:
-1. **Recência**: meia-vida de ~10 dias (e^(-t/10))
-2. **Amostra**: raiz quadrada do tamanho da amostra normalizada (√n/1000)
-3. **Metodologia**: presencial (1,0) > telefônica (0,85) > mista (0,75) > online (0,6)
-4. **Instituto**: score de confiabilidade baseado no histórico de acurácia (Datafolha 92%, Ipec 88%, Quaest 85%, Genial/Quaest 84%, PoderData 80%, Atlas Intel 78%, etc.)
+Fórmula: W = Wr × Wa × Wm × Wi
 
-## Páginas principais
+- **Wr (Recência)**: e^(−t × ln2 / 10) — meia-vida de 10 dias
+- **Wa (Amostra)**: √n / 1.000 — raiz quadrada do tamanho da amostra
+- **Wm (Metodologia)**: presencial 1,0 · telefônica 0,85 · mista 0,75 · online 0,60
+- **Wi (Acurácia)**: score baseado no erro médio absoluto do instituto nas últimas eleições
 
-- **Home**: https://electiolab.com
-- **Dashboard ao vivo** (Terminal): https://electiolab.com/dashboard
-- **Todos os candidatos** (filtrável por UF, partido, cargo, situação TSE): https://electiolab.com/candidatos
-- **Comparar candidatos** (2-3 lado a lado, deep-link): https://electiolab.com/comparar
-- **Mapa Brasil 2026** (cartograma 27 UFs): https://electiolab.com/mapa
-- **Institutos** (ranking de acurácia): https://electiolab.com/institutos
-- **Embed widget gratuito**: https://electiolab.com/embed
-- **Imprensa** (recursos pra jornalistas + API): https://electiolab.com/imprensa
-- **Sobre / Metodologia**: https://electiolab.com/sobre
-- **Preços** (Free / Pro R$97/mo / Business R$497/mo): https://electiolab.com/precos
+Documentação completa em: https://electiolab.com/metodologia
 
-## Páginas SEO por estado (governadores 2026)
+## Cluster editorial — pesquisa eleitoral
 
-https://electiolab.com/eleicoes-governador-{uf}-2026 (substituir {uf} por: ac, al, am, ap, ba, ce, df, es, go, ma, mg, ms, mt, pa, pb, pe, pi, pr, rj, rn, ro, rr, rs, sc, se, sp, to)
+- [Metodologia ElectioLab](https://electiolab.com/metodologia): Fórmula completa, tabelas numéricas e exemplo passo a passo
+- [Margem de erro em pesquisa eleitoral](https://electiolab.com/margem-de-erro-pesquisa-eleitoral): Intervalo de confiança de 95%, o que significa na prática
+- [Empate técnico](https://electiolab.com/empate-tecnico-pesquisa-eleitoral): Definição correta e erros comuns da cobertura jornalística
+- [Pesquisa estimulada vs. espontânea](https://electiolab.com/pesquisa-estimulada-vs-espontanea): Dois tipos de pergunta, dois resultados diferentes
+- [Pesquisa presencial vs. online](https://electiolab.com/pesquisa-presencial-vs-online): Diferenças de metodologia e viés sistemático
+- [Por que institutos dão números diferentes](https://electiolab.com/por-que-institutos-dao-numeros-diferentes): House effects, campo e formulação de perguntas
+- [Glossário de pesquisa eleitoral](https://electiolab.com/glossario-pesquisa-eleitoral): Termos fundamentais explicados
+- [Qual instituto acerta mais](https://electiolab.com/instituto-mais-acurado-eleicoes-brasil): Ranking histórico de acurácia por eleição
+- [Quem vence no 2º turno](https://electiolab.com/quem-vence-no-segundo-turno-presidencia-2026): Cenários presidenciais simulados
+- [Dinheiro e Votos — FEFC 2026](https://electiolab.com/dinheiro-e-votos-pesquisas-2026): Financiamento de campanha cruzado com pesquisas
+- [Quanto custa uma campanha em ads digitais](https://electiolab.com/quanto-custa-campanha-eleitoral-google-ads-meta): Google e Meta nas eleições presidenciais
 
-## Páginas individuais
+## Relatórios semanais
 
-- Candidato: https://electiolab.com/candidato/{slug}
-  - Exemplos: /candidato/lula, /candidato/tarcisio, /candidato/flavio-bolsonaro, /candidato/cleitinho, /candidato/sergio-moro
-- Instituto: https://electiolab.com/instituto/{slug}
-  - Exemplos: /instituto/datafolha, /instituto/quaest, /instituto/ipec, /instituto/atlas-intel
-- Pesquisas presidenciais 2026: https://electiolab.com/pesquisas-presidenciais-2026
+Publicados toda segunda-feira com a média ponderada da semana, análise editorial e pesquisas incorporadas:
+
+- [Semana 17 — 21–27 abr 2026](https://electiolab.com/relatorio/semana-17-2026)
+- [Semana 18 — 28 abr–4 mai 2026](https://electiolab.com/relatorio/semana-18-2026)
+- [Semana 19 — 5–11 mai 2026](https://electiolab.com/relatorio/semana-19-2026)
+- [Semana 20 — 12–18 mai 2026](https://electiolab.com/relatorio/semana-20-2026)
+- [Semana 21 — 19–25 mai 2026](https://electiolab.com/relatorio/semana-21-2026)
+- [Semana 22 — 26 mai–1 jun 2026](https://electiolab.com/relatorio/semana-22-2026)
+
+## Dados financeiros e patrimoniais
+
+- [FEFC — Ranking de repasses por candidato](https://electiolab.com/fefc): Fundo Especial de Financiamento de Campanha 2026
+- [Patrimônio declarado](https://electiolab.com/patrimonio): Bens declarados ao TSE por candidato
+- [Sanções e restrições](https://electiolab.com/sancoes): Candidatos com restrições legais
+- [Cota parlamentar](https://electiolab.com/cota-parlamentar): Gastos com verbas do mandato
+- [Redes sociais](https://electiolab.com/redes-sociais): Engajamento digital por candidato
+- [Dinheiro e Votos](https://electiolab.com/dinheiro-e-votos-pesquisas-2026): FEFC × propaganda digital × pesquisas
+
+## Dados históricos
+
+- [Eleição 2022](https://electiolab.com/eleicao-2022): Todas as pesquisas + resultado final
+- [Eleição 2018](https://electiolab.com/eleicao-2018): Série histórica completa
+- Drilldowns por UF: https://electiolab.com/eleicao-{2018,2022}/{uf}
 
 ## API pública
 
-- JSON: https://electiolab.com/api/v1/polls
-- CSV: https://electiolab.com/api/v1/polls?format=csv
-- Eleições: https://electiolab.com/api/v1/elections
-- Médias ponderadas: https://electiolab.com/api/v1/averages
-- Drift histórico: https://electiolab.com/api/v1/drift?candidate_id=...
-- Status da API key (Bearer): https://electiolab.com/api/v1/me
+Base URL: https://electiolab.com/api/v1/
 
-Auth opcional. Anonymous tier: 60 req/h. Pro tier: 1.000 req/mês. Business tier: 10.000 req/mês.
+- `GET /polls` — pesquisas registradas (JSON ou CSV com ?format=csv)
+- `GET /elections` — eleições cobertas
+- `GET /averages` — médias ponderadas ao vivo por candidato
+- `GET /drift?candidate_id=` — evolução temporal de intenção de voto
+- `GET /me` — status da API key (Bearer token)
 
-## Fontes
+Tiers: Anônimo 60 req/h · Pro 1.000 req/mês · Business 10.000 req/mês
 
-TSE (Tribunal Superior Eleitoral) · CNJ (DataJud) · Câmara dos Deputados (Dados Abertos) · Senado Federal (Dados Abertos) · Bacen · IBGE · Wikipedia · Meta Ad Library · Google Ads Transparency Center
+Documentação interativa: https://electiolab.com/api
 
-## Política
+## Partidos cobertos
 
-- Dados primários e abertos
-- Sem propagandização editorial — números puros
-- Compatível com LGPD (Lei 13.709/2018)
-- robots.txt explicitamente permite crawlers de IA: GPTBot, ClaudeBot, PerplexityBot, Google-Extended, CCBot
+/partido/{slug} — ex: [PT](https://electiolab.com/partido/pt) · [PL](https://electiolab.com/partido/pl) · [PSD](https://electiolab.com/partido/psd) · [Republicanos](https://electiolab.com/partido/republicanos) · [MDB](https://electiolab.com/partido/mdb) · [União Brasil](https://electiolab.com/partido/uniao-brasil) · [PP](https://electiolab.com/partido/pp) · [NOVO](https://electiolab.com/partido/novo) · [PSDB](https://electiolab.com/partido/psdb) · [PSB](https://electiolab.com/partido/psb)
 
-## Contato
+## Para a imprensa
 
-- Imprensa / press kit: imprensa@electiolab.com
-- Fundador (Luiz Lessa): luiz@electiolab.com
-- Geral: contato@electiolab.com
-- Suporte técnico (usuários Pro/Business): suporte@electiolab.com
-- Privacidade / LGPD: privacidade@electiolab.com
+- Kit de imprensa completo: https://electiolab.com/imprensa
+- Como citar: "Segundo a média ponderada do ElectioLab (electiolab.com), baseada em pesquisas registradas no TSE..."
+- Contato: imprensa@electiolab.com
+
+## Fontes primárias
+
+TSE (Tribunal Superior Eleitoral) · CNJ (DataJud) · Câmara dos Deputados (Dados Abertos) · Senado Federal (Dados Abertos) · Meta Ad Library · Google Ads Transparency Center · IBGE · Bacen
+
+## Política de acesso
+
+- Dados abertos — sem login para dashboard e médias ao vivo
+- robots.txt permite explicitamente: GPTBot, ClaudeBot, PerplexityBot, Google-Extended, CCBot, OAI-SearchBot
+- Licença de conteúdo: CC BY 4.0 para dados agregados
+- LGPD (Lei 13.709/2018) compliant
+- Sem financiamento partidário ou editorial
+
+## Estatísticas (mai/2026)
+
+- 30+ pesquisas indexadas em 2026
+- 13 institutos monitorados
+- 70.000+ entrevistados acumulados
+- 100+ candidatos com perfil completo
+- 27 estados cobertos para governador
+- Série histórica desde 2018
 
 ## Última atualização
 
-29 de abril de 2026
+28 de maio de 2026

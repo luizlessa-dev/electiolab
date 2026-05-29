@@ -12,6 +12,7 @@ export function NewsletterSignup({ variant = "card", source = "site" }: Props) {
   const [email, setEmail] = useState("");
   const [state, setState] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [needsConfirmation, setNeedsConfirmation] = useState(true);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -26,8 +27,10 @@ export function NewsletterSignup({ variant = "card", source = "site" }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, source }),
       });
-      const data = await res.json();
+      const data = await res.json() as { error?: string; requires_confirmation?: boolean };
       if (!res.ok) throw new Error(data.error || "Erro ao inscrever");
+      // Guarda se precisa de confirmação por email para ajustar mensagem
+      setNeedsConfirmation(data.requires_confirmation !== false);
       setState("success");
     } catch (err) {
       setState("error");
@@ -44,11 +47,22 @@ export function NewsletterSignup({ variant = "card", source = "site" }: Props) {
       }>
         <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5" />
         <div>
-          <p className="font-medium">Quase lá!</p>
-          <p className="text-xs opacity-90 mt-0.5">
-            Enviamos um email de confirmação pra <strong>{email}</strong>. Clique no link
-            de lá pra ativar sua inscrição.
-          </p>
+          {needsConfirmation ? (
+            <>
+              <p className="font-medium">Quase lá!</p>
+              <p className="text-xs opacity-90 mt-0.5">
+                Enviamos um email de confirmação pra <strong>{email}</strong>. Clique no link
+                de lá pra ativar sua inscrição.
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="font-medium">Inscrito!</p>
+              <p className="text-xs opacity-90 mt-0.5">
+                <strong>{email}</strong> adicionado à Sinal Eleitoral. Você receberá a próxima edição na segunda-feira.
+              </p>
+            </>
+          )}
         </div>
       </div>
     );
