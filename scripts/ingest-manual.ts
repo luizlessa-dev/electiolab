@@ -49,6 +49,56 @@ const PENDING_POLLS: Array<{
   source_url?: string;
   results: { candidate_name: string; percentage: number }[];
 }> = [
+  // ─── Real Time Big Data · 2-4 mai 2026 ────────────────────────────────────
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-presidente-maio-2026/
+  // TSE: BR-03627/2026 · n=2.000 · telefônica · ME: ±2pp
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-05-05",
+    fieldwork_start: "2026-05-02",
+    fieldwork_end: "2026-05-04",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-presidente-maio-2026/",
+    results: [
+      { candidate_name: "Lula",            percentage: 40 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 34 },
+      { candidate_name: "Caiado",          percentage:  5 },
+      { candidate_name: "Zema",            percentage:  4 },
+      { candidate_name: "Renan Santos",    percentage:  3 },
+      { candidate_name: "Augusto Cury",    percentage:  1 },
+      { candidate_name: "Aldo Rebelo",     percentage:  1 },
+      { candidate_name: "Cabo Daciolo",    percentage:  1 },
+    ],
+  },
+
+  // ─── Meio/Ideia · 1-5 mai 2026 ────────────────────────────────────────────
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/meio-ideia-presidente-maio-2026/
+  // TSE: BR-05356/2026 · n=1.500 · telefônica · ME: ±2,5pp
+  {
+    institute_name: "Meio/Ideia",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-05-06",
+    fieldwork_start: "2026-05-01",
+    fieldwork_end: "2026-05-05",
+    sample_size: 1500,
+    margin_of_error: 2.5,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/meio-ideia-presidente-maio-2026/",
+    results: [
+      { candidate_name: "Lula",            percentage: 40 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 36 },
+      { candidate_name: "Caiado",          percentage:  5.6 },
+      { candidate_name: "Zema",            percentage:  3 },
+      { candidate_name: "Augusto Cury",    percentage:  1.5 },
+      { candidate_name: "Renan Santos",    percentage:  1.4 },
+      { candidate_name: "Aldo Rebelo",     percentage:  0.8 },
+      { candidate_name: "Cabo Daciolo",    percentage:  0.3 },
+    ],
+  },
+
   // ─── Atlas Intel · Latam Pulse · 13-18 mai 2026 ───────────────────────────
   // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-presidente-maio-2026/
   // TSE: BR-06939/2026 · n=5.032 · online · ME: ±1pp
