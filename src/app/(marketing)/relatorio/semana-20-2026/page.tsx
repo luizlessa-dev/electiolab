@@ -8,45 +8,42 @@ export const DATA: ReportData = {
   dateISO: "2026-05-18",
 
   presidencial: [
-    { name: "Lula",      party: "PT",           pct: 37.0, delta:  0.0, cor: "#ef4444" },
-    { name: "Bolsonaro", party: "PL",           pct: 30.2, delta: -0.1, cor: "#3b82f6" },
-    { name: "Tarcísio",  party: "Republicanos", pct: 18.5, delta: +0.1, cor: "#8b5cf6" },
-    { name: "Outros",    party: "—",            pct: 14.3, delta:  0.0, cor: "#6b7280" },
+    { name: "Lula",            party: "PT",  pct: 39.8, delta: +0.3, cor: "#ef4444" },
+    { name: "Flávio Bolsonaro", party: "PL", pct: 35.3, delta: +0.8, cor: "#1d4ed8" },
+    { name: "Caiado",          party: "PSD", pct: 2.9,  delta: -1.9, cor: "#eab308" },
+    { name: "Zema",            party: "NOVO", pct: 4.1, delta: +0.6, cor: "#f97316" },
   ],
 
   analise: [
-    "Semana de manutenção: Lula estabiliza em 37,0% pela segunda semana consecutiva — sinal de consolidação, não de estagnação. Em ciência política eleitoral, estabilidade em patamar elevado é um ativo: indica que a liderança não depende de eventos favoráveis para se sustentar.",
-    "Bolsonaro (PL) recua 0,1pp, acumulando -0,2pp desde a semana 17. A série de quatro semanas sem crescimento começa a configurar uma tendência de pressão sobre o piso eleitoral. Ainda não é uma queda estrutural, mas merece atenção nos próximos ciclos.",
-    "Tarcísio (Republicanos) sobe 0,1pp e encerra a semana em 18,5% — a maior marca da candidatura desde o início da série do ElectioLab. Dezembro começa a aparecer em análises como prazo para o candidato consolidar uma identidade eleitoral própria, separada do bolsonarismo histórico.",
-    "O campo 'Outros' permanece em 14,3% pela segunda semana seguida. A manutenção indica que os eleitores indecisos entre os candidatos menores ainda não migram para o campo polarizado — o que pode mudar a partir de agosto com o início oficial da campanha.",
+    "Semana de maior dispersão entre os institutos. A Vox Brasil (online) foi o único levantamento a colocar Flávio Bolsonaro numericamente à frente (36,5% x 34,3%); no mesmo período, a AtlasIntel apontou Lula com 47%.",
+    "A média da semana (Lula ~40%, Flávio ~35%) suaviza essa divergência metodológica — exatamente o tipo de ruído que a agregação existe para tratar.",
   ],
   destaqueAnalise:
-    "Momento de estabilidade máxima na série: nenhum candidato varia mais de 0,1pp. Isso pode indicar que o eleitorado está aguardando eventos concretos de campanha para revisar intenções — confirmando a importância do período agosto–outubro para a definição do quadro final.",
+    "Quando institutos divergem na mesma semana (Vox aponta Flávio na frente, Atlas aponta Lula com folga), a média ponderada é mais informativa que qualquer pesquisa isolada.",
 
   pesquisas: [
     {
-      instituto: "AtlasIntel",
-      cliente: "Espontânea",
-      publicacao: "15 mai 2026",
-      metodologia: "Online",
-      n: 4_622,
-      lider: "Lula",
-      pct_lider: 36,
-      destaque: "Tarcísio alcança 19% na faixa 25–34 anos — o melhor resultado entre jovens adultos desde que entrou na corrida. Bolsonaro recua para 29% nessa faixa etária.",
+      instituto: "Vox Brasil", cliente: "Espontânea", publicacao: "13 mai 2026",
+      metodologia: "Online", n: 2100, lider: "Flávio Bolsonaro", pct_lider: 36.5,
+      destaque: "Único da semana com Flávio (36,5%) numericamente à frente de Lula (34,3%).",
+    },
+    {
+      instituto: "Datafolha", cliente: "Folha de S.Paulo", publicacao: "14 mai 2026",
+      metodologia: "Presencial", n: 2004, lider: "Lula", pct_lider: 38,
+      destaque: "Datafolha: Lula 38%, Flávio 35%, Zema 3%.",
+    },
+    {
+      instituto: "Atlas Intel", cliente: "Espontânea", publicacao: "19 mai 2026",
+      metodologia: "Online", n: 5032, lider: "Lula", pct_lider: 47,
+      destaque: "AtlasIntel volta a apontar o topo da série para Lula (47%), Flávio 34,3%.",
     },
   ],
 
-  governadores: [
-    { uf: "SP", lider: "Tarcísio",      pct: 40.6, delta: +0.2, partido: "Rep" },
-    { uf: "MG", lider: "Cleitinho",     pct: 48.4, delta: +0.1, partido: "Rep" },
-    { uf: "RJ", lider: "Eduardo Paes",  pct: 49.2, delta:  0.0, partido: "PSD" },
-    { uf: "RS", lider: "Eduardo Leite", pct: 43.3, delta: -0.1, partido: "PSDB" },
-    { uf: "BA", lider: "Jerônimo",      pct: 54.9, delta: +0.2, partido: "PT" },
-  ],
+  governadores: [],
 
-  totalPesquisas: 27,
-  totalInstitutos: 13,
-  totalEntrevistados: 66_617,
+  totalPesquisas: 23,
+  totalInstitutos: 12,
+  totalEntrevistados: 99358,
 
   prevSemana: 19,
   nextSemana: 21,

@@ -8,55 +8,44 @@ export const DATA: ReportData = {
   dateISO: "2026-05-25",
 
   presidencial: [
-    { name: "Lula",      party: "PT",           pct: 37.1, delta: +0.3,  cor: "#ef4444" },
-    { name: "Bolsonaro", party: "PL",           pct: 30.2, delta: -0.2,  cor: "#3b82f6" },
-    { name: "Tarcísio",  party: "Republicanos", pct: 18.6, delta: +0.4,  cor: "#8b5cf6" },
-    { name: "Outros",    party: "—",            pct: 14.1, delta: -0.5,  cor: "#6b7280" },
+    { name: "Lula",            party: "PT",  pct: 39.7, delta: -0.1, cor: "#ef4444" },
+    { name: "Flávio Bolsonaro", party: "PL", pct: 34.7, delta: -0.6, cor: "#1d4ed8" },
+    { name: "Caiado",          party: "PSD", pct: 3.7,  delta: +0.8, cor: "#eab308" },
+    { name: "Zema",            party: "NOVO", pct: 3.3, delta: -0.8, cor: "#f97316" },
   ],
 
   analise: [
-    "Lula (PT) avança 0,3pp e mantém a maior distância sobre o segundo colocado desde o início da série histórica do ElectioLab. A pesquisa Quaest de 20 de maio foi o principal driver da variação positiva, com a candidatura alcançando 38% na metodologia telefônica — melhor resultado desde outubro de 2025.",
-    "Tarcísio (Republicanos) registra +0,4pp, consolidando a tendência de crescimento lento mas consistente observada desde a semana 14. O ganho vem principalmente da faixa etária 18–34 anos e de eleitores de baixa renda no interior de São Paulo e Minas Gerais, segundo a desagregação regional da AtlasIntel.",
-    "Bolsonaro (PL) recua 0,2pp, dentro da margem de ruído estatístico da média. O piso eleitoral do ex-presidente permanece estável na faixa de 29–31% há 9 semanas consecutivas — o mais longo período de estabilidade registrado na série.",
+    "Três pesquisas na semana. A Datafolha apontou a maior distância (Lula 40% x Flávio Bolsonaro 31%), enquanto a Gerp registrou empate técnico em 38%. A Nexus/BTG ficou no meio (Lula 41% x Flávio 35%).",
+    "A média consolida Lula em torno de 40% e Flávio em 35%, vantagem de cerca de 5pp. A dispersão entre Datafolha e Gerp ilustra como dois institutos sérios podem divergir dentro de suas margens.",
   ],
   destaqueAnalise:
-    "Com 5 meses de série histórica, o ElectioLab não registra nenhum movimento de virada. A corrida presidencial permanece estabilizada: Lula à frente por cerca de 6,9pp da soma dos dois candidatos conservadores mais fortes.",
+    "Mesmo com a Gerp apontando empate em 38%, o conjunto das pesquisas da semana mantém Lula à frente de Flávio por ~5pp na média.",
 
   pesquisas: [
     {
-      instituto: "Quaest",
-      cliente: "Genial Investimentos",
-      publicacao: "20 mai 2026",
-      metodologia: "Telefônica",
-      n: 2_000,
-      lider: "Lula",
-      pct_lider: 38,
-      destaque: "Lula atinge 38% — melhor resultado na metodologia telefônica em 7 meses. Tarcísio sobe 1pp entre eleitores sem ensino superior.",
+      instituto: "Datafolha", cliente: "Folha de S.Paulo", publicacao: "22 mai 2026",
+      metodologia: "Presencial", n: 2004, lider: "Lula", pct_lider: 40,
+      destaque: "Maior distância da semana: Lula 40%, Flávio 31%, Caiado 4%.",
     },
     {
-      instituto: "AtlasIntel",
-      cliente: "Espontânea",
-      publicacao: "23 mai 2026",
-      metodologia: "Online",
-      n: 5_114,
-      lider: "Lula",
-      pct_lider: 36,
-      destaque: "Cenário mais equilibrado no interior de SP. Tarcísio alcança 21% na faixa 18–34 anos — melhor resultado desde que entrou na corrida.",
+      instituto: "Gerp", cliente: "Espontânea", publicacao: "21 mai 2026",
+      metodologia: "Presencial", n: 2000, lider: "Lula", pct_lider: 38,
+      destaque: "Empate técnico: Lula e Flávio ambos em 38%.",
+    },
+    {
+      instituto: "Nexus", cliente: "BTG Pactual", publicacao: "25 mai 2026",
+      metodologia: "Telefônica", n: 2045, lider: "Lula", pct_lider: 41,
+      destaque: "Nexus/BTG: Lula 41%, Flávio 35%, Caiado 5%.",
     },
   ],
 
-  governadores: [
-    { uf: "SP", lider: "Tarcísio",      pct: 40.8, delta: +0.8, partido: "Rep" },
-    { uf: "MG", lider: "Cleitinho",     pct: 48.5, delta: +0.5, partido: "Rep" },
-    { uf: "RJ", lider: "Eduardo Paes",  pct: 49.3, delta: +0.3, partido: "PSD" },
-    { uf: "RS", lider: "Eduardo Leite", pct: 43.2, delta: -0.4, partido: "PSDB" },
-  ],
+  governadores: [],
 
-  totalPesquisas: 28,
+  totalPesquisas: 26,
   totalInstitutos: 13,
-  totalEntrevistados: 68_420,
+  totalEntrevistados: 105407,
 
-  prevSemana: 17,
+  prevSemana: 20,
   nextSemana: 22,
   nextDateRange: "26 mai – 1 jun 2026",
 };
