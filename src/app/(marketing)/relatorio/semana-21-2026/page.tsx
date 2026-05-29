@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { RelatorioPage, buildReportMetadata } from "@/components/relatorio/relatorio-page";
 import type { ReportData } from "@/components/relatorio/types";
 
-const DATA: ReportData = {
+export const DATA: ReportData = {
   semana: 21,
   dateRange: "19–25 de maio de 2026",
   dateISO: "2026-05-25",
