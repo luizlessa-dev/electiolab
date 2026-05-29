@@ -29,7 +29,8 @@ if (fs.existsSync(envFile)) {
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  // Service role bypassa RLS para inserções administrativas
+  process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
 // ────────────────────────────────────────────────────
@@ -48,7 +49,193 @@ const PENDING_POLLS: Array<{
   source_url?: string;
   results: { candidate_name: string; percentage: number }[];
 }> = [
-  // ─── Novos polls 2026 (abr/2026) ───────────────────
+  // ─── Atlas Intel · Latam Pulse · 13-18 mai 2026 ───────────────────────────
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-presidente-maio-2026/
+  // TSE: BR-06939/2026 · n=5.032 · online · ME: ±1pp
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-05-19",
+    fieldwork_start: "2026-05-13",
+    fieldwork_end: "2026-05-18",
+    sample_size: 5032,
+    margin_of_error: 1.0,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-presidente-maio-2026/",
+    results: [
+      { candidate_name: "Lula",            percentage: 47.0 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 34.3 },
+      { candidate_name: "Renan Santos",     percentage:  6.9 },
+      { candidate_name: "Zema",             percentage:  5.2 },
+      { candidate_name: "Caiado",           percentage:  2.7 },
+    ],
+  },
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-05-19",
+    fieldwork_start: "2026-05-13",
+    fieldwork_end: "2026-05-18",
+    sample_size: 5032,
+    margin_of_error: 1.0,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-presidente-maio-2026/",
+    results: [
+      { candidate_name: "Lula",            percentage: 48.9 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 41.8 },
+    ],
+  },
+
+  // ─── Gerp · 18-21 mai 2026 ────────────────────────────────────────────────
+  // Fonte: Gazeta do Povo / Wikipedia · n=2.000 · presencial · ME: ±2.2pp
+  {
+    institute_name: "Gerp",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-05-21",
+    fieldwork_start: "2026-05-18",
+    fieldwork_end: "2026-05-21",
+    sample_size: 2000,
+    margin_of_error: 2.2,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/gerp-presidente-maio-2026/",
+    results: [
+      { candidate_name: "Lula",            percentage: 38.0 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 38.0 },
+      { candidate_name: "Zema",             percentage:  3.0 },
+      { candidate_name: "Caiado",           percentage:  2.0 },
+    ],
+  },
+
+  // ─── Datafolha · 20-21 mai 2026 ───────────────────────────────────────────
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-presidente-maio-2026-2/
+  // TSE: BR-07489/2026 · n=2.004 · presencial · ME: ±2pp
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-05-22",
+    fieldwork_start: "2026-05-20",
+    fieldwork_end: "2026-05-21",
+    sample_size: 2004,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-presidente-maio-2026-2/",
+    results: [
+      { candidate_name: "Lula",            percentage: 40 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 31 },
+      { candidate_name: "Caiado",          percentage:  4 },
+      { candidate_name: "Zema",            percentage:  3 },
+      { candidate_name: "Renan Santos",    percentage:  3 },
+      { candidate_name: "Samara Martins",  percentage:  3 },
+      { candidate_name: "Augusto Cury",    percentage:  2 },
+      { candidate_name: "Aldo Rebelo",     percentage:  1 },
+      { candidate_name: "Cabo Daciolo",    percentage:  1 },
+    ],
+  },
+
+  // ─── Nexus/BTG Pactual · 22-24 mai 2026 ──────────────────────────────────
+  // Fonte: Wikipedia / Gazeta do Povo · n=2.045 · telefônica · ME: ±2pp
+  {
+    institute_name: "Nexus",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-05-25",
+    fieldwork_start: "2026-05-22",
+    fieldwork_end: "2026-05-24",
+    sample_size: 2045,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/nexus-btg-pactual-presidente-maio-2026/",
+    results: [
+      { candidate_name: "Lula",            percentage: 41 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 35 },
+      { candidate_name: "Caiado",          percentage:  5 },
+      { candidate_name: "Zema",            percentage:  4 },
+    ],
+  },
+
+  // ─── PoderData/Aya · 25-28 mai 2026 ──────────────────────────────────────
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/poder-data-presidente-maio-2026/
+  // TSE: BR-04882/2026 · n=2.400 · telefônica · ME: ±2pp
+  {
+    institute_name: "PoderData",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-05-29",
+    fieldwork_start: "2026-05-25",
+    fieldwork_end: "2026-05-28",
+    sample_size: 2400,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/poder-data-presidente-maio-2026/",
+    results: [
+      { candidate_name: "Lula",            percentage: 40 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 35 },
+      { candidate_name: "Zema",            percentage:  4 },
+      { candidate_name: "Renan Santos",    percentage:  3 },
+      { candidate_name: "Augusto Cury",    percentage:  3 },
+      { candidate_name: "Caiado",          percentage:  3 },
+    ],
+  },
+  {
+    institute_name: "PoderData",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-05-29",
+    fieldwork_start: "2026-05-25",
+    fieldwork_end: "2026-05-28",
+    sample_size: 2400,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/poder-data-presidente-maio-2026/",
+    results: [
+      { candidate_name: "Lula",            percentage: 46 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 42 },
+    ],
+  },
+
+  // ─── Paraná Pesquisas · Governador SP · 18-20 mai 2026 ───────────────────
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/parana-pesquisas-governador-sao-paulo-maio-2026/
+  // TSE: SP-02706/2026 · n=1.640 · presencial · ME: ±2,5pp
+  {
+    institute_name: "Paraná Pesquisas",
+    election_name: "Governador SP 2026 - 1º Turno",
+    publication_date: "2026-05-21",
+    fieldwork_start: "2026-05-18",
+    fieldwork_end: "2026-05-20",
+    sample_size: 1640,
+    margin_of_error: 2.5,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/parana-pesquisas-governador-sao-paulo-maio-2026/",
+    results: [
+      { candidate_name: "Tarcísio",     percentage: 47.3 },
+      { candidate_name: "Haddad",       percentage: 33.5 },
+      { candidate_name: "Paulo Serra",  percentage:  4.3 },
+      { candidate_name: "Kim Kataguiri", percentage: 3.4 },
+    ],
+  },
+
+  // ─── Real Time Big Data · Governador MG · pub 21 mai 2026 ─────────────────
+  // Fonte: moonbh.com.br / Gazeta do Povo · n=1.600 · ME: ±2pp
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador MG 2026 - 1º Turno",
+    publication_date: "2026-05-21",
+    fieldwork_start: "2026-05-19",
+    fieldwork_end: "2026-05-20",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://moonbh.com.br/politica-e-poder/2026/05/21/pesquisa-governo-minas-cleitinho-pacheco-kalil-simoes-real-time-big-data/",
+    results: [
+      { candidate_name: "Cleitinho",           percentage: 35 },
+      { candidate_name: "Rodrigo Pacheco",      percentage: 15 },
+      { candidate_name: "Alexandre Kalil",      percentage: 14 },
+      { candidate_name: "Mateus Simões",         percentage: 11 },
+      { candidate_name: "Gabriel Azevedo",       percentage:  6 },
+      { candidate_name: "Maria da Consolação",   percentage:  3 },
+      { candidate_name: "Ben Mendes",            percentage:  2 },
+      { candidate_name: "Flávio Roscoe",         percentage:  2 },
+    ],
+  },
+
+  // ─── Arquivo: polls de abril/2026 (já inseridos — serão ignorados) ────────
   {
     institute_name: "Futura Inteligência",
     election_name: "Presidencial 2026 - 1º Turno",
