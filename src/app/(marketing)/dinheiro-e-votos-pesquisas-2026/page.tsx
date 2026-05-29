@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@supabase/supabase-js";
 import { ArrowLeft, DollarSign, TrendingUp, BarChart3, AlertCircle } from "lucide-react";
+import { LeiaTabem } from "@/components/editorial/leia-tambem";
 
 export const revalidate = 3600;
 
@@ -736,57 +737,8 @@ export default async function DinheiroEVotosPage() {
               </div>
             </section>
 
-            {/* Links */}
-            <section className="border-t border-border pt-8">
-              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium mb-4">
-                Explore também
-              </p>
-              <div className="grid md:grid-cols-3 gap-3">
-                {[
-                  {
-                    href: "/pesquisas-presidenciais-2026",
-                    label: "Pesquisas presidenciais",
-                    desc: "Médias ponderadas ao vivo",
-                  },
-                  {
-                    href: "/fefc",
-                    label: "Ranking FEFC",
-                    desc: "Todos os repasses por candidato",
-                  },
-                  {
-                    href: "/quanto-custa-campanha-eleitoral-google-ads-meta",
-                    label: "Ads digitais 2022",
-                    desc: "Google e Meta na última eleição",
-                  },
-                  {
-                    href: "/metodologia",
-                    label: "Metodologia",
-                    desc: "Como calculamos a média",
-                  },
-                  {
-                    href: "/patrimonio",
-                    label: "Patrimônio declarado",
-                    desc: "Bens dos candidatos ao TSE",
-                  },
-                  {
-                    href: "/candidatos",
-                    label: "Perfis de candidatos",
-                    desc: "Dados completos de cada candidato",
-                  },
-                ].map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="border border-border rounded-lg px-4 py-3 hover:bg-muted/30 transition-colors group"
-                  >
-                    <p className="text-sm font-medium group-hover:text-primary transition-colors">
-                      {item.label}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
-                  </Link>
-                ))}
-              </div>
-            </section>
+            {/* Internal links */}
+            <LeiaTabem current="/dinheiro-e-votos-pesquisas-2026" />
           </div>
         </div>
       </div>

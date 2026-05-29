@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, BarChart3, Clock, Users, FlaskConical, Building2, ArrowRight, Calculator, BookOpen } from "lucide-react";
+import { LeiaTabem } from "@/components/editorial/leia-tambem";
 
 export const metadata: Metadata = {
   title: {
@@ -484,6 +485,10 @@ export default function MetodologiaPage() {
               contato@electiolab.com
             </a>
           </p>
+        </section>
+
+        <section className="max-w-3xl mx-auto px-4 pb-4">
+          <LeiaTabem current="/metodologia" />
         </section>
 
       </main>

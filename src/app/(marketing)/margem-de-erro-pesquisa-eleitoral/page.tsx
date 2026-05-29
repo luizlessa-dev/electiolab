@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, AlertTriangle } from "lucide-react";
+import { LeiaTabem } from "@/components/editorial/leia-tambem";
 
 export const metadata: Metadata = {
   title: {
@@ -268,24 +269,7 @@ export default function MargemErroPage() {
             </div>
           </section>
 
-          {/* Próximo passo */}
-          <section className="mt-10 pt-6 border-t border-border">
-            <p className="text-sm font-semibold mb-3">Continue lendo</p>
-            <Link
-              href="/empate-tecnico-pesquisa-eleitoral"
-              className="group flex items-center justify-between gap-3 rounded-lg border border-border bg-card hover:border-primary/50 transition-all p-4"
-            >
-              <div>
-                <p className="text-sm font-bold group-hover:text-primary transition-colors">
-                  Empate técnico em pesquisa eleitoral
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Quando dois candidatos &quot;empatam&quot; mesmo com números diferentes
-                </p>
-              </div>
-              <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
-            </Link>
-          </section>
+          <LeiaTabem current="/margem-de-erro-pesquisa-eleitoral" />
         </article>
       </main>
 

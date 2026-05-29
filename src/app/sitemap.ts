@@ -254,6 +254,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.75,
     },
     {
+      url: `${SITE_URL}/relatorio/semana-21-2026`,
+      lastModified: "2026-05-25T00:00:00.000Z",
+      changeFrequency: "never",
+      priority: 0.75,
+    },
+    {
+      url: `${SITE_URL}/relatorio/semana-22-2026`,
+      lastModified: "2026-06-01T00:00:00.000Z",
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
       url: `${SITE_URL}/eleicao-2018`,
       lastModified: now,
       changeFrequency: "yearly",

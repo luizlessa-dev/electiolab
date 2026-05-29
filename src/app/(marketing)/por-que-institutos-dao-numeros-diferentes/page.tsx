@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, BarChart3, ArrowRight, AlertTriangle, BookOpen } from "lucide-react";
+import { LeiaTabem } from "@/components/editorial/leia-tambem";
 
 export const metadata: Metadata = {
   title: {
@@ -413,6 +414,10 @@ export default function PorQueInstitutosDaoNumerosDiferentesPage() {
           >
             Ver médias presidenciais 2026 <ArrowRight className="h-3.5 w-3.5" />
           </Link>
+        </section>
+
+        <section className="max-w-3xl mx-auto px-4 pb-4">
+          <LeiaTabem current="/por-que-institutos-dao-numeros-diferentes" />
         </section>
 
       </main>

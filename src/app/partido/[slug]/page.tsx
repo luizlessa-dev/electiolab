@@ -129,31 +129,56 @@ export default async function PartidoPage({ params }: { params: Promise<{ slug: 
 
   const color = partyColor(slug);
 
+  const partyUrl = `https://electiolab.com/partido/${slug}`;
+  const dateModified = new Date().toISOString().slice(0, 10);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "Article",
+        "@id": `${partyUrl}#article`,
+        url: partyUrl,
+        mainEntityOfPage: partyUrl,
         headline: `${data.party} — Candidatos, FEFC e Patrimônio nas Eleições 2026`,
-        description: `Análise consolidada do partido ${data.party} nas eleições brasileiras de 2026.`,
+        description: `Análise consolidada do partido ${data.party} nas eleições brasileiras de 2026. ${data.candidates.length} candidatos ativos.`,
         author: { "@id": "https://electiolab.com/sobre#founder" },
         publisher: { "@id": "https://electiolab.com/#organization" },
         datePublished: "2026-04-30",
-        dateModified: new Date().toISOString().slice(0, 10),
+        dateModified,
         inLanguage: "pt-BR",
       },
       {
-        "@type": "PoliticalParty",
+        // PoliticalParty é subtype de Organization — compatível com todos os parsers
+        "@type": ["PoliticalParty", "Organization"],
+        "@id": `${partyUrl}#party`,
         name: data.party,
-        url: `https://electiolab.com/partido/${slug}`,
-        memberOf: { "@id": "https://electiolab.com/#dataset" },
+        alternateName: slug.toUpperCase().replace(/-/g, " "),
+        url: partyUrl,
+        numberOfEmployees: { "@type": "QuantitativeValue", value: data.candidates.length },
       },
       {
         "@type": "BreadcrumbList",
+        "@id": `${partyUrl}#breadcrumb`,
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "ElectioLab", item: "https://electiolab.com" },
-          { "@type": "ListItem", position: 2, name: "Partidos" },
-          { "@type": "ListItem", position: 3, name: data.party },
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "ElectioLab",
+            item: "https://electiolab.com",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Partidos",
+            item: "https://electiolab.com/candidatos",
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: data.party,
+            item: partyUrl,
+          },
         ],
       },
     ],
