@@ -127,6 +127,135 @@ export async function getLatestStateGovPoll(
 }
 
 /**
+ * Cenários de 2º turno (head-to-head) para governador de um estado.
+ *
+ * Diferente do presidencial, governadores NÃO têm weighted_averages por cenário.
+ * Aqui agregamos direto dos polls crus: agrupamos por PAR de candidatos (robusto
+ * contra rótulos inconsistentes como "Paes × Ruas" vs "Paes × Douglas Ruas" ou
+ * "Tarcísio × Haddad (Quaest/Vox/Paraná)") e calculamos a média simples das
+ * pesquisas de cada par, mantendo atribuição (institutos, data, nº de pesquisas).
+ */
+export type RunoffCandidate = {
+  name: string;
+  party: string | null;
+  color: string | null;
+  slug: string;
+  pct: number;
+};
+
+export type RunoffScenario = {
+  /** chave estável = slugs do par ordenados */
+  key: string;
+  candidates: RunoffCandidate[]; // 2, ordenados por pct desc
+  polls: number;
+  institutes: string[];
+  latest: string;       // data da pesquisa mais recente do par
+  undecided: number;    // 100 - soma das médias (clamp ≥0)
+};
+
+export async function getStateRunoffScenarios(uf: string): Promise<RunoffScenario[]> {
+  const supabase = sb();
+
+  const { data: election } = await supabase
+    .from("elections")
+    .select("id")
+    .eq("type", "governador")
+    .eq("state", uf)
+    .eq("year", 2026)
+    .eq("round", 1)
+    .maybeSingle();
+  if (!election) return [];
+
+  const { data: polls } = await supabase
+    .from("polls")
+    .select(
+      `publication_date, scenario_label,
+       institute:institutes(name),
+       results:poll_results(percentage, candidate:candidates(name, party, color, slug))`
+    )
+    .eq("election_id", election.id)
+    .not("scenario_label", "is", null)
+    .order("publication_date", { ascending: false });
+
+  if (!polls) return [];
+
+  type Acc = {
+    cands: Map<string, { name: string; party: string | null; color: string | null; slug: string; sum: number; count: number }>;
+    polls: number;
+    institutes: Set<string>;
+    latest: string;
+  };
+  const byPair = new Map<string, Acc>();
+
+  for (const p of polls as unknown as Array<{
+    publication_date: string;
+    scenario_label: string | null;
+    institute: { name: string }[] | { name: string } | null;
+    results: Array<{
+      percentage: number;
+      candidate:
+        | { name: string; party: string | null; color: string | null; slug: string }[]
+        | { name: string; party: string | null; color: string | null; slug: string }
+        | null;
+    }>;
+  }>) {
+    const results = (p.results ?? []).map((r) => {
+      const c = Array.isArray(r.candidate) ? r.candidate[0] : r.candidate;
+      return c ? { ...c, pct: Number(r.percentage) } : null;
+    }).filter((x): x is NonNullable<typeof x> => x !== null);
+
+    // Head-to-head genuíno = exatamente 2 candidatos
+    if (results.length !== 2) continue;
+
+    const key = results.map((r) => r.slug).sort().join("|");
+    const inst = (Array.isArray(p.institute) ? p.institute[0] : p.institute)?.name ?? "?";
+
+    const acc = byPair.get(key) ?? {
+      cands: new Map(),
+      polls: 0,
+      institutes: new Set<string>(),
+      latest: p.publication_date,
+    };
+    acc.polls += 1;
+    acc.institutes.add(inst);
+    if (p.publication_date > acc.latest) acc.latest = p.publication_date;
+    for (const r of results) {
+      const cur = acc.cands.get(r.slug) ?? {
+        name: r.name, party: r.party, color: r.color, slug: r.slug, sum: 0, count: 0,
+      };
+      cur.sum += r.pct;
+      cur.count += 1;
+      acc.cands.set(r.slug, cur);
+    }
+    byPair.set(key, acc);
+  }
+
+  const scenarios: RunoffScenario[] = [];
+  for (const [key, acc] of byPair) {
+    const candidates = [...acc.cands.values()]
+      .map((c) => ({
+        name: c.name, party: c.party, color: c.color, slug: c.slug,
+        pct: c.count > 0 ? c.sum / c.count : 0,
+      }))
+      .sort((a, b) => b.pct - a.pct);
+    if (candidates.length !== 2) continue;
+    const undecided = Math.max(0, 100 - candidates[0].pct - candidates[1].pct);
+    scenarios.push({
+      key,
+      candidates,
+      polls: acc.polls,
+      institutes: [...acc.institutes],
+      latest: acc.latest,
+      undecided,
+    });
+  }
+
+  // Mais pesquisas primeiro, depois mais recente
+  scenarios.sort((a, b) => b.polls - a.polls || b.latest.localeCompare(a.latest));
+  return scenarios;
+}
+
+/**
  * Ranking de institutos por reliability_score.
  */
 export type InstituteRanking = {

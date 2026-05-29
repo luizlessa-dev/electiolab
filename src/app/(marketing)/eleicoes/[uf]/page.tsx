@@ -3,8 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, BarChart3, MapPin, Users, TrendingUp } from "lucide-react";
 import { UF_NAMES } from "@/components/historic-election/page-template";
-import { getLatestStateGovPoll } from "@/lib/marketing-data";
+import { getLatestStateGovPoll, getStateRunoffScenarios } from "@/lib/marketing-data";
 import { StatePollSnapshotCard } from "@/components/state-poll-snapshot";
+import { StateRunoffTabs, type RunoffTabScenario } from "@/components/state-runoff-tabs";
 
 export const revalidate = 3600;
 export const dynamicParams = false;
@@ -78,10 +79,45 @@ export default async function EstadoPage({ params }: { params: Promise<{ uf: UF 
   const region = UF_REGION[ufUpper] ?? "";
   const eleitores = UF_ELEITORES[ufUpper] ?? "";
 
-  const govSnapshot = await getLatestStateGovPoll(ufUpper);
+  const [govSnapshot, runoffScenarios] = await Promise.all([
+    getLatestStateGovPoll(ufUpper),
+    getStateRunoffScenarios(ufUpper),
+  ]);
+
+  // ── 2º turno: candidato comum (presente em todos os confrontos) fixo à esquerda ──
+  let runoffTabs: RunoffTabScenario[] = [];
+  if (runoffScenarios.length > 0) {
+    const slugSets = runoffScenarios.map((s) => new Set(s.candidates.map((c) => c.slug)));
+    const commonSlug =
+      [...slugSets[0]].find((slug) => slugSets.every((set) => set.has(slug))) ?? null;
+
+    runoffTabs = runoffScenarios
+      .map((s) => {
+        // candidato comum (se houver) à esquerda; senão o líder
+        const common = commonSlug
+          ? s.candidates.find((c) => c.slug === commonSlug)
+          : s.candidates[0];
+        const adversary = s.candidates.find((c) => c.slug !== (common?.slug ?? ""));
+        if (!common || !adversary) return null;
+        return {
+          key: s.key,
+          commonName: common.name,
+          commonColor: common.color,
+          commonPct: common.pct,
+          adversaryName: adversary.name,
+          adversaryParty: adversary.party,
+          adversaryColor: adversary.color,
+          adversaryPct: adversary.pct,
+          undecided: s.undecided,
+          polls: s.polls,
+          institutes: s.institutes,
+          latest: s.latest,
+        } satisfies RunoffTabScenario;
+      })
+      .filter((x): x is RunoffTabScenario => x !== null);
+  }
 
   const govUrl = `/eleicoes-governador-${uf}-2026`;
-  const stateNameLower = stateName.toLowerCase().replace(/\s/g, "-");
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -210,6 +246,23 @@ export default async function EstadoPage({ params }: { params: Promise<{ uf: UF 
               </div>
             )}
           </section>
+
+          {/* 2º turno — cenários testados (só aparece onde há head-to-head) */}
+          {runoffTabs.length > 0 && (
+            <section className="space-y-3">
+              <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                <TrendingUp className="h-4 w-4" />
+                2º turno — cenários testados
+              </h2>
+              <StateRunoffTabs scenarios={runoffTabs} />
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                Cada aba é um confronto direto simulado pelos institutos. As percentuais não somam
+                100% — o restante são indecisos, brancos e nulos, mostrado em cada aba. Cenários de
+                2º turno para governador ainda têm poucas pesquisas; a atribuição (instituto e data)
+                aparece em cada confronto.
+              </p>
+            </section>
+          )}
 
           {/* Senador */}
           <section className="space-y-4">
