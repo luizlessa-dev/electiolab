@@ -178,6 +178,28 @@ const PENDING_POLLS: Array<{
     ],
   },
 
+  // RJ · Real Time Big Data · 9-10 mar 2026 · TSE RJ-04191/2026 · n=2.000 · telefônica
+  // (mais antiga que a Quaest 27/abr já no banco — adiciona densidade histórica)
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador RJ 2026 - 1º Turno",
+    publication_date: "2026-03-11",
+    fieldwork_start: "2026-03-09",
+    fieldwork_end: "2026-03-10",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-rio-de-janeiro-marco-2026/",
+    results: [
+      { candidate_name: "Eduardo Paes",   percentage: 46 },
+      { candidate_name: "Douglas Ruas",   percentage: 13 },
+      { candidate_name: "Ítalo Marsili",  percentage:  5 },
+      { candidate_name: "Wilson Witzel",  percentage:  5 },
+      { candidate_name: "William Siri",   percentage:  3 },
+      { candidate_name: "Rafa Luz",       percentage:  2 },
+    ],
+  },
+
   // ─── Atlas Intel · Latam Pulse · 13-18 mai 2026 ───────────────────────────
   // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-presidente-maio-2026/
   // TSE: BR-06939/2026 · n=5.032 · online · ME: ±1pp
