@@ -341,10 +341,10 @@ export default async function HomePage() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-border rounded-sm overflow-hidden max-w-lg mx-auto">
             {[
-              { value: "26", label: "Pesquisas" },
-              { value: "13", label: "Institutos" },
-              { value: "60k+", label: "Entrevistados" },
-              { value: "3", label: "Eleições" },
+              { value: "26", label: "Pesquisas em 2026" },
+              { value: "13", label: "Institutos monitorados" },
+              { value: "60k+", label: "Entrevistados acumulados" },
+              { value: "3", label: "Eleições cobertas" },
             ].map((stat) => (
               <div key={stat.label} className="bg-card text-center px-3 py-2.5">
                 <p className="text-xl font-mono font-bold tabular-nums text-foreground">
@@ -362,18 +362,17 @@ export default async function HomePage() {
               href="/dashboard"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-sm text-xs font-medium uppercase tracking-wider hover:bg-primary/90 transition-colors"
             >
-              Acessar Dashboard Gratuito
+              Ver as médias agora
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
-            <a
-              href="#metodologia"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-border rounded-sm text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
-            >
-              Ver como funciona →
-            </a>
           </div>
           <p className="text-xs text-muted-foreground font-mono">
-            Gratuito para começar · Sem cartão de crédito · Dados do TSE
+            Sem criar conta para ver os dados · Atualizado a cada 6h · Dados do TSE
+          </p>
+          <p className="text-xs text-muted-foreground">
+            <a href="#metodologia" className="hover:text-foreground transition-colors underline underline-offset-2">
+              Como funciona a ponderação →
+            </a>
           </p>
         </div>
       </section>
@@ -420,6 +419,26 @@ export default async function HomePage() {
           <p className="text-center text-muted-foreground italic text-sm">
             "E se existisse uma forma de ver a eleição como ela realmente é?"
           </p>
+        </div>
+      </section>
+
+      {/* Newsletter — posicionada após o problema, antes da solução */}
+      <section className="py-12 px-4 border-t border-border bg-muted/20">
+        <div className="max-w-2xl mx-auto text-center space-y-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs font-mono uppercase tracking-wider text-primary">
+            <Mail className="h-3 w-3" />
+            Sinal Eleitoral · Newsletter semanal
+          </div>
+          <h2 className="text-2xl font-bold tracking-tight">
+            Todo Monday, os dados que a imprensa vai citar — antes de todo mundo
+          </h2>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Média ponderada da semana, ranking de institutos por acurácia, movimentações
+            importantes e leitura cruzada com economia. Sem opinião — só os dados.
+          </p>
+          <div className="max-w-md mx-auto pt-1">
+            <NewsletterSignup variant="card" source="home-mid" />
+          </div>
         </div>
       </section>
 
@@ -688,7 +707,7 @@ export default async function HomePage() {
       <div className="px-4 border-t border-border bg-muted/20">
         <div className="max-w-5xl mx-auto py-3 flex items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground">
-            Projeto independente · Dados públicos do TSE · Metodologia aberta
+            Metodologia auditável · Sem financiamento partidário · Dados públicos do TSE
           </p>
           <Link
             href="/sobre"
@@ -919,25 +938,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Newsletter — Sinal Eleitoral */}
-      <section className="py-16 px-4 border-t border-border bg-muted/20">
-        <div className="max-w-2xl mx-auto text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs font-mono uppercase tracking-wider text-primary">
-            <Mail className="h-3 w-3" />
-            Sinal Eleitoral · Newsletter semanal
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
-            O essencial das pesquisas, toda segunda-feira
-          </h2>
-          <p className="text-base text-muted-foreground leading-relaxed">
-            Média ponderada da semana, ranking de institutos por acurácia, movimentações importantes,
-            e leitura cruzada com economia. Sem opinião — só os dados.
-          </p>
-          <div className="max-w-md mx-auto pt-2">
-            <NewsletterSignup variant="card" source="home" />
-          </div>
-        </div>
-      </section>
+      {/* Newsletter — footer reforço (formulário no rodapé já cobre) */}
 
       </main>
 
