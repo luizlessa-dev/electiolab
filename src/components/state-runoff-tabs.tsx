@@ -1,22 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import type { RunoffTabScenario } from "@/lib/marketing-data";
 
-export type RunoffTabScenario = {
-  key: string;
-  /** oponente comum (fixo à esquerda) — pode ser null se não houver candidato comum */
-  commonName: string;
-  commonColor: string | null;
-  commonPct: number;
-  adversaryName: string;
-  adversaryParty: string | null;
-  adversaryColor: string | null;
-  adversaryPct: number;
-  undecided: number;
-  polls: number;
-  institutes: string[];
-  latest: string;
-};
+export type { RunoffTabScenario };
 
 function Bar({
   name,

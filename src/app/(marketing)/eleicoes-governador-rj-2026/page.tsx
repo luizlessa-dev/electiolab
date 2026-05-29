@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BarChart3, ArrowLeft, ExternalLink, HelpCircle, TrendingUp } from "lucide-react";
 
-import { getLatestStateGovPoll } from "@/lib/marketing-data";
+import { getLatestStateGovPoll, getStateRunoffScenarios, toRunoffTabs } from "@/lib/marketing-data";
+import { StateRunoffTabs } from "@/components/state-runoff-tabs";
 import { StatePollSnapshotCard } from "@/components/state-poll-snapshot";
 
 export const revalidate = 3600;
@@ -79,6 +80,7 @@ const faqJsonLd = {
 
 export default async function GovernadorRJ2026Page() {
   const snapshot = await getLatestStateGovPoll("RJ");
+  const runoffTabs = toRunoffTabs(await getStateRunoffScenarios("RJ"));
   return (
     <div className="min-h-screen bg-background">
       <script
@@ -138,6 +140,21 @@ export default async function GovernadorRJ2026Page() {
             Última pesquisa indexada
           </h2>
           <StatePollSnapshotCard snapshot={snapshot} />
+          {runoffTabs.length > 0 && (
+            <div className="space-y-3 pt-4">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                <TrendingUp className="h-4 w-4" />
+                2º turno — cenários testados
+              </h3>
+              <StateRunoffTabs scenarios={runoffTabs} />
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                Cada aba é um confronto direto simulado pelos institutos. As percentuais não somam
+                100% — o restante são indecisos, brancos e nulos, mostrado em cada aba. Cenários de
+                2º turno para governador ainda têm poucas pesquisas; a atribuição (instituto e data)
+                aparece em cada confronto.
+              </p>
+            </div>
+          )}
           <p className="text-xs text-muted-foreground font-mono">
             Fonte: pesquisa mais recente indexada no ElectioLab · Atualiza a cada 1h
           </p>

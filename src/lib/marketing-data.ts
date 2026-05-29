@@ -256,6 +256,56 @@ export async function getStateRunoffScenarios(uf: string): Promise<RunoffScenari
 }
 
 /**
+ * Shape pronto para a UI de abas: oponente comum (presente em todos os
+ * confrontos) fixo à esquerda; senão o líder de cada confronto.
+ */
+export type RunoffTabScenario = {
+  key: string;
+  commonName: string;
+  commonColor: string | null;
+  commonPct: number;
+  adversaryName: string;
+  adversaryParty: string | null;
+  adversaryColor: string | null;
+  adversaryPct: number;
+  undecided: number;
+  polls: number;
+  institutes: string[];
+  latest: string;
+};
+
+export function toRunoffTabs(scenarios: RunoffScenario[]): RunoffTabScenario[] {
+  if (scenarios.length === 0) return [];
+  const slugSets = scenarios.map((s) => new Set(s.candidates.map((c) => c.slug)));
+  const commonSlug =
+    [...slugSets[0]].find((slug) => slugSets.every((set) => set.has(slug))) ?? null;
+
+  return scenarios
+    .map((s) => {
+      const common = commonSlug
+        ? s.candidates.find((c) => c.slug === commonSlug)
+        : s.candidates[0];
+      const adversary = s.candidates.find((c) => c.slug !== (common?.slug ?? ""));
+      if (!common || !adversary) return null;
+      return {
+        key: s.key,
+        commonName: common.name,
+        commonColor: common.color,
+        commonPct: common.pct,
+        adversaryName: adversary.name,
+        adversaryParty: adversary.party,
+        adversaryColor: adversary.color,
+        adversaryPct: adversary.pct,
+        undecided: s.undecided,
+        polls: s.polls,
+        institutes: s.institutes,
+        latest: s.latest,
+      } satisfies RunoffTabScenario;
+    })
+    .filter((x): x is RunoffTabScenario => x !== null);
+}
+
+/**
  * Ranking de institutos por reliability_score.
  */
 export type InstituteRanking = {

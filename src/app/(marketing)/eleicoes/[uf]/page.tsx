@@ -3,9 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, BarChart3, MapPin, Users, TrendingUp } from "lucide-react";
 import { UF_NAMES } from "@/components/historic-election/page-template";
-import { getLatestStateGovPoll, getStateRunoffScenarios } from "@/lib/marketing-data";
+import { getLatestStateGovPoll, getStateRunoffScenarios, toRunoffTabs } from "@/lib/marketing-data";
 import { StatePollSnapshotCard } from "@/components/state-poll-snapshot";
-import { StateRunoffTabs, type RunoffTabScenario } from "@/components/state-runoff-tabs";
+import { StateRunoffTabs } from "@/components/state-runoff-tabs";
 
 export const revalidate = 3600;
 export const dynamicParams = false;
@@ -83,39 +83,7 @@ export default async function EstadoPage({ params }: { params: Promise<{ uf: UF 
     getLatestStateGovPoll(ufUpper),
     getStateRunoffScenarios(ufUpper),
   ]);
-
-  // ── 2º turno: candidato comum (presente em todos os confrontos) fixo à esquerda ──
-  let runoffTabs: RunoffTabScenario[] = [];
-  if (runoffScenarios.length > 0) {
-    const slugSets = runoffScenarios.map((s) => new Set(s.candidates.map((c) => c.slug)));
-    const commonSlug =
-      [...slugSets[0]].find((slug) => slugSets.every((set) => set.has(slug))) ?? null;
-
-    runoffTabs = runoffScenarios
-      .map((s) => {
-        // candidato comum (se houver) à esquerda; senão o líder
-        const common = commonSlug
-          ? s.candidates.find((c) => c.slug === commonSlug)
-          : s.candidates[0];
-        const adversary = s.candidates.find((c) => c.slug !== (common?.slug ?? ""));
-        if (!common || !adversary) return null;
-        return {
-          key: s.key,
-          commonName: common.name,
-          commonColor: common.color,
-          commonPct: common.pct,
-          adversaryName: adversary.name,
-          adversaryParty: adversary.party,
-          adversaryColor: adversary.color,
-          adversaryPct: adversary.pct,
-          undecided: s.undecided,
-          polls: s.polls,
-          institutes: s.institutes,
-          latest: s.latest,
-        } satisfies RunoffTabScenario;
-      })
-      .filter((x): x is RunoffTabScenario => x !== null);
-  }
+  const runoffTabs = toRunoffTabs(runoffScenarios);
 
   const govUrl = `/eleicoes-governador-${uf}-2026`;
 
