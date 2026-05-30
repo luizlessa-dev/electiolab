@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, BookOpen, ArrowRight } from "lucide-react";
+import { LeiaTabem } from "@/components/editorial/leia-tambem";
 
 export const metadata: Metadata = {
   title: {
@@ -227,6 +228,7 @@ export default function GlossarioPage() {
             </li>
           </ul>
         </section>
+      <LeiaTabem current="/glossario-pesquisa-eleitoral" />
       </main>
 
       <footer className="border-t border-border py-6 mt-12">

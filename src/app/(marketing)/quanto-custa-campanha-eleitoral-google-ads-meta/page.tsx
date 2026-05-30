@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@supabase/supabase-js";
 import { ArrowLeft, Megaphone } from "lucide-react";
+import { LeiaTabem } from "@/components/editorial/leia-tambem";
 
 export const revalidate = 3600;
 
@@ -210,6 +211,7 @@ export default async function CustoAdsPage() {
               ))}
             </div>
           </section>
+        <LeiaTabem current="/quanto-custa-campanha-eleitoral-google-ads-meta" />
         </article>
       </main>
 

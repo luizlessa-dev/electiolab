@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Wallet } from "lucide-react";
+import { LeiaTabem } from "@/components/editorial/leia-tambem";
 import { createClient } from "@supabase/supabase-js";
 
 export const revalidate = 3600;
@@ -158,6 +159,7 @@ export default async function FefcPage() {
               Fonte: TSE — Prestação de Contas Eleitorais.
             </p>
           </section>
+        <LeiaTabem current="/fefc" />
         </article>
       </main>
 

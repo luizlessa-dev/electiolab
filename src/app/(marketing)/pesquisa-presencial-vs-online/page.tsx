@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Phone } from "lucide-react";
+import { LeiaTabem } from "@/components/editorial/leia-tambem";
 
 export const metadata: Metadata = {
   title: {
@@ -313,6 +314,7 @@ export default function PresencialOnlinePage() {
               <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
             </Link>
           </section>
+        <LeiaTabem current="/pesquisa-presencial-vs-online" />
         </article>
       </main>
 
