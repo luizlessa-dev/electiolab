@@ -247,6 +247,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.80,
     },
+    // Cauda longa senatorial — grandes estados
+    ...["sp", "mg", "rj", "ba", "rs", "pr", "pe", "ce"].map((uf) => ({
+      url: `${SITE_URL}/pesquisas-senador/${uf}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
     {
       url: `${SITE_URL}/relatorio/semana-17-2026`,
       lastModified: "2026-04-27T00:00:00.000Z",

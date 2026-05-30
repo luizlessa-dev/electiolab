@@ -35,19 +35,19 @@ export type StatePollSnapshot = {
 };
 
 /**
- * Busca a pesquisa mais recente para governador de um estado em 2026.
- * Retorna null se não houver pesquisa.
+ * Busca a pesquisa mais recente para um cargo estadual (governador|senador)
+ * de um estado em 2026. Retorna null se não houver pesquisa.
  */
-export async function getLatestStateGovPoll(
-  uf: string
+async function getLatestStatePollByType(
+  uf: string,
+  type: "governador" | "senador"
 ): Promise<StatePollSnapshot | null> {
   const supabase = sb();
 
-  // Pega election_id de governador 2026 do estado
   const { data: election } = await supabase
     .from("elections")
     .select("id")
-    .eq("type", "governador")
+    .eq("type", type)
     .eq("state", uf)
     .eq("year", 2026)
     .eq("round", 1)
@@ -124,6 +124,14 @@ export async function getLatestStateGovPoll(
     source_url: best.source_url,
     results,
   };
+}
+
+export function getLatestStateGovPoll(uf: string): Promise<StatePollSnapshot | null> {
+  return getLatestStatePollByType(uf, "governador");
+}
+
+export function getLatestSenatorPoll(uf: string): Promise<StatePollSnapshot | null> {
+  return getLatestStatePollByType(uf, "senador");
 }
 
 /**
