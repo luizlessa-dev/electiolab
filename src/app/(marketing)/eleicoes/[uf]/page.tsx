@@ -65,7 +65,7 @@ export async function generateMetadata({
       title,
       description,
       url: `https://electiolab.com/eleicoes/${uf}`,
-      images: [{ url: "https://electiolab.com/opengraph-image", width: 1200, height: 630 }],
+      // images: gerado automaticamente pela OG dinâmica co-localizada (opengraph-image.tsx)
     },
   };
 }
