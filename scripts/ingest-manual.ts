@@ -200,6 +200,45 @@ const PENDING_POLLS: Array<{
     ],
   },
 
+  // ─── GOVERNADORES — Tier 3 (estados menores) ──────────────────────────────
+
+  // AM · AtlasIntel · 8-14 mai 2026 · TSE AM-09404/2026 · n=1.244 · online
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador Amazonas 2026",
+    publication_date: "2026-05-15",
+    fieldwork_start: "2026-05-08",
+    fieldwork_end: "2026-05-14",
+    sample_size: 1244,
+    margin_of_error: 3.0,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governador-senador-amazonas-maio-2026/",
+    results: [
+      { candidate_name: "Maria do Carmo Seffair", percentage: 38.4 },
+      { candidate_name: "Omar Aziz",              percentage: 27.5 },
+      { candidate_name: "Roberto Cidade",         percentage: 13.7 },
+      { candidate_name: "David Almeida",          percentage: 11.8 },
+    ],
+  },
+
+  // MS · Real Time Big Data · 9-11 mai 2026 · TSE MS-06412/2026 · n=1.600 · telefônica
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Mato Grosso do Sul 2026",
+    publication_date: "2026-05-12",
+    fieldwork_start: "2026-05-09",
+    fieldwork_end: "2026-05-11",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-mato-grosso-do-sul-maio-2026/",
+    results: [
+      { candidate_name: "Eduardo Riedel", percentage: 43 },
+      { candidate_name: "Fabio Trad",     percentage: 21 },
+      { candidate_name: "Catan",          percentage: 11 },
+    ],
+  },
+
   // ─── Atlas Intel · Latam Pulse · 13-18 mai 2026 ───────────────────────────
   // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-presidente-maio-2026/
   // TSE: BR-06939/2026 · n=5.032 · online · ME: ±1pp
