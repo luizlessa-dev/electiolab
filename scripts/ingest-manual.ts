@@ -49,6 +49,42 @@ const PENDING_POLLS: Array<{
   source_url?: string;
   results: { candidate_name: string; percentage: number }[];
 }> = [
+  // ─── Meio/Ideia · 23-27 mai 2026 · TSE BR-02918/2026 · n=1.500 · telefônica ──
+  // Fonte: https://www.brasildefato.com.br/2026/05/28/lula-lidera-todos-os-cenarios-e-abre-cinco-pontos-sobre-flavio-bolsonaro-no-2o-turno-aponta-pesquisa-meioideia/
+  {
+    institute_name: "Meio/Ideia",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-05-28",
+    fieldwork_start: "2026-05-23",
+    fieldwork_end: "2026-05-27",
+    sample_size: 1500,
+    margin_of_error: 2.5,
+    methodology: "telefonica",
+    source_url: "https://www.brasildefato.com.br/2026/05/28/lula-lidera-todos-os-cenarios-e-abre-cinco-pontos-sobre-flavio-bolsonaro-no-2o-turno-aponta-pesquisa-meioideia/",
+    results: [
+      { candidate_name: "Lula",            percentage: 38.5 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 31.5 },
+      { candidate_name: "Caiado",          percentage:  5.5 },
+      { candidate_name: "Zema",            percentage:  2.4 },
+      { candidate_name: "Renan Santos",    percentage:  2.1 },
+    ],
+  },
+  {
+    institute_name: "Meio/Ideia",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-05-28",
+    fieldwork_start: "2026-05-23",
+    fieldwork_end: "2026-05-27",
+    sample_size: 1500,
+    margin_of_error: 2.5,
+    methodology: "telefonica",
+    source_url: "https://www.brasildefato.com.br/2026/05/28/lula-lidera-todos-os-cenarios-e-abre-cinco-pontos-sobre-flavio-bolsonaro-no-2o-turno-aponta-pesquisa-meioideia/",
+    results: [
+      { candidate_name: "Lula",            percentage: 46.5 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 41.4 },
+    ],
+  },
+
   // ─── Real Time Big Data · 2-4 mai 2026 ────────────────────────────────────
   // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-presidente-maio-2026/
   // TSE: BR-03627/2026 · n=2.000 · telefônica · ME: ±2pp
