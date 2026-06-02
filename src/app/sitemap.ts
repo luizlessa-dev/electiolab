@@ -224,6 +224,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.75,
     },
     {
+      url: `${SITE_URL}/pesquisas-eleitorais-sao-confiaveis`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${SITE_URL}/pesquisas-erraram-2022`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.75,
+    },
+    {
       url: `${SITE_URL}/metodologia`,
       lastModified: now,
       changeFrequency: "monthly",

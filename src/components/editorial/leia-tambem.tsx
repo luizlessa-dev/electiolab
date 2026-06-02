@@ -44,6 +44,18 @@ const CLUSTER: Article[] = [
     tag: "Análise",
   },
   {
+    href: "/pesquisas-eleitorais-sao-confiaveis",
+    title: "Pesquisas eleitorais são confiáveis?",
+    desc: "Por que a média de várias é mais confiável que uma só",
+    tag: "Análise",
+  },
+  {
+    href: "/pesquisas-erraram-2022",
+    title: "As pesquisas erraram em 2022?",
+    desc: "O que aconteceu no 1º e 2º turno e o que mudou",
+    tag: "Análise",
+  },
+  {
     href: "/dinheiro-e-votos-pesquisas-2026",
     title: "Dinheiro e Votos — FEFC 2026",
     desc: "Financiamento de campanha cruzado com as pesquisas",
