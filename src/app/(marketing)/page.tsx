@@ -90,6 +90,7 @@ const jsonLd = {
         "height": 630,
       },
       "sameAs": [
+        "https://www.wikidata.org/wiki/Q140033564",
         "https://github.com/luizlessa",
         "https://linkedin.com/in/luizlessa",
       ],

@@ -59,6 +59,7 @@ function buildJsonLd(institutesText: string) {
       "jobTitle": "Fundador e Editor Responsável",
       "description": "Fundador e editor responsável do ElectioLab. Construiu o motor de ponderação (recência, amostra, metodologia e acurácia) e o sistema de backtesting de acurácia dos institutos contra os resultados oficiais do TSE de 2018 e 2022.",
       "sameAs": [
+        "https://www.wikidata.org/wiki/Q140033564",
         "https://github.com/luizlessa",
         "https://linkedin.com/in/luizlessa"
       ],
