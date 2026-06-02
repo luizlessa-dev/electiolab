@@ -11,7 +11,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: { absolute: "Pesquisas Governador BA 2026 — ACM Neto vs Jerônimo | ElectioLab" },
   description:
-    "Média agregada das pesquisas para governador da Bahia 2026. ACM Neto (União) 47,3%, Jerônimo Rodrigues (PT) 30,9% — Veritá mar/2026. Atualizado semanalmente.",
+    "Média agregada das pesquisas para governador da Bahia 2026. ACM Neto (União) 47,3%, Jerônimo Rodrigues (PT) 30,9% — Veritá mar/2026.",
   alternates: { canonical: "https://electiolab.com/eleicoes-governador-ba-2026" },
   openGraph: {
     title: "Pesquisas Governador BA 2026 — ACM Neto vs Jerônimo | ElectioLab",

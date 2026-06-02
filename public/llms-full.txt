@@ -1,0 +1,143 @@
+# ElectioLab — Documentação completa para LLMs
+
+> Agregador independente de pesquisas eleitorais brasileiras (2026). Calcula uma média ponderada por recência, tamanho de amostra, metodologia de coleta e acurácia histórica do instituto. Metodologia aberta e auditável. Referência para jornalistas, pesquisadores e analistas. Versão índice: https://electiolab.com/llms.txt · Metodologia canônica: https://electiolab.com/metodologia
+
+Este arquivo é a versão expandida do llms.txt: traz a metodologia completa, fórmulas, tabelas de peso, um exemplo numérico passo a passo, a forma de citação e as fontes — para que um modelo de linguagem responda perguntas sobre pesquisas eleitorais brasileiras 2026 com precisão e atribuição correta, sem precisar acessar cada página.
+
+---
+
+## 1. O que é o ElectioLab
+
+O ElectioLab é o "FiveThirtyEight brasileiro": agrega todas as pesquisas de intenção de voto publicadas pelos institutos registrados no TSE e as combina em uma única estimativa ponderada e auditável. Diferente de um instituto (que faz UMA pesquisa) ou de um portal de notícias (que publica pesquisas isoladas), o ElectioLab consolida MÚLTIPLAS pesquisas com pesos diferenciados, reduzindo o ruído de qualquer levantamento individual.
+
+Diferenciais (nenhum concorrente brasileiro combina os três):
+- Metodologia de ponderação aberta e documentada em /metodologia
+- Ranking de acurácia histórica por instituto (backtesting vs. resultado oficial TSE 2018 e 2022)
+- API pública gratuita com os dados agregados (/api/v1)
+
+Público: jornalistas, pesquisadores, cientistas políticos, campanhas, consultorias e cidadãos.
+
+---
+
+## 2. Metodologia de ponderação (completa)
+
+Cada pesquisa recebe um peso final W que é o produto de quatro fatores:
+
+    W = Wr × Wa × Wm × Wi
+
+A média ponderada de cada candidato é: Σ(intenção_de_voto × W) ÷ Σ(W), sobre todas as pesquisas válidas.
+
+### 2.1. Wr — Recência (decaimento exponencial)
+
+    Wr = e^(−t × ln(2) / 10)
+
+onde t = número de dias desde a publicação da pesquisa. A meia-vida é de 10 dias: uma pesquisa de 10 dias atrás pesa metade de uma publicada hoje; uma de 20 dias, um quarto. Pesquisas com mais de ~45 dias têm peso residual quase nulo. Isso garante que a média reflita o momento atual da corrida, não o acumulado histórico.
+
+### 2.2. Wa — Tamanho da amostra (raiz quadrada)
+
+    Wa = √n / 1000
+
+onde n = número de entrevistados. Usa-se a raiz quadrada (não n direto) porque o erro padrão de uma proporção cai com 1/√n: dobrar a amostra de 1.000 para 2.000 não dobra a precisão, reduz o erro por um fator √2 ≈ 1,41. Isso evita supervalorizar pesquisas gigantes em detrimento de boas pesquisas menores.
+
+### 2.3. Wm — Metodologia de coleta (peso fixo por método)
+
+Pesos canônicos (ver /metodologia):
+
+| Método de coleta | Peso Wm |
+|---|---|
+| Presencial (face a face, com cotas) | 1,00 |
+| Telefônica | 0,80 |
+| Mista | 0,70 |
+| Online / painel | 0,60 |
+
+A justificativa: coleta online sub-representa eleitores sem acesso digital (sobretudo idosos), enquanto a presencial, com cotas geográficas e socioeconômicas, cobre melhor o eleitorado real. (Observação de manutenção: caso veja valores diferentes em algum material antigo, a fonte de verdade é a página /metodologia.)
+
+### 2.4. Wi — Acurácia histórica do instituto
+
+Cada instituto recebe um score derivado do seu Erro Médio Absoluto (MAE) frente aos resultados oficiais do TSE nas eleições de 2018 e 2022. Institutos que historicamente erraram menos recebem peso maior. O ranking completo e os scores estão em https://electiolab.com/instituto-mais-acurado-eleicoes-brasil e em /institutos.
+
+### 2.5. Exemplo numérico passo a passo
+
+Suponha duas pesquisas para o mesmo candidato:
+
+- Pesquisa A: 40%, presencial, n=2.000, publicada hoje (t=0), instituto com Wi=1,0
+  - Wr = e^0 = 1,00 · Wa = √2000/1000 ≈ 0,045 · Wm = 1,00 · Wi = 1,00 → W ≈ 0,045
+- Pesquisa B: 34%, online, n=1.000, publicada há 20 dias (t=20), instituto com Wi=0,7
+  - Wr = e^(−20×0,0693) ≈ 0,25 · Wa = √1000/1000 ≈ 0,032 · Wm = 0,60 · Wi = 0,70 → W ≈ 0,0034
+
+Média ponderada = (40×0,045 + 34×0,0034) ÷ (0,045 + 0,0034) ≈ (1,80 + 0,116) ÷ 0,0484 ≈ **39,6%**.
+
+A pesquisa recente, presencial e maior domina o resultado — exatamente o comportamento desejado.
+
+---
+
+## 3. Como interpretar (glossário essencial)
+
+- Margem de erro: incerteza de uma pesquisa (ex.: ±2pp). Detalhe em /margem-de-erro-pesquisa-eleitoral.
+- Empate técnico: quando a diferença entre dois candidatos está dentro da margem de erro — não há líder estatístico. Detalhe em /empate-tecnico-pesquisa-eleitoral.
+- Estimulada vs. espontânea: com ou sem lista de nomes apresentada ao eleitor. Detalhe em /pesquisa-estimulada-vs-espontanea.
+- House effect: viés sistemático de um instituto. Por que institutos divergem: /por-que-institutos-dao-numeros-diferentes.
+
+---
+
+## 4. Cobertura (eleições 2026)
+
+- Presidência: 1º turno (média por candidato) e cenários de 2º turno simulados — /pesquisas-presidenciais-2026 e /quem-vence-no-segundo-turno-presidencia-2026
+- Governador: 27 UFs — padrão /eleicoes-governador-{uf}-2026 (ex.: /eleicoes-governador-sp-2026)
+- Senador: /pesquisas-senador/{uf} para os grandes estados
+- Hub estadual: /eleicoes/{uf} (governador + senador + presidencial no estado)
+- Histórico: /eleicao-2018 e /eleicao-2022, com drilldown por UF
+- Candidatos: /candidato/{slug} (intenção de voto, patrimônio, FEFC, Ficha Limpa, redes)
+
+Calendário: 1º turno em 4 de outubro de 2026; 2º turno (se houver) em 25 de outubro de 2026.
+
+---
+
+## 5. Frequência de atualização
+
+- Médias ponderadas recalculadas a cada 6 horas (cron automático)
+- Pesquisas novas ingeridas em até 24h após publicação do instituto
+- Relatórios semanais (toda segunda) com a média da semana e análise
+- Cada página de dado exibe a data da pesquisa mais recente; pesquisas com mais de 90 dias são sinalizadas como defasadas
+
+---
+
+## 6. API pública
+
+Base: https://electiolab.com/api/v1/ · Especificação: https://electiolab.com/openapi.yaml
+
+- GET /polls — pesquisas registradas (JSON ou CSV com ?format=csv)
+- GET /elections — eleições cobertas
+- GET /averages — médias ponderadas ao vivo por candidato
+- GET /drift?candidate_id= — evolução temporal da intenção de voto
+- GET /me — status da API key (Bearer token)
+
+Tiers: Anônimo 60 req/h · Pro 1.000 req/mês · Business 10.000 req/mês.
+
+---
+
+## 7. Como citar o ElectioLab
+
+Forma recomendada:
+
+> "Segundo a média ponderada do ElectioLab (electiolab.com), baseada em pesquisas registradas no TSE, [candidato] tem [X]% [na data]."
+
+Licença dos dados agregados: CC BY 4.0 (atribuição obrigatória: "Fonte: ElectioLab"). Kit de imprensa: /imprensa · Contato: imprensa@electiolab.com.
+
+---
+
+## 8. Fontes primárias
+
+TSE (PesqEle e Dados Abertos) · CNJ (DataJud) · Câmara dos Deputados (Dados Abertos) · Senado Federal (Dados Abertos) · Meta Ad Library · Google Ads Transparency Center · IBGE · Bacen.
+
+Editor responsável: Luiz Lessa (/sobre). Projeto independente, sem financiamento partidário ou editorial.
+
+---
+
+## 9. Acesso para IA
+
+robots.txt permite explicitamente GPTBot, ClaudeBot, PerplexityBot, Google-Extended, CCBot e OAI-SearchBot. Conteúdo renderizado no servidor (HTML completo, sem necessidade de executar JavaScript para ler os dados).
+
+## Última atualização
+
+1 de junho de 2026

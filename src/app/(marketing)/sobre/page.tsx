@@ -56,8 +56,8 @@ function buildJsonLd(institutesText: string) {
       "@id": "https://electiolab.com/sobre#founder",
       "name": "Luiz Lessa",
       "url": "https://electiolab.com/sobre",
-      "jobTitle": "Fundador e Editor",
-      "description": "Fundador e editor do ElectioLab, agregador de pesquisas eleitorais brasileiras com ponderação por recência, amostra, metodologia e acurácia histórica dos institutos.",
+      "jobTitle": "Fundador e Editor Responsável",
+      "description": "Fundador e editor responsável do ElectioLab. Construiu o motor de ponderação (recência, amostra, metodologia e acurácia) e o sistema de backtesting de acurácia dos institutos contra os resultados oficiais do TSE de 2018 e 2022.",
       "sameAs": [
         "https://github.com/luizlessa",
         "https://linkedin.com/in/luizlessa"
@@ -423,11 +423,15 @@ export default async function SobrePage() {
               </div>
               <div className="flex-1 space-y-1">
                 <p className="text-sm font-semibold text-foreground">Luiz Lessa</p>
-                <p className="text-xs text-muted-foreground">Fundador &amp; Desenvolvedor — ElectioLab</p>
+                <p className="text-xs text-muted-foreground">Fundador e editor responsável — ElectioLab</p>
                 <p className="text-xs text-muted-foreground leading-relaxed pt-1 max-w-xl">
-                  Desenvolvedor independente apaixonado por dados públicos e transparência eleitoral.
-                  O ElectioLab nasceu da frustração com a cobertura fragmentada de pesquisas eleitorais
-                  na mídia brasileira — e da crença de que dados abertos do TSE merecem uma interface à altura.
+                  Luiz construiu o ElectioLab integralmente — do motor de ponderação estatística
+                  (recência, amostra, metodologia e acurácia) à ingestão automatizada de pesquisas
+                  registradas no TSE. Desenhou o sistema de acurácia que faz backtesting de cada
+                  instituto contra os resultados oficiais do TSE de 2018 e 2022, e responde
+                  editorialmente por todo o conteúdo publicado. O projeto nasceu da cobertura
+                  fragmentada de pesquisas na mídia brasileira — e da convicção de que dados abertos
+                  do TSE merecem uma interface à altura.
                 </p>
                 <div className="flex items-center gap-4 pt-2">
                   <a
@@ -501,6 +505,39 @@ export default async function SobrePage() {
                 estimulada vs espontânea
               </Link>{" "}
               — base mínima pra interpretar qualquer pesquisa publicada na mídia.
+            </p>
+          </div>
+
+          {/* Correções e fontes — sinal de confiança (E-E-A-T / YMYL) */}
+          <div className="space-y-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Correções e fontes primárias
+            </h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Levamos a precisão a sério. Encontrou um dado incorreto ou desatualizado? Escreva para{" "}
+              <a href="mailto:contato@electiolab.com" className="text-primary hover:underline">
+                contato@electiolab.com
+              </a>{" "}
+              com o assunto &quot;Correção&quot; — verificamos, corrigimos e registramos a alteração.
+              Todas as pesquisas citadas são registradas no{" "}
+              <a
+                href="https://www.tse.jus.br/eleicoes/pesquisas-eleitorais"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                sistema PesqEle do TSE
+              </a>
+              ; dados de candidatos, patrimônio e prestação de contas vêm do{" "}
+              <a
+                href="https://dadosabertos.tse.jus.br"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                TSE Dados Abertos
+              </a>
+              .
             </p>
           </div>
 

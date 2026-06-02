@@ -11,7 +11,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: { absolute: "Pesquisas Governador PE 2026 — João Campos vs Raquel Lyra | ElectioLab" },
   description:
-    "Média agregada das pesquisas para governador de Pernambuco 2026. João Campos (PSB) 50%, Raquel Lyra (PSD) 38% — Datafolha abr/2026. Atualizado semanalmente.",
+    "Média agregada das pesquisas para governador de Pernambuco 2026. João Campos (PSB) 50%, Raquel Lyra (PSD) 38% — Datafolha abr/2026.",
   alternates: { canonical: "https://electiolab.com/eleicoes-governador-pe-2026" },
   openGraph: {
     title: "Pesquisas Governador PE 2026 — João Campos vs Raquel Lyra | ElectioLab",

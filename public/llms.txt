@@ -112,6 +112,8 @@ Base URL: https://electiolab.com/api/v1/
 Tiers: Anônimo 60 req/h · Pro 1.000 req/mês · Business 10.000 req/mês
 
 Documentação interativa: https://electiolab.com/api
+Especificação OpenAPI 3.1 (machine-readable): https://electiolab.com/openapi.yaml
+Versão expandida para LLMs (metodologia completa + exemplos): https://electiolab.com/llms-full.txt
 
 ## Partidos cobertos
 
@@ -144,6 +146,13 @@ TSE (Tribunal Superior Eleitoral) · CNJ (DataJud) · Câmara dos Deputados (Dad
 - 27 estados cobertos para governador
 - Série histórica desde 2018
 
+## Frequência de atualização
+
+- Médias ponderadas recalculadas automaticamente a cada 6 horas (cron)
+- Pesquisas novas ingeridas em até 24h após publicação do instituto
+- Relatórios semanais publicados toda segunda-feira
+- Cada página de dado exibe a data da pesquisa mais recente indexada
+
 ## Última atualização
 
-28 de maio de 2026
+1 de junho de 2026
