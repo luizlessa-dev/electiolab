@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, BarChart3, Landmark, Users, TrendingUp } from "l
 import { UF_NAMES } from "@/components/historic-election/page-template";
 import { getLatestSenatorPoll } from "@/lib/marketing-data";
 import { StatePollSnapshotCard } from "@/components/state-poll-snapshot";
+import { buildStateRaceDataset } from "@/lib/governor-dataset";
 
 export const revalidate = 3600;
 export const dynamicParams = false;
@@ -104,6 +105,19 @@ export default async function SenadorPage({ params }: { params: Promise<{ uf: UF
   return (
     <div className="min-h-screen bg-background text-foreground">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            buildStateRaceDataset({
+              uf: ufUpper,
+              race: "senador",
+              url: `https://electiolab.com/pesquisas-senador/${uf}`,
+              snapshot,
+            })
+          ),
+        }}
+      />
 
       {/* Header */}
       <header className="border-b border-border bg-sidebar/80 backdrop-blur-sm sticky top-0 z-50">

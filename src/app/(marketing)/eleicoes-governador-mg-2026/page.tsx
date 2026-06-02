@@ -4,6 +4,7 @@ import { BarChart3, ArrowLeft, ExternalLink, HelpCircle, TrendingUp } from "luci
 import { getLatestStateGovPoll, getStateRunoffScenarios, toRunoffTabs } from "@/lib/marketing-data";
 import { StateRunoffTabs } from "@/components/state-runoff-tabs";
 import { StatePollSnapshotCard } from "@/components/state-poll-snapshot";
+import { buildStateRaceDataset } from "@/lib/governor-dataset";
 
 export const revalidate = 3600;
 
@@ -84,6 +85,14 @@ export default async function GovernadorMG2026Page() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            buildStateRaceDataset({ uf: "MG", race: "governador", url: "https://electiolab.com/eleicoes-governador-mg-2026", snapshot })
+          ),
+        }}
       />
 
       {/* Header */}
