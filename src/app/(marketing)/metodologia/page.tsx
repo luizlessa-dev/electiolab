@@ -305,8 +305,8 @@ export default function MetodologiaPage() {
             <div className="space-y-1 text-sm font-mono">
               {[
                 { m: "Presencial (face-a-face)", w: "1,00", note: "Cobertura mais completa do eleitorado" },
-                { m: "Telefônica (CATI / RDD)", w: "0,80", note: "Viés de sub-representação de jovens" },
-                { m: "Mista (presencial + online)", w: "0,70", note: "Combinação com vieses parciais" },
+                { m: "Telefônica (CATI / RDD)", w: "0,85", note: "Viés de sub-representação de jovens" },
+                { m: "Mista (presencial + online)", w: "0,75", note: "Combinação com vieses parciais" },
                 { m: "Online (painel / app)", w: "0,60", note: "Sub-representa idosos e baixa renda" },
               ].map((r) => (
                 <div key={r.m} className="flex items-start gap-3 py-1.5 border-b border-border/40 last:border-0">
