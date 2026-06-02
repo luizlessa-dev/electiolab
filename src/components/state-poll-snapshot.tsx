@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { StatePollSnapshot } from "@/lib/marketing-data";
 
 /**
@@ -23,7 +24,12 @@ export function StatePollSnapshotCard({
 
   // Calcula maior pct para escala dos bars
   const maxPct = Math.max(...snapshot.results.map((r) => r.pct), 1);
-  const dateBR = new Date(snapshot.publication_date).toLocaleDateString("pt-BR");
+  const pubDate = new Date(snapshot.publication_date);
+  const dateBR = pubDate.toLocaleDateString("pt-BR");
+  // Sinal de frescor para conteúdo YMYL eleitoral: pesquisa com >90 dias é
+  // sinalizada visualmente (estados pequenos recebem poucas pesquisas).
+  const daysSince = Math.floor((Date.now() - pubDate.getTime()) / 86_400_000);
+  const isStale = daysSince > 90;
 
   const meta: string[] = [];
   if (snapshot.sample_size) meta.push(`${snapshot.sample_size.toLocaleString("pt-BR")} entrevistas`);
@@ -38,8 +44,21 @@ export function StatePollSnapshotCard({
           {snapshot.institute_name}
           {meta.length > 0 ? ` · ${meta.join(" · ")}` : ""}
         </span>
-        <span className="text-xs font-mono text-muted-foreground shrink-0">{dateBR}</span>
+        <span
+          className={`text-xs font-mono shrink-0 ${
+            isStale ? "text-amber-600 dark:text-amber-500" : "text-muted-foreground"
+          }`}
+        >
+          {dateBR}
+          {isStale ? ` · há ${daysSince} dias` : ""}
+        </span>
       </div>
+      {isStale && (
+        <div className="px-4 py-2 border-b border-amber-500/20 bg-amber-500/10 text-[11px] text-amber-700 dark:text-amber-400 leading-relaxed">
+          Pesquisa com mais de 90 dias — poucos institutos cobrem esta eleição neste
+          período. Novos dados aparecem automaticamente quando publicados.
+        </div>
+      )}
       <div className="divide-y divide-border">
         {snapshot.results.map((c, i) => (
           <div key={`${c.name}-${i}`} className="px-4 py-3 flex items-center gap-4">
@@ -75,6 +94,13 @@ export function StatePollSnapshotCard({
           Cenário: {snapshot.scenario_label}
         </div>
       )}
+      <div className="px-4 py-2 border-t border-border bg-muted/20 text-[10px] font-mono text-muted-foreground leading-relaxed">
+        O ElectioLab pondera pesquisas por recência, amostra, método e acurácia histórica
+        do instituto.{" "}
+        <Link href="/metodologia" className="text-primary hover:underline">
+          Ver metodologia
+        </Link>
+      </div>
     </div>
   );
 }

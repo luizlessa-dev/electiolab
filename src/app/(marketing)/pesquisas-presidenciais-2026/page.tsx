@@ -376,6 +376,26 @@ export default async function PesquisasPresidenciais2026Page() {
           <h1 className="text-3xl font-bold tracking-tight">
             Média Agregada de Pesquisas Presidenciais 2026
           </h1>
+          {/* Answer-first (GEO): resposta direta com números no topo, citável por IA */}
+          {top1t.length >= 2 && (
+            <p className="text-foreground/90 max-w-2xl leading-relaxed font-medium">
+              Pela média ponderada do ElectioLab
+              {updated
+                ? ` (última pesquisa indexada em ${new Date(updated).toLocaleDateString("pt-BR", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  })})`
+                : ""}
+              , {top1t[0].name}
+              {top1t[0].party ? ` (${top1t[0].party})` : ""} lidera a corrida presidencial de 2026
+              com {top1t[0].pct.toFixed(1)}%, seguido de {top1t[1].name} com{" "}
+              {top1t[1].pct.toFixed(1)}%
+              {top1t[2] ? ` e ${top1t[2].name} com ${top1t[2].pct.toFixed(1)}%` : ""}. Médias
+              calculadas a partir de {top1t[0].polls} pesquisas, ponderadas por recência, amostra,
+              método e acurácia histórica do instituto.
+            </p>
+          )}
           <p className="text-muted-foreground max-w-2xl leading-relaxed">
             O ElectioLab consolida todas as pesquisas presidenciais publicadas em 2026 — Datafolha,
             Quaest, Atlas Intel, PoderData e outros — em uma única média ponderada. Cada pesquisa

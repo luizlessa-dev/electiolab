@@ -67,7 +67,7 @@ export default async function GovernadorRO2026Page() {
   const snapshot = await getLatestStateGovPoll("RO");
   return (
     <div className="min-h-screen bg-background">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ ...webPageJsonLd, dateModified: snapshot?.publication_date ?? webPageJsonLd.dateModified }) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <header className="border-b border-border bg-sidebar/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="h-[2px] bg-gradient-to-r from-primary via-primary/60 to-transparent" />
