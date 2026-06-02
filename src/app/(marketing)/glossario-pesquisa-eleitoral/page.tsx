@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     absolute: "Glossário de Pesquisa Eleitoral — Termos Explicados | ElectioLab",
   },
   description:
-    "Glossário de termos técnicos de pesquisa eleitoral: margem de erro, intervalo de confiança, empate técnico, pesquisa estimulada vs espontânea, presencial vs online. Explicações claras sem jargão.",
+    "Glossário de pesquisa eleitoral: margem de erro, intervalo de confiança, empate técnico, estimulada vs espontânea, presencial vs online. Sem jargão.",
   alternates: { canonical: "https://electiolab.com/glossario-pesquisa-eleitoral" },
   openGraph: {
     title: "Glossário de Pesquisa Eleitoral — Termos Explicados | ElectioLab",

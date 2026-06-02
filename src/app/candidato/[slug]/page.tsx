@@ -40,9 +40,9 @@ export async function generateMetadata({
   if (!c) return { title: "Candidato não encontrado" };
 
   const title = `${c.name}${c.party ? ` (${c.party})` : ""} — Pesquisas Eleitorais 2026`;
-  const description = c.bio
-    ? c.bio.slice(0, 160)
-    : `Pesquisas eleitorais, trajetória, atividade legislativa, patrimônio e financiamento de campanha de ${c.name} nas eleições 2026.`;
+  const description = `Pesquisas e intenção de voto de ${c.name}${
+    c.party ? ` (${c.party})` : ""
+  } nas eleições 2026: média ponderada ElectioLab, trajetória, patrimônio e financiamento de campanha.`;
 
   return {
     title,

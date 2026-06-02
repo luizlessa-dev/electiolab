@@ -139,12 +139,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.3,
     },
     {
-      url: `${SITE_URL}/imprensa`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
       url: `${SITE_URL}/pesquisas-presidenciais-2026`,
       lastModified: now,
       changeFrequency: "weekly",

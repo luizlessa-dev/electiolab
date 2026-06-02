@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     absolute: "Metodologia ElectioLab — Como Calculamos a Média Ponderada | ElectioLab",
   },
   description:
-    "Documentação completa da metodologia de ponderação do ElectioLab: recência (meia-vida 10 dias), tamanho amostral (√n), metodologia de coleta (presencial > online) e acurácia histórica dos institutos. Auditável e open-source.",
+    "Como o ElectioLab pondera pesquisas: recência, amostra (√n), metodologia e acurácia histórica do instituto. Método auditável e aberto.",
   alternates: { canonical: "https://electiolab.com/metodologia" },
   openGraph: {
     title: "Metodologia ElectioLab — Como Calculamos a Média Ponderada",
