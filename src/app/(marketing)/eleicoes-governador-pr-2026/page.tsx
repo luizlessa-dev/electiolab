@@ -5,6 +5,7 @@ import { BarChart3, ArrowLeft, ExternalLink, HelpCircle, TrendingUp } from "luci
 import { getLatestStateGovPoll, getStateRunoffScenarios, toRunoffTabs } from "@/lib/marketing-data";
 import { StateRunoffTabs } from "@/components/state-runoff-tabs";
 import { StatePollSnapshotCard } from "@/components/state-poll-snapshot";
+import { buildStateRaceDataset } from "@/lib/governor-dataset";
 
 export const revalidate = 3600;
 
@@ -69,8 +70,9 @@ export default async function GovernadorPR2026Page() {
   const runoffTabs = toRunoffTabs(await getStateRunoffScenarios("PR"));
   return (
     <div className="min-h-screen bg-background">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ ...webPageJsonLd, dateModified: snapshot?.publication_date ?? webPageJsonLd.dateModified }) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(buildStateRaceDataset({ uf: "PR", race: "governador", url: "https://electiolab.com/eleicoes-governador-pr-2026", snapshot })) }} />
       <header className="border-b border-border bg-sidebar/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="h-[2px] bg-gradient-to-r from-primary via-primary/60 to-transparent" />
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">

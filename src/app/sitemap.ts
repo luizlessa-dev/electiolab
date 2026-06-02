@@ -139,12 +139,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.3,
     },
     {
-      url: `${SITE_URL}/imprensa`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
       url: `${SITE_URL}/pesquisas-presidenciais-2026`,
       lastModified: now,
       changeFrequency: "weekly",
@@ -227,6 +221,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${SITE_URL}/pesquisa-presencial-vs-online`,
       lastModified: now,
       changeFrequency: "monthly",
+      priority: 0.75,
+    },
+    {
+      url: `${SITE_URL}/pesquisas-eleitorais-sao-confiaveis`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${SITE_URL}/pesquisas-erraram-2022`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.75,
+    },
+    {
+      url: `${SITE_URL}/aprovacao-governo-lula`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${SITE_URL}/rejeicao-candidatos-presidente-2026`,
+      lastModified: now,
+      changeFrequency: "weekly",
       priority: 0.75,
     },
     {

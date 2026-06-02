@@ -145,10 +145,10 @@ export async function generateMetadata({
   return {
     title,
     description,
+    // Canonical SEMPRE limpo: páginas parametrizadas (?a=&b=) consolidam
+    // autoridade na URL base, evitando fragmentação por combinação de candidatos.
     alternates: {
-      canonical:
-        "https://electiolab.com/comparar" +
-        (slugs.length ? `?${slugs.map((s, i) => `${"abc"[i]}=${s}`).join("&")}` : ""),
+      canonical: "https://electiolab.com/comparar",
     },
     openGraph: {
       title,

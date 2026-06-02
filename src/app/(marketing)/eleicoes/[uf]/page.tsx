@@ -52,7 +52,10 @@ export async function generateMetadata({
   const stateName = UF_NAMES[ufUpper];
   if (!stateName) return {};
 
-  const title = `Eleições ${stateName} 2026 — Pesquisas Governador e Senador`;
+  // Título de HUB: lidera com "Eleições {estado}" e lista os cargos, deixando a
+  // frase "Pesquisas Governador {UF}" para a página deep-dive (/eleicoes-governador-{uf}-2026),
+  // evitando competir pela mesma keyword. Canonical permanece próprio (hub ≠ deep-dive).
+  const title = `Eleições ${stateName} 2026 — Governador, Senador e Candidatos`;
   const description =
     `Acompanhe as pesquisas eleitorais para governador e senador de ${stateName} em 2026. ` +
     `Dados ao vivo, médias ponderadas e análise dos candidatos — ElectioLab.`;

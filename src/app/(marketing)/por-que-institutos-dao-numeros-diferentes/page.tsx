@@ -297,8 +297,8 @@ export default function PorQueInstitutosDaoNumerosDiferentesPage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border rounded-sm overflow-hidden text-xs font-mono text-center">
             {[
               { label: "Presencial", w: "1,00", note: "Peso integral" },
-              { label: "Telefônica", w: "0,80", note: "−20%" },
-              { label: "Mista", w: "0,70", note: "−30%" },
+              { label: "Telefônica", w: "0,85", note: "−15%" },
+              { label: "Mista", w: "0,75", note: "−25%" },
               { label: "Online", w: "0,60", note: "−40%" },
             ].map((r) => (
               <div key={r.label} className="bg-card px-3 py-3 space-y-1">

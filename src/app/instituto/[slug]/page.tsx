@@ -157,10 +157,11 @@ export default async function InstitutoPage({
 
   const orgUrl = institute.website ?? `https://electiolab.com/instituto/${slug}`;
 
-  // JSON-LD: Article (wrapping) + Organization (com aggregateRating quando disponível)
+  // JSON-LD: Article (wrapping) + Organization (com additionalProperty quando disponível)
   //          + FAQPage + BreadcrumbList
-  // aggregateRating usa reliability_score normalizado pra escala 0-100 (ratingValue)
-  // com bestRating=100/worstRating=0, refletindo histórico vs TSE.
+  // O score de acurácia é exposto como PropertyValue (additionalProperty), NÃO como
+  // AggregateRating: não são avaliações de usuários, e rating auto-atribuído viola as
+  // diretrizes de structured data do Google (risco de spammy markup / ação manual).
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -190,14 +191,13 @@ export default async function InstitutoPage({
         nationality: { "@type": "Country", name: "Brasil" },
         ...(reliabilityPct !== null
           ? {
-              aggregateRating: {
-                "@type": "AggregateRating",
-                ratingValue: reliabilityPct,
-                bestRating: 100,
-                worstRating: 0,
-                ratingCount: polls.length,
-                reviewCount: polls.length,
-                description: `Score de acurácia ElectioLab calculado por desvio histórico vs. resultado oficial TSE em ${polls.length} pesquisas.`,
+              additionalProperty: {
+                "@type": "PropertyValue",
+                name: "Score de acurácia ElectioLab",
+                value: reliabilityPct,
+                minValue: 0,
+                maxValue: 100,
+                description: `Score de acurácia calculado pelo desvio histórico vs. resultado oficial TSE em ${polls.length} pesquisas.`,
               },
             }
           : {}),

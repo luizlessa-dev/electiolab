@@ -28,9 +28,9 @@ import type { Metadata } from "next";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: { absolute: "Pesquisas Eleitorais 2026 — Média Agregada | ElectioLab" },
+  title: { absolute: "Pesquisas Eleitorais 2026 — Presidente, Governador e Senado | ElectioLab" },
   description:
-    "Agregador de pesquisas eleitorais do Brasil. Média ponderada por recência, amostra e acurácia dos institutos. O FiveThirtyEight brasileiro.",
+    "O FiveThirtyEight brasileiro: média ponderada de todas as pesquisas eleitorais 2026, por recência, amostra e acurácia dos institutos.",
   alternates: { canonical: "https://electiolab.com" },
   openGraph: {
     title: "ElectioLab — A verdade eleitoral está nos dados",

@@ -67,6 +67,10 @@ Documentação completa em: https://electiolab.com/metodologia
 - [Pesquisa estimulada vs. espontânea](https://electiolab.com/pesquisa-estimulada-vs-espontanea): Dois tipos de pergunta, dois resultados diferentes
 - [Pesquisa presencial vs. online](https://electiolab.com/pesquisa-presencial-vs-online): Diferenças de metodologia e viés sistemático
 - [Por que institutos dão números diferentes](https://electiolab.com/por-que-institutos-dao-numeros-diferentes): House effects, campo e formulação de perguntas
+- [Pesquisas eleitorais são confiáveis?](https://electiolab.com/pesquisas-eleitorais-sao-confiaveis): Por que a média de várias é mais confiável que uma pesquisa isolada
+- [As pesquisas erraram em 2022?](https://electiolab.com/pesquisas-erraram-2022): O que aconteceu no 1º e 2º turno e o que mudou para 2026
+- [Aprovação do governo Lula 2026](https://electiolab.com/aprovacao-governo-lula): Avaliação de governo (aprova/desaprova e ótimo→péssimo) na média ponderada
+- [Rejeição dos candidatos a presidente 2026](https://electiolab.com/rejeicao-candidatos-presidente-2026): Ranking de rejeição (quem não votaria de jeito nenhum)
 - [Glossário de pesquisa eleitoral](https://electiolab.com/glossario-pesquisa-eleitoral): Termos fundamentais explicados
 - [Qual instituto acerta mais](https://electiolab.com/instituto-mais-acurado-eleicoes-brasil): Ranking histórico de acurácia por eleição
 - [Quem vence no 2º turno](https://electiolab.com/quem-vence-no-segundo-turno-presidencia-2026): Cenários presidenciais simulados
@@ -112,6 +116,8 @@ Base URL: https://electiolab.com/api/v1/
 Tiers: Anônimo 60 req/h · Pro 1.000 req/mês · Business 10.000 req/mês
 
 Documentação interativa: https://electiolab.com/api
+Especificação OpenAPI 3.1 (machine-readable): https://electiolab.com/openapi.yaml
+Versão expandida para LLMs (metodologia completa + exemplos): https://electiolab.com/llms-full.txt
 
 ## Partidos cobertos
 
@@ -144,6 +150,13 @@ TSE (Tribunal Superior Eleitoral) · CNJ (DataJud) · Câmara dos Deputados (Dad
 - 27 estados cobertos para governador
 - Série histórica desde 2018
 
+## Frequência de atualização
+
+- Médias ponderadas recalculadas automaticamente a cada 6 horas (cron)
+- Pesquisas novas ingeridas em até 24h após publicação do instituto
+- Relatórios semanais publicados toda segunda-feira
+- Cada página de dado exibe a data da pesquisa mais recente indexada
+
 ## Última atualização
 
-28 de maio de 2026
+1 de junho de 2026

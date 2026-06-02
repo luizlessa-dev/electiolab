@@ -178,6 +178,19 @@ export function RelatorioPage({ data: d }: { data: ReportData }) {
               ` ${d.pesquisas.length} pesquisa${d.pesquisas.length > 1 ? "s" : ""} nova${d.pesquisas.length > 1 ? "s" : ""} incorporada${d.pesquisas.length > 1 ? "s" : ""} à base.`}
             {d.prevSemana && ` Variação vs. semana ${d.prevSemana}.`}
           </p>
+          {/* Byline visível (E-E-A-T): autoria explícita no HTML, não só no JSON-LD */}
+          <p className="text-xs text-muted-foreground">
+            Por{" "}
+            <Link href="/sobre" className="text-foreground hover:underline">
+              Luiz Lessa
+            </Link>
+            , ElectioLab · Publicado em{" "}
+            {new Date(d.dateISO).toLocaleDateString("pt-BR", {
+              day: "2-digit",
+              month: "long",
+              year: "numeric",
+            })}
+          </p>
         </div>
 
         {/* ── Média presidencial ── */}
