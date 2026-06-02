@@ -236,6 +236,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.75,
     },
     {
+      url: `${SITE_URL}/aprovacao-governo-lula`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${SITE_URL}/rejeicao-candidatos-presidente-2026`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.75,
+    },
+    {
       url: `${SITE_URL}/metodologia`,
       lastModified: now,
       changeFrequency: "monthly",

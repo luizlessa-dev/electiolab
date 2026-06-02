@@ -69,6 +69,8 @@ Documentação completa em: https://electiolab.com/metodologia
 - [Por que institutos dão números diferentes](https://electiolab.com/por-que-institutos-dao-numeros-diferentes): House effects, campo e formulação de perguntas
 - [Pesquisas eleitorais são confiáveis?](https://electiolab.com/pesquisas-eleitorais-sao-confiaveis): Por que a média de várias é mais confiável que uma pesquisa isolada
 - [As pesquisas erraram em 2022?](https://electiolab.com/pesquisas-erraram-2022): O que aconteceu no 1º e 2º turno e o que mudou para 2026
+- [Aprovação do governo Lula 2026](https://electiolab.com/aprovacao-governo-lula): Avaliação de governo (aprova/desaprova e ótimo→péssimo) na média ponderada
+- [Rejeição dos candidatos a presidente 2026](https://electiolab.com/rejeicao-candidatos-presidente-2026): Ranking de rejeição (quem não votaria de jeito nenhum)
 - [Glossário de pesquisa eleitoral](https://electiolab.com/glossario-pesquisa-eleitoral): Termos fundamentais explicados
 - [Qual instituto acerta mais](https://electiolab.com/instituto-mais-acurado-eleicoes-brasil): Ranking histórico de acurácia por eleição
 - [Quem vence no 2º turno](https://electiolab.com/quem-vence-no-segundo-turno-presidencia-2026): Cenários presidenciais simulados

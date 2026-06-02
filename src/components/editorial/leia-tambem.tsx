@@ -56,6 +56,18 @@ const CLUSTER: Article[] = [
     tag: "Análise",
   },
   {
+    href: "/aprovacao-governo-lula",
+    title: "Aprovação do governo Lula 2026",
+    desc: "Aprova/desaprova e ótimo→péssimo na média ponderada",
+    tag: "Dados ao vivo",
+  },
+  {
+    href: "/rejeicao-candidatos-presidente-2026",
+    title: "Rejeição dos candidatos a presidente",
+    desc: "Quem o eleitor não votaria de jeito nenhum em 2026",
+    tag: "Dados ao vivo",
+  },
+  {
     href: "/dinheiro-e-votos-pesquisas-2026",
     title: "Dinheiro e Votos — FEFC 2026",
     desc: "Financiamento de campanha cruzado com as pesquisas",

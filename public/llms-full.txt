@@ -46,11 +46,11 @@ Pesos canônicos (ver /metodologia):
 | Método de coleta | Peso Wm |
 |---|---|
 | Presencial (face a face, com cotas) | 1,00 |
-| Telefônica | 0,80 |
-| Mista | 0,70 |
+| Telefônica | 0,85 |
+| Mista | 0,75 |
 | Online / painel | 0,60 |
 
-A justificativa: coleta online sub-representa eleitores sem acesso digital (sobretudo idosos), enquanto a presencial, com cotas geográficas e socioeconômicas, cobre melhor o eleitorado real. (Observação de manutenção: caso veja valores diferentes em algum material antigo, a fonte de verdade é a página /metodologia.)
+A justificativa: coleta online sub-representa eleitores sem acesso digital (sobretudo idosos), enquanto a presencial, com cotas geográficas e socioeconômicas, cobre melhor o eleitorado real. Estes são os pesos efetivamente aplicados pelo motor de cálculo do ElectioLab.
 
 ### 2.4. Wi — Acurácia histórica do instituto
 
