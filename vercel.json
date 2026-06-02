@@ -1,6 +1,10 @@
 {
   "crons": [
     {
+      "path": "/api/cron/ingest-pesqele",
+      "schedule": "0 10 * * *"
+    },
+    {
       "path": "/api/cron/check-polls",
       "schedule": "7 12 * * 1"
     }
