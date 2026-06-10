@@ -178,7 +178,10 @@ function parseTable(tableHtml: string): string[][] {
         case "scenario": scenario = cell; break;
         case "candidate": {
           const pct = parsePct(cell);
-          if (pct != null) results.push({ name: cleanCandidate(colLabel[c]), pct });
+          if (pct != null) {
+            const party = (colLabel[c].match(/\(([^)]+)\)/)?.[1] ?? "").trim();
+            results.push({ name: cleanCandidate(colLabel[c]), pct, party });
+          }
           break;
         }
       }

@@ -43,13 +43,17 @@ const squash = (s: string) => normalize(s).replace(/\s+/g, "");
   };
   const matchInst = (raw: string): boolean => { const t = squash(raw); return (insts ?? []).some((i) => { const n = squash(i.name); return n.includes(t) || t.includes(n); }); };
 
-  const polls = JSON.parse(fs.readFileSync(FILE, "utf-8")) as Array<{ institute: string; fieldwork_end: string | null; results: { name: string; pct: number }[]; _sum?: number; scenario?: string | null }>;
+  const polls = JSON.parse(fs.readFileSync(FILE, "utf-8")) as Array<{ institute: string; fieldwork_end: string | null; results: { name: string; pct: number; party?: string }[]; _sum?: number; scenario?: string | null }>;
 
+  const JSON_MODE = process.argv.includes("--json");
+  const gaps = new Map<string, { name: string; party: string }>(); // candidatos sem cadastro (nome → partido)
   let pass = 0, review = 0;
   for (const p of polls) {
     const issues: string[] = [];
     if (!matchInst(p.institute)) issues.push(`instituto não casa: "${p.institute}"`);
-    const missing = p.results.filter((r) => !matchCand(r.name)).map((r) => r.name);
+    const missingR = p.results.filter((r) => !matchCand(r.name));
+    const missing = missingR.map((r) => r.name);
+    for (const r of missingR) { const k = normalize(r.name); if (!gaps.has(k)) gaps.set(k, { name: r.name, party: r.party ?? "?" }); }
     if (missing.length) issues.push(`nomes sem candidato (${missing.length}): ${missing.join(", ")}`);
     const droppedPct = p.results.filter((r) => !matchCand(r.name)).reduce((a, r) => a + r.pct, 0);
     if (droppedPct >= 3) issues.push(`⚠ ${droppedPct.toFixed(1)}pp cairiam em silêncio`);
@@ -60,9 +64,16 @@ const squash = (s: string) => normalize(s).replace(/\s+/g, "");
 
     const ok = issues.length === 0;
     if (ok) pass++; else review++;
-    const tag = ok ? "✅ PASS  " : "🔶 REVIEW";
-    console.log(`${tag} ${(p.fieldwork_end ?? "????")}  ${p.institute.padEnd(20)} ${String(p.results.length).padStart(2)}c sum=${sum.toFixed(1)}%${p.scenario ? ` cen${p.scenario}` : ""}`);
-    for (const is of issues) console.log(`           └ ${is}`);
+    if (!JSON_MODE) {
+      const tag = ok ? "✅ PASS  " : "🔶 REVIEW";
+      console.log(`${tag} ${(p.fieldwork_end ?? "????")}  ${p.institute.padEnd(20)} ${String(p.results.length).padStart(2)}c sum=${sum.toFixed(1)}%${p.scenario ? ` cen${p.scenario}` : ""}`);
+      for (const is of issues) console.log(`           └ ${is}`);
+    }
   }
-  console.log(`\n  ${pass} PASS · ${review} REVIEW · ${polls.length} total`);
+  if (JSON_MODE) {
+    console.log(JSON.stringify({ polls_total: polls.length, pass, review, roster_gaps: [...gaps.values()] }));
+  } else {
+    console.log(`\n  ${pass} PASS · ${review} REVIEW · ${polls.length} total`);
+    if (gaps.size) console.log(`  roster faltante: ${[...gaps.values()].map((g) => `${g.name} (${g.party})`).join(", ")}`);
+  }
 })();
