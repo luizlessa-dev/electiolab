@@ -10,8 +10,20 @@ alter table poll_drafts add column if not exists scenario_label text;
 
 -- troca a unique key para incluir scenario_label (nulls not distinct: 1T sem
 -- cenário continua sendo uma linha só)
-alter table poll_drafts
-  drop constraint if exists poll_drafts_election_id_institute_name_fieldwork_end_scope_round_key;
+-- dropa a unique key antiga por DESCOBERTA (o nome auto-gerado é truncado em 63
+-- chars pelo Postgres → "…scope__key", não "…scope_round_key"). Remove qualquer
+-- unique constraint de poll_drafts exceto a nova, sem depender do nome exato.
+do $$
+declare c text;
+begin
+  for c in
+    select conname from pg_constraint
+    where conrelid = 'poll_drafts'::regclass and contype = 'u'
+      and conname <> 'poll_drafts_unique_scenario'
+  loop
+    execute format('alter table poll_drafts drop constraint %I', c);
+  end loop;
+end $$;
 
 -- idempotente: se já existir (re-execução / aplicação manual), recria sem erro
 alter table poll_drafts
