@@ -25,7 +25,8 @@ const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPAB
 const FILE = process.argv[2];
 const arg = (k: string) => process.argv.find((a) => a.startsWith(`--${k}=`))?.split("=").slice(1).join("=");
 const ELECTION = arg("election-id");
-if (!FILE || !ELECTION) { console.error("Uso: gate-poll-drafts.ts <file.json> --election-id=<uuid>"); process.exit(1); }
+const SEATS = parseInt(arg("seats") ?? "1"); // Senado 2026 = 2 cadeiras → voto duplo, soma ~200%
+if (!FILE || !ELECTION) { console.error("Uso: gate-poll-drafts.ts <file.json> --election-id=<uuid> [--seats=2]"); process.exit(1); }
 
 // idêntico ao route de promoção
 const normalize = (s: string) => s.toUpperCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^A-Z0-9 ]+/g, " ").replace(/\s+/g, " ").trim();
@@ -54,7 +55,8 @@ const squash = (s: string) => normalize(s).replace(/\s+/g, "");
     if (droppedPct >= 3) issues.push(`⚠ ${droppedPct.toFixed(1)}pp cairiam em silêncio`);
     if (!p.fieldwork_end) issues.push("sem data de campo");
     const sum = p.results.reduce((a, r) => a + r.pct, 0);
-    if (sum > 100.5) issues.push(`soma de candidatos ${sum.toFixed(1)}% > 100`);
+    const ceil = 100 * SEATS + 1.5; // tolera arredondamento; ×cadeiras p/ Senado voto-duplo
+    if (sum > ceil) issues.push(`soma de candidatos ${sum.toFixed(1)}% > ${100 * SEATS} (${SEATS} cadeira(s))`);
 
     const ok = issues.length === 0;
     if (ok) pass++; else review++;
