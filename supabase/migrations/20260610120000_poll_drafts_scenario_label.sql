@@ -13,6 +13,10 @@ alter table poll_drafts add column if not exists scenario_label text;
 alter table poll_drafts
   drop constraint if exists poll_drafts_election_id_institute_name_fieldwork_end_scope_round_key;
 
+-- idempotente: se já existir (re-execução / aplicação manual), recria sem erro
+alter table poll_drafts
+  drop constraint if exists poll_drafts_unique_scenario;
+
 alter table poll_drafts
   add constraint poll_drafts_unique_scenario
   unique nulls not distinct (election_id, institute_name, fieldwork_end, scope, round, scenario_label);
