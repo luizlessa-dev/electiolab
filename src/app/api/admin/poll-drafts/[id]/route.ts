@@ -126,6 +126,7 @@ async function approve(draftId: string) {
       methodology: d.methodology, // NULL permitido quando draft não informa (migration 20260517020237)
       scope: d.scope,
       round: d.round,
+      scenario_label: d.scenario_label ?? null, // carrega o cenário (estimulada A/B/C, 2T par-a-par)
       source_url: d.source_url,
       is_verified: false,
     })

@@ -62,7 +62,7 @@ async function resolveElection(): Promise<{ id: string; name: string } | null> {
   const raw = JSON.parse(fs.readFileSync(FILE, "utf-8")) as Array<{
     institute: string; fieldwork_start?: string; fieldwork_end: string;
     publication_date?: string | null; sample_size?: number;
-    margin_of_error?: number; round?: number;
+    margin_of_error?: number; round?: number; scenario?: string | null;
     results: Array<{ name: string; pct: number }>;
   }>;
   console.log(`   ${raw.length} entradas no arquivo`);
@@ -77,6 +77,7 @@ async function resolveElection(): Promise<{ id: string; name: string } | null> {
     margin_of_error: r.margin_of_error ?? null,
     round: r.round ?? 1,
     scope: "1t",
+    scenario_label: r.scenario ?? null,
     results: r.results,
     source_url: sourceUrl,
     source_kind: sourceUrl.includes("wikipedia") ? "wikipedia" : "manual",
@@ -85,9 +86,9 @@ async function resolveElection(): Promise<{ id: string; name: string } | null> {
   }));
 
   if (!APPLY) {
-    console.log(`\n   (dry-run; 5 amostras)`);
-    for (const d of drafts.slice(0, 5)) {
-      console.log(`     ${d.fieldwork_end}  ${d.institute_name.padEnd(22)} n=${String(d.sample_size).padStart(5)} ${d.results.length} cands`);
+    console.log(`\n   (dry-run; ${drafts.length} drafts, sem colisão de cenário)`);
+    for (const d of drafts) {
+      console.log(`     ${d.fieldwork_end}  ${d.institute_name.padEnd(20)} n=${String(d.sample_size).padStart(5)} ${String(d.results.length).padStart(2)}c  cen=${d.scenario_label ?? "—"}`);
     }
     return;
   }
@@ -95,7 +96,7 @@ async function resolveElection(): Promise<{ id: string; name: string } | null> {
   let inserted = 0, updated = 0, errors = 0;
   for (const d of drafts) {
     const { error } = await sb.from("poll_drafts").upsert(d, {
-      onConflict: "election_id,institute_name,fieldwork_end,scope,round",
+      onConflict: "election_id,institute_name,fieldwork_end,scope,round,scenario_label",
       ignoreDuplicates: false,
     });
     if (error) { console.error(`  ❌ ${d.institute_name} ${d.fieldwork_end}: ${error.message}`); errors++; }
