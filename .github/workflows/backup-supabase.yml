@@ -16,12 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Supabase CLI
-        run: |
-          curl -fsSL https://github.com/supabase/cli/releases/latest/download/supabase_linux_amd64.tar.gz | tar -xz
-          sudo mv supabase /usr/local/bin/
-          supabase --version
-
       - name: Run pg_dump (schema + data) → R2/S3
         env:
           DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
