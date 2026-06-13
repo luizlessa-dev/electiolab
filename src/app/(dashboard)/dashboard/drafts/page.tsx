@@ -1,7 +1,14 @@
 import { createClient } from "@supabase/supabase-js";
+import { createClient as createServerClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 import { DraftsClient } from "./drafts-client";
 
 export const dynamic = "force-dynamic";
+
+function isAdmin(email: string | undefined): boolean {
+  const list = (process.env.ADMIN_EMAILS ?? "").split(",").map((e) => e.trim()).filter(Boolean);
+  return list.length > 0 && !!email && list.includes(email);
+}
 
 type DraftRow = {
   id: string;
@@ -61,6 +68,15 @@ async function getDrafts(): Promise<{ drafts: DraftRow[]; summary: SummaryRow[] 
 }
 
 export default async function PollDraftsPage() {
+  const supabase = await createServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user || !isAdmin(user.email)) {
+    redirect("/dashboard");
+  }
+
   const { drafts, summary } = await getDrafts();
   return <DraftsClient drafts={drafts} summary={summary} />;
 }

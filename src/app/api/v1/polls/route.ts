@@ -98,6 +98,15 @@ export async function GET(request: Request) {
   }
 
   if (format === "csv") {
+    if (!auth.authenticated) {
+      return NextResponse.json(
+        {
+          error:
+            "Exportação CSV requer autenticação. Gere sua API key em electiolab.com/dashboard/api (plano Pro+).",
+        },
+        { status: 401 }
+      );
+    }
     const csv = toCsv((data ?? []) as unknown as PollRow[]);
     const resp = new NextResponse(csv, {
       status: 200,
