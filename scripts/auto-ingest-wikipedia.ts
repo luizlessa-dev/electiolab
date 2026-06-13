@@ -165,15 +165,12 @@ const WIKI_MAP: WikiEntry[] = [
     page: "Pesquisas_eleitorais_para_a_eleição_estadual_de_2026_em_Mato_Grosso",
     tables: [{ tableIndex: 0, round: 1, scope: "1t" }],
   },
-  // PA: tabela usa formato de data "20–24/Mai/2026" (barra + abrev.) em vez do
-  // padrão "20 a 24 de maio de 2026" — parser não reconhece, retorna 0 pesquisas.
-  // Curar PA manualmente via ingest-manual.ts até o parser ser estendido.
-  // {
-  //   electionId: "be63d720-45a8-4ff0-830b-93f3f135a2c3",
-  //   type: "governador", state: "PA",
-  //   page: "Pesquisas_eleitorais_para_a_eleição_estadual_de_2026_no_Pará",
-  //   tables: [{ tableIndex: 0, round: 1, scope: "1t" }],
-  // },
+  {
+    electionId: "be63d720-45a8-4ff0-830b-93f3f135a2c3",
+    type: "governador", state: "PA",
+    page: "Pesquisas_eleitorais_para_a_eleição_estadual_de_2026_no_Pará",
+    tables: [{ tableIndex: 0, round: 1, scope: "1t" }],
+  },
   {
     electionId: "fd349384-7c24-4d63-b950-309228d37386",
     type: "governador", state: "PB",
@@ -276,6 +273,7 @@ function stripTags(s: string): string {
     .replace(/\.mw-parser-output[^{]*\{[^}]*\}/g, "")
     .replace(/<[^>]+>/g, " ")
     .replace(/&nbsp;/g, " ").replace(/&#160;/g, " ")
+    .replace(/&ndash;/g, "–").replace(/&mdash;/g, "—")
     .replace(/&amp;/g, "&").replace(/&#?\w+;/g, " ")
     .replace(/\s+/g, " ").trim();
 }
@@ -291,9 +289,30 @@ function iso(d: number, m: number, y: number): string | null {
 }
 const INFERRED_YEAR = 2026; // ano da eleição; usado quando a data não traz o ano explícito
 
+// Abreviações de mês usadas em alguns estados (ex: PA usa "Mai", "Jun", "Abr")
+const MONTH_ABBR: Record<string, number> = {
+  jan: 1, fev: 2, mar: 3, abr: 4, mai: 5, jun: 6,
+  jul: 7, ago: 8, set: 9, out: 10, nov: 11, dez: 12,
+};
+
 function parseDates(raw: string): { start: string | null; end: string | null } {
   const s = raw.toLowerCase().replace(/[º°]/g, "").replace(/\s+/g, " ").trim();
   const y = parseInt(s.match(/\b(20\d{2})\b/)?.[1] ?? String(INFERRED_YEAR));
+
+  // Formato "D–D/Mmm/YYYY" ou "D–D/Mmm" (ex: PA: "20–24/Mai/2026")
+  const slashFmt = s.match(/(\d{1,2})[–\-](\d{1,2})\/([a-z]{3})/);
+  if (slashFmt) {
+    const d1 = parseInt(slashFmt[1]); const d2 = parseInt(slashFmt[2]);
+    const mon = MONTH_ABBR[slashFmt[3]];
+    if (mon) return { start: iso(d1, mon, y), end: iso(d2, mon, y) };
+  }
+  // Formato "D/Mmm" dia único com barra (ex: "5/Jun")
+  const slashSingle = s.match(/(\d{1,2})\/([a-z]{3})/);
+  if (slashSingle) {
+    const d1 = parseInt(slashSingle[1]); const mon = MONTH_ABBR[slashSingle[2]];
+    if (mon) { const v = iso(d1, mon, y); return { start: v, end: v }; }
+  }
+
   const monthsIn = [...s.matchAll(/(\d{1,2})\s+de\s+([a-zç]+)/g)].map((m) => ({ d: parseInt(m[1]), mon: MONTHS[m[2]] }));
   const bareDays = [...s.matchAll(/(\d{1,2})\s+[ae]\s+(\d{1,2})\s+de\s+([a-zç]+)/g)];
   if (bareDays.length) {
@@ -389,7 +408,8 @@ async function fetchWikiTable(page: string, tableIndex: number, attempt = 1): Pr
     /\d{1,2}\s+a\s+\d{1,2}\s+de\s+[a-zç]+/i.test(c) ||
     /\d{1,2}\s+e\s+\d{1,2}\s+de\s+[a-zç]+/i.test(c) ||
     /\d{1,2}\s+de\s+[a-zç]+\s+a\s+\d{1,2}[º°]?\s+de\s+[a-zç]+/i.test(c) ||
-    /^\d{1,2}[º°]?\s+de\s+[a-zç]+$/i.test(c.trim()),
+    /^\d{1,2}[º°]?\s+de\s+[a-zç]+$/i.test(c.trim()) ||
+    /\d{1,2}[–\-]\d{1,2}\/[a-z]{3}/i.test(c),        // formato PA: "20–24/Mai/2026"
   );
   const dataStart = g.findIndex((r) => isDataRow(r));
   if (dataStart < 0) return [];
