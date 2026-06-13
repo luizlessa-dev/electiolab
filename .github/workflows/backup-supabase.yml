@@ -27,7 +27,12 @@ jobs:
 
       - name: Run pg_dump (schema + data) → R2/S3
         env:
-          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+          PGHOST: aws-1-sa-east-1.pooler.supabase.com
+          PGPORT: "5432"
+          PGUSER: ${{ secrets.SUPABASE_DB_USER }}
+          PGPASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          PGDATABASE: postgres
+          PGSSLMODE: require
           AWS_ACCESS_KEY_ID: ${{ secrets.BACKUP_S3_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.BACKUP_S3_SECRET_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.BACKUP_S3_REGION || 'auto' }}
@@ -39,9 +44,9 @@ jobs:
           TIMESTAMP=$(date -u +%Y%m%d-%H%M%S)
           FILE="electiolab-backup-${TIMESTAMP}.sql.gz"
 
-          echo "==> pg_dump"
-          PGSSLMODE=require /usr/lib/postgresql/17/bin/pg_dump "$DATABASE_URL" \
-            --no-owner --no-privileges --clean --if-exists \
+          echo "==> pg_dump (user: $PGUSER)"
+          /usr/lib/postgresql/17/bin/pg_dump \
+            --no-owner --no-privileges --clean --if-exists --no-password \
             --exclude-schema=auth \
             --exclude-schema=storage \
             --exclude-schema=realtime \

@@ -32,6 +32,8 @@ if (!PAGE) { console.error("Faltou --page=<título wiki>"); process.exit(1); }
 function stripTags(s: string): string {
   return s
     .replace(/<sup[^>]*>[\s\S]*?<\/sup>/gi, "")    // notas de rodapé [1]
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "") // blocos <style> embutidos
+    .replace(/\.mw-parser-output[^{]*\{[^}]*\}/g, "") // CSS inline (ex.: tooltip "Cen.")
     .replace(/<[^>]+>/g, " ")
     .replace(/&nbsp;/g, " ").replace(/&#160;/g, " ")
     .replace(/&amp;/g, "&").replace(/&#?\w+;/g, " ")
@@ -51,8 +53,8 @@ function parseDates(raw: string): { start: string | null; end: string | null } {
   const s = raw.toLowerCase().replace(/[º°]/g, "").replace(/\s+/g, " ").trim();
   const y = parseInt(s.match(/\b(20\d{2})\b/)?.[1] ?? "0");
   const monthsIn = [...s.matchAll(/(\d{1,2})\s+de\s+([a-zç]+)/g)].map((m) => ({ d: parseInt(m[1]), mon: MONTHS[m[2]] }));
-  const bareDays = [...s.matchAll(/(\d{1,2})\s+a\s+(\d{1,2})\s+de\s+([a-zç]+)/g)];
-  // caso "D a D de MMMM de YYYY"
+  const bareDays = [...s.matchAll(/(\d{1,2})\s+[ae]\s+(\d{1,2})\s+de\s+([a-zç]+)/g)];
+  // caso "D a D de MMMM de YYYY" ou "D e D de MMMM de YYYY"
   if (bareDays.length) {
     const g = bareDays[0]; const d1 = parseInt(g[1]); const d2 = parseInt(g[2]); const mon = MONTHS[g[3]];
     return { start: iso(d1, mon, y), end: iso(d2, mon, y) };
@@ -141,7 +143,13 @@ function parseTable(tableHtml: string): string[][] {
   const g = parseTable(tables[TABLE]);
   // zona de cabeçalho = linhas iniciais sem dado; 1ª linha de dados = tem célula com "%" ou data "de 20XX"
   // linha de dados = tem uma DATA de campo ("... de 20XX"); cabeçalhos não têm ano (inclusive "Margem de erro (%pt)")
-  const isDataRow = (r: string[]) => r.some((c) => /\bde\s+20\d{2}\b/.test(c) || /\d{1,2}\s+a\s+\d{1,2}\s+de\s+[a-zç]+/i.test(c));
+  const isDataRow = (r: string[]) => r.some((c) =>
+    /\bde\s+20\d{2}\b/.test(c) ||                                         // "... de 20XX"
+    /\d{1,2}\s+a\s+\d{1,2}\s+de\s+[a-zç]+/i.test(c) ||                    // "D a D de mês"
+    /\d{1,2}\s+e\s+\d{1,2}\s+de\s+[a-zç]+/i.test(c) ||                    // "D e D de mês" (dias não-consecutivos, sem ano)
+    /\d{1,2}\s+de\s+[a-zç]+\s+a\s+\d{1,2}[º°]?\s+de\s+[a-zç]+/i.test(c) ||// "D de mês a D de mês" (sem ano)
+    /^\d{1,2}[º°]?\s+de\s+[a-zç]+$/i.test(c.trim()),                      // "D de mês" único (sem ano)
+  );
   const dataStart = g.findIndex((r) => isDataRow(r));
   const headerRows = g.slice(0, dataStart);
   const width = g[0].length;
@@ -167,7 +175,7 @@ function parseTable(tableHtml: string): string[][] {
   for (const row of g.slice(dataStart)) {
     if (row.filter(Boolean).length < 3) continue;
     let institute = "", datesRaw = "", sample: number | null = null, margin: number | null = null, scenario = "";
-    const results: { name: string; pct: number }[] = [];
+    const results: { name: string; pct: number; party: string }[] = [];
     for (let c = 0; c < width; c++) {
       const cell = row[c] ?? "";
       switch (colKind[c]) {
