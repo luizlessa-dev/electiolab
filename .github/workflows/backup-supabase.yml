@@ -40,8 +40,7 @@ jobs:
           FILE="electiolab-backup-${TIMESTAMP}.sql.gz"
 
           echo "==> pg_dump"
-          # Usa psql client (já vem na ubuntu-latest)
-          PGSSLMODE=require pg_dump "$DATABASE_URL" \
+          PGSSLMODE=require /usr/lib/postgresql/17/bin/pg_dump "$DATABASE_URL" \
             --no-owner --no-privileges --clean --if-exists \
             --exclude-schema=auth \
             --exclude-schema=storage \
