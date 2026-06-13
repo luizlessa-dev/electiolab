@@ -16,6 +16,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install PostgreSQL 17 client
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y postgresql-client-17
+
       - name: Run pg_dump (schema + data) → R2/S3
         env:
           DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
