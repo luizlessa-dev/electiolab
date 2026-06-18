@@ -120,7 +120,7 @@ async function approve(draftId: string) {
       tse_registration: d.tse_protocolo, // se houver match TSE
       fieldwork_start: d.fieldwork_start,
       fieldwork_end: d.fieldwork_end,
-      publication_date: d.publication_date,
+      publication_date: d.publication_date ?? d.fieldwork_end,
       sample_size: d.sample_size,
       margin_of_error: d.margin_of_error,
       methodology: d.methodology, // NULL permitido quando draft não informa (migration 20260517020237)

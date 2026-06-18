@@ -26,6 +26,8 @@ const has = (k: string) => process.argv.includes(`--${k}`);
 const PAGE = arg("page");
 const TABLE = parseInt(arg("table") ?? "0");
 const OUT = arg("out");
+const YEAR_DEFAULT = parseInt(arg("year") ?? "0");
+const SCENARIO_PREFIX = arg("scenario-prefix") ?? "";  // ex: "1T-T5" → cenários viram "1T-T5 Cenário 1"
 if (!PAGE) { console.error("Faltou --page=<título wiki>"); process.exit(1); }
 
 // ---------- util ----------
@@ -42,30 +44,61 @@ function stripTags(s: string): string {
 const MONTHS: Record<string, number> = {
   janeiro: 1, fevereiro: 2, "março": 3, marco: 3, abril: 4, maio: 5, junho: 6,
   julho: 7, agosto: 8, setembro: 9, outubro: 10, novembro: 11, dezembro: 12,
+  // abreviações (página presidencial usa "29 Mai - 30 Mai")
+  jan: 1, fev: 2, mar: 3, abr: 4, mai: 5, jun: 6,
+  jul: 7, ago: 8, set: 9, out: 10, nov: 11, dez: 12,
 };
 const dd = (n: number) => String(n).padStart(2, "0");
 function iso(d: number, m: number, y: number): string | null {
   if (!d || !m || !y) return null;
   return `${y}-${dd(m)}-${dd(d)}`;
 }
-/** Parseia "1° a 3 de junho de 2026", "29 de março a 4 de abril de 2026", "2 de maio de 2026". */
+// Constante fora da função para não criar Date() por chamada
+const _TODAY_MS = Date.now();
+/** Quando não há ano explícito, tenta defaultY mas recua 1 se a data ficaria >150d no futuro
+ *  (cobre eleição em outubro/2026 mas evita atribuir Dez-2025 como Dez-2026). */
+function resolveYear(month: number, day: number, defaultY: number): number {
+  if (!defaultY) return 0;
+  const candidate = Date.UTC(defaultY, month - 1, day);
+  const daysAhead = (candidate - _TODAY_MS) / 86_400_000;
+  return daysAhead > 150 ? defaultY - 1 : defaultY;
+}
+
+/** Parseia datas de campo: "1° a 3 de junho de 2026", "29 de março a 4 de abril de 2026",
+ *  "2 de maio de 2026", "29 Mai - 30 Mai" (página presidencial — sem ano na célula). */
 function parseDates(raw: string): { start: string | null; end: string | null } {
   const s = raw.toLowerCase().replace(/[º°]/g, "").replace(/\s+/g, " ").trim();
   const y = parseInt(s.match(/\b(20\d{2})\b/)?.[1] ?? "0");
+  const defaultY = y || YEAR_DEFAULT;
+
+  // caso abreviado "DD Mês [YYYY]" (página presidencial: "29 Mai - 30 Mai", "1 Jun 2026 - 3 Jun 2026")
+  // O padrão exige ≥3 letras para o mês, excluindo "de"(2) e "a"(1)
+  const abbrev = [...s.matchAll(/(\d{1,2})\s+([a-zç]{3,9})(?:\s+(20\d{2}))?/g)]
+    .map((m) => {
+      const mon = MONTHS[m[2]];
+      const d = parseInt(m[1]);
+      const ey = m[3] ? parseInt(m[3]) : 0;
+      return { d, mon, y: ey || resolveYear(mon ?? 1, d, defaultY) };
+    })
+    .filter((x) => x.mon);
+  if (abbrev.length >= 2) return { start: iso(abbrev[0].d, abbrev[0].mon, abbrev[0].y), end: iso(abbrev[abbrev.length - 1].d, abbrev[abbrev.length - 1].mon, abbrev[abbrev.length - 1].y) };
+  if (abbrev.length === 1) { const v = iso(abbrev[0].d, abbrev[0].mon, abbrev[0].y); return { start: v, end: v }; }
+
+  // caso forma longa "D de MMMM [de YYYY]"
   const monthsIn = [...s.matchAll(/(\d{1,2})\s+de\s+([a-zç]+)/g)].map((m) => ({ d: parseInt(m[1]), mon: MONTHS[m[2]] }));
   const bareDays = [...s.matchAll(/(\d{1,2})\s+[ae]\s+(\d{1,2})\s+de\s+([a-zç]+)/g)];
-  // caso "D a D de MMMM de YYYY" ou "D e D de MMMM de YYYY"
+  // "D a D de MMMM [de YYYY]" ou "D e D de MMMM [de YYYY]"
   if (bareDays.length) {
     const g = bareDays[0]; const d1 = parseInt(g[1]); const d2 = parseInt(g[2]); const mon = MONTHS[g[3]];
-    return { start: iso(d1, mon, y), end: iso(d2, mon, y) };
+    return { start: iso(d1, mon, defaultY), end: iso(d2, mon, defaultY) };
   }
-  // caso "D de MMMM a D de MMMM de YYYY"
+  // "D de MMMM a D de MMMM [de YYYY]"
   if (monthsIn.length >= 2 && monthsIn[0].mon && monthsIn[1].mon) {
-    return { start: iso(monthsIn[0].d, monthsIn[0].mon, y), end: iso(monthsIn[1].d, monthsIn[1].mon, y) };
+    return { start: iso(monthsIn[0].d, monthsIn[0].mon, defaultY), end: iso(monthsIn[1].d, monthsIn[1].mon, defaultY) };
   }
-  // caso dia único "D de MMMM de YYYY"
+  // dia único "D de MMMM [de YYYY]"
   if (monthsIn.length === 1 && monthsIn[0].mon) {
-    const v = iso(monthsIn[0].d, monthsIn[0].mon, y);
+    const v = iso(monthsIn[0].d, monthsIn[0].mon, defaultY);
     return { start: v, end: v };
   }
   return { start: null, end: null };
@@ -83,6 +116,7 @@ function cleanCandidate(raw: string): string {
 const INSTITUTE_ALIASES: Record<string, string> = {
   "100% cidades/futura": "Futura Inteligência",
   "100% cidades": "Futura Inteligência",
+  "futura/apex": "Futura/Apex",  // página presidencial — já existe no banco
 };
 const aliasInstitute = (raw: string): string => INSTITUTE_ALIASES[raw.trim().toLowerCase()] ?? raw;
 
@@ -148,7 +182,8 @@ function parseTable(tableHtml: string): string[][] {
     /\d{1,2}\s+a\s+\d{1,2}\s+de\s+[a-zç]+/i.test(c) ||                    // "D a D de mês"
     /\d{1,2}\s+e\s+\d{1,2}\s+de\s+[a-zç]+/i.test(c) ||                    // "D e D de mês" (dias não-consecutivos, sem ano)
     /\d{1,2}\s+de\s+[a-zç]+\s+a\s+\d{1,2}[º°]?\s+de\s+[a-zç]+/i.test(c) ||// "D de mês a D de mês" (sem ano)
-    /^\d{1,2}[º°]?\s+de\s+[a-zç]+$/i.test(c.trim()),                      // "D de mês" único (sem ano)
+    /^\d{1,2}[º°]?\s+de\s+[a-zç]+$/i.test(c.trim()) ||                    // "D de mês" único (sem ano)
+    /\d{1,2}\s+(jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)/i.test(c),// "DD Mês" abreviado (página presidencial)
   );
   const dataStart = g.findIndex((r) => isDataRow(r));
   const headerRows = g.slice(0, dataStart);
@@ -179,7 +214,7 @@ function parseTable(tableHtml: string): string[][] {
     for (let c = 0; c < width; c++) {
       const cell = row[c] ?? "";
       switch (colKind[c]) {
-        case "institute": institute = cell.replace(/\s*\d+\s*$/, "").trim(); break;
+        case "institute": institute = cell.replace(/\s*\[\s*\d+\s*\]/g, "").replace(/\s*\d+\s*$/, "").trim(); break;
         case "dates": datesRaw = cell; break;
         case "sample": { const n = parseInt(cell.replace(/[^\d]/g, "")); sample = Number.isFinite(n) ? n : null; break; }
         case "margin": { const m = parsePct(cell); margin = m; break; }
@@ -204,6 +239,30 @@ function parseTable(tableHtml: string): string[][] {
       scenario: scenario.trim() ? (/^\d+$/.test(scenario.trim()) ? `Cenário ${scenario.trim()}` : scenario.trim()) : null,
       results, _sum: sum, _dates_raw: datesRaw,
     });
+  }
+
+  // Auto-numerar cenários quando o mesmo (instituto, data) aparece múltiplas vezes
+  // (página presidencial não tem coluna "Cen." — cada tabela é um cenário/combinação de candidatos)
+  type PollEntry = { institute: string; fieldwork_end: string | null; scenario: string | null; [k: string]: unknown };
+  const polls = out as PollEntry[];
+  const keyCounts = new Map<string, number>();
+  for (const p of polls) {
+    const k = `${p.institute}|${p.fieldwork_end}`;
+    if (!p.scenario) keyCounts.set(k, (keyCounts.get(k) ?? 0) + 1);
+  }
+  const keyIdx = new Map<string, number>();
+  for (const p of polls) {
+    if (!p.scenario) {
+      const k = `${p.institute}|${p.fieldwork_end}`;
+      if ((keyCounts.get(k) ?? 1) > 1) {
+        const n = (keyIdx.get(k) ?? 0) + 1;
+        keyIdx.set(k, n);
+        const label = n === 1 ? "Cenário 1" : `Cenário ${n}`;
+        p.scenario = SCENARIO_PREFIX ? `${SCENARIO_PREFIX} ${label}` : label;
+      } else if (SCENARIO_PREFIX) {
+        p.scenario = SCENARIO_PREFIX;
+      }
+    }
   }
 
   const jsonOut = JSON.stringify(out, null, 2);
