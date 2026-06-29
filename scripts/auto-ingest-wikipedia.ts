@@ -251,17 +251,20 @@ const WIKI_MAP: WikiEntry[] = [
   },
 
   // ── SENADORES ────────────────────────────────────────────────────────────
-  // NÃO INCLUÍDOS AUTOMATICAMENTE: o tableIndex de senador varia por estado
-  // (estados com simulações de 2T governador têm tabelas intermediárias).
-  // Para adicionar um estado: rode --list na página estadual, identifique a
-  // tabela de senador visualmente, e adicione uma entrada aqui com o índice correto.
-  // Exemplo (verificar índice antes de usar):
-  // {
-  //   electionId: "<id>",
-  //   type: "senador", state: "XX",
-  //   page: "Pesquisas_eleitorais_para_a_eleição_estadual_de_2026_em_XX",
-  //   tables: [{ tableIndex: N, round: 1, scope: "1t", seats: 2 }],
-  // },
+  // tableIndex varia por estado — confirmar via:
+  //   npx tsx scripts/extract-wikipedia-polls.ts --page="<página>" --list
+  //   npx tsx scripts/extract-wikipedia-polls.ts --page="<página>" --tableIndex=N
+  // e verificar os nomes dos candidatos (senadores ≠ governadores).
+  // Senado 2026 = 2 cadeiras por UF → seats: 2 (soma ~200% é normal).
+  // Adicionar novos estados aqui conforme Wikipedia criar tabelas de pesquisa.
+  {
+    electionId: "09f99790-d38d-4daa-aaf8-f4ad4b3f62cc",
+    type: "senador", state: "RJ",
+    page: "Pesquisas_eleitorais_para_a_eleição_estadual_de_2026_no_Rio_de_Janeiro",
+    tables: [{ tableIndex: 2, round: 1, scope: "1t", seats: 2 }],
+  },
+  // SP, MG, GO, SC, PE, RS, BA, PR, CE: sem tabela de Senado no Wikipedia em jun/2026.
+  // Re-checar mensalmente com --list na página estadual.
 ];
 
 // ── Wikipedia parser (inline — replica extract-wikipedia-polls.ts) ────────────

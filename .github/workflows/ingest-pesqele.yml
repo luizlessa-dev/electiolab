@@ -15,6 +15,10 @@ on:
         required: false
         default: "false"
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   ingest:
     runs-on: ubuntu-latest
@@ -45,6 +49,13 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: npx tsx scripts/auto-ingest-wikipedia.ts --type=governador --apply
+
+      - name: Auto-ingest Wikipedia (senadores)
+        if: ${{ inputs.skip_wikipedia != 'true' }}
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npx tsx scripts/auto-ingest-wikipedia.ts --type=senador --apply
 
       - name: Match drafts → PesqEle
         env:
