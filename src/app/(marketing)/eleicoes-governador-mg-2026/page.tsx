@@ -87,6 +87,15 @@ export default async function GovernadorMG2026Page() {
         <div className="space-y-4">
           <p className="text-xs font-mono uppercase tracking-wider text-primary">Governador Minas Gerais · Eleições 2026</p>
           <h1 className="text-3xl font-bold tracking-tight">Pesquisas Governador MG 2026 — Cleitinho Lidera com 28%</h1>
+          <div className="border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20 px-4 py-3 rounded-sm">
+            <p className="text-xs font-semibold text-yellow-800 dark:text-yellow-300 mb-1">⚠️ STATUS DE CANDIDATURA EM DISPUTA</p>
+            <p className="text-xs text-yellow-700 dark:text-yellow-400 leading-relaxed">
+              Existe conflito sobre a candidatura de Cleitinho em MG 2026: Partido Republicanos diz que não será candidato, mas Cleitinho nega. Lei eleitoral está sob análise.
+              <Link href="https://g1.globo.com/politica/noticia/2026/07/29/republicanos-diz-que-cleitinho-nao-sera-candidato-em-mg-mas-senador-nega-o-que-diz-a-lei-eleitoral.ghtml" target="_blank" className="font-semibold underline ml-1">
+                Leia mais na G1
+              </Link>
+            </p>
+          </div>
           <p className="text-muted-foreground max-w-2xl leading-relaxed">
             Cleitinho (Republicanos) lidera com 28%+, enquanto Kalil (PDT) aparece em segundo com 16-20%.
           </p>
