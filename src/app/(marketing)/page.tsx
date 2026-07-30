@@ -313,7 +313,7 @@ export default async function HomePage() {
 
           <h1 className="text-4xl md:text-6xl font-bold tracking-tighter leading-[1.05]">
             Pesquisas Eleitorais 2026{" "}
-            <span className="text-primary">ao vivo</span>,
+            <span className="text-primary">ao vivo</span>,{" "}
             <br className="hidden md:block" />
             <span className="text-muted-foreground text-3xl md:text-5xl">
               em uma média ponderada que faz sentido.

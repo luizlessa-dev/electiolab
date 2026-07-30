@@ -82,7 +82,10 @@ export default async function GovernadorMG2026Page() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify({ ...webPageJsonLd, dateModified: snapshot?.publication_date ?? webPageJsonLd.dateModified }) }}
       />
-      <script
+<script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ElectioLab","item":"https://electiolab.com"},{"@type":"ListItem","position":2,"name":"Eleições 2026","item":"https://electiolab.com/eleicoes"},{"@type":"ListItem","position":3,"name":"Governador Minas Gerais 2026","item":"https://electiolab.com/eleicoes-governador-mg-2026"}]}) }}
+      />      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />

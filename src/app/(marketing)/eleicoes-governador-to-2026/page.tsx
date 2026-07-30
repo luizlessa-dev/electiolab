@@ -69,7 +69,10 @@ export default async function GovernadorTO2026Page() {
   return (
     <div className="min-h-screen bg-background">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ ...webPageJsonLd, dateModified: snapshot?.publication_date ?? webPageJsonLd.dateModified }) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+<script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ElectioLab","item":"https://electiolab.com"},{"@type":"ListItem","position":2,"name":"Eleições 2026","item":"https://electiolab.com/eleicoes"},{"@type":"ListItem","position":3,"name":"Governador Tocantins 2026","item":"https://electiolab.com/eleicoes-governador-to-2026"}]}) }}
+      />      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(buildStateRaceDataset({ uf: "TO", race: "governador", url: "https://electiolab.com/eleicoes-governador-to-2026", snapshot })) }} />
       <header className="border-b border-border bg-sidebar/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="h-[2px] bg-gradient-to-r from-primary via-primary/60 to-transparent" />
