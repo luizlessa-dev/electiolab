@@ -10,8 +10,12 @@ import { buildStateRaceDataset } from "@/lib/governor-dataset";
 export const revalidate = 3600;
 export const dynamicParams = false;
 
-// Grandes colégios eleitorais — onde há pesquisa de senado indexada
-const UFS = ["sp", "mg", "rj", "ba", "rs", "pr", "pe", "ce"] as const;
+// Todas as 27 unidades da federação — cobertura completa Brasil 2026
+const UFS = [
+  "ac", "al", "am", "ap", "ba", "ce", "df", "es", "go", "ma",
+  "mg", "ms", "mt", "pa", "pb", "pe", "pi", "pr", "rj", "rn",
+  "ro", "rr", "rs", "sc", "se", "sp", "to"
+] as const;
 type UF = (typeof UFS)[number];
 
 export function generateStaticParams() {

@@ -265,8 +265,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.80,
     },
-    // Cauda longa senatorial — grandes estados
-    ...["sp", "mg", "rj", "ba", "rs", "pr", "pe", "ce"].map((uf) => ({
+    // Cauda longa senatorial — cobertura completa Brasil 27 UFs
+    ...["ac", "al", "am", "ap", "ba", "ce", "df", "es", "go", "ma",
+        "mg", "ms", "mt", "pa", "pb", "pe", "pi", "pr", "rj", "rn",
+        "ro", "rr", "rs", "sc", "se", "sp", "to"].map((uf) => ({
       url: `${SITE_URL}/pesquisas-senador/${uf}`,
       lastModified: now,
       changeFrequency: "weekly" as const,
