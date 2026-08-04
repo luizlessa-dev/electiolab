@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getCandidateBySlug } from "@/lib/queries";
+import { getCandidateEditorial } from "@/lib/marketing-data";
 import { getParlamentarByCpf, getCeapByCamaraId, crossCeapWithCeis } from "@/lib/tf-data";
 import {
   ArrowLeft,
@@ -27,6 +28,7 @@ import {
   XCircle as XCircleIcon,
 } from "lucide-react";
 import { DriftChartLazy as DriftChart } from "./drift-chart-lazy";
+import { CandidateEditorialBio } from "@/components/candidate-editorial-bio";
 
 export const revalidate = 3600; // 1h ISR — gera sob demanda na primeira request
 
@@ -61,6 +63,8 @@ export default async function CandidatoPage({
   const { slug } = await params;
   const c = await getCandidateBySlug(slug);
   if (!c) notFound();
+
+  const editorial = await getCandidateEditorial(slug);
 
   const election = (c as any).election;
   const polls = ((c as any).poll_results ?? []) as Array<{
@@ -354,6 +358,15 @@ export default async function CandidatoPage({
             )}
           </aside>
         </section>
+
+        {/* Editorial Bio */}
+        {editorial?.editorial_bio && (
+          <CandidateEditorialBio
+            bio={editorial.editorial_bio}
+            name={c.name}
+            publishedAt={editorial.editorial_published_at ?? undefined}
+          />
+        )}
 
         {/* Dados pessoais */}
         <section className="grid md:grid-cols-3 gap-3">

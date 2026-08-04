@@ -430,3 +430,26 @@ export async function getLatestPresidentialPoll(): Promise<StatePollSnapshot | n
     results,
   };
 }
+
+export async function getCandidateEditorial(slug: string): Promise<{
+  editorial_bio: string | null;
+  editorial_summary: string | null;
+  editorial_published_at: string | null;
+} | null> {
+  try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
+    const { data } = await supabase
+      .from("candidates")
+      .select("editorial_bio, editorial_summary, editorial_published_at")
+      .eq("slug", slug)
+      .single();
+
+    return data || null;
+  } catch {
+    return null;
+  }
+}
