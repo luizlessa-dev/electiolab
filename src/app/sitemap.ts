@@ -139,6 +139,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.3,
     },
     {
+      url: `${SITE_URL}/imprensa`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
       url: `${SITE_URL}/pesquisas-presidenciais-2026`,
       lastModified: now,
       changeFrequency: "weekly",
@@ -192,123 +198,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.75,
     },
-    // Glossário de pesquisa eleitoral — hub + 4 spokes (evergreen educacional)
-    {
-      url: `${SITE_URL}/glossario-pesquisa-eleitoral`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${SITE_URL}/margem-de-erro-pesquisa-eleitoral`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.75,
-    },
-    {
-      url: `${SITE_URL}/empate-tecnico-pesquisa-eleitoral`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.75,
-    },
-    {
-      url: `${SITE_URL}/pesquisa-estimulada-vs-espontanea`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.75,
-    },
-    {
-      url: `${SITE_URL}/pesquisa-presencial-vs-online`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.75,
-    },
-    {
-      url: `${SITE_URL}/pesquisas-eleitorais-sao-confiaveis`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${SITE_URL}/pesquisas-erraram-2022`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.75,
-    },
-    {
-      url: `${SITE_URL}/aprovacao-governo-lula`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${SITE_URL}/rejeicao-candidatos-presidente-2026`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.75,
-    },
-    {
-      url: `${SITE_URL}/metodologia`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.85,
-    },
-    {
-      url: `${SITE_URL}/por-que-institutos-dao-numeros-diferentes`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.80,
-    },
-    {
-      url: `${SITE_URL}/dinheiro-e-votos-pesquisas-2026`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.80,
-    },
-    // Cauda longa senatorial — cobertura completa Brasil 27 UFs
-    ...["ac", "al", "am", "ap", "ba", "ce", "df", "es", "go", "ma",
-        "mg", "ms", "mt", "pa", "pb", "pe", "pi", "pr", "rj", "rn",
-        "ro", "rr", "rs", "sc", "se", "sp", "to"].map((uf) => ({
-      url: `${SITE_URL}/pesquisas-senador/${uf}`,
-      lastModified: now,
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    })),
     {
       url: `${SITE_URL}/relatorio/semana-17-2026`,
       lastModified: "2026-04-27T00:00:00.000Z",
       changeFrequency: "never",
       priority: 0.75,
-    },
-    {
-      url: `${SITE_URL}/relatorio/semana-18-2026`,
-      lastModified: "2026-05-04T00:00:00.000Z",
-      changeFrequency: "never",
-      priority: 0.75,
-    },
-    {
-      url: `${SITE_URL}/relatorio/semana-19-2026`,
-      lastModified: "2026-05-11T00:00:00.000Z",
-      changeFrequency: "never",
-      priority: 0.75,
-    },
-    {
-      url: `${SITE_URL}/relatorio/semana-20-2026`,
-      lastModified: "2026-05-18T00:00:00.000Z",
-      changeFrequency: "never",
-      priority: 0.75,
-    },
-    {
-      url: `${SITE_URL}/relatorio/semana-21-2026`,
-      lastModified: "2026-05-25T00:00:00.000Z",
-      changeFrequency: "never",
-      priority: 0.75,
-    },
-    {
-      url: `${SITE_URL}/relatorio/semana-22-2026`,
-      lastModified: "2026-06-01T00:00:00.000Z",
-      changeFrequency: "weekly",
-      priority: 0.8,
     },
     {
       url: `${SITE_URL}/eleicao-2018`,
@@ -496,15 +390,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.7,
     },
-    // Hubs estaduais 2026: /eleicoes/{uf} — 27 páginas de cauda longa
-    ...["ac","al","am","ap","ba","ce","df","es","go","ma","mg","ms","mt","pa","pb","pe","pi","pr","rj","rn","ro","rr","rs","sc","se","sp","to"].map(
-      (uf) => ({
-        url: `${SITE_URL}/eleicoes/${uf}`,
-        lastModified: now,
-        changeFrequency: "weekly" as const,
-        priority: 0.75,
-      })
-    ),
     // Drilldowns por UF: /eleicao-{2018,2022}/{uf} — 54 páginas SEO de cauda longa
     ...["ac","al","am","ap","ba","ce","df","es","go","ma","mg","ms","mt","pa","pb","pe","pi","pr","rj","rn","ro","rr","rs","sc","se","sp","to"].flatMap(
       (uf) => [
