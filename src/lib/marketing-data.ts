@@ -439,17 +439,21 @@ export async function getCandidateEditorial(slug: string): Promise<{
   try {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      { auth: { persistSession: false } }
     );
 
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("candidates")
       .select("editorial_bio, editorial_summary, editorial_published_at")
       .eq("slug", slug)
-      .single();
+      .not("editorial_bio", "is", null)
+      .maybeSingle();
+
 
     return data || null;
-  } catch {
+  } catch (err) {
+    console.log("[editorial] Exception for slug", slug, ":", err);
     return null;
   }
 }
