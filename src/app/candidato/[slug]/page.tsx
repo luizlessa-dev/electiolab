@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { DriftChartLazy as DriftChart } from "./drift-chart-lazy";
 import { CandidateEditorialBio } from "@/components/candidate-editorial-bio";
+import { CandidateSchema } from "./candidate-schema";
 
 export const revalidate = 3600; // 1h ISR — gera sob demanda na primeira request
 
@@ -241,6 +242,11 @@ export default async function CandidatoPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      <CandidateSchema
+        candidate={c}
+        latestPollPercentage={latestPoll ? Number(latestPoll.percentage) : undefined}
       />
 
       {/* Header navegação */}
