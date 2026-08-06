@@ -39,16 +39,18 @@ const MOCK_CLIENTS = {
   tse: datafolhaMockClient,
 };
 
-const BROWSER_CLIENTS: Record<string, any> = {
-  datafolha: datafolhaBrowserClient,
-  poderdata: poderDataClient,
-  atlasintel: atlasIntelClient,
-  ipespe: ipespeClient,
-  mda: mdaClient,
-  fsb: fsbClient,
-  rtbd: rtbdClient,
-  genial: genialQuaestClient,
-};
+const BROWSER_CLIENTS: Record<string, any> = process.env.NEXT_PUBLIC_ENV === 'production'
+  ? {} // Disable browser clients in production (no Playwright in serverless)
+  : {
+      datafolha: datafolhaBrowserClient,
+      poderdata: poderDataClient,
+      atlasintel: atlasIntelClient,
+      ipespe: ipespeClient,
+      mda: mdaClient,
+      fsb: fsbClient,
+      rtbd: rtbdClient,
+      genial: genialQuaestClient,
+    };
 
 const API_CLIENTS: Record<string, any> = {
   tse: tseApiClient,
