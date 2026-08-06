@@ -71,6 +71,7 @@ export async function syncPollsToSupabase(
     }));
 
     console.log(`[Sync] ${instituteId}: inserindo ${pollsData.length} polls...`);
+    console.log(`[Sync] Primeiro poll data:`, JSON.stringify(pollsData[0], null, 2).slice(0, 200));
 
     // Inserir no Supabase
     const { data, error } = await supabase.from('polls').insert(pollsData);
