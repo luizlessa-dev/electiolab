@@ -105,6 +105,7 @@ export async function GET(
         sample_size,
         methodology,
         margin_of_error,
+        institutes(id, name, reliability_score),
         poll_results(
           candidate_id,
           percentage
@@ -134,7 +135,9 @@ export async function GET(
       const rWeight = getRecencyWeight(daysOld);
       const sWeight = getSampleSizeWeight(poll.sample_size);
       const mWeight = getMethodologyWeight(poll.methodology);
-      const iWeight = getCredibilityWeight(5); // Default credibility score
+      const institute = (poll.institutes as any)?.[0];
+      const credibilityScore = institute?.reliability_score ? (institute.reliability_score * 10) : 5;
+      const iWeight = getCredibilityWeight(credibilityScore);
       const moeWeight = getMoEWeight(poll.margin_of_error);
 
       // Calculate rough average for outlier detection
@@ -154,13 +157,17 @@ export async function GET(
         const outlierWeight = getOutlierWeight(result.percentage, roughAvg, roughStdDev);
         const finalWeight = rWeight * sWeight * mWeight * iWeight * moeWeight * outlierWeight;
 
+        const institute = (poll.institutes as any)?.[0];
+        const instName = institute?.name || 'Unknown';
+        const credScore = institute?.reliability_score ? (institute.reliability_score * 10) : 5;
+
         pollWeights.push({
           pollId: `${poll.id}-${result.candidate_id}`,
-          instituteName: '', // Not available in this schema
+          instituteName: instName,
           percentage: result.percentage,
           sampleSize: poll.sample_size,
           methodology: poll.methodology,
-          credibilityScore: 5, // Default
+          credibilityScore: credScore,
           marginOfError: poll.margin_of_error,
           daysOld: Math.round(daysOld),
           isOutlier: Math.abs(result.percentage - roughAvg) / Math.max(roughStdDev, 1) > 2,

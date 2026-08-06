@@ -118,6 +118,7 @@ export async function POST(request: NextRequest) {
             methodology,
             margin_of_error,
             institute_id,
+            institutes(id, name, reliability_score),
             poll_results(candidate_id, percentage)
           `)
           .eq('election_id', eId)
@@ -183,7 +184,9 @@ export async function POST(request: NextRequest) {
             const rWeight = getRecencyWeight(daysOld);
             const sWeight = getSampleSizeWeight(poll.sample_size);
             const mWeight = getMethodologyWeight(poll.methodology);
-            const iWeight = getCredibilityWeight(5); // Default credibility score
+            const institute = (poll.institutes as any)?.[0];
+            const credibilityScore = institute?.reliability_score ? (institute.reliability_score * 10) : 5;
+            const iWeight = getCredibilityWeight(credibilityScore);
             const moeWeight = getMoEWeight(poll.margin_of_error);
             const outlierWeight = getOutlierWeight(result.percentage, roughAvg, roughStdDev);
 
@@ -213,7 +216,9 @@ export async function POST(request: NextRequest) {
             const rWeight = getRecencyWeight(daysOld);
             const sWeight = getSampleSizeWeight(poll.sample_size);
             const mWeight = getMethodologyWeight(poll.methodology);
-            const iWeight = getCredibilityWeight(5); // Default credibility score
+            const institute = (poll.institutes as any)?.[0];
+            const credibilityScore = institute?.reliability_score ? (institute.reliability_score * 10) : 5;
+            const iWeight = getCredibilityWeight(credibilityScore);
             const moeWeight = getMoEWeight(poll.margin_of_error);
             const outlierWeight = getOutlierWeight(result.percentage, roughAvg, roughStdDev);
             const finalWeight = rWeight * sWeight * mWeight * iWeight * moeWeight * outlierWeight;
