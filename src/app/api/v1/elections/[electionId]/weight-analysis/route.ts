@@ -135,7 +135,7 @@ export async function GET(
       const rWeight = getRecencyWeight(daysOld);
       const sWeight = getSampleSizeWeight(poll.sample_size);
       const mWeight = getMethodologyWeight(poll.methodology);
-      const institute = (poll.institutes as any)?.[0];
+      const institute = (poll.institutes as any);
       const credibilityScore = institute?.reliability_score ? (institute.reliability_score * 10) : 5;
       const iWeight = getCredibilityWeight(credibilityScore);
       const moeWeight = getMoEWeight(poll.margin_of_error);
@@ -157,7 +157,7 @@ export async function GET(
         const outlierWeight = getOutlierWeight(result.percentage, roughAvg, roughStdDev);
         const finalWeight = rWeight * sWeight * mWeight * iWeight * moeWeight * outlierWeight;
 
-        const institute = (poll.institutes as any)?.[0];
+        const institute = (poll.institutes as any);
         const instName = institute?.name || 'Unknown';
         const credScore = institute?.reliability_score ? (institute.reliability_score * 10) : 5;
 

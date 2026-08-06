@@ -184,7 +184,7 @@ export async function POST(request: NextRequest) {
             const rWeight = getRecencyWeight(daysOld);
             const sWeight = getSampleSizeWeight(poll.sample_size);
             const mWeight = getMethodologyWeight(poll.methodology);
-            const institute = (poll.institutes as any)?.[0];
+            const institute = (poll.institutes as any);
             const credibilityScore = institute?.reliability_score ? (institute.reliability_score * 10) : 5;
             const iWeight = getCredibilityWeight(credibilityScore);
             const moeWeight = getMoEWeight(poll.margin_of_error);
@@ -216,7 +216,7 @@ export async function POST(request: NextRequest) {
             const rWeight = getRecencyWeight(daysOld);
             const sWeight = getSampleSizeWeight(poll.sample_size);
             const mWeight = getMethodologyWeight(poll.methodology);
-            const institute = (poll.institutes as any)?.[0];
+            const institute = (poll.institutes as any);
             const credibilityScore = institute?.reliability_score ? (institute.reliability_score * 10) : 5;
             const iWeight = getCredibilityWeight(credibilityScore);
             const moeWeight = getMoEWeight(poll.margin_of_error);
