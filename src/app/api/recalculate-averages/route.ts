@@ -99,27 +99,31 @@ export async function POST(request: NextRequest) {
 
         if (!election) continue;
 
-        const { data: candidates } = await supabase
+        const { data: candidates, error: cError } = await supabase
           .from('candidates')
           .select('id, name')
           .eq('election_id', eId)
           .eq('is_active', true);
 
+        console.log(`  Candidates for ${eId}:`, { count: candidates?.length || 0, error: cError?.message });
+
         if (!candidates?.length) continue;
 
-        const { data: polls } = await supabase
+        const { data: polls, error: pError } = await supabase
           .from('polls')
           .select(`
             id,
             fieldwork_end,
             sample_size,
             methodology,
-            credibility_score,
             margin_of_error,
+            institute_id,
             poll_results(candidate_id, percentage)
           `)
           .eq('election_id', eId)
           .order('fieldwork_end', { ascending: false });
+
+        console.log(`  Polls for ${eId}:`, { count: polls?.length || 0, error: pError?.message });
 
         if (!polls?.length) continue;
 
@@ -179,7 +183,7 @@ export async function POST(request: NextRequest) {
             const rWeight = getRecencyWeight(daysOld);
             const sWeight = getSampleSizeWeight(poll.sample_size);
             const mWeight = getMethodologyWeight(poll.methodology);
-            const iWeight = getCredibilityWeight(poll.credibility_score);
+            const iWeight = getCredibilityWeight(5); // Default credibility score
             const moeWeight = getMoEWeight(poll.margin_of_error);
             const outlierWeight = getOutlierWeight(result.percentage, roughAvg, roughStdDev);
 
@@ -209,7 +213,7 @@ export async function POST(request: NextRequest) {
             const rWeight = getRecencyWeight(daysOld);
             const sWeight = getSampleSizeWeight(poll.sample_size);
             const mWeight = getMethodologyWeight(poll.methodology);
-            const iWeight = getCredibilityWeight(poll.credibility_score);
+            const iWeight = getCredibilityWeight(5); // Default credibility score
             const moeWeight = getMoEWeight(poll.margin_of_error);
             const outlierWeight = getOutlierWeight(result.percentage, roughAvg, roughStdDev);
             const finalWeight = rWeight * sWeight * mWeight * iWeight * moeWeight * outlierWeight;
