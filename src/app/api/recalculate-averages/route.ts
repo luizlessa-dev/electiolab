@@ -66,11 +66,10 @@ export async function POST(request: NextRequest) {
       // Get all elections with polls
       const { data: elections } = await supabase
         .from('polls')
-        .select('election_id')
-        .order('election_id');
+        .select('election_id');
 
       const uniqIds = Array.from(
-        new Set((elections ?? []).map((p: any) => p.election_id as string))
+        new Set((elections ?? []).map((p: any) => p.election_id as string).filter(Boolean))
       );
       electionsToProcess.push(...uniqIds);
     } else if (electionId) {
