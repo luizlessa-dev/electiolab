@@ -64,13 +64,16 @@ export async function POST(request: NextRequest) {
 
     if (allFlag) {
       // Get all elections with polls
-      const { data: elections } = await supabase
+      const { data: elections, error: pollsError } = await supabase
         .from('polls')
         .select('election_id');
+
+      console.log('Polls query:', { count: elections?.length, error: pollsError?.message });
 
       const uniqIds = Array.from(
         new Set((elections ?? []).map((p: any) => p.election_id as string).filter(Boolean))
       );
+      console.log('Unique elections:', uniqIds.length);
       electionsToProcess.push(...uniqIds);
     } else if (electionId) {
       electionsToProcess.push(electionId);
@@ -81,15 +84,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log('Elections to process:', electionsToProcess.length);
     const results = [];
 
     for (const eId of electionsToProcess) {
       try {
-        const { data: election } = await supabase
+        const { data: election, error: eError } = await supabase
           .from('elections')
           .select('id, name')
           .eq('id', eId)
           .single();
+
+        console.log(`Election ${eId}:`, { found: !!election, error: eError?.message });
 
         if (!election) continue;
 
