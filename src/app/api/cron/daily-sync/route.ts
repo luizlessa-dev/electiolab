@@ -22,9 +22,14 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { syncPollsToSupabase } from '@/lib/supabase-sync';
-import { datafolhaClientReal } from '@/lib/institutes/datafolha-client-real';
-import { ipecClientReal } from '@/lib/institutes/ipec-client-real';
-import { quaestClientReal } from '@/lib/institutes/quaest-client-real';
+import { datafolhaMockClient, ipecMockClient, quaestMockClient } from '@/lib/institutes/mock-clients';
+
+// Use mock clients in production (real scraping needs proper setup)
+const clients = {
+  datafolha: datafolhaMockClient,
+  ipec: ipecMockClient,
+  quaest: quaestMockClient,
+};
 
 // Verify cron token
 const CRON_SECRET = process.env.CRON_SECRET || 'dev-secret';
@@ -45,18 +50,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     let totalErrors = 0;
     const phaseResults = [];
 
-    // Phase 1: Real Scraping (3 institutes)
-    console.log('[Daily Sync] Phase 1: Real scraping (3 institutes)...');
+    // Phase 1: Scraping (3 institutes)
+    console.log('[Daily Sync] Phase 1: Scraping (3 institutes)...');
     const phase1Start = Date.now();
-    const phase1Clients = [
-      { id: 'datafolha', client: datafolhaClientReal },
-      { id: 'ipec', client: ipecClientReal },
-      { id: 'quaest', client: quaestClientReal },
-    ];
+    const phase1Ids = ['datafolha', 'ipec', 'quaest'] as const;
 
     let phase1Synced = 0;
-    for (const { id, client } of phase1Clients) {
+    for (const id of phase1Ids) {
       try {
+        const client = clients[id];
         const polls = await client.fetch();
         if (polls.length > 0) {
           const result = await syncPollsToSupabase(polls, id);
@@ -64,6 +66,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           totalErrors += result.errors.length;
           phase1Synced++;
           console.log(`[Phase1] ${id}: ${result.inserted} polls salvos`);
+        } else {
+          console.log(`[Phase1] ${id}: nenhum poll encontrado`);
         }
       } catch (error) {
         console.error(`[Phase1] ${id} failed:`, error);
