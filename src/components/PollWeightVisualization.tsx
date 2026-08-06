@@ -168,7 +168,7 @@ function PollWeightRow({ poll }: { poll: PollWeightData }) {
       {/* Warnings/Notes */}
       {poll.isOutlier && (
         <div className="bg-red-50 border-l-4 border-red-500 p-3 text-sm text-red-800">
-          ⚠️ Esta pesquisa foi detectada como outlier (>2σ) e teve seu peso reduzido a 50%.
+          ⚠️ Esta pesquisa foi detectada como outlier ({'>'}2σ) e teve seu peso reduzido a 50%.
         </div>
       )}
       {poll.daysOld > 21 && (
@@ -286,7 +286,7 @@ export function PollWeightVisualization({ polls, weightedAverage }: PollWeightVi
             <strong>MoE:</strong> Penaliza pesquisas com margem de erro grande (baseline 2.5%)
           </li>
           <li>
-            <strong>Outlier:</strong> Valores >2σ da média são downweighted a 50%
+            <strong>Outlier:</strong> Valores {'>'}2σ da média são downweighted a 50%
           </li>
         </ul>
       </div>

@@ -11,7 +11,12 @@
  * Last Updated: 2026-08-05
  */
 
-import { PollData, PollingResult, CacheEntry } from '../types/polling';
+// import { PollData, PollingResult, CacheEntry } from '../types/polling'; // TODO: create types
+
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
 
 export interface DatafolhaPoll {
   id: string;
@@ -40,11 +45,28 @@ export interface DatafolhaSearchOptions {
 const CREDIBILITY_SCORE = 9; // Datafolha é confiável
 const CACHE_TTL_HOURS = 24;
 const BASE_URL = 'https://datafolha.folha.uol.com.br';
+const USER_AGENTS = [
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36',
+];
 
 class DatafolhaClient {
   private cache: Map<string, CacheEntry<DatafolhaPoll[]>> = new Map();
   private lastRequestTime = 0;
   private requestDelay = 1000; // 1 second between requests
+
+  private getRandomUserAgent(): string {
+    return USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
+  }
+
+  private async throttleRequest(): Promise<void> {
+    const elapsed = Date.now() - this.lastRequestTime;
+    if (elapsed < this.requestDelay) {
+      await new Promise(resolve => setTimeout(resolve, this.requestDelay - elapsed));
+    }
+    this.lastRequestTime = Date.now();
+  }
 
   /**
    * Search for presidential polls
@@ -134,9 +156,9 @@ class DatafolhaClient {
   }
 
   /**
-   * Convert Datafolha poll to internal PollData format
+   * Convert Datafolha poll to internal format
    */
-  toPollData(datafolhaPoll: DatafolhaPoll, electionId: string): PollData {
+  toPollData(datafolhaPoll: DatafolhaPoll, electionId: string) {
     return {
       id: `datafolha-${datafolhaPoll.id}`,
       electionId,
@@ -172,7 +194,12 @@ class DatafolhaClient {
     //   <span class="date">DD/MM/YYYY</span>
     // </div>
 
-    const response = await this.fetchWithUserAgent(url);
+    await this.throttleRequest();
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': this.getRandomUserAgent(),
+      },
+    });
     const html = await response.text();
 
     try {

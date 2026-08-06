@@ -14,9 +14,9 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { datafolhaClient } from '../../../lib/institutes/datafolha-client';
-import { quaestClient } from '../../../lib/institutes/quaest-client';
-import { atlasIntelClient } from '../../../lib/institutes/atlasitel-client';
+import { datafolhaClient } from '../../lib/institutes/datafolha-client';
+// import { quaestClient } from '../../lib/institutes/quaest-client'; // TODO: implement Quaest
+// import { atlasIntelClient } from '../../lib/institutes/atlasitel-client'; // TODO: implement AtlasIntel
 
 const sb = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -80,22 +80,30 @@ export async function POST(request: NextRequest) {
       // Buscar sondagens do instituto
       if (instituto === 'datafolha') {
         if (cargo === 'presidente') {
-          sondagens = await datafolhaClient.buscarSondagensPresidente(ano);
-        } else if (estado) {
-          sondagens = await datafolhaClient.buscarSondagensGovernador(estado, ano);
+          sondagens = await datafolhaClient.searchPresidencial(ano);
+        } else if (cargo === 'governador' && estado) {
+          sondagens = await datafolhaClient.searchGovernador(estado, ano);
         }
-      } else if (instituto === 'quaest') {
-        if (cargo === 'presidente') {
-          sondagens = await quaestClient.buscarSondagensPresidente(ano);
-        } else if (estado) {
-          sondagens = await quaestClient.buscarSondagensGovernador(estado, ano);
-        }
-      } else if (instituto === 'atlasitel') {
-        if (cargo === 'presidente') {
-          sondagens = await atlasIntelClient.buscarSondagensPresidente(ano);
-        } else if (estado) {
-          sondagens = await atlasIntelClient.buscarSondagensGovernador(estado, ano);
-        }
+      }
+      // TODO: Implement Quaest and AtlasIntel clients
+      // else if (instituto === 'quaest') {
+      //   if (cargo === 'presidente') {
+      //     sondagens = await quaestClient.buscarSondagensPresidente(ano);
+      //   } else if (estado) {
+      //     sondagens = await quaestClient.buscarSondagensGovernador(estado, ano);
+      //   }
+      // } else if (instituto === 'atlasitel') {
+      //   if (cargo === 'presidente') {
+      //     sondagens = await atlasIntelClient.buscarSondagensPresidente(ano);
+      //   } else if (estado) {
+      //     sondagens = await atlasIntelClient.buscarSondagensGovernador(estado, ano);
+      //   }
+      // }
+      else {
+        return NextResponse.json(
+          { error: `Instituto ${instituto} não implementado ainda. Disponível: datafolha` },
+          { status: 501 }
+        );
       }
 
       if (!sondagens || sondagens.length === 0) {
@@ -107,16 +115,16 @@ export async function POST(request: NextRequest) {
         });
       }
 
+      // Mapear credibilidade por instituto
+      const credibilityMap: Record<string, number> = {
+        datafolha: 9,
+        quaest: 8,
+        atlasitel: 7,
+      };
+
       // Inserir sondagens
       for (const sondagem of sondagens) {
         try {
-          // Mapear credibilidade por instituto
-          const credibilityMap: Record<string, number> = {
-            datafolha: 9,
-            quaest: 8,
-            atlasitel: 7,
-          };
-
           const credibilidade = credibilityMap[instituto] || 5;
 
           // Inserir pesquisa

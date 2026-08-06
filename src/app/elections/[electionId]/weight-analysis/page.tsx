@@ -125,7 +125,7 @@ export default function WeightAnalysisPage({ params }: PageProps) {
               <div className="text-2xl font-bold text-green-600">
                 {data.polls.filter(p => p.finalWeight > 0.8).length}
               </div>
-              <p className="text-xs text-gray-600">Peso Alto (>80%)</p>
+              <p className="text-xs text-gray-600">Peso Alto ({'>'}80%)</p>
             </div>
             <div className="bg-gray-50 rounded-lg p-3">
               <div className="text-2xl font-bold text-yellow-600">
@@ -172,7 +172,7 @@ export default function WeightAnalysisPage({ params }: PageProps) {
               <h4 className="font-semibold text-gray-900 mb-2">Fase 2 - Improvements</h4>
               <ul className="space-y-1 text-xs">
                 <li>✅ Margin of Error weight (penaliza MoE grande)</li>
-                <li>✅ Automatic outlier detection (>2σ downweight a 50%)</li>
+                <li>✅ Automatic outlier detection ({'>'}2σ downweight a 50%)</li>
                 <li>✅ Increased recency half-life (10→14 dias)</li>
                 <li>✅ Updated methodology weights (2026 standards)</li>
               </ul>

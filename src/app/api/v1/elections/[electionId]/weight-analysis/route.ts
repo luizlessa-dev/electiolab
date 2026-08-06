@@ -72,9 +72,10 @@ function getOutlierWeight(percentage: number, mean: number, stdDev: number): num
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { electionId: string } }
+  { params }: { params: Promise<{ electionId: string }> }
 ) {
   try {
+    const { electionId } = await params;
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -84,7 +85,7 @@ export async function GET(
     const { data: election, error: electionError } = await supabase
       .from('elections')
       .select('id, name')
-      .eq('id', params.electionId)
+      .eq('id', electionId)
       .single();
 
     if (electionError || !election) {
@@ -111,7 +112,7 @@ export async function GET(
           percentage
         )
       `)
-      .eq('election_id', params.electionId)
+      .eq('election_id', electionId)
       .order('fieldwork_end', { ascending: false });
 
     if (pollsError || !polls) {
