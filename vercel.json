@@ -1,6 +1,10 @@
 {
   "crons": [
     {
+      "path": "/api/cron/daily-sync",
+      "schedule": "0 9 * * *"
+    },
+    {
       "path": "/api/cron/ingest-pesqele",
       "schedule": "0 10 * * *"
     },
@@ -8,5 +12,10 @@
       "path": "/api/cron/check-polls",
       "schedule": "7 12 * * 1"
     }
-  ]
+  ],
+  "functions": {
+    "src/app/api/**": {
+      "maxDuration": 60
+    }
+  }
 }
