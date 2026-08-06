@@ -43,12 +43,17 @@ export class InstituteSyncManager {
 
   /**
    * Register default institute clients
+   * NOTE: Use updated clients from src/lib/institutes instead
    */
   private registerDefaultClients(): void {
+    // TODO: Migrate to new InstituteClientBase from src/lib/institutes/
+    // Phase 1+2.5 clients are implemented in electiolab/src/lib/institutes/
+    // - DatafolhaClientReal, IpecClientReal, QuaestClientReal
+    // - PoderDataClient, AtlasIntelClient, Tier 2 clients
     // Tier 1: APIs/Scraping implemented
-    this.registerClient(datafolhaClient);
-    this.registerClient(ipecClient);
-    this.registerClient(quaestClient);
+    // this.registerClient(datafolhaClient);
+    // this.registerClient(ipecClient);
+    // this.registerClient(quaestClient);
 
     // TODO: Register remaining 62 institutes as clients are implemented
   }
