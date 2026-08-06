@@ -225,7 +225,7 @@ export class TSEClient {
           votes,
           percentage,
           round: parseInt(String(r.turno || '1')) as 1 | 2,
-          updateTime: new Date(r.data_atualizacao || r.updated_at || new Date()),
+          updateTime: new Date(String(r.data_atualizacao || r.updated_at || new Date().toISOString())),
         });
       } catch (error) {
         console.warn('Failed to parse TSE result:', error);
@@ -330,7 +330,7 @@ export class TSEResultadosClient extends TSEClient {
    */
   private extractJSONFromHTML(html: string): unknown {
     // Look for window.__data = { ... } pattern
-    const match = html.match(/window\.__data\s*=\s*({.*?});/s);
+    const match = html.match(/window\.__data\s*=\s*({[\s\S]*?});/);
     if (!match) {
       throw new Error('Could not find data in TSE response');
     }
@@ -372,7 +372,7 @@ export class TSEResultadosClient extends TSEClient {
             sectionsTotal > 0
               ? Math.round((sectionsProcessed / sectionsTotal) * 100)
               : 0,
-          lastUpdate: new Date(s.ultima_atualizacao || s.last_update || new Date()),
+          lastUpdate: new Date(String(s.ultima_atualizacao || s.last_update || new Date().toISOString())),
         });
       } catch (error) {
         console.warn('Failed to parse TSE apuração status:', error);

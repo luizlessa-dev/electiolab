@@ -192,7 +192,7 @@ export async function GET(
     }
 
     return NextResponse.json({
-      electionId: params.electionId,
+      electionId,
       electionName: election.name,
       weightedAverage: Math.round(weightedAvg * 10) / 10,
       polls: pollWeights,

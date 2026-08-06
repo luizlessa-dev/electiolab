@@ -204,7 +204,7 @@ class DatafolhaClient {
 
     try {
       // Extract JSON data embedded in page (common pattern)
-      const jsonMatch = html.match(/window\.__INITIAL_STATE__\s*=\s*({.*?});/s);
+      const jsonMatch = html.match(/window\.__INITIAL_STATE__\s*=\s*({[\s\S]*?});/);
       if (!jsonMatch) {
         console.warn('Datafolha: Could not find JSON data in page');
         return [];
@@ -314,14 +314,6 @@ class DatafolhaClient {
     // Datafolha typically has MoE of 2.0-2.5% for large samples
     if (sampleSize <= 0) return 5.0;
     return parseFloat((1.96 * Math.sqrt(0.25 / sampleSize)).toFixed(2));
-  }
-
-  private async throttleRequest(): Promise<void> {
-    const elapsed = Date.now() - this.lastRequestTime;
-    if (elapsed < this.requestDelay) {
-      await new Promise(resolve => setTimeout(resolve, this.requestDelay - elapsed));
-    }
-    this.lastRequestTime = Date.now();
   }
 
   private isCached(key: string): boolean {
