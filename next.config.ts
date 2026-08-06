@@ -14,11 +14,17 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withSentryConfig(nextConfig, {
-  org: "lessa-labs",
-  project: "javascript-nextjs",
-  silent: !process.env.CI,
-  tunnelRoute: "/monitoring",
-  disableLogger: true,
-  automaticVercelMonitors: true,
-});
+// Temporarily disable Sentry for deployment
+// TODO: Configure Sentry auth token if needed
+const config = process.env.SENTRY_AUTH_TOKEN
+  ? withSentryConfig(nextConfig, {
+      org: "lessa-labs",
+      project: "javascript-nextjs",
+      silent: !process.env.CI,
+      tunnelRoute: "/monitoring",
+      disableLogger: true,
+      automaticVercelMonitors: true,
+    })
+  : nextConfig;
+
+export default config;
