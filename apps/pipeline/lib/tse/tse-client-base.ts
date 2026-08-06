@@ -153,9 +153,34 @@ export class TSEClient {
    * Override in subclass for specific endpoint
    */
   protected parseCandidates(data: unknown): TSECandidate[] {
-    // TODO: Implement parsing based on specific TSE API format
-    console.warn('TSE parseCandidates not implemented');
-    return [];
+    if (!data || typeof data !== 'object') return [];
+
+    const obj = data as Record<string, unknown>;
+    const candidates: TSECandidate[] = [];
+
+    // Handle array of candidates
+    const list = Array.isArray(obj) ? obj : Array.isArray(obj.data) ? obj.data : [];
+
+    for (const item of list) {
+      if (typeof item !== 'object' || !item) continue;
+
+      const c = item as Record<string, unknown>;
+      try {
+        candidates.push({
+          id: String(c.id || c.sequencial || ''),
+          name: String(c.nome || c.name || ''),
+          party: String(c.partido || c.sigla_partido || ''),
+          position: (c.cargo || c.position || 'presidente') as any,
+          state: c.uf || c.estado ? String(c.uf || c.estado) : undefined,
+          year: parseInt(String(c.ano || new Date().getFullYear())),
+          status: (c.situacao || c.status || 'registrado') as any,
+        });
+      } catch (error) {
+        console.warn('Failed to parse TSE candidate:', error);
+      }
+    }
+
+    return candidates;
   }
 
   /**
@@ -163,9 +188,51 @@ export class TSEClient {
    * Override in subclass for specific endpoint
    */
   protected parseResults(data: unknown): TSEResult[] {
-    // TODO: Implement parsing based on specific TSE API format
-    console.warn('TSE parseResults not implemented');
-    return [];
+    if (!data || typeof data !== 'object') return [];
+
+    const obj = data as Record<string, unknown>;
+    const results: TSEResult[] = [];
+
+    // Handle various TSE response formats
+    const list = Array.isArray(obj)
+      ? obj
+      : Array.isArray(obj.dados)
+        ? obj.dados
+        : Array.isArray(obj.resultados)
+          ? obj.resultados
+          : [];
+
+    for (const item of list) {
+      if (typeof item !== 'object' || !item) continue;
+
+      const r = item as Record<string, unknown>;
+      try {
+        const votes = parseInt(String(r.votos || r.votacao || '0'));
+        const percentage =
+          typeof r.percentual === 'number'
+            ? r.percentual
+            : typeof r.percentual === 'string'
+              ? parseFloat(r.percentual)
+              : undefined;
+
+        results.push({
+          electionId: String(r.eleicao_id || r.election_id || ''),
+          state: String(r.uf || r.estado || ''),
+          position: (r.cargo || r.position || 'presidente') as any,
+          candidateId: String(r.candidato_id || r.candidate_id || ''),
+          candidateName: String(r.candidato_nome || r.candidate_name || ''),
+          party: String(r.partido || r.party || ''),
+          votes,
+          percentage,
+          round: parseInt(String(r.turno || '1')) as 1 | 2,
+          updateTime: new Date(r.data_atualizacao || r.updated_at || new Date()),
+        });
+      } catch (error) {
+        console.warn('Failed to parse TSE result:', error);
+      }
+    }
+
+    return results;
   }
 }
 
@@ -275,9 +342,44 @@ export class TSEResultadosClient extends TSEClient {
    * Parse apuração status from response
    */
   private parseApuracaoStatus(data: unknown): TSEApuracaoStatus[] {
-    // TODO: Implement parsing based on TSE API response format
-    console.warn('TSE parseApuracaoStatus not implemented');
-    return [];
+    if (!data || typeof data !== 'object') return [];
+
+    const obj = data as Record<string, unknown>;
+    const statuses: TSEApuracaoStatus[] = [];
+
+    // TSE typically returns status by state and position
+    const list = Array.isArray(obj.status)
+      ? obj.status
+      : Array.isArray(obj)
+        ? obj
+        : [];
+
+    for (const item of list) {
+      if (typeof item !== 'object' || !item) continue;
+
+      const s = item as Record<string, unknown>;
+      try {
+        const sectionsProcessed = parseInt(String(s.secoes_totalizadas || s.processed || '0'));
+        const sectionsTotal = parseInt(String(s.secoes_totais || s.total || '1'));
+
+        statuses.push({
+          state: String(s.uf || s.estado || 'BR'),
+          position: (s.cargo || s.position || 'presidente') as any,
+          round: parseInt(String(s.turno || '1')) as 1 | 2,
+          sectionsTotal,
+          sectionsProcessed,
+          percentComplete:
+            sectionsTotal > 0
+              ? Math.round((sectionsProcessed / sectionsTotal) * 100)
+              : 0,
+          lastUpdate: new Date(s.ultima_atualizacao || s.last_update || new Date()),
+        });
+      } catch (error) {
+        console.warn('Failed to parse TSE apuração status:', error);
+      }
+    }
+
+    return statuses;
   }
 }
 

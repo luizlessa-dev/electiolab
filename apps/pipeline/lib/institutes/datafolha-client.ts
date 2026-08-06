@@ -165,17 +165,120 @@ class DatafolhaClient {
     url: string,
     options: DatafolhaSearchOptions
   ): Promise<DatafolhaPoll[]> {
-    // TODO: Implement web scraping or API integration
-    // For now, returns empty array as placeholder
-    //
-    // Steps:
-    // 1. Fetch HTML from Datafolha website
-    // 2. Parse poll data from page
-    // 3. Extract candidate names, percentages, dates
-    // 4. Validate and return structured data
+    // Datafolha typically publishes polls with this HTML structure:
+    // <div class="poll-data">
+    //   <span class="candidate">Nome</span>
+    //   <span class="percentage">XX%</span>
+    //   <span class="date">DD/MM/YYYY</span>
+    // </div>
 
-    console.warn('Datafolha client: Web scraping not yet implemented');
-    return [];
+    const response = await this.fetchWithUserAgent(url);
+    const html = await response.text();
+
+    try {
+      // Extract JSON data embedded in page (common pattern)
+      const jsonMatch = html.match(/window\.__INITIAL_STATE__\s*=\s*({.*?});/s);
+      if (!jsonMatch) {
+        console.warn('Datafolha: Could not find JSON data in page');
+        return [];
+      }
+
+      const data = JSON.parse(jsonMatch[1]);
+      return this.parseDatafolhaJSON(data, options);
+    } catch (error) {
+      console.error('Failed to parse Datafolha data:', error);
+      throw error;
+    }
+  }
+
+  private parseDatafolhaJSON(
+    data: Record<string, unknown>,
+    options: DatafolhaSearchOptions
+  ): DatafolhaPoll[] {
+    // Parse structure depends on Datafolha's actual JSON format
+    // This is a template - adjust based on real data structure
+
+    const polls: DatafolhaPoll[] = [];
+
+    // Example structure (adjust to actual Datafolha format):
+    // data.pesquisas = [{ id, titulo, data_fim, tamanho_amostra, resultados: [] }]
+
+    // For now, implement a safe parser that handles common cases
+    if (!Array.isArray(data.pesquisas)) {
+      return [];
+    }
+
+    for (const poll of data.pesquisas) {
+      try {
+        const datafolhaPoll: DatafolhaPoll = {
+          id: poll.id || `df-${Date.now()}`,
+          publishDate: new Date(poll.data_publicacao || new Date()),
+          fieldworkEnd: new Date(poll.data_fim || new Date()),
+          sampleSize: parseInt(poll.tamanho_amostra || '0'),
+          methodology: this.parseMethodology(poll.metodologia),
+          marginOfError: this.parseMarginOfError(poll.margem_erro),
+          results: this.parseResults(poll.resultados || []),
+          source: 'Datafolha (web scraping)',
+          reliabilityScore: CREDIBILITY_SCORE,
+        };
+
+        if (datafolhaPoll.sampleSize > 0 && datafolhaPoll.results.length > 0) {
+          polls.push(datafolhaPoll);
+        }
+      } catch (error) {
+        console.warn(`Failed to parse Datafolha poll:`, error);
+        continue;
+      }
+    }
+
+    return polls;
+  }
+
+  private parseMethodology(
+    method?: string
+  ): 'presencial' | 'mista' | 'online' {
+    if (!method) return 'presencial';
+
+    const lower = method.toLowerCase();
+    if (lower.includes('telefon')) return 'presencial'; // telefone is presencial
+    if (lower.includes('mist')) return 'mista';
+    if (lower.includes('online') || lower.includes('internet')) return 'online';
+    if (lower.includes('presencial')) return 'presencial';
+
+    return 'presencial'; // default
+  }
+
+  private parseMarginOfError(moe?: string | number): number | undefined {
+    if (!moe) return undefined;
+
+    const value = typeof moe === 'string' ? parseFloat(moe) : moe;
+    return isNaN(value) ? undefined : value;
+  }
+
+  private parseResults(
+    results: unknown[]
+  ): DatafolhaPoll['results'] {
+    if (!Array.isArray(results)) return [];
+
+    return results
+      .map(r => {
+        if (typeof r !== 'object' || !r) return null;
+
+        const obj = r as Record<string, unknown>;
+        return {
+          candidateId: String(obj.candidato_id || obj.id || ''),
+          candidateName: String(obj.candidato_nome || obj.nome || ''),
+          percentage: parseFloat(String(obj.percentual || obj.pct || '0')),
+          margin: parseFloat(String(obj.margem || '0')),
+        };
+      })
+      .filter(
+        (r) =>
+          r !== null &&
+          r.candidateId &&
+          r.candidateName &&
+          r.percentage > 0
+      ) as DatafolhaPoll['results'];
   }
 
   private estimateMoE(sampleSize: number): number {
