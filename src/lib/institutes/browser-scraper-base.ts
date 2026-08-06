@@ -10,7 +10,7 @@
  * - Quaest (JS-rendered)
  */
 
-import { chromium, Browser, Page } from 'playwright';
+import { chromium, Browser, BrowserContext, Page } from 'playwright';
 import { InstituteClientBase, Poll } from './institute-client-base';
 
 export interface BrowserScraperConfig {
@@ -65,11 +65,12 @@ export abstract class BrowserScraperBase extends InstituteClientBase {
    */
   protected async fetchWithBrowser(url: string, waitFor?: string): Promise<string> {
     const browser = await this.initBrowser();
-    const page = await browser.newPage();
+    const context = await browser.newContext({
+      userAgent: this.getRandomUserAgent(),
+    });
+    const page = await context.newPage();
 
     try {
-      // Set user agent
-      await page.setUserAgent(this.getRandomUserAgent());
 
       // Navigate and wait for content
       await page.goto(url, { waitUntil: 'networkidle' });
@@ -90,6 +91,7 @@ export abstract class BrowserScraperBase extends InstituteClientBase {
       return html;
     } finally {
       await page.close();
+      await context.close();
     }
   }
 

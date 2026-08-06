@@ -30,14 +30,16 @@ export default function WeightAnalysisPage({ params }: PageProps) {
   const [data, setData] = useState<ElectionWeightData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [electionId, setElectionId] = useState<string>('');
 
   useEffect(() => {
     const fetchWeightData = async () => {
       try {
         setLoading(true);
-        const { electionId } = await params;
+        const { electionId: id } = await params;
+        setElectionId(id);
         const response = await fetch(
-          `/api/v1/elections/${electionId}/weight-analysis`
+          `/api/v1/elections/${id}/weight-analysis`
         );
 
         if (!response.ok) {
@@ -56,7 +58,7 @@ export default function WeightAnalysisPage({ params }: PageProps) {
     };
 
     fetchWeightData();
-  }, [params.electionId]);
+  }, [params]);
 
   if (loading) {
     return (
@@ -145,14 +147,14 @@ export default function WeightAnalysisPage({ params }: PageProps) {
           {/* Useful Links */}
           <div className="mt-4 flex gap-2 text-sm">
             <a
-              href={`/elections/${params.electionId}`}
+              href={`/elections/${electionId}`}
               className="text-blue-600 hover:text-blue-800 underline"
             >
               ← Voltar aos resultados
             </a>
             <span className="text-gray-400">•</span>
             <a
-              href={`/elections/${params.electionId}/export?format=csv&include=weights`}
+              href={`/elections/${electionId}/export?format=csv&include=weights`}
               className="text-blue-600 hover:text-blue-800 underline"
             >
               Exportar CSV

@@ -108,10 +108,14 @@ export async function POST(request: NextRequest) {
     const successful = testResults.filter(r => r.status === 'success');
     const failed = testResults.filter(r => r.status === 'error');
 
+    const totalPollsFound = successful.reduce((sum: number, r: any) => {
+      return sum + ('pollsFound' in r ? r.pollsFound : 0);
+    }, 0);
+
     console.log(`[Test Scrapers] Results:`, {
       successful: successful.length,
       failed: failed.length,
-      totalPolls: successful.reduce((sum, r) => sum + (r.pollsFound || 0), 0),
+      totalPolls: totalPollsFound,
     });
 
     return NextResponse.json({
@@ -124,7 +128,7 @@ export async function POST(request: NextRequest) {
         total: testResults.length,
         successful: successful.length,
         failed: failed.length,
-        totalPollsFound: successful.reduce((sum, r) => sum + (r.pollsFound || 0), 0),
+        totalPollsFound,
       },
       results: testResults,
       next_steps: useMock
