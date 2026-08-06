@@ -66,7 +66,7 @@ export async function syncPollsToSupabase(
       },
       tse_registration: null,
       scope: 'national',
-      poll_type: 'electoral',
+      poll_type: 'estimulada',
       is_verified: false,
     }));
 
