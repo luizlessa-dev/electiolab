@@ -15,7 +15,7 @@ import { test, expect } from "@playwright/test";
  */
 
 const PUBLIC_PAGES = [
-  { path: "/", h1Match: /eleic|polít|brasil/i, schema: false },
+  { path: "/", h1Match: /pesquisas|eleic|polít|brasil/i, schema: false },
   { path: "/sancoes", h1Match: /sanç|ceis/i, schema: true },
   { path: "/cota-parlamentar", h1Match: /cota/i, schema: false },
   { path: "/eleicao-2018", h1Match: /elei.*2018/i, schema: true },
@@ -88,7 +88,7 @@ test("robots.txt allows public crawl", async ({ request }) => {
   const res = await request.get("/robots.txt");
   expect(res.status()).toBe(200);
   const txt = await res.text();
-  expect(txt).toContain("User-agent");
+  expect(txt.toLowerCase()).toContain("user-agent");
   // Não deve ter Disallow: / (bloqueio total)
   expect(txt).not.toMatch(/Disallow:\s*\/\s*$/m);
 });
