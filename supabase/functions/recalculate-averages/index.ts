@@ -6,7 +6,8 @@ interface PollRow {
   fieldwork_end: string;
   sample_size: number;
   methodology: string;
-  institute_reliability: number;
+  institute_reliability?: number; // deprecated
+  credibility_score?: number; // 0-10 (from institutes table or data_source_audit)
 }
 
 interface ResultRow {
@@ -49,7 +50,12 @@ function calculateWeightedAverage(
     const recencyWeight = Math.pow(0.5, Math.max(0, daysOld) / halfLifeDays);
     const sampleWeight = Math.sqrt(poll.sample_size / 1000);
     const methodWeight = METHODOLOGY_WEIGHTS[poll.methodology] ?? 0.5;
-    const instituteWeight = poll.institute_reliability || 0.7;
+
+    // Use credibility_score (0-10) with exponent 1.5 to amplify differences
+    // Examples: 9/10 → 0.86, 7/10 → 0.52, 2/10 → 0.03
+    const credScore = poll.credibility_score ?? poll.institute_reliability ?? 5;
+    const instituteWeight = Math.pow(Math.max(0, Math.min(10, credScore)) / 10, 1.5);
+
     const finalWeight =
       recencyWeight * sampleWeight * methodWeight * instituteWeight;
 

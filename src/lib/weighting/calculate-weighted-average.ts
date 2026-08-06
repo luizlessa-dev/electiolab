@@ -10,7 +10,8 @@ export interface PollInput {
   fieldworkEnd: Date;
   sampleSize: number;
   methodology: "presencial" | "telefonica" | "online" | "mista";
-  instituteReliability: number; // 0-1
+  instituteReliability?: number; // deprecated, use credibilityScore
+  credibilityScore?: number; // 0-10 (TSE=9-10, Datafolha=9, Quaest=8, AtlasIntel=7, default=5)
   percentage: number; // candidate's percentage in this poll
 }
 
@@ -72,8 +73,15 @@ export function calculateWeightedAverage(
     // 3. Methodology weight
     const mWeight = cfg.methodologyWeights[poll.methodology] ?? 0.5;
 
-    // 4. Institute reliability weight
-    const iWeight = cfg.useInstituteWeight ? poll.instituteReliability : 1.0;
+    // 4. Institute credibility weight (0-10 scale, with exponent to amplify differences)
+    let iWeight = 1.0;
+    if (cfg.useInstituteWeight) {
+      // Use credibilityScore (0-10) from institutes or default to 5
+      const credScore = poll.credibilityScore ?? poll.instituteReliability ?? 5;
+      // Normalize 0-10 to 0-1, then apply exponent 1.5 to amplify differences
+      // Examples: 9/10 → 0.86, 7/10 → 0.52, 2/10 → 0.03
+      iWeight = Math.pow(Math.max(0, Math.min(10, credScore)) / 10, 1.5);
+    }
 
     // Final weight = product of all factors
     const finalWeight = rWeight * sWeight * mWeight * iWeight;
