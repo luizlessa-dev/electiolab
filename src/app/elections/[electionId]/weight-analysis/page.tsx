@@ -21,9 +21,9 @@ interface ElectionWeightData {
 }
 
 interface PageProps {
-  params: {
+  params: Promise<{
     electionId: string;
-  };
+  }>;
 }
 
 export default function WeightAnalysisPage({ params }: PageProps) {
@@ -35,8 +35,9 @@ export default function WeightAnalysisPage({ params }: PageProps) {
     const fetchWeightData = async () => {
       try {
         setLoading(true);
+        const { electionId } = await params;
         const response = await fetch(
-          `/api/v1/elections/${params.electionId}/weight-analysis`
+          `/api/v1/elections/${electionId}/weight-analysis`
         );
 
         if (!response.ok) {
