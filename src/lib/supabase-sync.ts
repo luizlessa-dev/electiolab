@@ -33,11 +33,19 @@ export async function syncPollsToSupabase(
     errors: [],
   };
 
+  console.log(`[Sync] Iniciando sync para ${instituteId} com ${polls.length} polls`);
+
   if (!polls || polls.length === 0) {
+    console.log(`[Sync] ${instituteId}: sem polls para sincronizar`);
     return result;
   }
 
   try {
+    // Verificar credenciais Supabase
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      throw new Error('Supabase credentials not configured');
+    }
+
     // Transformar polls para formato Supabase
     const pollsData = polls.map(poll => ({
       institute_id: instituteId,
@@ -59,22 +67,24 @@ export async function syncPollsToSupabase(
       is_verified: false,
     }));
 
+    console.log(`[Sync] ${instituteId}: inserindo ${pollsData.length} polls...`);
+
     // Inserir no Supabase
-    const { error } = await supabase.from('polls').insert(pollsData);
+    const { data, error } = await supabase.from('polls').insert(pollsData);
 
     if (error) {
-      console.error(`[Sync] Erro ao inserir polls para ${instituteId}:`, error);
+      console.error(`[Sync] ❌ ${instituteId} erro Supabase:`, error);
       result.success = false;
-      result.errors.push(error.message);
+      result.errors.push(`${error.code}: ${error.message}`);
       return result;
     }
 
     result.inserted = pollsData.length;
-    console.log(`[Sync] ✅ ${instituteId}: ${result.inserted} polls inseridos`);
+    console.log(`[Sync] ✅ ${instituteId}: ${result.inserted} polls inseridos com sucesso`);
 
     return result;
   } catch (error) {
-    console.error(`[Sync] Erro crítico para ${instituteId}:`, error);
+    console.error(`[Sync] ❌ ${instituteId} erro crítico:`, error);
     result.success = false;
     result.errors.push(error instanceof Error ? error.message : String(error));
     return result;
