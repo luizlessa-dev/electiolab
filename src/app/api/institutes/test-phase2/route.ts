@@ -15,21 +15,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { datafolhaMockClient, ipecMockClient, quaestMockClient } from '@/lib/institutes/mock-clients';
 import { datafolhaBrowserClient } from '@/lib/institutes/datafolha-browser-client';
 import { tseApiClient } from '@/lib/institutes/tse-api-client';
+import { poderDataClient } from '@/lib/institutes/poderdata-client';
+import { atlasIntelClient } from '@/lib/institutes/atlasIntel-client';
 import {
-  poderDataClient,
-  atlasIntelClient,
   ipespeClient,
   mdaClient,
   fsbClient,
-  realTimeBigDataClient,
+  rtbdClient,
   genialQuaestClient,
-} from '@/lib/institutes/phase2-institute-clients';
+} from '@/lib/institutes/tier2-clients';
 
 const MOCK_CLIENTS = {
   datafolha: datafolhaMockClient,
   ipec: ipecMockClient,
   quaest: quaestMockClient,
-  poderdata: datafolhaMockClient, // Fallback
+  poderdata: datafolhaMockClient,
   atlasintel: datafolhaMockClient,
   ipespe: datafolhaMockClient,
   mda: datafolhaMockClient,
@@ -41,8 +41,13 @@ const MOCK_CLIENTS = {
 
 const BROWSER_CLIENTS: Record<string, any> = {
   datafolha: datafolhaBrowserClient,
-  // ipec: ipecBrowserClient, (would be implemented)
-  // quaest: quaestBrowserClient, (would be implemented)
+  poderdata: poderDataClient,
+  atlasintel: atlasIntelClient,
+  ipespe: ipespeClient,
+  mda: mdaClient,
+  fsb: fsbClient,
+  rtbd: rtbdClient,
+  genial: genialQuaestClient,
 };
 
 const API_CLIENTS: Record<string, any> = {
@@ -52,7 +57,7 @@ const API_CLIENTS: Record<string, any> = {
   ipespe: ipespeClient,
   mda: mdaClient,
   fsb: fsbClient,
-  rtbd: realTimeBigDataClient,
+  rtbd: rtbdClient,
   genial: genialQuaestClient,
 };
 
