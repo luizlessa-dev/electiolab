@@ -100,12 +100,10 @@ export async function GET(
       .from('polls')
       .select(`
         id,
-        institute_name,
         publication_date,
         fieldwork_end,
         sample_size,
         methodology,
-        credibility_score,
         margin_of_error,
         poll_results(
           candidate_id,
@@ -136,7 +134,7 @@ export async function GET(
       const rWeight = getRecencyWeight(daysOld);
       const sWeight = getSampleSizeWeight(poll.sample_size);
       const mWeight = getMethodologyWeight(poll.methodology);
-      const iWeight = getCredibilityWeight(poll.credibility_score);
+      const iWeight = getCredibilityWeight(5); // Default credibility score
       const moeWeight = getMoEWeight(poll.margin_of_error);
 
       // Calculate rough average for outlier detection
@@ -158,11 +156,11 @@ export async function GET(
 
         pollWeights.push({
           pollId: `${poll.id}-${result.candidate_id}`,
-          instituteName: poll.institute_name,
+          instituteName: '', // Not available in this schema
           percentage: result.percentage,
           sampleSize: poll.sample_size,
           methodology: poll.methodology,
-          credibilityScore: poll.credibility_score || 5,
+          credibilityScore: 5, // Default
           marginOfError: poll.margin_of_error,
           daysOld: Math.round(daysOld),
           isOutlier: Math.abs(result.percentage - roughAvg) / Math.max(roughStdDev, 1) > 2,
