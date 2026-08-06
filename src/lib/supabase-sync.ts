@@ -47,7 +47,10 @@ export async function syncPollsToSupabase(
     }
 
     // Transformar polls para formato Supabase
+    const ELECTION_2026_ID = '21f8e9a3-5ff8-4baf-b0ae-6b00d2614248';
+
     const pollsData = polls.map(poll => ({
+      election_id: ELECTION_2026_ID,
       institute_id: instituteId,
       publication_date: poll.publishDate,
       fieldwork_start: poll.fieldworkStart,
