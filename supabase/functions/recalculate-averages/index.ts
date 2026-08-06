@@ -6,6 +6,7 @@ interface PollRow {
   fieldwork_end: string;
   sample_size: number;
   methodology: string;
+  margin_of_error?: number; // margin of error in percentage points
   institute_reliability?: number; // deprecated
   credibility_score?: number; // 0-10 (from institutes table or data_source_audit)
 }
@@ -23,22 +24,48 @@ interface CandidateRow {
 
 const METHODOLOGY_WEIGHTS: Record<string, number> = {
   presencial: 1.0,
-  telefonica: 0.85,
-  mista: 0.75,
-  online: 0.6,
+  telefonica: 0.95,
+  mista: 0.85,
+  online: 0.9,
 };
+
+const RECENCY_HALF_LIFE_DAYS = 14; // increased from 10 days
+const BASELINE_MOE = 2.5; // baseline margin of error for weight calculation
 
 function calculateWeightedAverage(
   polls: (PollRow & { results: ResultRow[] })[],
   candidateId: string,
   referenceDate: Date,
-  halfLifeDays: number = 10,
+  halfLifeDays: number = RECENCY_HALF_LIFE_DAYS,
 ) {
+  // Phase 1: Calculate rough average to detect outliers
+  let roughSum = 0;
+  let roughCount = 0;
+  for (const poll of polls) {
+    const result = poll.results.find((r) => r.candidate_id === candidateId);
+    if (result) {
+      roughSum += result.percentage;
+      roughCount++;
+    }
+  }
+  const roughAverage = roughCount > 0 ? roughSum / roughCount : 0;
+
+  // Phase 2: Calculate rough std dev for outlier detection
+  let roughVarianceSum = 0;
+  for (const poll of polls) {
+    const result = poll.results.find((r) => r.candidate_id === candidateId);
+    if (result) {
+      roughVarianceSum += Math.pow(result.percentage - roughAverage, 2);
+    }
+  }
+  const roughStdDev = roughCount > 0 ? Math.sqrt(roughVarianceSum / roughCount) : 1;
+
+  // Phase 3: Calculate weighted average with all factors
   let weightedSum = 0;
   let totalWeight = 0;
   let pollCount = 0;
   let totalSampleSize = 0;
-  const values: { pct: number; weight: number }[] = [];
+  const values: { pct: number; weight: number; isOutlier: boolean }[] = [];
 
   for (const poll of polls) {
     const result = poll.results.find((r) => r.candidate_id === candidateId);
@@ -51,19 +78,29 @@ function calculateWeightedAverage(
     const sampleWeight = Math.sqrt(poll.sample_size / 1000);
     const methodWeight = METHODOLOGY_WEIGHTS[poll.methodology] ?? 0.5;
 
-    // Use credibility_score (0-10) with exponent 1.5 to amplify differences
-    // Examples: 9/10 → 0.86, 7/10 → 0.52, 2/10 → 0.03
+    // Institute credibility weight (0-10 scale with exponent 1.5)
     const credScore = poll.credibility_score ?? poll.institute_reliability ?? 5;
     const instituteWeight = Math.pow(Math.max(0, Math.min(10, credScore)) / 10, 1.5);
 
+    // Margin of error weight (PHASE 2)
+    let moeWeight = 1.0;
+    if (poll.margin_of_error) {
+      moeWeight = Math.min(1.5, BASELINE_MOE / Math.max(0.5, poll.margin_of_error));
+    }
+
+    // Outlier detection weight (PHASE 2)
+    const zscore = Math.abs(result.percentage - roughAverage) / Math.max(roughStdDev, 1);
+    const isOutlier = zscore > 2;
+    const outlierWeight = isOutlier ? 0.5 : 1.0;
+
     const finalWeight =
-      recencyWeight * sampleWeight * methodWeight * instituteWeight;
+      recencyWeight * sampleWeight * methodWeight * instituteWeight * moeWeight * outlierWeight;
 
     weightedSum += result.percentage * finalWeight;
     totalWeight += finalWeight;
     totalSampleSize += poll.sample_size;
     pollCount++;
-    values.push({ pct: result.percentage, weight: finalWeight });
+    values.push({ pct: result.percentage, weight: finalWeight, isOutlier });
   }
 
   if (totalWeight === 0) return null;

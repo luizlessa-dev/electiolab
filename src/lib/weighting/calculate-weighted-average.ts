@@ -12,6 +12,7 @@ export interface PollInput {
   methodology: "presencial" | "telefonica" | "online" | "mista";
   instituteReliability?: number; // deprecated, use credibilityScore
   credibilityScore?: number; // 0-10 (TSE=9-10, Datafolha=9, Quaest=8, AtlasIntel=7, default=5)
+  marginOfError?: number; // margin of error in percentage points (e.g., 2.5)
   percentage: number; // candidate's percentage in this poll
 }
 
@@ -31,12 +32,12 @@ export interface WeightedResult {
 }
 
 const DEFAULT_CONFIG: WeightConfig = {
-  recencyHalfLife: 10,
+  recencyHalfLife: 14, // increased from 10 to 14 days for more stable weighting
   methodologyWeights: {
     presencial: 1.0,
-    telefonica: 0.85,
-    mista: 0.75,
-    online: 0.6,
+    telefonica: 0.95, // updated from 0.85
+    mista: 0.85, // updated from 0.75
+    online: 0.9, // updated from 0.6 (online methods improved in 2026)
   },
   useInstituteWeight: true,
 };
@@ -58,13 +59,28 @@ export function calculateWeightedAverage(
     };
   }
 
+  // Phase 1: Calculate rough average to detect outliers
+  let roughSum = 0;
+  for (const poll of polls) {
+    roughSum += poll.percentage;
+  }
+  const roughAverage = roughSum / polls.length;
+
+  // Phase 2: Calculate rough std dev for outlier detection
+  let roughVarianceSum = 0;
+  for (const poll of polls) {
+    roughVarianceSum += Math.pow(poll.percentage - roughAverage, 2);
+  }
+  const roughStdDev = Math.sqrt(roughVarianceSum / polls.length);
+
+  // Phase 3: Calculate weighted average with all factors
   let weightedSum = 0;
   let totalWeight = 0;
   let totalSampleSize = 0;
-  const values: { pct: number; weight: number }[] = [];
+  const values: { pct: number; weight: number; isOutlier: boolean }[] = [];
 
   for (const poll of polls) {
-    // 1. Recency weight (exponential decay)
+    // 1. Recency weight (exponential decay with 14-day half-life)
     const rWeight = recencyWeight(poll.fieldworkEnd, refDate, cfg.recencyHalfLife);
 
     // 2. Sample size weight (square root, normalized by 1000)
@@ -73,23 +89,34 @@ export function calculateWeightedAverage(
     // 3. Methodology weight
     const mWeight = cfg.methodologyWeights[poll.methodology] ?? 0.5;
 
-    // 4. Institute credibility weight (0-10 scale, with exponent to amplify differences)
+    // 4. Institute credibility weight (0-10 scale, with exponent 1.5)
     let iWeight = 1.0;
     if (cfg.useInstituteWeight) {
-      // Use credibilityScore (0-10) from institutes or default to 5
       const credScore = poll.credibilityScore ?? poll.instituteReliability ?? 5;
-      // Normalize 0-10 to 0-1, then apply exponent 1.5 to amplify differences
-      // Examples: 9/10 → 0.86, 7/10 → 0.52, 2/10 → 0.03
       iWeight = Math.pow(Math.max(0, Math.min(10, credScore)) / 10, 1.5);
     }
 
+    // 5. Margin of error weight (PHASE 2)
+    // Penalize polls with large margin of error
+    let moeWeight = 1.0;
+    if (poll.marginOfError) {
+      const baselineMoE = 2.5; // typical good-quality poll MoE
+      moeWeight = Math.min(1.5, baselineMoE / Math.max(0.5, poll.marginOfError));
+    }
+
+    // 6. Outlier detection weight (PHASE 2)
+    // Flag and downweight values > 2σ from rough average
+    const zscore = Math.abs(poll.percentage - roughAverage) / Math.max(roughStdDev, 1);
+    const isOutlier = zscore > 2;
+    const outlierWeight = isOutlier ? 0.5 : 1.0; // downweight outliers by 50%
+
     // Final weight = product of all factors
-    const finalWeight = rWeight * sWeight * mWeight * iWeight;
+    const finalWeight = rWeight * sWeight * mWeight * iWeight * moeWeight * outlierWeight;
 
     weightedSum += poll.percentage * finalWeight;
     totalWeight += finalWeight;
     totalSampleSize += poll.sampleSize;
-    values.push({ pct: poll.percentage, weight: finalWeight });
+    values.push({ pct: poll.percentage, weight: finalWeight, isOutlier });
   }
 
   if (totalWeight === 0) {
