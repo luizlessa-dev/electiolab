@@ -90,15 +90,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       try {
         const polls = await client.fetch();
         if (polls.length > 0) {
-          const result = await syncPollsToSupabase(polls, client.instituteId);
+          // Use the instituteId from the first poll (already has UUID)
+          const instituteId = polls[0].instituteId;
+          const result = await syncPollsToSupabase(polls, instituteId);
           phase3Polls += result.inserted;
           totalPolls += result.inserted;
           totalErrors += result.errors.length;
           phase3Synced++;
-          console.log(`[Phase3.1] ${client.instituteName}: ${result.inserted} polls`);
+          console.log(`[Phase3.1] ${polls[0].instituteName}: ${result.inserted} polls`);
         }
       } catch (error) {
-        console.error(`[Phase3.1] ${client.instituteName} failed:`, error);
+        console.error(`[Phase3.1] failed:`, error);
         totalErrors++;
       }
     }
