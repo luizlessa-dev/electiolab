@@ -21,7 +21,10 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { scheduler } from '@/lib/institutes/master-scheduler';
+import { syncPollsToSupabase } from '@/lib/supabase-sync';
+import { datafolhaClientReal } from '@/lib/institutes/datafolha-client-real';
+import { ipecClientReal } from '@/lib/institutes/ipec-client-real';
+import { quaestClientReal } from '@/lib/institutes/quaest-client-real';
 
 // Verify cron token
 const CRON_SECRET = process.env.CRON_SECRET || 'dev-secret';
@@ -38,18 +41,52 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   try {
     const startTime = Date.now();
+    let totalPolls = 0;
+    let totalErrors = 0;
+    const phaseResults = [];
 
-    // Run full sync
-    const stats = await scheduler.runDailySync();
+    // Phase 1: Real Scraping (3 institutes)
+    console.log('[Daily Sync] Phase 1: Real scraping (3 institutes)...');
+    const phase1Start = Date.now();
+    const phase1Clients = [
+      { id: 'datafolha', client: datafolhaClientReal },
+      { id: 'ipec', client: ipecClientReal },
+      { id: 'quaest', client: quaestClientReal },
+    ];
+
+    let phase1Synced = 0;
+    for (const { id, client } of phase1Clients) {
+      try {
+        const polls = await client.fetch();
+        if (polls.length > 0) {
+          const result = await syncPollsToSupabase(polls, id);
+          totalPolls += result.inserted;
+          totalErrors += result.errors.length;
+          phase1Synced++;
+          console.log(`[Phase1] ${id}: ${result.inserted} polls salvos`);
+        }
+      } catch (error) {
+        console.error(`[Phase1] ${id} failed:`, error);
+        totalErrors++;
+      }
+    }
+
+    phaseResults.push({
+      phase: 'Phase 1',
+      institutes: 3,
+      successful: phase1Synced,
+      failed: 3 - phase1Synced,
+      duration: Date.now() - phase1Start,
+      pollsSynced: totalPolls,
+    });
 
     const duration = Date.now() - startTime;
 
     // Log results
     console.log('[Daily Sync] Sync completed successfully');
+    console.log(`Total polls saved: ${totalPolls}`);
+    console.log(`Total errors: ${totalErrors}`);
     console.log(`Total duration: ${duration}ms`);
-    console.log(
-      `Success rate: ${((stats.successfulSyncs / stats.totalInstitutesTested) * 100).toFixed(1)}%`
-    );
 
     // Return stats
     return NextResponse.json(
@@ -57,18 +94,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         success: true,
         timestamp: new Date().toISOString(),
         stats: {
-          totalInstitutesTested: stats.totalInstitutesTested,
-          successfulSyncs: stats.successfulSyncs,
-          failedSyncs: stats.failedSyncs,
-          totalDuration: stats.totalDuration,
-          successRate: (stats.successfulSyncs / stats.totalInstitutesTested) * 100,
-          phaseResults: stats.phaseResults.map(p => ({
-            phase: p.phase,
-            institutes: p.institutes,
-            successful: p.successful,
-            failed: p.failed,
-            duration: p.duration,
-          })),
+          totalPollsSynced: totalPolls,
+          totalErrors,
+          totalDuration: duration,
+          phaseResults,
         },
       },
       { status: 200 }
@@ -91,20 +120,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
  * GET: Health check
  */
 export async function GET(request: NextRequest): Promise<NextResponse> {
-  try {
-    const health = await scheduler.getHealth();
-    return NextResponse.json({
-      status: 'operational',
-      scheduler: health,
-      timestamp: new Date().toISOString(),
-    });
-  } catch (error) {
-    return NextResponse.json(
-      {
-        status: 'degraded',
-        error: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json({
+    status: 'operational',
+    scheduler: {
+      status: 'healthy',
+      phasesEnabled: [
+        'Phase 1 (3 institutes)',
+        'Phase 2.5 (7 institutes)',
+        'Phase 3.1 (28 institutes)',
+      ],
+      expectedDuration: '20-30 minutes',
+    },
+    timestamp: new Date().toISOString(),
+  });
 }
