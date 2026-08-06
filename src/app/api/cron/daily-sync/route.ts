@@ -31,6 +31,13 @@ const clients = {
   quaest: quaestMockClient,
 };
 
+// UUID mapping for institutes
+const instituteUUIDs: Record<string, string> = {
+  datafolha: '38744dae-cbdf-4ed1-84f9-ada191886146',
+  ipec: 'a4cd2d2c-5a0e-4c90-965e-fc6223fd108b',
+  quaest: '6aab34cd-f773-4ba6-9c8b-d4569ed273d2',
+};
+
 // Verify cron token
 const CRON_SECRET = process.env.CRON_SECRET || 'dev-secret';
 
@@ -60,8 +67,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       try {
         const client = clients[id];
         const polls = await client.fetch();
+        const instituteUUID = instituteUUIDs[id];
+
         if (polls.length > 0) {
-          const result = await syncPollsToSupabase(polls, id);
+          const result = await syncPollsToSupabase(polls, instituteUUID);
           totalPolls += result.inserted;
           totalErrors += result.errors.length;
           phase1Synced++;
