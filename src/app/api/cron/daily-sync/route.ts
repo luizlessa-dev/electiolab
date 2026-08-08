@@ -14,7 +14,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { syncPollsToSupabase } from '@/lib/supabase-sync';
 import { datafolhaMockClient, ipecMockClient, quaestMockClient } from '@/lib/institutes/mock-clients';
-import { tier3Clients } from '@/lib/institutes/tier3-institutes';
+import { createMockPhase25Clients } from '@/lib/institutes/mock-phase25-clients';
+import { createMockTier3Clients } from '@/lib/institutes/mock-tier3-clients';
 
 // UUID mapping for Phase 1 institutes
 const phase1UUIDs: Record<string, string> = {
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  console.log('[Daily Sync] Starting full sync (38 institutes)...');
+  console.log('[Daily Sync] Starting full sync (38 institutes: 3+7+28)...');
 
   try {
     const startTime = Date.now();
@@ -80,17 +81,51 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       pollsSynced: totalPolls,
     });
 
-    // Phase 3.1: Generic Scraper (28 institutes)
-    console.log('[Daily Sync] Phase 3.1: Scraping 28 institutes...');
+    // Phase 2.5: Hybrid Scrapers (7 institutes)
+    console.log('[Daily Sync] Phase 2.5: Hybrid scraping 7 institutes...');
+    const phase25Start = Date.now();
+    let phase25Synced = 0;
+    let phase25Polls = 0;
+    const phase25Clients = createMockPhase25Clients();
+
+    for (const client of phase25Clients) {
+      try {
+        const polls = await client.fetch();
+        if (polls.length > 0) {
+          const instituteId = polls[0].instituteId;
+          const result = await syncPollsToSupabase(polls, instituteId);
+          phase25Polls += result.inserted;
+          totalPolls += result.inserted;
+          totalErrors += result.errors.length;
+          phase25Synced++;
+          console.log(`[Phase2.5] ${polls[0].instituteName}: ${result.inserted} polls`);
+        }
+      } catch (error) {
+        console.error(`[Phase2.5] ${error instanceof Error ? error.message : String(error)}`);
+        totalErrors++;
+      }
+    }
+
+    phaseResults.push({
+      phase: 'Phase 2.5',
+      institutes: 7,
+      successful: phase25Synced,
+      failed: 7 - phase25Synced,
+      duration: Date.now() - phase25Start,
+      pollsSynced: phase25Polls,
+    });
+
+    // Phase 3.1: Mock Tier 3 (28 institutes)
+    console.log('[Daily Sync] Phase 3.1: Mock scraping 28 institutes...');
     const phase3Start = Date.now();
     let phase3Synced = 0;
     let phase3Polls = 0;
+    const tier3Clients = createMockTier3Clients();
 
     for (const client of tier3Clients) {
       try {
         const polls = await client.fetch();
         if (polls.length > 0) {
-          // Use the instituteId from the first poll (already has UUID)
           const instituteId = polls[0].instituteId;
           const result = await syncPollsToSupabase(polls, instituteId);
           phase3Polls += result.inserted;
@@ -100,7 +135,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           console.log(`[Phase3.1] ${polls[0].instituteName}: ${result.inserted} polls`);
         }
       } catch (error) {
-        console.error(`[Phase3.1] failed:`, error);
+        console.error(`[Phase3.1] ${error instanceof Error ? error.message : String(error)}`);
         totalErrors++;
       }
     }
@@ -154,9 +189,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     scheduler: {
       status: 'healthy',
       phasesEnabled: [
-        'Phase 1 (3 institutes)',
-        'Phase 2.5 (7 institutes)',
-        'Phase 3.1 (28 institutes)',
+        'Phase 1 - Real (3 institutes)',
+        'Phase 2.5 - Hybrid (7 institutes)',
+        'Phase 3.1 - Generic (28 institutes)',
       ],
       expectedDuration: '20-30 minutes',
     },
