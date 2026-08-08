@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 
+
 interface AggregatedCandidate {
   name: string;
   weightedPercentage: number;
@@ -51,7 +52,6 @@ const UF_NAMES: Record<string, string> = {
 
 export default function PesquisasPage() {
   const params = useParams();
-  const searchParams = useSearchParams();
   const uf = (params.uf as string)?.toUpperCase();
 
   const [days, setDays] = useState<number>(7);
@@ -66,7 +66,7 @@ export default function PesquisasPage() {
     try {
       const res = await fetch(
         `/api/polls/aggregated?uf=${uf}&days=${selectedDays}`,
-        { next: { revalidate: 300 } } // Cache 5 min
+        { next: { revalidate: 300 } }
       );
 
       if (!res.ok) {
@@ -106,7 +106,6 @@ export default function PesquisasPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
         <header className="mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">
             Pesquisas Eleitorais - {stateName}
@@ -114,7 +113,6 @@ export default function PesquisasPage() {
           <p className="text-slate-300">Agregação inteligente com ponderação de margem de erro e recência</p>
         </header>
 
-        {/* Filters */}
         <div className="bg-slate-800 rounded-lg p-6 mb-8 border border-slate-700">
           <label className="block mb-4">
             <span className="text-white font-medium mb-2 block">Últimos dias:</span>
@@ -136,7 +134,6 @@ export default function PesquisasPage() {
           </label>
         </div>
 
-        {/* Loading State */}
         {loading && (
           <div className="bg-slate-800 rounded-lg p-8 border border-slate-700 text-center">
             <div className="inline-block animate-spin">
@@ -146,14 +143,12 @@ export default function PesquisasPage() {
           </div>
         )}
 
-        {/* Error State */}
         {error && !loading && (
           <div className="bg-red-900/30 border border-red-700 rounded-lg p-6">
             <p className="text-red-200">⚠️ {error}</p>
           </div>
         )}
 
-        {/* Results */}
         {data && !loading && (
           <>
             {data.candidates.length > 0 ? (
@@ -177,7 +172,6 @@ export default function PesquisasPage() {
                       </div>
                     </div>
 
-                    {/* Progress bar */}
                     <div className="w-full bg-slate-700 rounded-full h-2 mb-4 overflow-hidden">
                       <div
                         className="bg-gradient-to-r from-blue-500 to-blue-600 h-full"
@@ -198,7 +192,6 @@ export default function PesquisasPage() {
               </div>
             )}
 
-            {/* Metadata */}
             <div className="bg-slate-800 rounded-lg p-4 border border-slate-700 text-sm text-slate-400">
               <details className="cursor-pointer">
                 <summary className="font-medium text-slate-200 hover:text-slate-100">
