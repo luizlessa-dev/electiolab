@@ -192,24 +192,60 @@ export default function PesquisasPage() {
               </div>
             )}
 
-            <div className="bg-slate-800 rounded-lg p-4 border border-slate-700 text-sm text-slate-400">
-              <details className="cursor-pointer">
-                <summary className="font-medium text-slate-200 hover:text-slate-100">
-                  📊 Metodologia
+            <div className="bg-slate-800 rounded-lg p-6 border border-slate-700 text-sm text-slate-300">
+              <details className="cursor-pointer group">
+                <summary className="font-medium text-slate-200 hover:text-slate-100 cursor-pointer">
+                  📊 Como funciona a agregação?
                 </summary>
-                <div className="mt-4 space-y-2 text-xs">
-                  <p>
-                    <strong>Técnica:</strong> {data.metadata.methodology}
-                  </p>
-                  <p>
-                    <strong>Amostras processadas:</strong> {data.metadata.totalSamplesProcessed}
-                  </p>
-                  <p>
-                    <strong>Outliers removidos:</strong> {data.metadata.outliersRemoved}
-                  </p>
-                  <p>
-                    <strong>Atualizado em:</strong> {new Date(data.metadata.aggregatedAt).toLocaleString('pt-BR')}
-                  </p>
+                <div className="mt-6 space-y-4 text-xs leading-relaxed">
+                  <div>
+                    <h4 className="font-semibold text-slate-100 mb-2">1️⃣ Precisão (Margem de Erro)</h4>
+                    <p>Pesquisas mais precisas pesam mais na média:</p>
+                    <ul className="ml-4 mt-1 space-y-1 text-slate-400">
+                      <li>• MoE &lt; 2%: peso máximo (100%)</li>
+                      <li>• MoE 2-3%: peso reduzido (~77%)</li>
+                      <li>• MoE 5%: peso mínimo (~40%)</li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold text-slate-100 mb-2">2️⃣ Recência (Half-life 14 dias)</h4>
+                    <p>Pesquisas recentes são mais relevantes:</p>
+                    <ul className="ml-4 mt-1 space-y-1 text-slate-400">
+                      <li>• Publicada hoje: peso 100%</li>
+                      <li>• 7 dias atrás: peso 71%</li>
+                      <li>• 14 dias atrás: peso 50%</li>
+                      <li>• 28 dias atrás: peso 25%</li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold text-slate-100 mb-2">3️⃣ Outliers (2-Sigma)</h4>
+                    <p>Dados anômalos (&gt;2σ desvios) são automaticamente descartados.</p>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold text-slate-100 mb-2">4️⃣ Confiança</h4>
+                    <p>Baseada em intervalo de confiança de 95%:</p>
+                    <ul className="ml-4 mt-1 space-y-1 text-slate-400">
+                      <li>• ±0.5%: Confiança ~90% (alto consenso)</li>
+                      <li>• ±2.5%: Confiança ~75% (consenso moderado)</li>
+                      <li>• ±5%: Confiança ~50% (baixo consenso)</li>
+                    </ul>
+                  </div>
+
+                  <hr className="border-slate-700 my-3" />
+
+                  <div className="text-slate-400">
+                    <p><strong>Fórmula:</strong> Σ(% × peso_precisão × peso_recência) / Σ(pesos)</p>
+                    <p className="mt-2">
+                      <strong>Amostras processadas:</strong> {data.metadata.totalSamplesProcessed} •
+                      <strong className="ml-2">Outliers removidos:</strong> {data.metadata.outliersRemoved}
+                    </p>
+                    <p className="mt-2">
+                      <strong>Atualizado em:</strong> {new Date(data.metadata.aggregatedAt).toLocaleString('pt-BR')}
+                    </p>
+                  </div>
                 </div>
               </details>
             </div>

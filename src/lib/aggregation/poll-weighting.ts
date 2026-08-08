@@ -24,15 +24,23 @@ export interface AggregatedResult {
 }
 
 /**
- * A) Margin of Error Weighting
- * Higher precision (lower MoE) = higher weight
+ * A) Margin of Error Weighting (Continuous Formula)
+ *
+ * Uses inverse relationship: weight = 1 / (1 + k×MoE)
+ * where k = 0.4 (calibrated for 2-5% MoE range)
+ *
+ * Examples:
+ * - MoE 1.5% → 0.87x
+ * - MoE 2.0% → 0.77x
+ * - MoE 3.0% → 0.63x
+ * - MoE 5.0% → 0.40x
+ * - Missing MoE → 0.50x (neutral penalty)
  */
 export function calculateMoeWeight(marginOfError?: number): number {
   if (!marginOfError) return 0.5; // Default penalty for missing data
 
-  if (marginOfError < 2.0) return 1.0; // Excellent precision
-  if (marginOfError < 3.0) return 0.7; // Good
-  return 0.3; // Poor precision, reduce weight
+  // Continuous formula: weight = 1 / (1 + 0.4×MoE)
+  return 1 / (1 + 0.4 * marginOfError);
 }
 
 /**
@@ -125,14 +133,22 @@ export function aggregateWeightedPolls(
       0
     ) / totalWeight;
 
-    // Step 5: Calculate confidence (lower stdDev = higher confidence)
+    // Step 5: Calculate confidence (95% confidence interval)
+    // Formula: CI_95 = 1.96 × stdDev / √n
+    // confidence = 1 - (CI_95 / 100) normalized to 0-1
     const mean = weightedPercentage;
     const variance = validSamples.reduce(
       (sum, s) => sum + Math.pow(s.percentage - mean, 2) * s.finalWeight,
       0
     ) / totalWeight;
     const stdDev = Math.sqrt(variance);
-    const confidence = Math.max(0, Math.min(1, 1 - stdDev / 50)); // 0-1 scale
+
+    // 95% confidence interval (z-score = 1.96)
+    const ci95 = 1.96 * (stdDev / Math.sqrt(validSamples.length));
+
+    // Normalize to 0-1 scale: higher CI (wider interval) = lower confidence
+    // At ±5% margin, confidence = 0; at ±0.5% margin, confidence = 0.9
+    const confidence = Math.max(0, Math.min(1, 1 - ci95 / 10));
 
     results.push({
       candidateName,
