@@ -4,7 +4,7 @@
  * Define all elections for 2026:
  * - Presidential (national)
  * - Governors (26 states)
- * - Senators (26 states, 3 per state = 78 total)
+ * - Senators (26 states, 1/3 renewal = 1 per state in 2026)
  */
 
 export interface Election {
@@ -44,34 +44,22 @@ export function getGovernorElection(uf: string): Election {
   };
 }
 
-// Senator elections (3 per state)
-export function getSenatorElections(uf: string): Election[] {
-  return [
-    {
-      id: `senador-${uf}-1-2026`,
-      type: 'senador',
-      name: `Eleição Senador 1º turno - ${uf}`,
-      state: uf,
-      candidateCount: 3,
-      tseId: undefined,
-    },
-    {
-      id: `senador-${uf}-2-2026`,
-      type: 'senador',
-      name: `Eleição Senador 2º turno - ${uf}`,
-      state: uf,
-      candidateCount: 3,
-      tseId: undefined,
-    },
-    {
-      id: `senador-${uf}-3-2026`,
-      type: 'senador',
-      name: `Eleição Senador Suplência - ${uf}`,
-      state: uf,
-      candidateCount: 3,
-      tseId: undefined,
-    },
-  ];
+// Senator elections (1 per state in 2026)
+//
+// Brazil's Senate has 81 total senators (3 per state).
+// Senate renewal cycles:
+// - 2022: 2/3 renewal (54 senators = 2 per state)
+// - 2026: 1/3 renewal (27 senators = 1 per state) ← current cycle
+// - 2030: 2/3 renewal (54 senators = 2 per state)
+export function getSenatorElections(uf: string): Election {
+  return {
+    id: `senador-${uf}-2026`,
+    type: 'senador',
+    name: `Eleição Senador - ${uf}`,
+    state: uf,
+    candidateCount: 3, // Typically 3-5 main candidates per state
+    tseId: undefined,
+  };
 }
 
 export function getAllStateElections(): Election[] {
@@ -79,7 +67,7 @@ export function getAllStateElections(): Election[] {
 
   for (const uf of UF_LIST) {
     elections.push(getGovernorElection(uf));
-    elections.push(...getSenatorElections(uf));
+    elections.push(getSenatorElections(uf));
   }
 
   return elections;
