@@ -8,6 +8,7 @@
  */
 
 import { InstituteClientBase, Poll } from './institute-client-base';
+import { PRESIDENTIAL_CANDIDATES_2026 } from '@/lib/candidates/presidential-2026';
 
 export class DatafolhaMockClient extends InstituteClientBase {
   constructor() {
@@ -20,8 +21,12 @@ export class DatafolhaMockClient extends InstituteClientBase {
   }
 
   async fetch(): Promise<Poll[]> {
-    console.log('[Datafolha Mock] Returning test data...');
+    console.log('[Datafolha Mock] Returning test data with real candidates...');
     await new Promise(r => setTimeout(r, 500)); // Simulate network delay
+
+    const topCandidates = PRESIDENTIAL_CANDIDATES_2026.slice(0, 4);
+    const percentages1 = [38.5, 28.2, 18.3, 12.1];
+    const percentages2 = [37.8, 29.1, 19.2, 11.2];
 
     return [
       this.normalizePoll({
@@ -31,11 +36,11 @@ export class DatafolhaMockClient extends InstituteClientBase {
         sampleSize: 2002,
         methodology: 'presencial',
         marginOfError: 2.2,
-        results: [
-          { candidateName: 'Candidate A', percentage: 42.5, candidateId: 'candidate-a' },
-          { candidateName: 'Candidate B', percentage: 35.2, candidateId: 'candidate-b' },
-          { candidateName: 'Candidate C', percentage: 18.1, candidateId: 'candidate-c' },
-        ],
+        results: topCandidates.map((candidate, idx) => ({
+          candidateName: candidate.name,
+          percentage: percentages1[idx],
+          candidateId: candidate.id,
+        })),
         sourceUrl: 'https://datafolha.folha.uol.com.br/eleicoes/2026/',
       }),
       this.normalizePoll({
@@ -45,11 +50,11 @@ export class DatafolhaMockClient extends InstituteClientBase {
         sampleSize: 1800,
         methodology: 'presencial',
         marginOfError: 2.3,
-        results: [
-          { candidateName: 'Candidate A', percentage: 41.8, candidateId: 'candidate-a' },
-          { candidateName: 'Candidate B', percentage: 36.1, candidateId: 'candidate-b' },
-          { candidateName: 'Candidate C', percentage: 19.3, candidateId: 'candidate-c' },
-        ],
+        results: topCandidates.map((candidate, idx) => ({
+          candidateName: candidate.name,
+          percentage: percentages2[idx],
+          candidateId: candidate.id,
+        })),
         sourceUrl: 'https://datafolha.folha.uol.com.br/eleicoes/2026/',
       }),
     ];
@@ -67,8 +72,11 @@ export class IpecMockClient extends InstituteClientBase {
   }
 
   async fetch(): Promise<Poll[]> {
-    console.log('[Ipec Mock] Returning test data...');
+    console.log('[Ipec Mock] Returning test data with real candidates...');
     await new Promise(r => setTimeout(r, 600));
+
+    const topCandidates = PRESIDENTIAL_CANDIDATES_2026.slice(0, 4);
+    const percentages = [39.1, 27.8, 19.2, 11.3];
 
     return [
       this.normalizePoll({
@@ -78,11 +86,11 @@ export class IpecMockClient extends InstituteClientBase {
         sampleSize: 1500,
         methodology: 'mista',
         marginOfError: 2.6,
-        results: [
-          { candidateName: 'Candidate A', percentage: 43.2, candidateId: 'candidate-a' },
-          { candidateName: 'Candidate B', percentage: 34.5, candidateId: 'candidate-b' },
-          { candidateName: 'Candidate C', percentage: 17.8, candidateId: 'candidate-c' },
-        ],
+        results: topCandidates.map((candidate, idx) => ({
+          candidateName: candidate.name,
+          percentage: percentages[idx],
+          candidateId: candidate.id,
+        })),
         sourceUrl: 'https://ictouch.com.br/pesquisa',
       }),
     ];
@@ -100,8 +108,11 @@ export class QuaestMockClient extends InstituteClientBase {
   }
 
   async fetch(): Promise<Poll[]> {
-    console.log('[Quaest Mock] Returning test data...');
+    console.log('[Quaest Mock] Returning test data with real candidates...');
     await new Promise(r => setTimeout(r, 550));
+
+    const topCandidates = PRESIDENTIAL_CANDIDATES_2026.slice(0, 4);
+    const percentages = [36.8, 30.2, 20.1, 10.4];
 
     return [
       this.normalizePoll({
@@ -111,11 +122,11 @@ export class QuaestMockClient extends InstituteClientBase {
         sampleSize: 1200,
         methodology: 'online',
         marginOfError: 2.8,
-        results: [
-          { candidateName: 'Candidate A', percentage: 40.9, candidateId: 'candidate-a' },
-          { candidateName: 'Candidate B', percentage: 37.3, candidateId: 'candidate-b' },
-          { candidateName: 'Candidate C', percentage: 18.2, candidateId: 'candidate-c' },
-        ],
+        results: topCandidates.map((candidate, idx) => ({
+          candidateName: candidate.name,
+          percentage: percentages[idx],
+          candidateId: candidate.id,
+        })),
         sourceUrl: 'https://quaest.com.br/pesquisas',
       }),
     ];

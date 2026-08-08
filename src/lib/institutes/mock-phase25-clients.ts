@@ -1,4 +1,5 @@
 import { Poll } from './institute-client-base';
+import { PRESIDENTIAL_CANDIDATES_2026 } from '@/lib/candidates/presidential-2026';
 
 interface MockClient {
   fetch(): Promise<Poll[]>;
@@ -24,6 +25,10 @@ function createMockClientForPhase25(institute: typeof PHASE25_INSTITUTES[0]): Mo
   return {
     instituteName: institute.name,
     async fetch(): Promise<Poll[]> {
+      // Generate realistic results with top 4-5 candidates
+      const topCandidates = PRESIDENTIAL_CANDIDATES_2026.slice(0, 5);
+      const basePercentages = [38, 28, 18, 12, 4];
+
       const poll: Poll = {
         id: `${institute.id}-poll-1`,
         instituteId: institute.uuid,
@@ -34,11 +39,11 @@ function createMockClientForPhase25(institute: typeof PHASE25_INSTITUTES[0]): Mo
         marginOfError: 2.6,
         confidenceLevel: 95,
         methodology: 'mista' as const,
-        results: [
-          { candidateId: '1', candidateName: 'Candidate A', percentage: 42 },
-          { candidateId: '2', candidateName: 'Candidate B', percentage: 38 },
-          { candidateId: '3', candidateName: 'Candidate C', percentage: 20 },
-        ],
+        results: topCandidates.map((candidate, idx) => ({
+          candidateId: candidate.id,
+          candidateName: candidate.name,
+          percentage: basePercentages[idx] + (Math.random() * 4 - 2), // ±2% variation
+        })),
         sourceUrl: `https://example.com/${institute.id}`,
         isVerified: false,
         reliabilityScore: 0.75,
