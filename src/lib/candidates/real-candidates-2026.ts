@@ -298,6 +298,130 @@ export const REAL_CANDIDATES_CE_SENATOR: RealCandidate[] = [
   },
 ];
 
+// ═══════════════════════════════════════════════════════════════════
+// SÃO PAULO - Governador (Quaest/Genial - julho 2026)
+// ═══════════════════════════════════════════════════════════════════
+
+export const REAL_CANDIDATES_SP_GOVERNOR: RealCandidate[] = [
+  {
+    id: 'tarcisio-sp',
+    name: 'Tarcísio de Freitas',
+    party: 'REPUBLICANOS',
+    position: 'governador',
+    state: 'SP',
+    searchingPercentage: 41,
+    status: 'pesquisado',
+  },
+  {
+    id: 'fernando-haddad',
+    name: 'Fernando Haddad',
+    party: 'PT',
+    position: 'governador',
+    state: 'SP',
+    searchingPercentage: 26,
+    status: 'pesquisado',
+  },
+  {
+    id: 'vera-lucia',
+    name: 'Vera Lúcia',
+    position: 'governador',
+    state: 'SP',
+    searchingPercentage: 3,
+    status: 'pesquisado',
+  },
+  {
+    id: 'carlos-machado',
+    name: 'Carlos Machado',
+    position: 'governador',
+    state: 'SP',
+    searchingPercentage: 1,
+    status: 'pesquisado',
+  },
+  {
+    id: 'vivian-mendes',
+    name: 'Vivian Mendes',
+    position: 'governador',
+    state: 'SP',
+    searchingPercentage: 1,
+    status: 'pesquisado',
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════════
+// SÃO PAULO - Senador (Quaest/Genial - julho 2026)
+// ═══════════════════════════════════════════════════════════════════
+
+export const REAL_CANDIDATES_SP_SENATOR: RealCandidate[] = [
+  {
+    id: 'marina-silva-sp',
+    name: 'Marina Silva',
+    party: 'REDE',
+    position: 'senador',
+    state: 'SP',
+    searchingPercentage: 14,
+    status: 'pesquisado',
+  },
+  {
+    id: 'simone-tebet-sp',
+    name: 'Simone Tebet',
+    party: 'MDB',
+    position: 'senador',
+    state: 'SP',
+    searchingPercentage: 11,
+    status: 'pesquisado',
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════════
+// BAHIA - Governador (Quaest/Genial - julho 2026)
+// ═══════════════════════════════════════════════════════════════════
+
+export const REAL_CANDIDATES_BA_GOVERNOR: RealCandidate[] = [
+  {
+    id: 'acm-neto',
+    name: 'ACM Neto',
+    party: 'MDB',
+    position: 'governador',
+    state: 'BA',
+    searchingPercentage: 39,
+    status: 'pesquisado',
+  },
+  {
+    id: 'jeronimo-rodrigues',
+    name: 'Jerônimo Rodrigues',
+    party: 'PT',
+    position: 'governador',
+    state: 'BA',
+    searchingPercentage: 38,
+    status: 'pesquisado',
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════════
+// BAHIA - Senador (Quaest/Genial - julho 2026)
+// ═══════════════════════════════════════════════════════════════════
+
+export const REAL_CANDIDATES_BA_SENATOR: RealCandidate[] = [
+  {
+    id: 'rui-costa',
+    name: 'Rui Costa',
+    party: 'PT',
+    position: 'senador',
+    state: 'BA',
+    searchingPercentage: 22,
+    status: 'pesquisado',
+  },
+  {
+    id: 'jaques-wagner',
+    name: 'Jaques Wagner',
+    party: 'PT',
+    position: 'senador',
+    state: 'BA',
+    searchingPercentage: 16,
+    status: 'pesquisado',
+  },
+];
+
 /**
  * Get all real candidates by state and position
  */
@@ -309,10 +433,14 @@ export function getRealCandidatesByStateAndPosition(
     if (state === 'RS') return REAL_CANDIDATES_RS_GOVERNOR;
     if (state === 'GO') return REAL_CANDIDATES_GO_GOVERNOR;
     if (state === 'CE') return REAL_CANDIDATES_CE_GOVERNOR;
+    if (state === 'SP') return REAL_CANDIDATES_SP_GOVERNOR;
+    if (state === 'BA') return REAL_CANDIDATES_BA_GOVERNOR;
   } else if (position === 'senador') {
     if (state === 'RS') return REAL_CANDIDATES_RS_SENATOR;
     if (state === 'GO') return REAL_CANDIDATES_GO_SENATOR;
     if (state === 'CE') return REAL_CANDIDATES_CE_SENATOR;
+    if (state === 'SP') return REAL_CANDIDATES_SP_SENATOR;
+    if (state === 'BA') return REAL_CANDIDATES_BA_SENATOR;
   }
   return [];
 }
