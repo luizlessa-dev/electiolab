@@ -23,9 +23,29 @@ export async function POST(req: NextRequest) {
 
     await handleInstitutsCompleteWebhook(body);
 
+    // Trigger Agent 3 (validação + alertas)
+    if (body.ok) {
+      console.log("[institutos-complete] Triggering Agent 3...");
+      try {
+        const agent3Response = await fetch("http://localhost:3001/api/agents/run-agent-3", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ triggered_by: "institutos-complete" }),
+        });
+
+        if (!agent3Response.ok) {
+          console.warn("[institutos-complete] Agent 3 trigger failed:", agent3Response.status);
+        } else {
+          console.log("[institutos-complete] Agent 3 triggered successfully");
+        }
+      } catch (e) {
+        console.warn("[institutos-complete] Agent 3 trigger error:", e);
+      }
+    }
+
     return NextResponse.json({
       ok: true,
-      message: "Institutos webhook processed",
+      message: "Institutos webhook processed, Agent 3 triggered",
       received_at: new Date().toISOString(),
     });
   } catch (e) {

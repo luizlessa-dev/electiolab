@@ -24,13 +24,29 @@ export async function POST(req: NextRequest) {
     // Process the webhook
     await handleTseIngestWebhook(body);
 
-    // TODO: Trigger Agent 2 here (agent-2-institutos)
-    // TODO: Update dashboard widget
-    // TODO: Log to data_source_audit (if not already done by Agent 1)
+    // Trigger Agent 2 (institutos scraping)
+    if (body.ok) {
+      console.log("[tse-complete] Triggering Agent 2...");
+      try {
+        const agent2Response = await fetch("http://localhost:3001/api/agents/run-agent-2", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ triggered_by: "tse-complete" }),
+        });
+
+        if (!agent2Response.ok) {
+          console.warn("[tse-complete] Agent 2 trigger failed:", agent2Response.status);
+        } else {
+          console.log("[tse-complete] Agent 2 triggered successfully");
+        }
+      } catch (e) {
+        console.warn("[tse-complete] Agent 2 trigger error:", e);
+      }
+    }
 
     return NextResponse.json({
       ok: true,
-      message: "TSE webhook processed",
+      message: "TSE webhook processed, Agent 2 triggered",
       received_at: new Date().toISOString(),
     });
   } catch (e) {
