@@ -353,7 +353,6 @@ export class InstitutusScrapeAgent extends RufloAgent {
           fieldwork_end: p.fieldwork_end,
           sample_size: 1000,
           methodology: "online",
-          _source: `Scraping ${p.institute}`,
         })),
         { onConflict: "institute,publication_date" }
       )
