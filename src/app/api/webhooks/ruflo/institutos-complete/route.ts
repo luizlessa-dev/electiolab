@@ -11,21 +11,23 @@ import { handleInstitutsCompleteWebhook } from "@/agents/agent-2-institutos";
 
 export async function POST(req: NextRequest) {
   try {
-    // TODO: Validate webhook signature
-
     const body = await req.json();
-    console.log("[institutos-complete] webhook received:", body);
 
-    // TODO: Process webhook
-    // 1. Validate payload
-    // 2. Alert if critical failures (>50% failed)
-    // 3. Trigger Agent 3
-    // 4. Update dashboard: new polls count, institute status
-    // 5. Log to audit
+    console.log("[institutos-complete] webhook received:", {
+      ok: body.ok,
+      completed_count: body.completed_count,
+      failed_count: body.failed_count,
+      total_polls_inserted: body.total_polls_inserted,
+      timestamp: body.timestamp,
+    });
 
     await handleInstitutsCompleteWebhook(body);
 
-    return NextResponse.json({ ok: true, message: "Institutos webhook processed" });
+    return NextResponse.json({
+      ok: true,
+      message: "Institutos webhook processed",
+      received_at: new Date().toISOString(),
+    });
   } catch (e) {
     console.error("[institutos-complete] error:", e);
     return NextResponse.json(
