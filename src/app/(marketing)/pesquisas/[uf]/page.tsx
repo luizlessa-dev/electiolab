@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 
 
 interface AggregatedCandidate {
@@ -59,7 +59,7 @@ export default function PesquisasPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchData = async (selectedDays: number) => {
+  const fetchData = useCallback(async (selectedDays: number) => {
     setLoading(true);
     setError(null);
 
@@ -82,13 +82,13 @@ export default function PesquisasPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [uf]);
 
   useEffect(() => {
     if (uf && /^[A-Z]{2}$/.test(uf)) {
       fetchData(days);
     }
-  }, [uf, days]);
+  }, [uf, days, fetchData]);
 
   if (!uf || !/^[A-Z]{2}$/.test(uf)) {
     return (

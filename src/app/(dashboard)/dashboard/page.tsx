@@ -19,6 +19,49 @@ import {
 import { BarChart3, TrendingUp, Building2, FileSearch, Users, Percent, TrendingDown, Activity, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
+// Hoistado pro escopo do módulo (evita recriar o tipo de componente a cada
+// render do DashboardPage — ver react-hooks/static-components). Recebe
+// activeId em vez de fechar sobre `election`, já que não tem mais acesso
+// ao escopo da página.
+function ElectionPill({ e, label, activeId }: { e: any; label: string; activeId: string }) {
+  return (
+    <a
+      key={e.id}
+      href={`/dashboard?election=${e.id}`}
+      className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
+        e.id === activeId
+          ? "bg-blue-600/20 text-blue-300 border-blue-600/40"
+          : "bg-transparent text-slate-400 border-slate-700 hover:text-white hover:border-slate-500"
+      }`}
+    >
+      {label}
+    </a>
+  );
+}
+
+function ElectionRow({
+  label,
+  items,
+  fmt,
+  activeId,
+}: {
+  label: string;
+  items: any[];
+  fmt: (e: any) => string;
+  activeId: string;
+}) {
+  return items.length > 0 ? (
+    <div className="flex items-center gap-2 flex-wrap justify-end">
+      <span className="text-[10px] uppercase tracking-[0.15em] text-slate-500 font-mono mr-1 min-w-[5.5rem] text-right">
+        {label}
+      </span>
+      {items.map((e: any) => (
+        <ElectionPill key={e.id} e={e} label={fmt(e)} activeId={activeId} />
+      ))}
+    </div>
+  ) : null;
+}
+
 export default async function DashboardPage({
   searchParams,
 }: {
@@ -217,56 +260,25 @@ export default async function DashboardPage({
               .filter((e) => e.type === "senador")
               .sort(sortByState);
 
-            const Pill = ({ e, label }: { e: any; label: string }) => (
-              <a
-                key={e.id}
-                href={`/dashboard?election=${e.id}`}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
-                  e.id === election.id
-                    ? "bg-blue-600/20 text-blue-300 border-blue-600/40"
-                    : "bg-transparent text-slate-400 border-slate-700 hover:text-white hover:border-slate-500"
-                }`}
-              >
-                {label}
-              </a>
-            );
-
-            const Row = ({
-              label,
-              items,
-              fmt,
-            }: {
-              label: string;
-              items: any[];
-              fmt: (e: any) => string;
-            }) =>
-              items.length > 0 ? (
-                <div className="flex items-center gap-2 flex-wrap justify-end">
-                  <span className="text-[10px] uppercase tracking-[0.15em] text-slate-500 font-mono mr-1 min-w-[5.5rem] text-right">
-                    {label}
-                  </span>
-                  {items.map((e: any) => (
-                    <Pill key={e.id} e={e} label={fmt(e)} />
-                  ))}
-                </div>
-              ) : null;
-
             return (
               <>
-                <Row
+                <ElectionRow
                   label="Nacional"
                   items={nationals}
                   fmt={(e) => `${e.year} — ${e.round}º Turno`}
+                  activeId={election.id}
                 />
-                <Row
+                <ElectionRow
                   label="Governador"
                   items={govElections}
                   fmt={(e) => `${e.state ?? "—"} ${e.year}`}
+                  activeId={election.id}
                 />
-                <Row
+                <ElectionRow
                   label="Senador"
                   items={senElections}
                   fmt={(e) => `${e.state ?? "—"} ${e.year}`}
+                  activeId={election.id}
                 />
               </>
             );

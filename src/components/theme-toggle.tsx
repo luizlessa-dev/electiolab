@@ -8,6 +8,9 @@ export function ThemeToggle({ compact = false }: { compact?: boolean }) {
   const { theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
+  // Padrão padrão de next-themes para evitar mismatch de hidratação SSR/CSR
+  // (o tema real só é conhecido no cliente). Não há alternativa pura aqui.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
 
   if (!mounted) {

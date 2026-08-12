@@ -176,8 +176,8 @@ export default async function RedesSociaisPage() {
             <section className="mb-10">
               <h2 className="text-xl font-bold mb-4">Candidatos com perfis declarados</h2>
               <div className="rounded-lg border border-border bg-card overflow-hidden">
-                {candidates.map(({ ref, rows }) => (
-                  <div key={ref?.slug ?? Math.random()} className="border-b border-border/30 last:border-0">
+                {candidates.map(({ ref, rows }, i) => (
+                  <div key={ref?.slug ?? rows[0]?.id ?? i} className="border-b border-border/30 last:border-0">
                     <div className="flex items-center px-4 py-3 bg-muted/15">
                       {ref?.slug ? (
                         <Link href={`/candidato/${ref.slug}`} className="flex-1 font-semibold hover:text-primary hover:underline">

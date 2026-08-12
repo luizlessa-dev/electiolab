@@ -97,6 +97,16 @@ export function CandidatesIndex({ candidates, initial }: Props) {
   const [sortDir, setSortDir] = useState<SortDir>(initial.sortDir);
   const [page, setPage] = useState<number>(initial.page);
 
+  // Reset paginação quando filtro/sort muda — ajustado durante o render (não
+  // em effect) pra evitar um passo de render extra; ver
+  // https://react.dev/learn/you-might-not-need-an-effect#adjusting-state-based-on-a-prop-or-state-change
+  const filterKey = JSON.stringify([query, type, uf, party, tse, hasBio, hasPhoto, sortKey, sortDir]);
+  const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
+  if (filterKey !== prevFilterKey) {
+    setPrevFilterKey(filterKey);
+    setPage(1);
+  }
+
   // Sincroniza estado → URL (replace, sem novo entry no histórico)
   useEffect(() => {
     const params = new URLSearchParams();
@@ -191,11 +201,6 @@ export function CandidatesIndex({ candidates, initial }: Props) {
     setSortDir("asc");
     setPage(1);
   }, []);
-
-  // Reset paginação quando filtro/sort muda
-  useEffect(() => {
-    setPage(1);
-  }, [query, type, uf, party, tse, hasBio, hasPhoto, sortKey, sortDir]);
 
   // Click em sort: se já é o ativo → inverte direção; senão → vira ativo com direção default
   const onSortClick = useCallback(

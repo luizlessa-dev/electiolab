@@ -28,6 +28,10 @@ export function StatePollSnapshotCard({
   const dateBR = pubDate.toLocaleDateString("pt-BR");
   // Sinal de frescor para conteúdo YMYL eleitoral: pesquisa com >90 dias é
   // sinalizada visualmente (estados pequenos recebem poucas pesquisas).
+  // Server Component (renderiza uma vez por request no servidor, sem
+  // reconciliação de hidratação como um Client Component) — Date.now() aqui
+  // é o padrão correto pra "agora" no momento do request.
+  // eslint-disable-next-line react-hooks/purity
   const daysSince = Math.floor((Date.now() - pubDate.getTime()) / 86_400_000);
   const isStale = daysSince > 90;
 

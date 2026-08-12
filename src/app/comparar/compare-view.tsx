@@ -113,6 +113,9 @@ export function CompareView({ initialCandidates, options }: Props) {
     if (!changed) return;
 
     if (wantedSlugs.length === 0) {
+      // Efeito genuíno de fetch-on-change (React docs: "Fetching data" é um
+      // uso válido de effect); este é só o ramo síncrono de "nada pra buscar".
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCandidates([]);
       return;
     }
