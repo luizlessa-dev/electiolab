@@ -345,7 +345,6 @@ const INSTITUTE_ALIASES: Record<string, string> = {
   "100% cidades": "Futura Inteligência",
 };
 const aliasInstitute = (raw: string): string => INSTITUTE_ALIASES[raw.trim().toLowerCase()] ?? raw;
-const META_RE = /contratante|pesquisa|instituto|^data|datas|amostr|margem|^cen\.?$|cen[áa]rio/i;
 const IGNORE_RE = /outros|brancos?|nulos?|indecis|absten|absor|lideran|diferen|n[ãa]o sabe|^—$|^-$/i;
 
 function parseTable(tableHtml: string): string[][] {

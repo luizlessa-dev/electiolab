@@ -20,7 +20,6 @@ import { test, expect } from "@playwright/test";
  */
 
 const TEST_EMAIL = process.env.E2E_TEST_EMAIL ?? "e2e@electiolab.test";
-const TEST_CARD = "4242424242424242";
 
 test.describe("Pricing page", () => {
   test("renderiza os 4 planos com preços corretos", async ({ page }) => {

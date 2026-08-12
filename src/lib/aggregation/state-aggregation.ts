@@ -7,8 +7,8 @@
  * 3. Confidence scoring based on data quality
  */
 
-import { aggregateWeightedPolls, AggregatedResult } from './poll-weighting';
-import { validateAndNormalizePollCandidates, getValidCandidatesForState } from './candidate-validator';
+import { aggregateWeightedPolls } from './poll-weighting';
+import { validateAndNormalizePollCandidates } from './candidate-validator';
 import { getRealCandidatesByStateAndPosition } from '@/lib/candidates/real-candidates-2026';
 
 export interface StatePollData {

@@ -170,10 +170,3 @@ function calculateVolatility(values: number[]): number {
   const avgSquaredDiff = squaredDiffs.reduce((sum, sq) => sum + sq, 0) / values.length;
   return Math.sqrt(avgSquaredDiff);
 }
-
-function interpretVolatility(volatility: number): string {
-  if (volatility < 1) return 'Very stable - consistent polling';
-  if (volatility < 2) return 'Stable - minor fluctuations';
-  if (volatility < 4) return 'Moderate - regular swings';
-  return 'High volatility - significant swings';
-}

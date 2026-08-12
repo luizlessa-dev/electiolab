@@ -153,7 +153,10 @@ async function main() {
   // Grava em batches de 100
   let inserted = 0;
   for (let i = 0; i < inserts.length; i += 100) {
-    const batch = inserts.slice(i, i + 100).map(({ name, ...rest }) => rest);
+    const batch = inserts.slice(i, i + 100).map(({ name, ...rest }) => {
+      void name;
+      return rest;
+    });
     const { error: ie } = await supabase.from("judicial_proceedings").insert(batch);
     if (ie) console.error(`  batch ${i}:`, ie.message);
     else inserted += batch.length;

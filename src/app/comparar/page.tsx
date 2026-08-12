@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@supabase/supabase-js";
-import { ArrowLeft, GitCompare, X, Plus } from "lucide-react";
+import { ArrowLeft, GitCompare } from "lucide-react";
 import { CompareView, type ComparedCandidate } from "./compare-view";
 
 export const dynamic = "force-dynamic";

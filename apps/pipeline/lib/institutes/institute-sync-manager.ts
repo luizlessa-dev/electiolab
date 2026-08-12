@@ -9,9 +9,6 @@
  */
 
 import { InstituteClientBase, Poll } from './institute-client-base';
-import { datafolhaClient } from './datafolha-client';
-import { ipecClient } from './ipec-client';
-import { quaestClient } from './quaest-client';
 
 export interface SyncOptions {
   electionId?: string;

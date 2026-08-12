@@ -84,9 +84,6 @@ export const MultiRegionComparisonSchema = z.object({
 // Phase 3: Historical Analytics
 // ═══════════════════════════════════════════════════════════════════
 
-const TrendSchema = z.enum(['up', 'down', 'stable']);
-const ConsistencySchema = z.enum(['high', 'medium', 'low']);
-
 export const CandidateHistoryQuerySchema = z.object({
   candidate: z.string().min(1),
   state: z.string().length(2).toUpperCase(),

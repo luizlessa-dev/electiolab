@@ -185,7 +185,7 @@ export class InstitutusScrapeAgent extends RufloAgent {
                 strategyUsed = strategy;
                 break;
               }
-            } catch (e) {
+            } catch {
               console.log(
                 `[${this.config.id}] ${institute.id}: ${strategy} failed`
               );
@@ -275,7 +275,7 @@ export class InstitutusScrapeAgent extends RufloAgent {
       }
 
       return polls;
-    } catch (e) {
+    } catch {
       return [];
     }
   }

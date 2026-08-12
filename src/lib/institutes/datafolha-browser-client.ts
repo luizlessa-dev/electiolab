@@ -41,13 +41,12 @@ export class DatafolhaBrowserClient extends BrowserScraperBase {
         if (extracted.length > 0) {
           return extracted;
         }
-      } catch (e) {
+      } catch {
         console.warn('[Datafolha Browser] JSON parse failed');
       }
     }
 
     // Fallback: HTML extraction
-    const pollPattern = /class="[^"]*poll[^"]*"/gi;
     const pollDivs = html.match(/(?:<div[^>]*poll[^>]*>[\s\S]*?<\/div>)/gi) || [];
 
     for (const pollDiv of pollDivs.slice(0, 5)) {
@@ -56,7 +55,7 @@ export class DatafolhaBrowserClient extends BrowserScraperBase {
         if (poll && poll.results.length > 0) {
           polls.push(poll);
         }
-      } catch (e) {
+      } catch {
         // Skip invalid polls
       }
     }
@@ -69,10 +68,6 @@ export class DatafolhaBrowserClient extends BrowserScraperBase {
    */
   private extractPollFromDiv(html: string): Poll | null {
     try {
-      // Extract title
-      const titleMatch = html.match(/<h[2-3][^>]*>([\s\S]*?)<\/h[2-3]>/);
-      const title = titleMatch ? titleMatch[1].replace(/<[^>]*>/g, '').trim() : 'Poll';
-
       // Extract date
       const dateMatch = html.match(/(\d{1,2})[/-](\d{1,2})[/-](\d{4})/);
       const date = dateMatch
@@ -113,7 +108,7 @@ export class DatafolhaBrowserClient extends BrowserScraperBase {
         results,
         sourceUrl: this.config.baseUrl,
       });
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -143,7 +138,7 @@ export class DatafolhaBrowserClient extends BrowserScraperBase {
         if (poll.sampleSize > 0 && poll.results.length > 0) {
           polls.push(poll);
         }
-      } catch (error) {
+      } catch {
         // Skip invalid
       }
     }

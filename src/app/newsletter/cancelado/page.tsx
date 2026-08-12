@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CheckCircle2, AlertCircle, ArrowLeft, Mail } from "lucide-react";
+import { CheckCircle2, AlertCircle, ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Inscrição cancelada — Sinal Eleitoral",

@@ -93,7 +93,7 @@ async function resolveElection(): Promise<{ id: string; name: string } | null> {
     return;
   }
 
-  let inserted = 0, updated = 0, errors = 0;
+  let inserted = 0, errors = 0;
   for (const d of drafts) {
     const { error } = await sb.from("poll_drafts").upsert(d, {
       onConflict: "election_id,institute_name,fieldwork_end,scope,round,scenario_label",

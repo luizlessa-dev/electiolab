@@ -4,10 +4,10 @@
  * Manually trigger Agent 1 (TSE Ingestão)
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { TseIngestAgent } from "@/agents/agent-1-tse";
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   try {
     console.log("[run-agent-1] Starting Agent 1 (TSE ingestão)...");
 

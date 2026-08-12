@@ -46,7 +46,7 @@ export class IpecClientReal extends InstituteClientBase {
               console.log(`[Ipec] Found ${polls.length} polls from ${url}`);
               return polls;
             }
-          } catch (e) {
+          } catch {
             console.log(`[Ipec] Failed to fetch from ${url}, trying next...`);
           }
         }
@@ -82,7 +82,7 @@ export class IpecClientReal extends InstituteClientBase {
         if (extracted.length > 0) {
           return extracted;
         }
-      } catch (e) {
+      } catch {
         console.warn('[Ipec] JSON parse failed, trying HTML extraction');
       }
     }

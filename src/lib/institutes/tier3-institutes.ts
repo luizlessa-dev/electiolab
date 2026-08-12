@@ -11,8 +11,7 @@
  * - ~2kb per client
  */
 
-import { GenericScraper, GenericScraperConfig } from './generic-scraper';
-import { Poll } from './institute-client-base';
+import { GenericScraper } from './generic-scraper';
 
 // ============================================================================
 // TIER 3A: TRADITIONAL REGIONAL INSTITUTES (0.72-0.78)

@@ -15,7 +15,7 @@ console.log('🚀 TSE Integration Test Suite\n');
 // Test 1: DivulgaCandContas Client Instantiation
 console.log('Test 1: DivulgaCandContas Client Instantiation');
 try {
-  const candidatosClient = new DivulgaCandContasClient();
+  new DivulgaCandContasClient();
   console.log('✅ Client instantiated successfully\n');
 } catch (error) {
   console.error('❌ Failed to instantiate DivulgaCandContas client:', error);
@@ -25,7 +25,7 @@ try {
 // Test 2: TSE Resultados Client Instantiation
 console.log('Test 2: TSE Resultados Client Instantiation');
 try {
-  const resultadosClient = new TSEResultadosClient();
+  new TSEResultadosClient();
   console.log('✅ Client instantiated successfully\n');
 } catch (error) {
   console.error('❌ Failed to instantiate TSE Resultados client:', error);

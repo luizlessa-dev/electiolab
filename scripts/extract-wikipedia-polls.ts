@@ -132,7 +132,6 @@ function parseTable(tableHtml: string): string[][] {
     const cellMatches = [...tr.matchAll(/<(t[hd])\b([^>]*)>([\s\S]*?)<\/\1>/g)];
     if (!grid[ri]) grid[ri] = [];
     let col = 0;
-    const place = (text: string) => { while (grid[ri][col] != null) col++; grid[ri][col] = text; };
     // primeiro, despeja rowspans pendentes desta linha
     (pending[ri] ?? []).forEach(() => {}); // placeholder; tratamos abaixo via carry
     for (const cm of cellMatches) {

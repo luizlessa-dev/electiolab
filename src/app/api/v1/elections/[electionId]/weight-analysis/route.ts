@@ -8,31 +8,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 
-interface Database {
-  polls: {
-    id: string;
-    election_id: string;
-    institute_name: string;
-    publication_date: string;
-    fieldwork_end: string;
-    sample_size: number;
-    methodology: string;
-    credibility_score?: number;
-    margin_of_error?: number;
-  };
-  poll_results: {
-    poll_id: string;
-    candidate_id: string;
-    percentage: number;
-  };
-  weighted_averages: {
-    election_id: string;
-    weighted_average: number;
-    confidence_interval_low: number;
-    confidence_interval_high: number;
-  };
-}
-
 const RECENCY_HALF_LIFE_DAYS = 14;
 const BASELINE_MOE = 2.5;
 

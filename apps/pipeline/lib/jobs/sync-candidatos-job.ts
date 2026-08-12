@@ -39,11 +39,6 @@ export async function syncCandidatosJob(ano: number = 2026): Promise<SyncCandida
     'RO', 'RR', 'RS', 'SC', 'SE', 'SP', 'TO',
   ];
 
-  const cargos: Array<'presidente' | 'governador' | 'senador' | 'deputado'> = [
-    'presidente',
-    'governador',
-  ];
-
   let totalCandidatos = 0;
   let totalErros = 0;
   const erros: string[] = [];
@@ -200,6 +195,9 @@ export async function scheduleSyncCandidatos() {
     return;
   }
 
+  // node-schedule não está instalado (não está em package.json/node_modules) —
+  // função morta, nunca chamada em nenhum lugar do repo.
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const schedule = require('node-schedule');
 
   // Executar toda segunda-feira às 10:00 UTC

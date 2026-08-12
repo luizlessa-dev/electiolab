@@ -156,7 +156,6 @@ export default async function CandidatoPage({
   const tseSitYear = (c as any).tse_last_situation_year as number | null;
 
   // Aggregations totais (soma cross-platform)
-  const adsTotal = digitalAds.length;
   const spendMin = digitalAds.reduce((s, a) => s + (Number(a.spend_lower) || 0), 0);
   const spendMax = digitalAds.reduce((s, a) => s + (Number(a.spend_upper) || 0), 0);
 

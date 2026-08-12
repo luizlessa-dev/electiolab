@@ -91,7 +91,7 @@ async function snapshot(url: string): Promise<Snapshot> {
   let res: Response;
   try {
     res = await fetch(url, { redirect: "follow" });
-  } catch (e) {
+  } catch {
     return {
       url, status: 0, title: null, meta_description: null, canonical: null,
       meta_robots: null, h1: [], h2: [], h3: [], og: {}, json_ld_count: 0,

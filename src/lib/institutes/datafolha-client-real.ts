@@ -75,7 +75,7 @@ export class DatafolhaClientReal extends InstituteClientBase {
             polls.push(...extracted);
             return polls;
           }
-        } catch (e) {
+        } catch {
           console.warn('[Datafolha] JSON parse error, trying next pattern');
         }
       }
@@ -160,7 +160,7 @@ export class DatafolhaClientReal extends InstituteClientBase {
           if (poll) {
             polls.push(poll);
           }
-        } catch (e) {
+        } catch {
           // Skip invalid rows
         }
       }
@@ -195,7 +195,7 @@ export class DatafolhaClientReal extends InstituteClientBase {
         ],
         sourceUrl: `${this.baseUrl}/pesquisa/`,
       });
-    } catch (error) {
+    } catch {
       return null;
     }
   }

@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  LineChart,
   Line,
   XAxis,
   YAxis,
@@ -20,7 +19,6 @@ interface CandidateInfo {
 }
 
 const AXIS_COLOR = "oklch(0.35 0.005 260)";
-const GRID_COLOR = "oklch(0.20 0.005 260)";
 const LABEL_COLOR = "oklch(0.50 0 0)";
 
 export function TrendLineChart({

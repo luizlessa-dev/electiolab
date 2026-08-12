@@ -5,10 +5,10 @@
  * Called by Agent 1 webhook on completion
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { InstitutusScrapeAgent } from "@/agents/agent-2-institutos";
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   try {
     console.log("[run-agent-2] Starting Agent 2 (institutos scraping)...");
 

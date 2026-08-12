@@ -3,7 +3,7 @@
  * Rate limiting + retry automático
  */
 
-import type { CandidatoTSE, DivulgaCandContasResponse } from './types';
+import type { DivulgaCandContasResponse } from './types';
 
 const BASE_URL = 'https://divulgacandcontas.tse.jus.br';
 

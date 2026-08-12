@@ -13,7 +13,7 @@ import { z } from 'zod';
 import { discrepancyManager, type DiscrepancyFilter } from '@/lib/admin/discrepancy-manager';
 import { DiscrepancyFilterSchema } from '@/lib/validation/wave4';
 import { requireAdminAuth, checkRateLimit, getClientIdentifier } from '@/lib/middleware/auth';
-import { handleError, successResponse, ValidationError } from '@/lib/utils/error-handler';
+import { handleError, successResponse } from '@/lib/utils/error-handler';
 
 /**
  * GET - List discrepancies

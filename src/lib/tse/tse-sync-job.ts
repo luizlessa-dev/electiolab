@@ -15,7 +15,6 @@
  */
 
 import { tseSyncService, TSESyncResult } from './tse-sync-service';
-import { tseValidator } from './tse-validator';
 
 export interface SyncJobResult {
   jobId: string;

@@ -50,13 +50,13 @@ export class IpespeClientImpl extends BrowserScraperBase {
                 sourceUrl: this.config.baseUrl,
               });
               if (poll.results.length > 0) polls.push(poll);
-            } catch (e) {
+            } catch {
               // Skip invalid
             }
           }
           if (polls.length > 0) return polls;
         }
-      } catch (e) {
+      } catch {
         // Continue to HTML fallback
       }
     }
@@ -248,13 +248,13 @@ export class RTBDClientImpl extends BrowserScraperBase {
                 sourceUrl: this.config.baseUrl,
               });
               if (poll.results.length > 0) polls.push(poll);
-            } catch (e) {
+            } catch {
               // Skip invalid
             }
           }
           if (polls.length > 0) return polls;
         }
-      } catch (e) {
+      } catch {
         // Continue to HTML fallback
       }
     }

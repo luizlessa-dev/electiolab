@@ -11,13 +11,7 @@
  *   npx tsx scripts/collect-gsc-baseline.ts
  */
 
-import { createClient } from "@supabase/supabase-js";
 import * as fs from "fs";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ""
-);
 
 // Estados que temos páginas online
 const STATES = [
@@ -84,7 +78,6 @@ async function main() {
   console.log("⏳ Collecting metrics for 15 states...\n");
 
   const results: StateBaseline[] = [];
-  const startTime = Date.now();
 
   // Coleta em paralelo
   const promises = STATES.map((state) => collectStateMetrics(state));

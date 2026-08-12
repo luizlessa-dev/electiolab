@@ -68,7 +68,7 @@ export class TSEApiClient extends InstituteClientBase {
         { ano: 2026, tipo: 'presidencial' },
         { ano: 2026, tipo: 'governador' },
       ];
-    } catch (error) {
+    } catch {
       console.warn('[TSE] Could not fetch elections list');
       return [];
     }
@@ -124,11 +124,11 @@ export class TSEApiClient extends InstituteClientBase {
    * Validate candidate against TSE registry
    * Ensures polling data matches official names
    */
-  async validateCandidate(name: string, state: string): Promise<boolean> {
+  async validateCandidate(): Promise<boolean> {
     try {
       // Would check against TSE registry
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

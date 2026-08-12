@@ -109,7 +109,7 @@ async function validate() {
     for (const validation of validationQueries) {
       console.log(`✓ Validando: ${validation.name}`);
 
-      const { data, error } = await sb.rpc('count_rows', {
+      await sb.rpc('count_rows', {
         table_name: validation.name,
       }).catch(async () => {
         // Se RPC não existir, tenta usar query SQL diretamente
@@ -122,25 +122,25 @@ async function validate() {
       // Simplificar: usar query simples pra verificar existência
       const testQueries = {
         'Candidatos Table': async () => {
-          const { data } = await sb
+          await sb
             .from('candidates')
             .select('count', { count: 'exact', head: true });
           return { success: true, count: 0 };
         },
         'Election Results Table': async () => {
-          const { data } = await sb
+          await sb
             .from('election_results')
             .select('count', { count: 'exact', head: true });
           return { success: true, count: 0 };
         },
         'Election Results Candidatos Table': async () => {
-          const { data } = await sb
+          await sb
             .from('election_results_candidatos')
             .select('count', { count: 'exact', head: true });
           return { success: true, count: 0 };
         },
         'Data Source Audit Table': async () => {
-          const { data } = await sb
+          await sb
             .from('data_source_audit')
             .select('count', { count: 'exact', head: true });
           return { success: true, count: 0 };

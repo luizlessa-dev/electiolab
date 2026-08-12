@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
           if (!error && data) {
             polls = data;
           }
-        } catch (err) {
+        } catch {
           console.warn(`[Regional] Failed to fetch ${state} from DB`);
         }
 

@@ -27,10 +27,10 @@ export class PoderDataClient extends InstituteClientBase {
 
       try {
         const response = await this.fetchWithUserAgent(`${this.baseUrl}/pesquisas`);
-        const html = await response.text();
+        await response.text();
 
         // PoderData likely has structured data
-        const polls = this.extractPolls(html);
+        const polls = this.extractPolls();
         console.log(`[PoderData] Found ${polls.length} polls`);
 
         return polls;
@@ -41,7 +41,7 @@ export class PoderDataClient extends InstituteClientBase {
     }, 'PoderData fetch');
   }
 
-  private extractPolls(html: string): Poll[] {
+  private extractPolls(): Poll[] {
     // Placeholder: would implement actual parsing
     // PoderData research: check for JSON in <script> or API endpoints
     return [];
@@ -69,9 +69,9 @@ export class AtlasIntelClient extends InstituteClientBase {
       try {
         // AtlasIntel likely has live tracking dashboard
         const response = await this.fetchWithUserAgent(`${this.baseUrl}/`);
-        const html = await response.text();
+        await response.text();
 
-        const polls = this.extractPolls(html);
+        const polls = this.extractPolls();
         console.log(`[AtlasIntel] Found ${polls.length} polls`);
 
         return polls;
@@ -82,7 +82,7 @@ export class AtlasIntelClient extends InstituteClientBase {
     }, 'AtlasIntel fetch');
   }
 
-  private extractPolls(html: string): Poll[] {
+  private extractPolls(): Poll[] {
     // Placeholder: would implement actual parsing
     return [];
   }
@@ -108,9 +108,9 @@ export class IpespeClient extends InstituteClientBase {
 
       try {
         const response = await this.fetchWithUserAgent(`${this.baseUrl}/`);
-        const html = await response.text();
+        await response.text();
 
-        const polls = this.extractPolls(html);
+        const polls = this.extractPolls();
         return polls;
       } catch (error) {
         console.error('[Ipespe] Fetch error:', error);
@@ -119,7 +119,7 @@ export class IpespeClient extends InstituteClientBase {
     }, 'Ipespe fetch');
   }
 
-  private extractPolls(html: string): Poll[] {
+  private extractPolls(): Poll[] {
     return [];
   }
 }

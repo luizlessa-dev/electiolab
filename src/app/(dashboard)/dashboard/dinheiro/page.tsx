@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getElections, getCandidates, getDigitalAdsAggregate, getPartyFunds } from "@/lib/queries";
+import { getElections, getDigitalAdsAggregate, getPartyFunds } from "@/lib/queries";
 import { DollarSign, Megaphone, Banknote, ExternalLink } from "lucide-react";
 
 export default async function DinheiroPage() {

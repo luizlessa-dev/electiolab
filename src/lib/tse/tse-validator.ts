@@ -8,7 +8,6 @@
  */
 
 import { validateCandidate } from '@/lib/aggregation/candidate-validator';
-import { tseSyncService } from './tse-sync-service';
 import { fetchTSECandidatos } from './tse-client';
 
 export interface TSEValidationResult {

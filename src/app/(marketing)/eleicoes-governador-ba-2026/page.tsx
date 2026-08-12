@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { BarChart3, ArrowLeft, ExternalLink, HelpCircle, TrendingUp } from "lucide-react";
+import { BarChart3, ArrowLeft, HelpCircle, TrendingUp } from "lucide-react";
 import { getLatestStateGovPoll, getStateRunoffScenarios, toRunoffTabs } from "@/lib/marketing-data";
 import { StateRunoffTabs } from "@/components/state-runoff-tabs";
 import { StatePollSnapshotCard } from "@/components/state-poll-snapshot";
-import { buildStateRaceDataset } from "@/lib/governor-dataset";
 
 export const revalidate = 3600;
 export const metadata: Metadata = {

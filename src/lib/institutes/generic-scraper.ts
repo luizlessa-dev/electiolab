@@ -190,7 +190,7 @@ export abstract class GenericScraper extends InstituteClientBase {
   protected parseJson(jsonStr: string): any {
     try {
       return JSON.parse(jsonStr);
-    } catch (e) {
+    } catch {
       // Try removing trailing commas
       try {
         const cleaned = jsonStr.replace(/,\s*}/g, '}').replace(/,\s*]/g, ']');

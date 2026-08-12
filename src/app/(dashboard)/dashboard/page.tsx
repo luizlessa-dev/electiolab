@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { WeightedAverageChart } from "@/components/charts/weighted-average-chart";
 import { TrendLineChart } from "@/components/charts/trend-line-chart";
@@ -16,7 +15,7 @@ import {
   calculateWeightedAverage,
   type PollInput,
 } from "@/lib/weighting/calculate-weighted-average";
-import { BarChart3, TrendingUp, Building2, FileSearch, Users, Percent, TrendingDown, Activity, ChevronRight } from "lucide-react";
+import { BarChart3, TrendingUp, Building2, FileSearch, Users, Activity, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 // Hoistado pro escopo do módulo (evita recriar o tipo de componente a cada
@@ -86,7 +85,7 @@ export default async function DashboardPage({
     );
   }
 
-  const [candidates, polls, institutes, electionResults, indicators] =
+  const [candidates, polls, institutes, electionResults] =
     await Promise.all([
       getCandidates(election.id),
       getPolls(election.id),
@@ -183,7 +182,6 @@ export default async function DashboardPage({
   const instituteCount = new Set((polls as any[]).map((p) => p.institute?.name)).size;
 
   const topCandidate = [...candidateAverages].sort((a, b) => b.average - a.average)[0];
-  const ipca = indicators.length > 0 ? Number(indicators[indicators.length - 1]?.value).toFixed(1) : null;
 
   // Última pesquisa — para dateModified no JSON-LD
   const lastPollDate = (polls as any[])

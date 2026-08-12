@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
         }));
 
         // Inserir no Supabase
-        const { error: insertError, data: insertedData } = await sb
+        const { error: insertError } = await sb
           .from('candidates')
           .insert(candidatosParaInserir)
           .select();

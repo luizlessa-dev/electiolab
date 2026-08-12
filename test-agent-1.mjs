@@ -33,7 +33,7 @@ console.log("======================\n");
 // Test 1: Can we connect to Supabase?
 console.log("📋 Test 1: Supabase connection...");
 try {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("pesqele_registry")
     .select("count")
     .limit(1);

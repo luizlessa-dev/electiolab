@@ -249,7 +249,6 @@ function parseCsvBuffer(buf: Buffer, ano: number): TseRow[] {
   const header = lines[0].split(";").map((h) => h.replace(/^"|"$/g, "").trim());
   const idx = (col: string) => header.indexOf(col);
 
-  const iAno = idx("ANO_ELEICAO");
   const iUF = idx("SG_UF");
   const iCargo = idx("DS_CARGO");
   const iSq = idx("SQ_CANDIDATO");

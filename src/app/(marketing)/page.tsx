@@ -241,9 +241,6 @@ export default async function HomePage() {
 
   // Top 7 institutos para o texto SEO
   const topInstitutes = institutes.slice(0, 7);
-  const institutesText = topInstitutes
-    .map((i, idx) => (idx === 0 ? `${i.name} ${i.pct}%` : `${i.name} ${i.pct}%`))
-    .join(", ");
 
   // Texto resumo da última presidencial (top 4 candidatos)
   const presTop = presPoll?.results.slice(0, 4) ?? [];
@@ -418,7 +415,7 @@ export default async function HomePage() {
             ))}
           </div>
           <p className="text-center text-muted-foreground italic text-sm">
-            "E se existisse uma forma de ver a eleição como ela realmente é?"
+            &ldquo;E se existisse uma forma de ver a eleição como ela realmente é?&rdquo;
           </p>
         </div>
       </section>

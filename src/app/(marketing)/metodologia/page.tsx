@@ -232,7 +232,7 @@ export default function MetodologiaPage() {
                 ["20 dias", "0,250", "25,0%"],
                 ["30 dias", "0,125", "12,5%"],
                 ["45 dias", "0,044", "4,4%"],
-              ].map(([a, b, c], i) => (
+              ].map(([a], i) => (
                 <div key={i} className={`bg-card px-3 py-2 ${i === 0 ? "text-muted-foreground uppercase tracking-wider" : ""}`}>
                   {i === 0 ? a : a}
                 </div>
@@ -247,7 +247,7 @@ export default function MetodologiaPage() {
                 ["20 dias", "0,250", "25,0%"],
                 ["30 dias", "0,125", "12,5%"],
                 ["45 dias", "0,044", "4,4%"],
-              ].map(([a, b, c], i) => (
+              ].map(([, b], i) => (
                 <div key={`b-${i}`} className={`bg-card px-3 py-2 ${i === 0 ? "text-muted-foreground" : i % 2 === 0 ? "text-primary" : ""}`}>{b}</div>
               ))}
             </div>

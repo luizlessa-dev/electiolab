@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
             if (!error && data) {
               polls = data;
             }
-          } catch (err) {
+          } catch {
             console.warn(`Failed to fetch ${state} ${position} from Supabase`);
           }
 

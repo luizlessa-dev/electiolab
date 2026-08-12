@@ -87,17 +87,11 @@ const errors = [];
 
 // Checar para statement abertos (sem ;)
 const lines = sql.split('\n');
-let openStatement = false;
-lines.forEach((line, idx) => {
+lines.forEach((line) => {
   const trimmed = line.trim();
 
   // Ignorar comentários e linhas vazias
   if (!trimmed || trimmed.startsWith('--')) return;
-
-  // Checar se todas as statements têm ;
-  if (trimmed.endsWith(';')) {
-    openStatement = false;
-  }
 });
 
 if (errors.length === 0) {

@@ -5,7 +5,7 @@
  * Returns: { ok: boolean, agents: {...}, dependencies: {...}, timestamp: string }
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
 interface HealthResponse {
@@ -33,7 +33,7 @@ interface HealthResponse {
 
 const AGENT_NAMES = ["agent-1-tse", "agent-2-institutos", "agent-3-validacao"];
 
-export async function GET(req: NextRequest): Promise<NextResponse> {
+export async function GET(): Promise<NextResponse> {
   const timestamp = new Date().toISOString();
   const response: HealthResponse = {
     ok: true,
@@ -56,7 +56,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       process.env.SUPABASE_SERVICE_ROLE_KEY || ""
     );
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("pesqele_registry")
       .select("count")
       .limit(1);

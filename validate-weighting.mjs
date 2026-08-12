@@ -57,11 +57,6 @@ console.log(`  With extreme [40,41,39,40,95] → ${outliers2[4] ? 'detected at [
 
 // Full aggregation test
 console.log('\n📊 Full Aggregation Test:');
-const polls = [
-  { candidate: 'A', pct: 45, moe: 2.0, date: new Date('2026-08-08T09:00:00Z') },
-  { candidate: 'A', pct: 44, moe: 2.5, date: new Date('2026-08-07T09:00:00Z') },
-  { candidate: 'B', pct: 35, moe: 2.2, date: new Date('2026-08-08T09:00:00Z') },
-];
 
 const ref = new Date('2026-08-08T10:00:00Z');
 

@@ -74,7 +74,7 @@ export async function syncPollsToSupabase(
     console.log(`[Sync] poll_type=${pollsData[0].poll_type}, election_id=${pollsData[0].election_id}`);
 
     // Inserir no Supabase
-    const { data, error } = await supabase.from('polls').insert(pollsData);
+    const { error } = await supabase.from('polls').insert(pollsData);
 
     if (error) {
       console.error(`[Sync] ❌ ${instituteId} erro Supabase:`, error);

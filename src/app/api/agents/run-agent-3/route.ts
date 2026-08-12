@@ -5,10 +5,10 @@
  * Called by Agent 2 webhook on completion
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { ValidacaoAgent } from "@/agents/agent-3-validacao";
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   try {
     console.log("[run-agent-3] Starting Agent 3 (validação + alertas)...");
 

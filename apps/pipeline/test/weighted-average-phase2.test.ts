@@ -283,30 +283,6 @@ describe('Fase 2: Recency Half-Life (10 → 14 dias)', () => {
   });
 
   test('Pesquisa com 21 dias deve ter peso bem menor que 14 dias', () => {
-    const refDate = new Date('2026-08-05');
-
-    const poll14Days: PollInput[] = [
-      {
-        id: 'poll14',
-        fieldworkEnd: new Date('2026-07-22'), // 14 dias
-        sampleSize: 2000,
-        methodology: 'presencial',
-        credibilityScore: 9,
-        percentage: 35,
-      },
-    ];
-
-    const poll21Days: PollInput[] = [
-      {
-        id: 'poll21',
-        fieldworkEnd: new Date('2026-07-15'), // 21 dias
-        sampleSize: 2000,
-        methodology: 'presencial',
-        credibilityScore: 9,
-        percentage: 35,
-      },
-    ];
-
     // Com half-life 14:
     const weight14 = Math.pow(0.5, 14 / 14); // 0.5
     const weight21 = Math.pow(0.5, 21 / 14); // 0.5^1.5 ≈ 0.354

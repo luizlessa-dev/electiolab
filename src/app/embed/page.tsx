@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, Code, Palette, Maximize2, Copy } from "lucide-react";
+import { ArrowLeft, Code, Palette, Maximize2 } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Embed Widget — Inclua dados eleitorais no seu site | ElectioLab",
@@ -160,7 +160,7 @@ export default function EmbedDocsPage() {
           <h3 className="text-base font-bold">Termos de uso</h3>
           <ul className="text-sm text-muted-foreground space-y-1 list-disc ml-5 leading-relaxed">
             <li>Uso editorial gratuito (jornais, blogs, portais).</li>
-            <li>Não modifique o branding "ElectioLab" no rodapé do widget.</li>
+            <li>Não modifique o branding &ldquo;ElectioLab&rdquo; no rodapé do widget.</li>
             <li>Os dados podem ser cacheados pelo navegador por até 1h.</li>
             <li>Se precisar de SLA, customização visual ou white-label,
               <Link href="/precos" className="text-primary hover:underline"> veja os planos Business</Link>.

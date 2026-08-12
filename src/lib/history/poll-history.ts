@@ -158,7 +158,6 @@ class PollHistory {
       const startPercentage = history[0].percentage;
       const endPercentage = history[history.length - 1].percentage;
       const avgPercentage = history.reduce((sum, h) => sum + h.percentage, 0) / history.length;
-      const volatility = this.calculateVolatility(history.map(h => h.percentage));
 
       let trend: 'up' | 'down' | 'stable';
       if (endPercentage > startPercentage + 2) {

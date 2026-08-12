@@ -50,7 +50,7 @@ export class AtlasIntelClient extends BrowserScraperBase {
             console.log(`[AtlasIntel] Found ${polls.length} polls`);
             return polls;
           }
-        } catch (e) {
+        } catch {
           console.warn(`[AtlasIntel] Failed to fetch from ${url}`);
         }
       }
@@ -83,7 +83,7 @@ export class AtlasIntelClient extends BrowserScraperBase {
             console.log('[AtlasIntel] Successfully parsed JSON');
             return extracted;
           }
-        } catch (e) {
+        } catch {
           console.warn('[AtlasIntel] JSON parse failed');
         }
       }
@@ -187,7 +187,7 @@ export class AtlasIntelClient extends BrowserScraperBase {
 
           polls.push(poll);
         }
-      } catch (e) {
+      } catch {
         console.warn('[AtlasIntel] Dashboard parse error');
       }
     }
@@ -247,7 +247,7 @@ export class AtlasIntelClient extends BrowserScraperBase {
 
           polls.push(poll);
         }
-      } catch (e) {
+      } catch {
         console.warn('[AtlasIntel] Card parse error');
       }
     }

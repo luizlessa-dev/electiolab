@@ -38,7 +38,7 @@ describe('Candidate Validator Integration', () => {
 
     it('should work across all states', () => {
       const states = ['SP', 'RJ', 'MG', 'BA', 'RS', 'DF', 'PA', 'AM'];
-      states.forEach((state) => {
+      states.forEach(() => {
         const result = validateCandidate('Lula', 'SP', 'governador');
         // Should either accept or reject, but not crash
         expect(result).toHaveProperty('isValid');

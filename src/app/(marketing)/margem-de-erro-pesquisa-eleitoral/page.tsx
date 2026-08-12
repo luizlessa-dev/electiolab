@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, AlertTriangle } from "lucide-react";
+import { ArrowLeft, AlertTriangle } from "lucide-react";
 import { LeiaTabem } from "@/components/editorial/leia-tambem";
 
 export const metadata: Metadata = {

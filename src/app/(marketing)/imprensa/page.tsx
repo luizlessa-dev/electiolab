@@ -269,9 +269,9 @@ export default function ImprensaPage() {
 
               <p>
                 A iniciativa responde a um problema bem documentado no jornalismo político brasileiro: a cobertura
-                de pesquisas isoladas cria a ilusão de volatilidade que não existe na realidade eleitoral. "Um
+                de pesquisas isoladas cria a ilusão de volatilidade que não existe na realidade eleitoral. &ldquo;Um
                 instituto diz 39%, outro diz 33% na mesma semana. A manchete fica com o outlier. O ElectioLab
-                mostra que, na média ponderada, o número está em 37% — e que a tendência é estável há três semanas",
+                mostra que, na média ponderada, o número está em 37% — e que a tendência é estável há três semanas&rdquo;,
                 explica o projeto.
               </p>
 
@@ -293,8 +293,8 @@ export default function ImprensaPage() {
 
               <div className="border-l-2 border-primary pl-4 py-1 my-4">
                 <p className="text-foreground font-medium italic">
-                  "No Brasil, a ausência de um agregador fazia com que cada pesquisa fosse tratada como a verdade
-                  absoluta. A agregação não elimina a incerteza — ela a quantifica corretamente."
+                  &ldquo;No Brasil, a ausência de um agregador fazia com que cada pesquisa fosse tratada como a verdade
+                  absoluta. A agregação não elimina a incerteza — ela a quantifica corretamente.&rdquo;
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">— ElectioLab</p>
               </div>

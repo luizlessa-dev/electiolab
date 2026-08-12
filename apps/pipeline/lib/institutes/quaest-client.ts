@@ -48,7 +48,7 @@ export class QuaestClient extends InstituteClientBase {
   /**
    * Parse Quaest HTML/JSON response
    */
-  private parseQuaestHTML(html: string): Poll[] {
+  private parseQuaestHTML(): Poll[] {
     // TODO: Implement HTML parsing for Quaest-specific format
     return [];
   }

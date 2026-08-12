@@ -46,7 +46,7 @@ export class QuaestClientReal extends InstituteClientBase {
               console.log(`[Quaest] Found ${polls.length} polls from ${url}`);
               return polls;
             }
-          } catch (e) {
+          } catch {
             console.log(`[Quaest] Failed to fetch from ${url}, trying next...`);
           }
         }
@@ -82,7 +82,7 @@ export class QuaestClientReal extends InstituteClientBase {
         if (extracted.length > 0) {
           return extracted;
         }
-      } catch (e) {
+      } catch {
         console.warn('[Quaest] JSON parse failed, trying HTML extraction');
       }
     }
@@ -105,7 +105,7 @@ export class QuaestClientReal extends InstituteClientBase {
         if (poll && poll.results.length > 0) {
           polls.push(poll);
         }
-      } catch (e) {
+      } catch {
         console.warn('[Quaest] Failed to parse article');
       }
     }
@@ -118,8 +118,7 @@ export class QuaestClientReal extends InstituteClientBase {
    */
   private extractPollFromArticle(html: string): Poll | null {
     try {
-      // Extract title/date
-      const titleMatch = html.match(/<h[1-3][^>]*>([\s\S]*?)<\/h[1-3]>/);
+      // Extract date
       const dateMatch = html.match(/<time[^>]*datetime="([^"]*)"[^>]*>/);
 
       // Extract candidates and percentages
@@ -158,7 +157,7 @@ export class QuaestClientReal extends InstituteClientBase {
         results,
         sourceUrl: this.baseUrl,
       });
-    } catch (error) {
+    } catch {
       return null;
     }
   }

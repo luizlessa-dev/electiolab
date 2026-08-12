@@ -83,10 +83,7 @@ class DatafolhaClient {
     try {
       // Datafolha typically publishes: presidencial polls
       // URL pattern: https://datafolha.folha.uol.com.br/pesquisa/...
-      const polls = await this.fetchAndParse(
-        `${BASE_URL}/pesquisa/`,
-        { cargo: 'presidente', ano }
-      );
+      const polls = await this.fetchAndParse(`${BASE_URL}/pesquisa/`);
 
       this.setCache(cacheKey, polls);
       return polls;
@@ -112,10 +109,7 @@ class DatafolhaClient {
     await this.throttleRequest();
 
     try {
-      const polls = await this.fetchAndParse(
-        `${BASE_URL}/pesquisa/`,
-        { cargo: 'governador', estado, ano }
-      );
+      const polls = await this.fetchAndParse(`${BASE_URL}/pesquisa/`);
 
       this.setCache(cacheKey, polls);
       return polls;
@@ -142,10 +136,7 @@ class DatafolhaClient {
     await this.throttleRequest();
 
     try {
-      const polls = await this.fetchAndParse(
-        `${BASE_URL}/pesquisa/`,
-        { cargo: 'presidente', ano, scenario }
-      );
+      const polls = await this.fetchAndParse(`${BASE_URL}/pesquisa/`);
 
       this.setCache(cacheKey, polls);
       return polls.length > 0 ? polls[0] : null;
@@ -184,8 +175,7 @@ class DatafolhaClient {
   // ============================================================================
 
   private async fetchAndParse(
-    url: string,
-    options: DatafolhaSearchOptions
+    url: string
   ): Promise<DatafolhaPoll[]> {
     // Datafolha typically publishes polls with this HTML structure:
     // <div class="poll-data">
@@ -211,7 +201,7 @@ class DatafolhaClient {
       }
 
       const data = JSON.parse(jsonMatch[1]);
-      return this.parseDatafolhaJSON(data, options);
+      return this.parseDatafolhaJSON(data);
     } catch (error) {
       console.error('Failed to parse Datafolha data:', error);
       throw error;
@@ -219,8 +209,7 @@ class DatafolhaClient {
   }
 
   private parseDatafolhaJSON(
-    data: Record<string, unknown>,
-    options: DatafolhaSearchOptions
+    data: Record<string, unknown>
   ): DatafolhaPoll[] {
     // Parse structure depends on Datafolha's actual JSON format
     // This is a template - adjust based on real data structure

@@ -75,11 +75,6 @@ async function getStats() {
 }
 
 async function getCruzamentos() {
-  const sb = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { auth: { persistSession: false } }
-  );
   // Cruzamento com digital_ads (CNPJ do anunciante = CNPJ sancionado)
   // Schema digital_ads: campos page_name; CNPJ do anunciante pode estar em outras tabelas
   // Por enquanto, vamos cruzar pela busca de nome em campaign_finances? Não, campaign_finances é por candidato.

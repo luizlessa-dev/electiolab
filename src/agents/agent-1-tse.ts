@@ -9,9 +9,7 @@
 
 import { RufloAgent, AgentConfig } from "./base";
 import { createHash } from "crypto";
-
-// @ts-ignore
-const AdmZip = require("adm-zip");
+import AdmZip from "adm-zip";
 
 const TSE_CDN_URL =
   "https://cdn.tse.jus.br/pesquisa_eleitoral_2026.zip";
@@ -131,7 +129,7 @@ TSE-2026-003,Quaest,2026-08-03,2026-08-07,2026-08-10`;
       const zip = new AdmZip(Buffer.from(zipBuffer));
       const csvContent = zip.readAsText("pesquisa_eleitoral_2026.csv");
       return csvContent;
-    } catch (e) {
+    } catch {
       // If not a real ZIP, treat as raw CSV (for mock)
       return Buffer.from(zipBuffer).toString('utf-8');
     }
@@ -170,7 +168,7 @@ TSE-2026-003,Quaest,2026-08-03,2026-08-07,2026-08-10`;
       return 0;
     }
 
-    const { data, error } = await this.supabase
+    const { error } = await this.supabase
       .from("pesqele_registry")
       .upsert(
         rows.map((row) => ({
@@ -196,14 +194,13 @@ TSE-2026-003,Quaest,2026-08-03,2026-08-07,2026-08-10`;
           raw: row, // store entire row for audit
         })),
         { onConflict: "protocolo" }
-      )
-      .select("count");
+      );
 
     if (error) {
       throw new Error(`Supabase upsert failed: ${error.message}`);
     }
 
-    const count = data?.length || rows.length;
+    const count = rows.length;
     console.log(`[${this.config.id}] Upserted ${count} rows to pesqele_registry`);
     return count;
   }

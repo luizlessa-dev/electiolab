@@ -152,8 +152,7 @@ async function searchTitles(query: string): Promise<string[]> {
 
 async function findBio(
   fullName: string,
-  shortName: string,
-  state: string | null
+  shortName: string
 ): Promise<{ extract: string; pageUrl: string; title: string } | null> {
   // 1. Tenta variantes diretas
   const variants = new Set<string>();
@@ -238,7 +237,7 @@ async function main() {
     const name = c.name as string;
     const state = ((c.election as { state?: string } | null)?.state) ?? null;
     process.stdout.write(`  [${i + 1}/${list.length}] ${name} (${state ?? "-"})… `);
-    const hit = await findBio(fullName, name, state);
+    const hit = await findBio(fullName, name);
     if (!hit) {
       notFound++;
       console.log("∅");

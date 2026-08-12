@@ -10,7 +10,7 @@
  * - Quaest (JS-rendered)
  */
 
-import { chromium, Browser, BrowserContext, Page } from 'playwright';
+import { chromium, Browser } from 'playwright';
 import { InstituteClientBase, Poll } from './institute-client-base';
 
 export interface BrowserScraperConfig {

@@ -63,7 +63,7 @@ async function recordSnapshots() {
             if (!error && data) {
               polls = data;
             }
-          } catch (err) {
+          } catch {
             console.warn(`[Cron] Failed to fetch ${state} ${position} from Supabase`);
           }
 

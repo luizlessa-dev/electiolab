@@ -248,7 +248,6 @@ export default async function DinheiroEVotosPage() {
   const totalFefc = fefcRows.reduce((s, r) => s + Number(r.amount_received ?? 0), 0);
 
   const hasFefcData = fefcRows.length > 0;
-  const hasAvgData = avgRows.length > 0;
 
   const dateModified = new Date().toISOString().slice(0, 10);
 

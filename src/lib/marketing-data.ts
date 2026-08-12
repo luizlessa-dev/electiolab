@@ -443,7 +443,7 @@ export async function getCandidateEditorial(slug: string): Promise<{
       { auth: { persistSession: false } }
     );
 
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("candidates")
       .select("editorial_bio, editorial_summary, editorial_published_at")
       .eq("slug", slug)

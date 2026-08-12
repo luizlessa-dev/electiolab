@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, Wallet, Receipt } from "lucide-react";
+import { ArrowLeft, Receipt } from "lucide-react";
 import { getTopCeapSpenders } from "@/lib/tf-data";
 
 export const revalidate = 3600;

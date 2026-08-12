@@ -13,12 +13,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { pollHistory } from '@/lib/history/poll-history';
 
-interface PeriodParams {
-  startDaysBefore: number
-  endDaysBefore: number
-  label: string
-}
-
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;

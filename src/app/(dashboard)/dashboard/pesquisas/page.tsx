@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { PollTable } from "@/components/dashboard/poll-table";
 import { getElections, getCandidates, getPolls } from "@/lib/queries";
 

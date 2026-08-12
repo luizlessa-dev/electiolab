@@ -50,7 +50,7 @@ export class PoderDataClient extends BrowserScraperBase {
             console.log('[PoderData] Successfully parsed JSON');
             return extracted;
           }
-        } catch (e) {
+        } catch {
           console.warn('[PoderData] JSON parse failed, trying next pattern');
         }
       }
@@ -128,7 +128,7 @@ export class PoderDataClient extends BrowserScraperBase {
           try {
             const poll = this.parseTableRow(cells.map(c => c.replace(/<[^>]*>/g, '').trim()));
             if (poll) polls.push(poll);
-          } catch (e) {
+          } catch {
             // Skip invalid rows
           }
         }
@@ -165,7 +165,7 @@ export class PoderDataClient extends BrowserScraperBase {
         ],
         sourceUrl: this.config.baseUrl,
       });
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -218,7 +218,7 @@ export class PoderDataClient extends BrowserScraperBase {
 
           polls.push(poll);
         }
-      } catch (e) {
+      } catch {
         console.warn('[PoderData] Article parse error');
       }
     }

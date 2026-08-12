@@ -222,7 +222,6 @@ describe('Wave 4 Phase 3: Analytics & Histórico', () => {
     });
 
     it('should handle insufficient data', async () => {
-      const refDate = new Date();
       const period1Start = new Date('1900-01-01');
       const period1End = new Date('1900-02-01');
 

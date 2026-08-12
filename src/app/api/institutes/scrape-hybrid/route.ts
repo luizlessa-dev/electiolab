@@ -22,15 +22,6 @@ interface ScrapeRequest {
   useCache?: boolean;
 }
 
-interface ScrapeResponse {
-  success: boolean;
-  strategy: string;
-  data?: any;
-  cached: boolean;
-  duration: number;
-  cacheHitRate?: number;
-}
-
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     // Parse request

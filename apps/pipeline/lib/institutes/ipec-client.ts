@@ -49,7 +49,7 @@ export class IpecClient extends InstituteClientBase {
    * Parse Ipec HTML response
    * Typical structure varies by page layout
    */
-  private parseIpecHTML(html: string): Poll[] {
+  private parseIpecHTML(): Poll[] {
     // TODO: Implement HTML parsing
     // Use cheerio or similar library to extract poll data from tables
     return [];
