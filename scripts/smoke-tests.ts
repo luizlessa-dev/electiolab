@@ -20,12 +20,12 @@ const BASE = process.argv.find((a) => a.startsWith("--base="))?.split("=")[1] ??
 const SKIP = new Set((process.argv.find((a) => a.startsWith("--skip="))?.split("=")[1] ?? "").split(","));
 const SMOKE_EMAIL = process.env.SMOKE_EMAIL ?? `smoke+${Date.now()}@electiolab.dev`;
 
-let pass = 0, fail = 0;
+let passCount = 0, failCount = 0;
 const results: { name: string; ok: boolean; status?: number; note: string }[] = [];
 
 function rec(name: string, ok: boolean, note: string, status?: number) {
   results.push({ name, ok, status, note });
-  if (ok) pass++; else fail++;
+  if (ok) passCount++; else failCount++;
   const tag = ok ? "✅" : "❌";
   const code = status ? `[${status}]` : "";
   console.log(`  ${tag} ${name.padEnd(28)} ${code.padEnd(6)} ${note}`);
@@ -125,6 +125,6 @@ async function check(name: string, fn: () => Promise<{ ok: boolean; status?: num
   });
 
   // Sumário
-  console.log(`\n   ${pass} pass · ${fail} fail · ${results.length} total\n`);
-  process.exit(fail > 0 ? 1 : 0);
+  console.log(`\n   ${passCount} pass · ${failCount} fail · ${results.length} total\n`);
+  process.exit(failCount > 0 ? 1 : 0);
 })();

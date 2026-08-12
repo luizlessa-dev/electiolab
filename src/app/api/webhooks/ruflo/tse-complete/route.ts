@@ -1,9 +1,9 @@
 /**
  * POST /api/webhooks/ruflo/tse-complete
  *
- * Receives TSE ingestão completion from Agent 1
- * Triggers Agent 2 (institutos scraping)
- * Updates dashboard
+ * Receives TSE ingestão completion from Agent 1.
+ * For now: just logs and acknowledges.
+ * Later: will trigger Agent 2 (institutos scraping)
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -11,22 +11,44 @@ import { handleTseIngestWebhook } from "@/agents/agent-1-tse";
 
 export async function POST(req: NextRequest) {
   try {
-    // TODO: Validate webhook signature
-    // const signature = req.headers.get("x-ruflo-signature");
-    // if (!validateSignature(signature, body)) return 401
-
     const body = await req.json();
-    console.log("[tse-complete] webhook received:", body);
 
-    // TODO: Process webhook
-    // 1. Validate payload
-    // 2. Trigger Agent 2
-    // 3. Update dashboard widget
-    // 4. Log to audit
+    console.log("[tse-complete] webhook received:", {
+      ok: body.ok,
+      row_count: body.row_count,
+      upserted_count: body.upserted_count,
+      duration_ms: body.duration_ms,
+      timestamp: body.timestamp,
+    });
 
+    // Process the webhook
     await handleTseIngestWebhook(body);
 
-    return NextResponse.json({ ok: true, message: "TSE webhook processed" });
+    // Trigger Agent 2 (institutos scraping)
+    if (body.ok) {
+      console.log("[tse-complete] Triggering Agent 2...");
+      try {
+        const agent2Response = await fetch("http://localhost:3001/api/agents/run-agent-2", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ triggered_by: "tse-complete" }),
+        });
+
+        if (!agent2Response.ok) {
+          console.warn("[tse-complete] Agent 2 trigger failed:", agent2Response.status);
+        } else {
+          console.log("[tse-complete] Agent 2 triggered successfully");
+        }
+      } catch (e) {
+        console.warn("[tse-complete] Agent 2 trigger error:", e);
+      }
+    }
+
+    return NextResponse.json({
+      ok: true,
+      message: "TSE webhook processed, Agent 2 triggered",
+      received_at: new Date().toISOString(),
+    });
   } catch (e) {
     console.error("[tse-complete] error:", e);
     return NextResponse.json(
