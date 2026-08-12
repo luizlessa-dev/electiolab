@@ -55,8 +55,14 @@ export function calculateRecencyWeight(pollDate: Date, referenceDate: Date = new
 }
 
 /**
- * B) Outlier Detection (2-Sigma Method)
- * Identifies samples > 2σ away from mean
+ * B) Outlier Detection (Median Absolute Deviation)
+ *
+ * Uses median + MAD instead of mean + stdDev: a plain mean/stdDev z-score
+ * is skewed by the outlier itself (the "masking effect"), so a single
+ * extreme value can inflate stdDev enough to hide from its own z-score.
+ * MAD is robust to that because the median/MAD barely move when one point
+ * is extreme. 1.4826 is the standard constant that makes MAD comparable to
+ * a normal-distribution stdDev, so `threshold` still reads as "≈ N sigma".
  */
 export function detectOutliers(
   candidatePercentages: number[],
@@ -64,17 +70,21 @@ export function detectOutliers(
 ): boolean[] {
   if (candidatePercentages.length < 2) return candidatePercentages.map(() => false);
 
-  // Calculate mean
-  const mean = candidatePercentages.reduce((a, b) => a + b, 0) / candidatePercentages.length;
+  const median = getMedian(candidatePercentages);
+  const absDeviations = candidatePercentages.map((val) => Math.abs(val - median));
+  const mad = getMedian(absDeviations);
+  const scaledMad = mad * 1.4826;
 
-  // Calculate standard deviation
-  const variance =
-    candidatePercentages.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) /
-    candidatePercentages.length;
-  const stdDev = Math.sqrt(variance);
+  return candidatePercentages.map((val) => {
+    const robustZ = Math.abs(val - median) / scaledMad;
+    return robustZ > threshold;
+  });
+}
 
-  // Mark outliers (> threshold * σ)
-  return candidatePercentages.map((val) => Math.abs(val - mean) > threshold * stdDev);
+function getMedian(values: number[]): number {
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
 }
 
 /**

@@ -2,16 +2,17 @@ import { calculateMoeWeight, calculateRecencyWeight, detectOutliers, aggregateWe
 
 describe('Poll Weighting (Wave 3b)', () => {
   describe('A) Margin of Error Weighting', () => {
-    it('should give full weight to excellent precision (MoE < 2.0)', () => {
-      expect(calculateMoeWeight(1.5)).toBe(1.0);
+    // Continuous formula (commit 41587a3): weight = 1 / (1 + 0.4×MoE)
+    it('should give high weight to excellent precision (MoE 1.5)', () => {
+      expect(calculateMoeWeight(1.5)).toBeCloseTo(0.625, 3);
     });
 
-    it('should give 0.7 weight to good precision (2.0 <= MoE < 3.0)', () => {
-      expect(calculateMoeWeight(2.5)).toBe(0.7);
+    it('should give moderate weight to good precision (MoE 2.5)', () => {
+      expect(calculateMoeWeight(2.5)).toBeCloseTo(0.5, 3);
     });
 
-    it('should give 0.3 weight to poor precision (MoE >= 3.0)', () => {
-      expect(calculateMoeWeight(3.5)).toBe(0.3);
+    it('should give lower weight to poor precision (MoE 3.5)', () => {
+      expect(calculateMoeWeight(3.5)).toBeCloseTo(0.4167, 3);
     });
 
     it('should default to 0.5 for missing MoE', () => {
