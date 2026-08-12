@@ -1,15 +1,20 @@
 # Approval/Rejection Polling Data Setup
 
 ## Status
-✅ Migration created: `supabase/migrations/1722781200_create_approval_polls.sql`
+✅ Migration applied: `supabase/migrations/20260811120000_approval_polls_baseline.sql`
+(consolida e substitui os dois arquivos anteriores e conflitantes — `1722781200_create_approval_polls.sql`
+e `20260601000000_approval_polls.sql` —, nenhum dos quais reproduzia sozinho o schema real de
+produção. Já aplicada em produção via Supabase MCP em 2026-08-11.)
 
 ## Next Steps
 
 ### 1. Apply Migration to Supabase
-Execute the SQL in your Supabase SQL Editor:
+Já aplicada em produção. Para reaplicar num ambiente novo, execute o SQL em
+`supabase/migrations/20260811120000_approval_polls_baseline.sql` (idempotente,
+seguro rodar de novo):
 1. Go to Supabase Dashboard → SQL Editor
 2. Create new query
-3. Copy-paste the entire content of `supabase/migrations/1722781200_create_approval_polls.sql`
+3. Copy-paste the entire content of `supabase/migrations/20260811120000_approval_polls_baseline.sql`
 4. Click "Run"
 
 This will:
