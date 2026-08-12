@@ -165,9 +165,47 @@ TSE-2026-003,Quaest,2026-08-03,2026-08-07,2026-08-10`;
   }
 
   private async upsertPesqele(rows: PesqeleRow[]): Promise<number> {
-    // For MVP: just log (don't upsert due to schema unknowns)
-    console.log(`[${this.config.id}] Would upsert ${rows.length} rows to pesqele_registry`);
-    return rows.length;
+    if (rows.length === 0) {
+      console.log(`[${this.config.id}] No rows to upsert`);
+      return 0;
+    }
+
+    const { data, error } = await this.supabase
+      .from("pesqele_registry")
+      .upsert(
+        rows.map((row) => ({
+          protocolo: row.protocol,
+          ano: 2026, // hardcoded for MVP (extract from row if available)
+          uf: row.uf || "BR",
+          municipio: row.municipio || null,
+          cnpj_empresa: row.cnpj_empresa || null,
+          nome_empresa: row.institute || "TSE",
+          nome_fantasia: row.nome_fantasia || null,
+          cargos: row.cargos || "Presidente",
+          dt_inicio: row.fieldwork_start || null,
+          dt_fim: row.fieldwork_end || null,
+          dt_divulgacao: row.publication_date || null,
+          dt_registro: new Date().toISOString(),
+          qt_entrevistados: row.sample_size || null,
+          pesquisa_propria: false,
+          cd_conre: null,
+          nm_estatistico: null,
+          vr_pesquisa: null,
+          ds_metodologia: row.methodology || null,
+          ds_plano_amostral: null,
+          raw: row, // store entire row for audit
+        })),
+        { onConflict: "protocolo" }
+      )
+      .select("count");
+
+    if (error) {
+      throw new Error(`Supabase upsert failed: ${error.message}`);
+    }
+
+    const count = data?.length || rows.length;
+    console.log(`[${this.config.id}] Upserted ${count} rows to pesqele_registry`);
+    return count;
   }
 
   private async updateMissingQueue(): Promise<number> {
