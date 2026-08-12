@@ -21,9 +21,10 @@ Implementei:
 
 ### Configuração
 
-**Execução:** Toda segunda-feira às 10:00 UTC  
-**Cadência:** 1x por semana  
-**Automação:** Via `node-schedule`
+**Execução:** manual (`syncCandidatosJob`) ou via endpoint a criar (ver Opção B)  
+**Cadência:** sob demanda — o agendamento automático planejado via `node-schedule`
+nunca foi implementado (pacote nunca instalado) e foi removido em 2026-08-12;
+o padrão de agendamento real deste repo é Vercel Cron (`vercel.json` + `/api/cron/*`)
 
 ### O que faz
 
@@ -53,20 +54,7 @@ console.log(result);
 // }
 ```
 
-#### Opção B: Agendar automaticamente
-
-No seu server boot (ex: `server.ts` ou `middleware.ts`):
-
-```typescript
-import { scheduleSyncCandidatos } from '@/lib/jobs/sync-candidatos-job';
-
-// No servidor
-if (typeof window === 'undefined') {
-  scheduleSyncCandidatos();
-}
-```
-
-#### Opção C: Via API (webhook manual)
+#### Opção B: Via API (webhook manual)
 
 ```bash
 curl -X POST http://localhost:3000/api/jobs/sync-candidatos \
@@ -314,13 +302,9 @@ Média Ponderada com Credibilidade
 
 ### Curto Prazo (Esta semana)
 1. **Testar** endpoint POST `/api/institutes/sync-polls`
-2. **Configurar** package.json:
-   ```json
-   "dependencies": {
-     "node-schedule": "^2.1.1"
-   }
-   ```
-3. **Criar** endpoint para disparar job manualmente (POST `/api/jobs/sync-candidatos`)
+2. **Criar** endpoint para disparar job manualmente (POST `/api/jobs/sync-candidatos`) —
+   ou, se for pra rodar sozinho, adicionar em `vercel.json` como Vercel Cron (padrão já usado
+   pelos outros jobs do repo), não via `node-schedule`
 
 ### Médio Prazo (Próxima semana)
 1. **Criar tabela** `institutes` (mapeamento nome → id)
@@ -356,7 +340,6 @@ Média Ponderada com Credibilidade
 - [x] Quaest client implementado
 - [x] AtlasIntel client implementado
 - [x] Endpoint sync-polls criado
-- [ ] Package.json atualizado com node-schedule
 - [ ] Teste manual do job
 - [ ] Teste manual de cada instituto
 - [ ] Integração no UI

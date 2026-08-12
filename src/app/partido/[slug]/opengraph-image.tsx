@@ -1,33 +1,33 @@
 import { ImageResponse } from "next/og";
 import { createClient } from "@supabase/supabase-js";
-import { partyColor, slugToParty } from "@/lib/party-utils";
+import { partyColor, slugToParty, partyMatchesSlug } from "@/lib/party-utils";
 
 export const runtime = "edge";
 export const alt = "Partido — ElectioLab";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-async function getPartyStats() {
+async function getPartyStats(slug: string) {
   const sb = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
   const { data } = await sb
     .from("candidates")
-    .select("id, name, election:elections(type, year)")
+    .select("id, name, party, election:elections(type, year)")
     .eq("is_active", true);
 
   const candidates = ((data ?? []) as unknown as Array<{
     id: string;
     name: string;
-    party?: string;
+    party: string | null;
     election: { type: string; year: number } | { type: string; year: number }[] | null;
   }>);
 
   // Count 2026 active candidates for this party
   const matching = candidates.filter((c) => {
     const elec = Array.isArray(c.election) ? c.election[0] : c.election;
-    return elec?.year === 2026;
+    return partyMatchesSlug(c.party, slug) && elec?.year === 2026;
   });
 
   return {
@@ -35,11 +35,11 @@ async function getPartyStats() {
   };
 }
 
-export default async function OG({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default async function OG({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const partyLabel = slugToParty(slug) ?? slug.toUpperCase();
   const accent = partyColor(slug);
-  const stats = await getPartyStats().catch(() => ({ total: 0 }));
+  const stats = await getPartyStats(slug).catch(() => ({ total: 0 }));
 
   // Short acronym for the big avatar block
   const acronym = partyLabel.length <= 6 ? partyLabel : partyLabel.split(" ").map((w) => w[0]).join("").slice(0, 4).toUpperCase();

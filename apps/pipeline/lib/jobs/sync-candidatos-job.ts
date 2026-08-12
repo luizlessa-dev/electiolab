@@ -185,38 +185,3 @@ export async function syncCandidatosJob(ano: number = 2026): Promise<SyncCandida
     duration,
   };
 }
-
-export async function scheduleSyncCandidatos() {
-  console.log('[JOB SCHEDULER] Configurando sincronização de candidatos...');
-
-  // Importar apenas no servidor
-  if (typeof window !== 'undefined') {
-    console.warn('[JOB SCHEDULER] Jobs só podem rodar no servidor');
-    return;
-  }
-
-  // node-schedule não está instalado (não está em package.json/node_modules) —
-  // função morta, nunca chamada em nenhum lugar do repo.
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const schedule = require('node-schedule');
-
-  // Executar toda segunda-feira às 10:00 UTC
-  schedule.scheduleJob('0 10 * * 1', async () => {
-    console.log('\n' + '='.repeat(60));
-    console.log('🔔 EXECUÇÃO AGENDADA: Sincronização de candidatos');
-    console.log('='.repeat(60) + '\n');
-
-    try {
-      const result = await syncCandidatosJob(2026);
-      console.log('\n📋 RESULTADO:');
-      console.log(JSON.stringify(result, null, 2));
-    } catch (error) {
-      console.error('❌ ERRO NA EXECUÇÃO:');
-      console.error(error);
-    }
-
-    console.log('\n' + '='.repeat(60) + '\n');
-  });
-
-  console.log('✅ Job agendado: Toda segunda-feira às 10:00 UTC');
-}
