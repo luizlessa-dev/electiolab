@@ -1,6 +1,6 @@
-# Wave 3 Architecture - Complete ElectioLab System
+# Architecture - Complete ElectioLab System
 
-Complete end-to-end architecture from poll data ingestion to TSE validation and dashboard visualization.
+Complete end-to-end architecture from poll data ingestion to TSE validation and dashboard visualization. Covers the Wave 3 core system plus the Wave 4 layers built on top of it (notifications/discrepancy persistence, orchestration, regional/approval/presidential aggregation, and historical snapshots).
 
 ---
 
@@ -575,3 +575,85 @@ Long term (Year+):
 Generated: 2026-08-08
 System: ElectioLab Wave 3 (Production Ready)
 Deployment Target: Vercel + Supabase
+
+---
+
+## Wave 4 Layers (Built on Top of Wave 3)
+
+Wave 4 does not replace the Wave 3 pipeline above — it adds four layers around it: persistence for discrepancies found during TSE sync, a service orchestrator that wires notifications/discrepancies/snapshots together, richer aggregation (regional, approval, presidential), and historical tracking of aggregation results over time.
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                 WAVE 4: NOTIFICATIONS, ENRICHMENT & HISTORY                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    Wave 3 TSE Sync Layer                    Wave 3 Aggregation Engine
+    (tse-sync-service.ts)                    (state-aggregation.ts)
+              │                                         │
+              ↓                                         ↓
+    ┌───────────────────────┐              ┌─────────────────────────────┐
+    │ Discrepancy Manager    │              │ Regional / Approval /       │
+    │ (discrepancy-manager.ts│              │ Presidential Aggregation    │
+    │  + `discrepancies`     │              │ (regional-aggregation.ts,   │
+    │  table)                │              │  approval-aggregation.ts)   │
+    │                        │              │                             │
+    │ Persists every         │              │ • 5-region grouping         │
+    │ discrepancy found      │              │ • Population weighting      │
+    │ during TSE sync        │              │ • Approval/disapproval      │
+    │ (createDiscrepancy)    │              │ • Presidential (national)   │
+    └──────────┬─────────────┘              └──────────────┬──────────────┘
+               │                                            │
+               └─────────────────────┬──────────────────────┘
+                                      ↓
+                        ┌─────────────────────────────┐
+                        │  Wave4 Orchestrator          │
+                        │  (wave4-orchestrator.ts)     │
+                        │                               │
+                        │  Wires together:              │
+                        │  • Anomaly → Slack + Email    │
+                        │    + Discrepancy record       │
+                        │  • Discrepancy → notification │
+                        │  • Periodic snapshot → log     │
+                        │  • healthCheck()               │
+                        └──────────────┬────────────────┘
+                                       ↓
+                        ┌─────────────────────────────┐
+                        │  Poll History / Snapshots    │
+                        │  (poll-history.ts +          │
+                        │   `aggregation_history`      │
+                        │   table)                     │
+                        │                               │
+                        │  • Daily snapshot recording   │
+                        │  • Candidate trajectory        │
+                        │  • Trend + volatility          │
+                        │  • Period comparison           │
+                        │                               │
+                        │  Populated by:                │
+                        │  GET/POST /api/cron/          │
+                        │  aggregation-snapshots         │
+                        │  (fixed 2026-08-11 — now       │
+                        │  fetches real polls from        │
+                        │  Supabase, with mock fallback,  │
+                        │  and actually calls              │
+                        │  handlePeriodicSnapshot;         │
+                        │  previously a no-op placeholder  │
+                        │  that always returned            │
+                        │  recordedCount: 0)                │
+                        └───────────────────────────────┘
+```
+
+### Discrepancy persistence
+
+`src/lib/tse/tse-sync-service.ts` computes discrepancies while comparing TSE candidates against research data (`syncStatePosition`). As of 2026-08-11, every discrepancy found is persisted via `discrepancyManager.createDiscrepancy(state, position, d)` (`src/lib/admin/discrepancy-manager.ts`) into the `discrepancies` table, instead of only being returned in-memory. This is what makes `/api/admin/discrepancies` and the Slack/email alert flow actually see TSE sync results.
+
+### Orchestrator
+
+`src/lib/services/wave4-orchestrator.ts` is the integration point between the pipelines above and the notification services from Wave 4 Phase 1 (Slack, email, discrepancy manager). It exposes `handleAnomalyDetected`, `handleDiscrepancyCreated`, `handlePeriodicSnapshot`, and `healthCheck`.
+
+### Regional / approval / presidential aggregation
+
+`src/lib/aggregation/regional-aggregation.ts` groups state-level results into 5 regions (Sul, Sudeste, Centro-Oeste, Nordeste, Norte) with population weighting. `src/lib/approval/approval-aggregation.ts` aggregates approval/disapproval polls for both governor and presidential positions. Together these extend the Wave 3 aggregation engine from 2 positions (governador, senador) to 3, and from state-only to state + region + national views.
+
+### Historical snapshots
+
+`src/lib/history/poll-history.ts` records daily aggregation snapshots into the `aggregation_history` table and derives candidate trajectories, trend/volatility metrics, and period comparisons. Until 2026-08-11, the cron endpoint that should have driven this (`src/app/api/cron/aggregation-snapshots/route.ts`) was a placeholder that always returned `recordedCount: 0` without touching the database. It now fetches real polls from Supabase (table `polls`, by state/position), falls back to the mock institute client when no real polls exist yet, aggregates with `aggregateStatePolls`, and calls `getOrchestrator().handlePeriodicSnapshot(candidates, 'cron')` — so `aggregation_history` is populated by the daily cron run for real, not just by manual/test calls.

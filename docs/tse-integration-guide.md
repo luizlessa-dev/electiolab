@@ -1,6 +1,6 @@
-# TSE Integration Guide - Wave 3 Phase 3
+# TSE Integration Guide
 
-Quick reference for using TSE integration in your application.
+Quick reference for using TSE integration in your application, plus the technical detail (file structure, environment variables, monitoring) needed to operate it in production.
 
 ---
 
@@ -213,6 +213,16 @@ if (status) {
 
 ## 🔍 Understanding Discrepancies
 
+### Discrepancy Logging (persisted, not just console/JSON)
+
+Every discrepancy found by `syncStatePosition` in `src/lib/tse/tse-sync-service.ts` is persisted to the `discrepancies` table via `discrepancyManager.createDiscrepancy(state, position, d)` (`src/lib/admin/discrepancy-manager.ts`), on every sync run — this is not just a console log or a one-off JSON export anymore. Discrepancies are:
+
+- Queryable and filterable through `GET /api/admin/discrepancies` (by state, position, severity, type, resolution, or free-text search)
+- Resolvable/auditable through `POST /api/admin/discrepancies` (`resolvedBy`, `resolvedAt`, `notes`)
+- Picked up by the Wave4 Orchestrator (`src/lib/services/wave4-orchestrator.ts`) to trigger Slack/email alerts for critical items
+
+Console output and JSON export (via `tseSyncService.exportDiscrepancies()`) still happen alongside persistence — useful for a quick look at a single sync run — but the database is the durable, queryable source of truth.
+
 ### Types of Discrepancies
 
 1. **Missing in Research** 🟡
@@ -303,7 +313,7 @@ if (status) {
 
 1. **Run daily**: Schedule sync during off-peak hours (2 AM UTC)
 2. **Cache aggressively**: 24-hour TTL reduces API calls
-3. **Log discrepancies**: Export JSON for analysis and audits
+3. **Review persisted discrepancies**: Query `/api/admin/discrepancies` regularly, don't rely only on console output
 4. **Validate before aggregation**: Enrich polls with TSE data
 5. **Monitor success rate**: Alert if >1 state fails
 6. **Review critical items**: Candidates missing in TSE
@@ -354,12 +364,49 @@ if (elapsedMs > 120000) {
 
 ---
 
+## 📁 File Structure
+
+```
+src/lib/tse/
+├── tse-client.ts              - Basic API client (elections + candidates, 24h cache)
+├── tse-sync-service.ts        - Sync orchestration, caching, discrepancy detection + persistence
+├── tse-validator.ts           - Real-time validation (exact + fuzzy matching, enrichment)
+├── tse-sync-job.ts            - Background job runner (daily full sync)
+└── README.md                  - Module-level technical documentation
+
+src/lib/admin/
+└── discrepancy-manager.ts     - CRUD + filtering over the `discrepancies` table
+
+src/app/api/
+├── tse/sync/route.ts          - Manual sync endpoint (POST trigger, GET status)
+├── cron/tse-sync/route.ts     - Vercel Cron handler (daily 2 AM UTC)
+└── admin/discrepancies/route.ts - List/filter/resolve persisted discrepancies
+```
+
+---
+
+## 🔧 Environment Variables
+
+```bash
+# Required for Vercel Cron
+CRON_SECRET=your-vercel-cron-secret
+
+# TSE API Base URL (already configured)
+TSE_API_BASE=https://dadosabertos.tse.jus.br/api/v1
+
+# Optional: Cache TTL (default: 24 hours)
+TSE_CACHE_TTL=86400000
+```
+
+---
+
 ## 📚 Related Documentation
 
-- [Wave 3 Phase 3 Detailed Docs](./WAVE3_PHASE3_TSE_INTEGRATION.md)
-- [Aggregation Pipeline](./src/lib/aggregation/README.md)
-- [Candidate Validator](./src/lib/aggregation/candidate-validator.ts)
-- [Real Candidates Data](./src/lib/candidates/real-candidates-2026.ts)
+- [Architecture](./ARCHITECTURE.md) - System diagrams (Wave 3 + Wave 4 layers)
+- [Changelog](./CHANGELOG.md) - TSE integration history and bug fixes
+- [Aggregation Pipeline](../src/lib/aggregation/README.md)
+- [Candidate Validator](../src/lib/aggregation/candidate-validator.ts)
+- [Real Candidates Data](../src/lib/candidates/real-candidates-2026.ts)
 
 ---
 
@@ -386,4 +433,4 @@ if (elapsedMs > 120000) {
 ---
 
 Generated: 2026-08-08
-Last updated: Wave 3 Phase 3 Complete
+Last updated: 2026-08-11 (discrepancy persistence fix)

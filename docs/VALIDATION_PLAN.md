@@ -1,6 +1,6 @@
 # Wave 4 - Plano de Validação em Produção
 
-**Data:** 2026-08-08
+**Data:** 2026-08-08 (nomes de migration corrigidos e passos novos adicionados em 2026-08-11)
 **Status:** Em Progresso
 **Objetivo:** Validar todas as 3 phases com dados reais
 
@@ -11,7 +11,7 @@
 ### ✅ Phase 1: Alertas & Notificações (Slack, Email, Admin)
 
 #### Database Migration
-- [ ] Migration `001_create_discrepancies_table.sql` executou
+- [ ] Migration `20260810002618_create_discrepancies_table.sql` executou
 - [ ] Tabela `discrepancies` criada com índices
 - [ ] RLS policies ativas
 - [ ] Trigger de `updated_at` funcionando
@@ -56,7 +56,7 @@
 - [ ] Dashboard mostra seletor de 3 posições
 
 #### Approval Metrics
-- [ ] Database: Migration `002_create_approval_polls_table.sql` executou
+- [ ] Database: Migration `20260811120000_approval_polls_baseline.sql` executou
 - [ ] Tabela `approval_polls` criada com validações
 - [ ] Agregação presidencial: GET `/api/approval/aggregated?position=presidencial`
 - [ ] Aprovação estadual: GET `/api/approval/aggregated?position=governador&uf=SP`
@@ -76,7 +76,7 @@
 ### ✅ Phase 3: Analytics & Histórico (Snapshots, Trends, Comparison)
 
 #### Database Migration
-- [ ] Migration `003_create_aggregation_history_table.sql` executou
+- [ ] Migration `20260810002619_create_aggregation_history_table.sql` executou
 - [ ] Tabela `aggregation_history` criada
 - [ ] Índices otimizados
 - [ ] RLS policies ativas
@@ -305,9 +305,18 @@ Antes de considerar validação completa:
 
 ---
 
+## 🆕 Validação dos Fixes de 2026-08-11
+
+Passos adicionais para confirmar os três fixes descritos em `docs/CHANGELOG.md` (entrada 2026-08-11):
+
+- [ ] **Cron de snapshots grava dados reais:** chamar `GET /api/cron/aggregation-snapshots` com pesquisas reais presentes na tabela `polls` do Supabase (para pelo menos um estado/cargo) e confirmar que a resposta retorna `recordedCount > 0` — não mais o placeholder fixo `recordedCount: 0`. Se não houver pesquisas reais, confirmar que o fallback para o mock institute client ainda produz um `recordedCount > 0`.
+- [ ] **TSE sync persiste discrepâncias:** rodar um sync do TSE (`POST /api/tse/sync?state=SP&position=governador&detailed=true`) para um estado/cargo com discrepância conhecida e confirmar que aparecem linhas correspondentes na tabela `discrepancies` — via `GET /api/admin/discrepancies?state=SP` ou via query direta (`select * from discrepancies where state = 'SP' order by created_at desc limit 5;`).
+
+---
+
 **Próximo:** Deploy em staging / Produção
 
 ---
 
 Criado: 2026-08-08
-Última atualização: ⏳ Em progresso
+Última atualização: 2026-08-11 (nomes de migration corrigidos + passos de validação dos fixes de 2026-08-11)

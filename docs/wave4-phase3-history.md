@@ -16,6 +16,8 @@ Wave 4 Phase 3 implements comprehensive historical analytics:
 3. **Trend Analysis** - Detect trends and volatility in polling data
 4. **Period Comparison** - Compare polls between different time periods
 
+> **Note (2026-08-11):** The service and API layer documented below (`poll-history.ts` + `/api/history/*`) were complete and correct as of this phase's original 2026-08-08 delivery. However, the cron endpoint meant to *drive* daily snapshot recording (`src/app/api/cron/aggregation-snapshots/route.ts`) was actually a placeholder until 2026-08-11 — it always returned `recordedCount: 0` without writing anything to `aggregation_history`. So while this document describes the history system as production-ready since 2026-08-08, the table was not actually being populated automatically until the cron fix landed on 2026-08-11. Before that date, snapshots only existed if triggered manually/in tests.
+
 ---
 
 ## 📁 Files Created
@@ -225,7 +227,7 @@ curl "http://localhost:3000/api/history/comparison?state=SP"
 
 ### Database
 
-#### `supabase/migrations/003_create_aggregation_history_table.sql` (80 lines)
+#### `supabase/migrations/20260810002619_create_aggregation_history_table.sql`
 - Table for storing daily snapshots
 - JSONB fields for flexible candidate data
 - Optimized indexes (state, position, date)
@@ -381,7 +383,7 @@ npm test -- --watch wave4-phase3
 supabase db push
 
 # Or manually:
-# Copy contents of supabase/migrations/003_create_aggregation_history_table.sql
+# Copy contents of supabase/migrations/20260810002619_create_aggregation_history_table.sql
 # and run in Supabase SQL Editor
 ```
 

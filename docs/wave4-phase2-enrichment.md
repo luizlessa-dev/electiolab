@@ -220,8 +220,9 @@ curl -X POST http://localhost:3000/api/regions/aggregated \
 
 ### Database
 
-#### `supabase/migrations/002_create_approval_polls_table.sql` (80 lines)
+#### `supabase/migrations/20260811120000_approval_polls_baseline.sql`
 - Table for approval/disapproval polls
+- Note: this is the consolidated baseline migration (2026-08-11). Two earlier conflicting migrations for this table (`1722781200_create_approval_polls.sql` and `20260601000000_approval_polls.sql`, neither matching production schema) were removed in favor of this single file.
 - Constraints for valid percentages
 - State requirement for governador positions
 - Optimized indexes
@@ -381,7 +382,7 @@ npm test -- --watch wave4-phase2
 supabase db push
 
 # Or manually:
-# Copy contents of supabase/migrations/002_create_approval_polls_table.sql
+# Copy contents of supabase/migrations/20260811120000_approval_polls_baseline.sql
 # and run in Supabase SQL Editor
 ```
 
