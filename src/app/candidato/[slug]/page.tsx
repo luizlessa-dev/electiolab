@@ -30,8 +30,102 @@ import {
 import { DriftChartLazy as DriftChart } from "./drift-chart-lazy";
 import { CandidateEditorialBio } from "@/components/candidate-editorial-bio";
 import { CandidateSchema } from "./candidate-schema";
+import type { Database } from "@/types/database.types";
 
 export const revalidate = 3600; // 1h ISR — gera sob demanda na primeira request
+
+// getCandidateBySlug() (src/lib/queries.ts) monta o Supabase client sem o
+// generic <Database>, então o retorno da query chega como `any` em runtime.
+// O shape abaixo espelha exatamente as colunas pedidas no `.select(...)`
+// daquela função, usando os tipos reais gerados em database.types.ts —
+// dá pra tipar o dado sem tocar em lib/queries.ts (fora do escopo desta tarefa).
+type CandidateRow = Database["public"]["Tables"]["candidates"]["Row"];
+type ElectionRow = Database["public"]["Tables"]["elections"]["Row"];
+type PollRow = Database["public"]["Tables"]["polls"]["Row"];
+type InstituteRow = Database["public"]["Tables"]["institutes"]["Row"];
+type PollResultRow = Database["public"]["Tables"]["poll_results"]["Row"];
+type ElectionResultRow = Database["public"]["Tables"]["election_results"]["Row"];
+type CampaignFinanceRow = Database["public"]["Tables"]["campaign_finances"]["Row"];
+type DigitalAdRow = Database["public"]["Tables"]["digital_ads"]["Row"];
+type LegislativeVoteRow = Database["public"]["Tables"]["legislative_votes"]["Row"];
+type JudicialProceedingRow = Database["public"]["Tables"]["judicial_proceedings"]["Row"];
+type CandidateAssetRow = Database["public"]["Tables"]["candidate_assets"]["Row"];
+type CandidateSocialMediaRow = Database["public"]["Tables"]["candidate_social_media"]["Row"];
+type CandidateFefcRow = Database["public"]["Tables"]["candidate_fefc"]["Row"];
+type PriorElectionResultRow = Database["public"]["Tables"]["prior_election_results"]["Row"];
+
+interface CandidateDetail extends CandidateRow {
+  election: Pick<
+    ElectionRow,
+    "id" | "name" | "type" | "state" | "year" | "round" | "election_date"
+  > | null;
+  poll_results: Array<
+    Pick<PollResultRow, "percentage"> & {
+      poll:
+        | (Pick<PollRow, "id" | "publication_date" | "sample_size" | "methodology"> & {
+            institute: Pick<InstituteRow, "name" | "slug"> | null;
+          })
+        | null;
+    }
+  >;
+  election_results: Array<
+    Pick<ElectionResultRow, "total_votes" | "percentage" | "is_elected" | "result_description">
+  >;
+  campaign_finances: Array<
+    Pick<
+      CampaignFinanceRow,
+      "total_received" | "total_spent" | "fund_partidario" | "fund_especial" | "receita_pf" | "receita_pj"
+    >
+  >;
+  digital_ads: Array<
+    Pick<
+      DigitalAdRow,
+      | "id"
+      | "platform"
+      | "page_name"
+      | "spend_lower"
+      | "spend_upper"
+      | "impressions_lower"
+      | "impressions_upper"
+      | "delivery_start"
+      | "creative_text"
+    >
+  >;
+  legislative_votes: Array<
+    Pick<LegislativeVoteRow, "id" | "vote_date" | "bill_title" | "vote" | "topic" | "importance">
+  >;
+  judicial_proceedings: Array<
+    Pick<
+      JudicialProceedingRow,
+      | "id"
+      | "process_number"
+      | "court"
+      | "process_class"
+      | "process_subject"
+      | "current_status"
+      | "is_relevant"
+      | "source_url"
+    >
+  >;
+  candidate_assets: Array<
+    Pick<CandidateAssetRow, "id" | "election_year" | "asset_type_name" | "description" | "value_brl">
+  >;
+  candidate_social_media: Array<
+    Pick<CandidateSocialMediaRow, "id" | "election_year" | "platform" | "url" | "handle">
+  >;
+  candidate_fefc: Array<
+    Pick<CandidateFefcRow, "id" | "election_year" | "amount_received" | "amount_spent" | "party_acronym">
+  >;
+  // total_votes/result_status são nullable no schema (prior_election_results), mas o
+  // código abaixo sempre os trata como presentes — mesma suposição que já existia no
+  // tipo manual anterior. Não é corrigido aqui (mudança de tipo, não de runtime).
+  prior_election_results: Array<
+    Pick<PriorElectionResultRow, "id" | "year" | "round" | "election_type" | "state" | "city" | "party"> & {
+      total_votes: number;
+      result_status: string;
+    }
+  >;
+}
 
 export async function generateMetadata({
   params,
@@ -62,37 +156,27 @@ export default async function CandidatoPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const c = await getCandidateBySlug(slug);
+  const c = (await getCandidateBySlug(slug)) as CandidateDetail | null;
   if (!c) notFound();
 
   const editorial = await getCandidateEditorial(slug);
 
-  const election = (c as any).election;
-  const polls = ((c as any).poll_results ?? []) as Array<{
-    percentage: number;
-    poll: { id: string; publication_date: string; sample_size: number; methodology: string; institute: { name: string; slug: string | null } | null };
-  }>;
+  const election = c.election;
+  const polls = c.poll_results ?? [];
   const sortedPolls = [...polls].sort((a, b) =>
     (b.poll?.publication_date ?? "").localeCompare(a.poll?.publication_date ?? "")
   );
   const latestPoll = sortedPolls[0];
-  const electionResults = (c as any).election_results ?? [];
-  const finance = (c as any).campaign_finances?.[0];
-  const digitalAds = ((c as any).digital_ads ?? []) as Array<{
-    id: string; platform: string | null; page_name: string;
-    spend_lower: number | null; spend_upper: number | null;
-    impressions_lower: number | null; impressions_upper: number | null;
-    creative_text: string | null;
-  }>;
+  const electionResults = c.election_results ?? [];
+  const finance = c.campaign_finances?.[0];
+  const digitalAds = c.digital_ads ?? [];
   // Agrupa por plataforma
   const adsByPlatform: Record<string, typeof digitalAds> = {};
   for (const ad of digitalAds) {
     const p = ad.platform ?? "outras";
     (adsByPlatform[p] ||= []).push(ad);
   }
-  const votes = ((c as any).legislative_votes ?? []) as Array<{
-    id: string; vote_date: string; bill_title: string; vote: string; topic: string; importance: number;
-  }>;
+  const votes = c.legislative_votes ?? [];
   // Votos agrupados por tópico
   const votesByTopic = votes.reduce<Record<string, typeof votes>>((acc, v) => {
     const t = v.topic || "geral";
@@ -103,33 +187,24 @@ export default async function CandidatoPage({
     ([, a], [, b]) =>
       Math.max(...b.map((v) => v.importance ?? 0)) - Math.max(...a.map((v) => v.importance ?? 0))
   );
-  const proceedings = ((c as any).judicial_proceedings ?? []) as Array<{
-    id: string; process_number: string | null; court: string; process_class: string; process_subject: string | null;
-    current_status: string | null; is_relevant: boolean; source_url: string | null;
-  }>;
+  const proceedings = c.judicial_proceedings ?? [];
   const relevantProceedings = proceedings.filter((p) => p.is_relevant);
 
   // TSE Extended datasets
-  const assets = ((c as any).candidate_assets ?? []) as Array<{
-    id: string; election_year: number; asset_type_name: string | null; description: string | null; value_brl: number | null;
-  }>;
+  const assets = c.candidate_assets ?? [];
   const latestAssetsYear = assets.length ? Math.max(...assets.map((a) => a.election_year)) : null;
   const latestAssets = assets.filter((a) => a.election_year === latestAssetsYear);
   const totalNetWorth = latestAssets.reduce((s, a) => s + Number(a.value_brl ?? 0), 0);
 
-  const socialMedia = ((c as any).candidate_social_media ?? []) as Array<{
-    id: string; election_year: number; platform: string; url: string; handle: string | null;
-  }>;
+  const socialMedia = c.candidate_social_media ?? [];
   const latestSocialYear = socialMedia.length ? Math.max(...socialMedia.map((s) => s.election_year)) : null;
   const latestSocial = socialMedia.filter((s) => s.election_year === latestSocialYear);
 
-  const fefc = ((c as any).candidate_fefc ?? []) as Array<{
-    id: string; election_year: number; amount_received: number; amount_spent: number; party_acronym: string | null;
-  }>;
+  const fefc = c.candidate_fefc ?? [];
   const latestFefc = fefc.sort((a, b) => b.election_year - a.election_year)[0];
 
   // CEAP via Transparência Federal (cross-project)
-  const candidateCpf = (c as any).cpf as string | null;
+  const candidateCpf = c.cpf;
   const parlamentar = candidateCpf ? await getParlamentarByCpf(candidateCpf) : null;
   const ceap = parlamentar?.id_camara ? await getCeapByCamaraId(parlamentar.id_camara) : null;
 
@@ -143,17 +218,13 @@ export default async function CandidatoPage({
     : [];
 
   // Histórico eleitoral (2018, 2022, 2024)
-  const priorResults = ((c as any).prior_election_results ?? []) as Array<{
-    id: string; year: number; round: number; election_type: string;
-    state: string | null; city: string | null; party: string | null;
-    total_votes: number; result_status: string;
-  }>;
+  const priorResults = c.prior_election_results ?? [];
   const sortedPriorResults = [...priorResults]
     .sort((a, b) => (b.year - a.year) || ((b.total_votes ?? 0) - (a.total_votes ?? 0)));
 
   // TSE situação (Ficha Limpa)
-  const tseSit = (c as any).tse_last_situation as string | null;
-  const tseSitYear = (c as any).tse_last_situation_year as number | null;
+  const tseSit = c.tse_last_situation;
+  const tseSitYear = c.tse_last_situation_year;
 
   // Aggregations totais (soma cross-platform)
   const spendMin = digitalAds.reduce((s, a) => s + (Number(a.spend_lower) || 0), 0);
@@ -193,7 +264,7 @@ export default async function CandidatoPage({
     return a;
   }
 
-  const candidateAge = age((c as any).birth_date);
+  const candidateAge = age(c.birth_date);
 
   // JSON-LD: Person + BreadcrumbList (boost de rich result na SERP)
   const jsonLd = {
@@ -203,13 +274,13 @@ export default async function CandidatoPage({
         "@type": "Person",
         "@id": `https://electiolab.com/candidato/${slug}#person`,
         name: c.name,
-        description: (c as any).bio,
-        birthDate: (c as any).birth_date,
-        jobTitle: (c as any).current_position,
+        description: c.bio,
+        birthDate: c.birth_date,
+        jobTitle: c.current_position,
         affiliation: { "@type": "Organization", name: c.party },
         nationality: { "@type": "Country", name: "Brasil" },
         url: `https://electiolab.com/candidato/${slug}`,
-        image: (c as any).photo_url ?? undefined,
+        image: c.photo_url ?? undefined,
       },
       {
         "@type": "BreadcrumbList",
@@ -265,14 +336,14 @@ export default async function CandidatoPage({
         {/* HERO — perfil */}
         <section className="grid md:grid-cols-[1fr_280px] gap-8">
           <div className="flex gap-5">
-            {(c as any).photo_url && (
+            {c.photo_url && (
               <div className="shrink-0">
                 <div
                   className="relative w-28 h-28 md:w-36 md:h-36 rounded-lg overflow-hidden border-2 bg-muted"
                   style={{ borderColor: c.color ?? "var(--border)" }}
                 >
                   <Image
-                    src={(c as any).photo_url}
+                    src={c.photo_url}
                     alt={`Foto oficial de ${c.name}${c.party ? ` (${c.party})` : ""}`}
                     fill
                     sizes="(max-width: 768px) 112px, 144px"
@@ -299,14 +370,14 @@ export default async function CandidatoPage({
             </p>
             <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mb-4">
               {c.party && (
-                <span className="px-2 py-0.5 rounded-md text-xs font-mono uppercase border" style={{ borderColor: c.color, color: c.color }}>
+                <span className="px-2 py-0.5 rounded-md text-xs font-mono uppercase border" style={{ borderColor: c.color ?? undefined, color: c.color ?? undefined }}>
                   {c.party}
                 </span>
               )}
               {candidateAge && <span>{candidateAge} anos</span>}
-              {(c as any).current_position && (
+              {c.current_position && (
                 <span className="flex items-center gap-1">
-                  <Briefcase className="h-3.5 w-3.5" /> {(c as any).current_position}
+                  <Briefcase className="h-3.5 w-3.5" /> {c.current_position}
                 </span>
               )}
               {tseSit === "APTO" && (
@@ -326,9 +397,9 @@ export default async function CandidatoPage({
                 </span>
               )}
             </div>
-            {(c as any).bio && (
+            {c.bio && (
               <p className="text-base text-muted-foreground leading-relaxed max-w-prose">
-                {(c as any).bio}
+                {c.bio}
               </p>
             )}
             </div>
@@ -350,14 +421,14 @@ export default async function CandidatoPage({
                   ) : (
                     latestPoll.poll?.institute?.name
                   )}
-                  {" · "}{new Date(latestPoll.poll?.publication_date).toLocaleDateString("pt-BR")}
+                  {" · "}{new Date(latestPoll.poll?.publication_date ?? "").toLocaleDateString("pt-BR")}
                 </p>
               </div>
             )}
-            {(c as any).net_worth && (
+            {c.net_worth && (
               <div className="rounded-lg border border-border bg-card p-4">
                 <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1">Patrimônio declarado</p>
-                <p className="text-2xl font-mono font-bold tabular-nums">{fmtBig(Number((c as any).net_worth))}</p>
+                <p className="text-2xl font-mono font-bold tabular-nums">{fmtBig(Number(c.net_worth))}</p>
                 <p className="text-xs text-muted-foreground mt-1">Fonte: TSE</p>
               </div>
             )}
@@ -375,30 +446,30 @@ export default async function CandidatoPage({
 
         {/* Dados pessoais */}
         <section className="grid md:grid-cols-3 gap-3">
-          {(c as any).education && (
+          {c.education && (
             <div className="rounded-lg border border-border bg-card p-4">
               <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground font-medium mb-2">
                 <GraduationCap className="h-3.5 w-3.5" /> Escolaridade
               </div>
-              <p className="text-sm">{(c as any).education}</p>
+              <p className="text-sm">{c.education}</p>
             </div>
           )}
-          {(c as any).profession && (
+          {c.profession && (
             <div className="rounded-lg border border-border bg-card p-4">
               <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground font-medium mb-2">
                 <Briefcase className="h-3.5 w-3.5" /> Profissão
               </div>
-              <p className="text-sm">{(c as any).profession}</p>
+              <p className="text-sm">{c.profession}</p>
             </div>
           )}
-          {(c as any).current_term_start && (
+          {c.current_term_start && (
             <div className="rounded-lg border border-border bg-card p-4">
               <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground font-medium mb-2">
                 <Calendar className="h-3.5 w-3.5" /> Mandato atual
               </div>
               <p className="text-sm">
-                {new Date((c as any).current_term_start).getFullYear()}
-                {(c as any).current_term_end && ` – ${new Date((c as any).current_term_end).getFullYear()}`}
+                {new Date(c.current_term_start).getFullYear()}
+                {c.current_term_end && ` – ${new Date(c.current_term_end).getFullYear()}`}
               </p>
             </div>
           )}
@@ -414,9 +485,9 @@ export default async function CandidatoPage({
             {sortedPolls.length >= 2 && (
               <div className="mb-3">
                 <DriftChart
-                  candidateId={c.id as string}
-                  candidateName={c.name as string}
-                  color={(c.color as string | null) ?? "#3b82f6"}
+                  candidateId={c.id}
+                  candidateName={c.name}
+                  color={c.color ?? "#3b82f6"}
                 />
               </div>
             )}
@@ -471,7 +542,7 @@ export default async function CandidatoPage({
               <h2 className="text-xl font-bold">Resultados eleitorais</h2>
             </div>
             <div className="rounded-lg border border-border bg-card p-4 space-y-2">
-              {electionResults.map((r: any, i: number) => (
+              {electionResults.map((r, i) => (
                 <div key={i} className="flex items-center justify-between text-sm">
                   <span>{r.result_description ?? "Resultado"}</span>
                   <span className="font-mono tabular-nums font-semibold">
@@ -600,7 +671,7 @@ export default async function CandidatoPage({
                             {r.city && ` · ${r.city}`}
                           </span>
                         )}
-                        {r.round > 1 && (
+                        {(r.round ?? 0) > 1 && (
                           <span className="text-[10px] font-mono text-warning px-1.5 py-0.5 bg-warning/10 rounded-sm">
                             2º turno
                           </span>

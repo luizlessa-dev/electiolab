@@ -8,6 +8,8 @@
  * - Admin actions
  */
 
+import type { SyncJobResult } from '@/lib/tse/tse-sync-job';
+
 export interface AnomalyAlert {
   state: string
   position: string
@@ -20,11 +22,42 @@ export interface AnomalyAlert {
   timestamp: string
 }
 
+interface SlackTextObject {
+  type: 'plain_text' | 'mrkdwn'
+  text: string
+  emoji?: boolean
+}
+
+interface SlackBlockElement {
+  type: string
+  text?: SlackTextObject
+  url?: string
+  style?: 'primary' | 'danger'
+}
+
+interface SlackBlock {
+  type: 'header' | 'section' | 'actions' | 'context' | 'divider'
+  text?: SlackTextObject
+  fields?: SlackTextObject[]
+  elements?: Array<SlackTextObject | SlackBlockElement>
+}
+
+interface SlackAttachmentField {
+  title: string
+  value: string
+  short?: boolean
+}
+
+interface SlackAttachment {
+  color?: string
+  fields?: SlackAttachmentField[]
+}
+
 export interface SlackMessage {
   channel?: string
   text: string
-  blocks: any[]
-  attachments?: any[]
+  blocks: SlackBlock[]
+  attachments?: SlackAttachment[]
 }
 
 export interface SlackNotificationOptions {
@@ -160,7 +193,7 @@ class SlackNotifier {
   /**
    * Send sync job result notification
    */
-  async sendSyncJobResult(result: any, status: 'success' | 'partial' | 'failed'): Promise<void> {
+  async sendSyncJobResult(result: SyncJobResult, status: 'success' | 'partial' | 'failed'): Promise<void> {
     if (!this.isEnabled) return;
 
     const icon = status === 'success' ? '✅' : status === 'partial' ? '⚠️' : '❌';

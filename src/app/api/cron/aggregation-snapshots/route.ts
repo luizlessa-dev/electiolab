@@ -15,6 +15,20 @@ const STATES = [
 const POSITIONS: Array<'governador' | 'senador'> = ['governador', 'senador'];
 
 /**
+ * Row shape fetched from `polls` (Supabase client here is untyped — see
+ * src/lib/supabase/client.ts) or synthesized from the mock institute
+ * fallback further below. Both branches share this shape.
+ */
+interface StatePollRow {
+  candidate_name: string;
+  percentage: number;
+  margin_of_error?: number;
+  institute_name: string;
+  published_at: string;
+  sample_size: number;
+}
+
+/**
  * Cron Job: Record Daily Aggregation Snapshots
  *
  * This endpoint should be called once daily (e.g., via Vercel Cron)
@@ -50,7 +64,7 @@ async function recordSnapshots() {
       for (const position of POSITIONS) {
         try {
           // Fetch real polls, same pattern as /api/polls/anomalies
-          let polls: any[] = [];
+          let polls: StatePollRow[] = [];
 
           try {
             const { data, error } = await supabase

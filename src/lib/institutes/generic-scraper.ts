@@ -14,7 +14,7 @@
  * 4. Data attributes: data-candidate, data-percentage
  */
 
-import { InstituteClientBase, Poll, PollResult } from './institute-client-base';
+import { InstituteClientBase, Poll, PollResult, isRecord } from './institute-client-base';
 
 export interface GenericScraperConfig {
   instituteId: string;
@@ -187,7 +187,7 @@ export abstract class GenericScraper extends InstituteClientBase {
   /**
    * Try to parse JSON string (handles malformed JSON)
    */
-  protected parseJson(jsonStr: string): any {
+  protected parseJson(jsonStr: string): unknown {
     try {
       return JSON.parse(jsonStr);
     } catch {
@@ -202,34 +202,45 @@ export abstract class GenericScraper extends InstituteClientBase {
   }
 
   /**
+   * Get an array of raw poll records out of an unknown container shape,
+   * matching the field priority used across the various institute payloads.
+   */
+  private toPollsArray(value: unknown): unknown[] | null {
+    if (!value) return null;
+    return Array.isArray(value) ? value : [value];
+  }
+
+  /**
    * Normalize JSON data to Poll format
    */
-  protected normalizeJsonData(data: any): Poll[] {
+  protected normalizeJsonData(data: unknown): Poll[] {
     const polls: Poll[] = [];
+    const container = isRecord(data) ? data : null;
 
     // Handle array of polls
-    const pollsArray = Array.isArray(data) ? data :
-      data.polls ? (Array.isArray(data.polls) ? data.polls : [data.polls]) :
-      data.pesquisas ? (Array.isArray(data.pesquisas) ? data.pesquisas : [data.pesquisas]) :
-      data.results ? (Array.isArray(data.results) ? data.results : [data.results]) :
-      [data];
+    const pollsArray: unknown[] = Array.isArray(data)
+      ? data
+      : this.toPollsArray(container?.polls) ??
+        this.toPollsArray(container?.pesquisas) ??
+        this.toPollsArray(container?.results) ??
+        [data];
 
     for (const rawPoll of pollsArray.slice(0, 10)) {
-      if (!rawPoll) continue;
+      if (!rawPoll || !isRecord(rawPoll)) continue;
 
       try {
         const results = this.extractResultsFromJsonPoll(rawPoll);
         if (results.length === 0) continue;
 
         const poll = this.normalizePoll({
-          id: rawPoll.id || rawPoll.uuid || `${this.scraperConfig.instituteId}-${Date.now()}`,
+          id: String(rawPoll.id || rawPoll.uuid || `${this.scraperConfig.instituteId}-${Date.now()}`),
           publishDate: this.parseDate(rawPoll.publishDate || rawPoll.data_publicacao || rawPoll.publish_date),
           fieldworkEnd: this.parseDate(rawPoll.fieldworkEnd || rawPoll.data_fim || rawPoll.fieldwork_end),
           fieldworkStart: rawPoll.fieldworkStart || rawPoll.data_inicio ?
             this.parseDate(rawPoll.fieldworkStart || rawPoll.data_inicio) : undefined,
           sampleSize: parseInt(String(rawPoll.sampleSize || rawPoll.tamanho_amostra || 1000)),
           marginOfError: parseFloat(String(rawPoll.marginOfError || rawPoll.margem_erro || 0)),
-          methodology: (rawPoll.methodology || rawPoll.metodologia || 'presencial').toLowerCase(),
+          methodology: String(rawPoll.methodology || rawPoll.metodologia || 'presencial').toLowerCase(),
           results,
           sourceUrl: this.scraperConfig.baseUrl,
           isVerified: false,
@@ -247,8 +258,10 @@ export abstract class GenericScraper extends InstituteClientBase {
   /**
    * Extract results array from JSON poll object
    */
-  protected extractResultsFromJsonPoll(pollData: any): PollResult[] {
+  protected extractResultsFromJsonPoll(pollData: unknown): PollResult[] {
     const results: PollResult[] = [];
+
+    if (!isRecord(pollData)) return results;
 
     // Try various result field names
     const resultsArray =
@@ -261,9 +274,9 @@ export abstract class GenericScraper extends InstituteClientBase {
     if (!Array.isArray(resultsArray)) return [];
 
     for (const item of resultsArray) {
-      if (!item) continue;
+      if (!item || !isRecord(item)) continue;
 
-      const name = item.candidateName || item.nome || item.candidate_name || item.name || '';
+      const name = String(item.candidateName || item.nome || item.candidate_name || item.name || '');
       const pct = parseFloat(String(item.percentage || item.percentual || item.percent || 0));
 
       if (name && pct >= 0) {
@@ -271,7 +284,7 @@ export abstract class GenericScraper extends InstituteClientBase {
           candidateName: name.trim(),
           candidateId: this.normalizeId(name),
           percentage: pct,
-          margin: item.margin || item.margem,
+          margin: (item.margin || item.margem) as number | undefined,
         });
       }
     }
@@ -518,7 +531,7 @@ export abstract class GenericScraper extends InstituteClientBase {
   /**
    * Helper: Parse date (tries multiple formats)
    */
-  protected parseDate(value: any): Date {
+  protected parseDate(value: unknown): Date {
     if (!value) return new Date();
     if (value instanceof Date) return value;
 

@@ -14,6 +14,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/types/database.types";
 
 const ALERT_THRESHOLD_DAYS = 7;
 
@@ -27,7 +28,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const supabase = createClient(
+  const supabase = createClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
@@ -49,9 +50,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  const report = (elections ?? []).map((e: any) => {
+  const report = (elections ?? []).map((e) => {
     const dates = (e.polls ?? [])
-      .map((p: any) => p.publication_date)
+      .map((p) => p.publication_date)
       .sort()
       .reverse();
     const lastDate = dates[0] ?? null;

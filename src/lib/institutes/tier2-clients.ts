@@ -6,7 +6,7 @@
  */
 
 import { BrowserScraperBase } from './browser-scraper-base';
-import { Poll } from './institute-client-base';
+import { Poll, isRecord } from './institute-client-base';
 
 /**
  * Ipespe - Traditional polling institute
@@ -91,10 +91,11 @@ export class IpespeClientImpl extends BrowserScraperBase {
     return polls;
   }
 
-  private parseResults(results: any[]): Poll['results'] {
+  private parseResults(results: unknown): Poll['results'] {
     if (!Array.isArray(results)) return [];
     return results
       .map(r => {
+        if (!isRecord(r)) return null;
         const name = String(r.candidato_nome || r.nome || '');
         const pct = parseFloat(String(r.percentual || '0'));
         return name && pct > 0
@@ -289,10 +290,11 @@ export class RTBDClientImpl extends BrowserScraperBase {
     return polls;
   }
 
-  private parseResults(results: any[]): Poll['results'] {
+  private parseResults(results: unknown): Poll['results'] {
     if (!Array.isArray(results)) return [];
     return results
       .map(r => {
+        if (!isRecord(r)) return null;
         const name = String(r.candidateName || r.name || r.candidato || '');
         const pct = parseFloat(String(r.percentage || r.pct || '0'));
         return name && pct > 0

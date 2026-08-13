@@ -19,11 +19,30 @@ export interface AgentConfig {
 
 export interface AgentMemory {
   vector?: number[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   timestamp: string;
 }
 
-export abstract class RufloAgent {
+/**
+ * Fields `logAudit` reads to populate the `agent_runs` row. Each agent's
+ * concrete run() result (TseIngestResult, InstitutosScrapeResult,
+ * ValidacaoRunResult — one shape per subclass, see agent-1/2/3) only needs
+ * to be structurally compatible with this subset; extra agent-specific
+ * fields (e.g. `alerts`, `completed`, `checksum_sha256`) are untouched by
+ * logAudit and pass through via `details`/`output`.
+ */
+export interface AgentRunResult {
+  ok?: boolean;
+  duration_ms?: number;
+  row_count?: number;
+  upserted_count?: number;
+  poll_count?: number;
+  total_polls_inserted?: number;
+  completed_count?: number;
+  failed_count?: number;
+}
+
+export abstract class RufloAgent<TResult extends AgentRunResult = AgentRunResult> {
   protected config: AgentConfig;
   protected supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -34,9 +53,9 @@ export abstract class RufloAgent {
     this.config = config;
   }
 
-  abstract run(): Promise<any>;
+  abstract run(): Promise<TResult>;
 
-  protected async logAudit(result: any, error?: Error) {
+  protected async logAudit(result: TResult | null, error?: Error) {
     const audit = {
       agent_id: this.config.id,
       run_date: new Date().toISOString(),

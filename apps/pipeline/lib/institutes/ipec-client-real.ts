@@ -133,25 +133,41 @@ export class IpecClientReal extends InstituteClientBase {
   /**
    * Parse Ipec JSON structure
    */
-  private parseIPecJSON(data: any): Poll[] {
+  private parseIPecJSON(data: unknown): Poll[] {
     const polls: Poll[] = [];
-    const pollsArray = data.polls || data.pesquisas || data.results || [];
+
+    if (typeof data !== 'object' || !data) return polls;
+    const obj = data as Record<string, unknown>;
+    const pollsArray = obj.polls || obj.pesquisas || obj.results || [];
 
     if (!Array.isArray(pollsArray)) {
       return [];
     }
 
-    for (const rawPoll of pollsArray) {
+    for (const rawPollUnknown of pollsArray) {
+      if (typeof rawPollUnknown !== 'object' || !rawPollUnknown) continue;
+      const rawPoll = rawPollUnknown as Record<string, unknown>;
+
       try {
         const poll = this.normalizePoll({
           id: rawPoll.id || `ipec-${Date.now()}-${Math.random()}`,
-          publishDate: new Date(rawPoll.publishedAt || rawPoll.data_publicacao || new Date()),
-          fieldworkEnd: new Date(rawPoll.fieldworkEndDate || rawPoll.data_fim || new Date()),
+          publishDate: new Date(
+            (rawPoll.publishedAt || rawPoll.data_publicacao || new Date()) as string | number | Date
+          ),
+          fieldworkEnd: new Date(
+            (rawPoll.fieldworkEndDate || rawPoll.data_fim || new Date()) as string | number | Date
+          ),
           sampleSize: parseInt(String(rawPoll.sampleSize || rawPoll.amostra || 0)),
-          methodology: this.normalizeMethodology(rawPoll.methodology || 'presencial'),
-          marginOfError: this.parseMoE(rawPoll.marginOfError || rawPoll.moe),
-          results: this.parseResults(rawPoll.results || rawPoll.candidatos || []),
-          sourceUrl: rawPoll.source_url || this.baseUrl,
+          methodology: this.normalizeMethodology(
+            (rawPoll.methodology as string | undefined) || 'presencial'
+          ),
+          marginOfError: this.parseMoE(
+            (rawPoll.marginOfError || rawPoll.moe) as string | number | undefined
+          ),
+          results: this.parseResults(
+            (rawPoll.results || rawPoll.candidatos || []) as unknown[]
+          ),
+          sourceUrl: (rawPoll.source_url as string | undefined) || this.baseUrl,
         });
 
         if (poll.sampleSize > 0 && poll.results.length > 0) {
@@ -168,12 +184,13 @@ export class IpecClientReal extends InstituteClientBase {
   /**
    * Parse results
    */
-  private parseResults(results: any[]): Poll['results'] {
+  private parseResults(results: unknown[]): Poll['results'] {
     if (!Array.isArray(results)) return [];
 
     return results
-      .map(r => {
-        if (typeof r !== 'object' || !r) return null;
+      .map(item => {
+        if (typeof item !== 'object' || !item) return null;
+        const r = item as Record<string, unknown>;
 
         const name = String(r.candidateName || r.name || '');
         const percentage = parseFloat(String(r.percentage || r.pct || '0'));

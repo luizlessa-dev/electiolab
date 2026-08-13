@@ -10,6 +10,28 @@ import { aggregateStatePolls, compareWithResearchBaseline } from '@/lib/aggregat
 import { getMockStateClient } from '@/lib/institutes/mock-state-clients';
 import { supabase } from '@/lib/supabase/client';
 
+/**
+ * Row shape fetched from `polls` (Supabase client here is untyped — see
+ * src/lib/supabase/client.ts) or synthesized from the mock institute
+ * fallback further below. Both branches share this shape.
+ */
+interface StatePollRow {
+  state: string;
+  position: 'governador' | 'senador';
+  candidate_name: string;
+  percentage: number;
+  margin_of_error?: number;
+  institute_name: string;
+  published_at: string;
+  sample_size: number;
+}
+
+interface NotificationChannelResult {
+  status: string;
+  method: string;
+  note?: string;
+}
+
 interface AnomalyAlert {
   state: string;
   position: 'governador' | 'senador';
@@ -73,7 +95,7 @@ export async function GET(request: NextRequest) {
       for (const position of positions) {
         try {
           // Fetch polls
-          let polls: any[] = [];
+          let polls: StatePollRow[] = [];
 
           try {
             const { data, error } = await supabase
@@ -240,7 +262,7 @@ Detection Time: ${new Date(anomaly.timestamp).toLocaleString()}
     console.log(message);
 
     // Integration points (implement as needed)
-    const responses: Record<string, any> = {
+    const responses: Record<string, NotificationChannelResult> = {
       log: { status: 'sent', method: 'console.log' },
     };
 

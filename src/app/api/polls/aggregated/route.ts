@@ -13,11 +13,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { aggregateWeightedPolls } from '@/lib/aggregation/poll-weighting';
 import type { Poll } from '@/lib/institutes/institute-client-base';
+import type { Database } from '@/types/database.types';
 
-const supabase = createClient(
+const supabase = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
   process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
+
+/** Shape of `polls.raw_data` (jsonb) as written by the ingestion pipeline. */
+interface RawPollData {
+  results?: Array<{
+    candidateId: string;
+    candidateName: string;
+    percentage: number;
+  }>;
+}
 
 interface AggregatedResponse {
   candidates: Array<{
@@ -69,7 +79,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const startDate = new Date(endDate.getTime() - days * 24 * 60 * 60 * 1000);
 
     // Fetch polls from Supabase
-    let query = supabase
+    const query = supabase
       .from('polls')
       .select('*')
       .gte('publication_date', startDate.toISOString())
@@ -107,26 +117,29 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     // Transform Supabase data to Poll format
-    const polls: Array<Poll & { marginOfError?: number }> = pollsData.map((p: any) => ({
-      id: p.id,
-      instituteId: p.institute_id,
-      instituteName: p.institute_id,
-      publishDate: new Date(p.publication_date),
-      fieldworkEnd: new Date(p.fieldwork_end),
-      fieldworkStart: p.fieldwork_start ? new Date(p.fieldwork_start) : undefined,
-      sampleSize: p.sample_size || 0,
-      marginOfError: p.margin_of_error,
-      confidenceLevel: p.confidence_level || 95,
-      methodology: p.methodology || 'unknown',
-      results: (p.raw_data?.results || []).map((r: any) => ({
-        candidateId: r.candidateId,
-        candidateName: r.candidateName,
-        percentage: r.percentage,
-      })),
-      sourceUrl: p.source_url,
-      isVerified: p.is_verified || false,
-      reliabilityScore: 0.7,
-    }));
+    const polls: Array<Poll & { marginOfError?: number }> = pollsData.map((p) => {
+      const rawData = p.raw_data as RawPollData | null;
+      return {
+        id: p.id,
+        instituteId: p.institute_id,
+        instituteName: p.institute_id,
+        publishDate: new Date(p.publication_date),
+        fieldworkEnd: new Date(p.fieldwork_end),
+        fieldworkStart: p.fieldwork_start ? new Date(p.fieldwork_start) : undefined,
+        sampleSize: p.sample_size || 0,
+        marginOfError: p.margin_of_error ?? undefined,
+        confidenceLevel: p.confidence_level || 95,
+        methodology: (p.methodology || 'unknown') as Poll['methodology'],
+        results: (rawData?.results || []).map((r) => ({
+          candidateId: r.candidateId,
+          candidateName: r.candidateName,
+          percentage: r.percentage,
+        })),
+        sourceUrl: p.source_url ?? undefined,
+        isVerified: p.is_verified || false,
+        reliabilityScore: 0.7,
+      };
+    });
 
     // Filter by candidate if specified
     let filteredPolls = polls;

@@ -1,5 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from "jsr:@supabase/supabase-js@2";
+import { createClient, type SupabaseClient } from "jsr:@supabase/supabase-js@2";
 
 interface PollRow {
   id: string;
@@ -151,9 +151,48 @@ function groupPollsByScenario(
   return groups;
 }
 
+interface InstituteJoin {
+  reliability_score: number | null;
+}
+
+interface PollQueryRow {
+  id: string;
+  fieldwork_end: string;
+  sample_size: number;
+  methodology: string;
+  institute: InstituteJoin | null;
+  results: ResultRow[];
+}
+
+interface WeightedAverageInsertRow {
+  election_id: string;
+  candidate_id: string;
+  scenario_label: string | null;
+  calculated_at: string;
+  weighted_average: number;
+  confidence_interval_low: number;
+  confidence_interval_high: number;
+  polls_included: number;
+  total_sample_size: number;
+  calculation_params: {
+    half_life: number;
+    reference_date: string;
+    scenario?: string;
+  };
+}
+
+interface WeightedAverageSummary {
+  candidate: string;
+  scenario?: string;
+  weighted_average: number;
+  confidence_interval_low: number;
+  confidence_interval_high: number;
+  polls_included: number;
+  total_sample_size: number;
+}
+
 async function recalculateForElection(
-  // deno-lint-ignore no-explicit-any
-  supabase: any,
+  supabase: SupabaseClient,
   electionId: string,
   keepHistory: boolean,
 ) {
@@ -169,7 +208,8 @@ async function recalculateForElection(
     .from("candidates")
     .select("id, name, slug")
     .eq("election_id", electionId)
-    .eq("is_active", true);
+    .eq("is_active", true)
+    .returns<CandidateRow[]>();
 
   if (!candidates?.length) return { error: "No candidates", electionId };
 
@@ -181,7 +221,8 @@ async function recalculateForElection(
       results:poll_results(candidate_id, percentage)
     `)
     .eq("election_id", electionId)
-    .order("publication_date", { ascending: false });
+    .order("publication_date", { ascending: false })
+    .returns<PollQueryRow[]>();
 
   if (!polls?.length) return { error: "No polls", electionId };
 
@@ -189,8 +230,7 @@ async function recalculateForElection(
     ? new Date(election.election_date)
     : new Date();
 
-  // deno-lint-ignore no-explicit-any
-  const enrichedPolls = polls.map((p: any) => ({
+  const enrichedPolls = polls.map((p) => ({
     ...p,
     institute_reliability: p.institute?.reliability_score ?? 0.7,
   }));
@@ -205,10 +245,8 @@ async function recalculateForElection(
   }
 
   const now = new Date().toISOString();
-  // deno-lint-ignore no-explicit-any
-  const rows: any[] = [];
-  // deno-lint-ignore no-explicit-any
-  const summary: any[] = [];
+  const rows: WeightedAverageInsertRow[] = [];
+  const summary: WeightedAverageSummary[] = [];
 
   const isSecondRound = election.round === 2;
 
@@ -216,8 +254,7 @@ async function recalculateForElection(
     // ─── 2T: agrupa por cenário (par de candidatos) ───
     // Cada cenário (A vs B) é independente — média por cenário, não global.
     const candById = new Map<string, CandidateRow>(
-      // deno-lint-ignore no-explicit-any
-      candidates.map((c: any) => [c.id, c]),
+      candidates.map((c): [string, CandidateRow] => [c.id, c]),
     );
     const scenarios = groupPollsByScenario(enrichedPolls, candById);
 
@@ -294,13 +331,12 @@ Deno.serve(async (req: Request) => {
       const { data: pollElections } = await supabase
         .from("polls")
         .select("election_id")
-        .order("election_id");
+        .order("election_id")
+        .returns<{ election_id: string }[]>();
       const uniqIds = Array.from(
-        // deno-lint-ignore no-explicit-any
-        new Set((pollElections ?? []).map((p: any) => p.election_id as string)),
+        new Set((pollElections ?? []).map((p) => p.election_id)),
       );
-      // deno-lint-ignore no-explicit-any
-      const out: any[] = [];
+      const out: Awaited<ReturnType<typeof recalculateForElection>>[] = [];
       for (const id of uniqIds) {
         out.push(await recalculateForElection(supabase, id, keepHistory));
       }

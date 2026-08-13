@@ -9,6 +9,7 @@
 
 import { supabaseAdmin as supabase } from '@/lib/supabase/admin';
 import type { SyncDiscrepancy } from '@/lib/tse/tse-sync-service';
+import type { Json, Tables } from '@/types/database.types';
 
 export type DiscrepancySeverity = 'info' | 'warning' | 'critical';
 export type DiscrepancyType = 'missing_in_research' | 'missing_in_tse' | 'name_mismatch' | 'status_change';
@@ -22,8 +23,8 @@ export interface DiscrepancyRecord {
   type: DiscrepancyType
   severity: DiscrepancySeverity
   details: string
-  tseData?: any
-  researchData?: any
+  tseData?: Json | null
+  researchData?: Json | null
   resolution: ResolutionType
   resolvedBy?: string
   resolvedAt?: Date
@@ -386,21 +387,24 @@ class DiscrepancyManager {
   /**
    * Map database row to record
    */
-  private mapRowToRecord(row: any): DiscrepancyRecord {
+  private mapRowToRecord(row: Tables<'discrepancies'>): DiscrepancyRecord {
     return {
       id: row.id,
       state: row.state,
       position: row.position,
       candidateName: row.candidate_name,
-      type: row.type,
-      severity: row.severity,
+      // `type`/`severity`/`resolution` are `string` at the DB-schema level
+      // (no Postgres enum backing them) but this app only ever writes the
+      // literal unions below via createDiscrepancy/createBatch/resolve*.
+      type: row.type as DiscrepancyType,
+      severity: row.severity as DiscrepancySeverity,
       details: row.details,
       tseData: row.tse_data,
       researchData: row.research_data,
-      resolution: row.resolution,
-      resolvedBy: row.resolved_by,
+      resolution: row.resolution as ResolutionType,
+      resolvedBy: row.resolved_by ?? undefined,
       resolvedAt: row.resolved_at ? new Date(row.resolved_at) : undefined,
-      notes: row.notes,
+      notes: row.notes ?? undefined,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
     };

@@ -31,6 +31,36 @@ interface SyncResult {
   erros: string[];
 }
 
+/**
+ * PT-BR poll shape this handler consumes below (data_publicacao,
+ * candidatos, etc).
+ *
+ * NOTE: `datafolhaClient.searchPresidencial`/`searchGovernador` (see
+ * ../../lib/institutes/datafolha-client.ts) actually resolve to
+ * `DatafolhaPoll[]`, which uses different (English, camelCase) field
+ * names — e.g. `publishDate`, `results[].candidateName` — and has no
+ * `candidatos`/`data_publicacao`/`titulo` fields at all. That mismatch
+ * predates this typing pass; it is called out in the type-check report
+ * rather than fixed here, since renaming fields would change runtime
+ * behavior (this route currently reads `undefined` for every field
+ * below and silently no-ops the candidate insert loop).
+ */
+interface InstitutoSondagem {
+  titulo: string;
+  data_publicacao: string;
+  data_coleta_inicio: string;
+  data_coleta_fim: string;
+  amostra: number;
+  margem_erro: number;
+  fonte_publicacao?: string;
+  candidatos: Array<{
+    nome: string;
+    numero: string;
+    partido: string;
+    intencao_voto: number;
+  }>;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -73,16 +103,16 @@ export async function POST(request: NextRequest) {
     };
 
     try {
-      let sondagens: any[] = [];
+      let sondagens: InstitutoSondagem[] = [];
 
       console.log(`[API] Sincronizando ${instituto} - ${cargo}...`);
 
       // Buscar sondagens do instituto
       if (instituto === 'datafolha') {
         if (cargo === 'presidente') {
-          sondagens = await datafolhaClient.searchPresidencial(ano);
+          sondagens = (await datafolhaClient.searchPresidencial(ano)) as unknown as InstitutoSondagem[];
         } else if (cargo === 'governador' && estado) {
-          sondagens = await datafolhaClient.searchGovernador(estado, ano);
+          sondagens = (await datafolhaClient.searchGovernador(estado, ano)) as unknown as InstitutoSondagem[];
         }
       }
       // TODO: Implement Quaest and AtlasIntel clients

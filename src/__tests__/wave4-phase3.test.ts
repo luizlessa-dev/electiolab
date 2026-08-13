@@ -358,7 +358,7 @@ describe('Wave 4 Phase 3: Analytics & Histórico', () => {
 
   describe('Error Handling', () => {
     it('should handle invalid parameters gracefully', async () => {
-      const trajectory = await pollHistory.getCandidateHistory('', '', 'governador' as any, -1);
+      const trajectory = await pollHistory.getCandidateHistory('', '', 'governador', -1);
 
       expect(trajectory).toBeNull();
     });

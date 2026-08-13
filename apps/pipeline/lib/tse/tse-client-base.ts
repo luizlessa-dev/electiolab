@@ -170,10 +170,10 @@ export class TSEClient {
           id: String(c.id || c.sequencial || ''),
           name: String(c.nome || c.name || ''),
           party: String(c.partido || c.sigla_partido || ''),
-          position: (c.cargo || c.position || 'presidente') as any,
+          position: (c.cargo || c.position || 'presidente') as TSECandidate['position'],
           state: c.uf || c.estado ? String(c.uf || c.estado) : undefined,
           year: parseInt(String(c.ano || new Date().getFullYear())),
-          status: (c.situacao || c.status || 'registrado') as any,
+          status: (c.situacao || c.status || 'registrado') as TSECandidate['status'],
         });
       } catch (error) {
         console.warn('Failed to parse TSE candidate:', error);
@@ -218,7 +218,7 @@ export class TSEClient {
         results.push({
           electionId: String(r.eleicao_id || r.election_id || ''),
           state: String(r.uf || r.estado || ''),
-          position: (r.cargo || r.position || 'presidente') as any,
+          position: (r.cargo || r.position || 'presidente') as TSEResult['position'],
           candidateId: String(r.candidato_id || r.candidate_id || ''),
           candidateName: String(r.candidato_nome || r.candidate_name || ''),
           party: String(r.partido || r.party || ''),
@@ -364,7 +364,7 @@ export class TSEResultadosClient extends TSEClient {
 
         statuses.push({
           state: String(s.uf || s.estado || 'BR'),
-          position: (s.cargo || s.position || 'presidente') as any,
+          position: (s.cargo || s.position || 'presidente') as TSEApuracaoStatus['position'],
           round: parseInt(String(s.turno || '1')) as 1 | 2,
           sectionsTotal,
           sectionsProcessed,

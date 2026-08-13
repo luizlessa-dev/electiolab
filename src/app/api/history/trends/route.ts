@@ -13,6 +13,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { pollHistory } from '@/lib/history/poll-history';
 
+interface CandidateTrendAccumulator {
+  name: string;
+  party?: string;
+  dataPoints: Array<{ date: Date; percentage: number; confidence: number }>;
+}
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
@@ -83,7 +89,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Collect all candidates
-    const candidateMap = new Map<string, any>();
+    const candidateMap = new Map<string, CandidateTrendAccumulator>();
 
     for (const snapshot of snapshots) {
       for (const candidate of snapshot.candidates) {
@@ -95,7 +101,7 @@ export async function GET(request: NextRequest) {
             dataPoints: [],
           });
         }
-        candidateMap.get(key).dataPoints.push({
+        candidateMap.get(key)!.dataPoints.push({
           date: snapshot.snapshotDate,
           percentage: candidate.percentage,
           confidence: candidate.confidence,
@@ -108,7 +114,7 @@ export async function GET(request: NextRequest) {
     for (const [, candidate] of candidateMap) {
       if (candidate.dataPoints.length < 2) continue;
 
-      const percentages = candidate.dataPoints.map((p: any) => p.percentage);
+      const percentages = candidate.dataPoints.map((p) => p.percentage);
       const startPct = percentages[0];
       const endPct = percentages[percentages.length - 1];
       const change = endPct - startPct;

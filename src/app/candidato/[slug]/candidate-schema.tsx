@@ -1,5 +1,9 @@
+import type { getCandidateBySlug } from "@/lib/queries";
+
+type CandidateWithRelations = NonNullable<Awaited<ReturnType<typeof getCandidateBySlug>>>;
+
 interface CandidateSchemaProps {
-  candidate: any;
+  candidate: CandidateWithRelations;
   latestPollPercentage?: number;
 }
 
@@ -12,7 +16,7 @@ export function CandidateSchema({ candidate, latestPollPercentage }: CandidateSc
         "@id": `https://electiolab.com/candidato/${candidate.slug}#person`,
         name: candidate.name,
         image: candidate.photo_url || undefined,
-        birthDate: (candidate as any).birth_date || undefined,
+        birthDate: candidate.birth_date || undefined,
         jobTitle: "Political Candidate",
         affiliation: {
           "@type": "Organization",

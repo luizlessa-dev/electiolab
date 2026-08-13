@@ -35,6 +35,42 @@ export interface Poll {
   reliabilityScore: number;
 }
 
+/**
+ * Loose shape accepted by normalizePoll().
+ *
+ * Institute clients build this object from freshly scraped/parsed data
+ * (third-party HTML or JSON payloads), so most fields are optional and both
+ * camelCase and the legacy snake_case source keys normalizePoll() falls back
+ * to are represented here.
+ */
+export interface NormalizePollInput {
+  id: string;
+  publishDate?: Date | string | number;
+  publication_date?: Date | string | number;
+  fieldworkEnd?: Date | string | number;
+  fieldwork_end?: Date | string | number;
+  fieldworkStart?: Date | string | number;
+  sampleSize?: number | string;
+  sample_size?: number | string;
+  marginOfError?: number | string;
+  margin_of_error?: number | string;
+  confidenceLevel?: number;
+  confidence_level?: number;
+  methodology?: string;
+  results?: PollResult[];
+  sourceUrl?: string;
+  source_url?: string;
+  isVerified?: boolean;
+}
+
+/**
+ * Narrows an unknown value (typically JSON.parse() output from a
+ * third-party site) down to a plain object we can safely index into.
+ */
+export function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
 interface RetryConfig {
   maxRetries: number;
   initialDelayMs: number;
@@ -191,18 +227,18 @@ export abstract class InstituteClientBase {
   /**
    * Normalize poll data to standard format
    */
-  protected normalizePoll(data: any): Poll {
+  protected normalizePoll(data: NormalizePollInput): Poll {
     return {
       id: data.id,
       instituteId: this.instituteId,
       instituteName: this.instituteName,
-      publishDate: new Date(data.publishDate || data.publication_date),
-      fieldworkEnd: new Date(data.fieldworkEnd || data.fieldwork_end),
+      publishDate: new Date((data.publishDate || data.publication_date) as string | number | Date),
+      fieldworkEnd: new Date((data.fieldworkEnd || data.fieldwork_end) as string | number | Date),
       fieldworkStart: data.fieldworkStart ? new Date(data.fieldworkStart) : undefined,
       sampleSize: parseInt(String(data.sampleSize || data.sample_size)) || 0,
       marginOfError: parseFloat(String(data.marginOfError || data.margin_of_error)) || undefined,
       confidenceLevel: data.confidenceLevel || data.confidence_level || 95,
-      methodology: (data.methodology || 'presencial').toLowerCase() as any,
+      methodology: (data.methodology || 'presencial').toLowerCase() as Poll['methodology'],
       results: Array.isArray(data.results) ? data.results : [],
       sourceUrl: data.sourceUrl || data.source_url,
       isVerified: data.isVerified || false,

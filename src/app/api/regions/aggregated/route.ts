@@ -23,6 +23,22 @@ interface RegionAggregationRequest {
 }
 
 /**
+ * Row shape fetched from `polls` (Supabase client here is untyped — see
+ * src/lib/supabase/client.ts) or synthesized from the mock institute
+ * fallback further below. Both branches share this shape.
+ */
+interface StatePollRow {
+  state: string;
+  position: 'governador' | 'senador' | 'presidencial';
+  candidate_name: string;
+  percentage: number;
+  margin_of_error?: number;
+  institute_name: string;
+  published_at: string;
+  sample_size: number;
+}
+
+/**
  * GET - Single region
  */
 export async function GET(request: NextRequest) {
@@ -53,7 +69,7 @@ export async function GET(request: NextRequest) {
     for (const state of states) {
       try {
         // Fetch from database
-        let polls: any[] = [];
+        let polls: StatePollRow[] = [];
 
         try {
           const { data, error } = await supabase

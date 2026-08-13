@@ -20,10 +20,24 @@ export interface PesqeleRow {
   fieldwork_start: string;
   fieldwork_end: string;
   publication_date: string;
-  [key: string]: any;
+  // Optional columns present in the real TSE CSV but not in the mock
+  // fixture (uf, municipio, cnpj_empresa, etc.) — parseCSV only assigns
+  // string values (or omits the key), so string is the accurate type.
+  [key: string]: string | undefined;
 }
 
-export class TseIngestAgent extends RufloAgent {
+export interface TseIngestResult {
+  ok: boolean;
+  download_id: string;
+  checksum_sha256: string;
+  row_count: number;
+  upserted_count: number;
+  missing_count: number;
+  duration_ms: number;
+  timestamp: string;
+}
+
+export class TseIngestAgent extends RufloAgent<TseIngestResult> {
   constructor() {
     const config: AgentConfig = {
       name: "TSE Ingestão",
@@ -35,12 +49,12 @@ export class TseIngestAgent extends RufloAgent {
     super(config);
   }
 
-  async run() {
+  async run(): Promise<TseIngestResult> {
     const startTime = Date.now();
     console.log(`[${this.config.id}] Starting TSE ingestão...`);
 
     try {
-      const result = await this.retry(async () => {
+      const result = await this.retry(async (): Promise<TseIngestResult> => {
         const zipBuffer = await this.downloadTseZip();
         const checksum = this.sha256(Buffer.from(zipBuffer));
         console.log(
@@ -224,7 +238,7 @@ TSE-2026-003,Quaest,2026-08-03,2026-08-07,2026-08-10`;
   }
 }
 
-export async function handleTseIngestWebhook(result: any) {
+export async function handleTseIngestWebhook(result: TseIngestResult) {
   console.log("[tse-complete webhook] Received result:", {
     ok: result.ok,
     row_count: result.row_count,

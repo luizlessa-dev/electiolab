@@ -1,19 +1,43 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getElections, getDigitalAdsAggregate, getPartyFunds } from "@/lib/queries";
 import { DollarSign, Megaphone, Banknote, ExternalLink } from "lucide-react";
+import type { Database } from "@/types/database.types";
+
+type ElectionRow = Database["public"]["Tables"]["elections"]["Row"];
+type PartyFundRow = Database["public"]["Tables"]["party_fund_transfers"]["Row"];
+type DigitalAdRow = Pick<
+  Database["public"]["Tables"]["digital_ads"]["Row"],
+  | "id"
+  | "page_name"
+  | "platform"
+  | "spend_lower"
+  | "spend_upper"
+  | "impressions_lower"
+  | "impressions_upper"
+  | "delivery_start"
+> & {
+  candidate: Pick<
+    Database["public"]["Tables"]["candidates"]["Row"],
+    "id" | "name" | "party" | "color"
+  > | null;
+  election: Pick<
+    Database["public"]["Tables"]["elections"]["Row"],
+    "id" | "name" | "type" | "state"
+  > | null;
+};
 
 export default async function DinheiroPage() {
-  const elections = await getElections();
-  const election = elections.find((e: any) => e.year === 2022 && e.round === 1) ?? elections[0];
+  const elections = (await getElections()) as ElectionRow[];
+  const election = elections.find((e) => e.year === 2022 && e.round === 1) ?? elections[0];
   if (!election) return <p className="font-mono text-xs text-muted-foreground">NO DATA</p>;
 
-  const digitalAds = await getDigitalAdsAggregate();
-  const partyFunds = await getPartyFunds();
+  const digitalAds = (await getDigitalAdsAggregate()) as unknown as DigitalAdRow[];
+  const partyFunds = (await getPartyFunds()) as PartyFundRow[];
 
   // Aggregate party funds by year + type
-  const fpByYear = new Map<number, any[]>();
-  const fefcByYear = new Map<number, any[]>();
-  for (const f of partyFunds as any[]) {
+  const fpByYear = new Map<number, PartyFundRow[]>();
+  const fefcByYear = new Map<number, PartyFundRow[]>();
+  for (const f of partyFunds) {
     const map = f.fund_type === "FP" ? fpByYear : fefcByYear;
     if (!map.has(f.reference_year)) map.set(f.reference_year, []);
     map.get(f.reference_year)!.push(f);
@@ -73,7 +97,7 @@ export default async function DinheiroPage() {
     latestDate: string | null;
   }>();
 
-  for (const ad of digitalAds as any[]) {
+  for (const ad of digitalAds) {
     if (!ad.candidate) continue;
     const key = ad.candidate.id;
     if (!adsByCandidate.has(key)) {

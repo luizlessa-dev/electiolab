@@ -17,7 +17,20 @@ export interface AlertData {
   created_at: string;
 }
 
-export class ValidacaoAgent extends RufloAgent {
+export interface ValidationSummary {
+  ok: boolean;
+  elections_checked: number;
+  alerts_count: number;
+  alerts?: AlertData[];
+  status: "healthy" | "needs_review" | "error";
+}
+
+export interface ValidacaoRunResult extends ValidationSummary {
+  duration_ms: number;
+  timestamp: string;
+}
+
+export class ValidacaoAgent extends RufloAgent<ValidacaoRunResult> {
   private GAP_ALERT_THRESHOLD = 3; // dias
 
   constructor() {
@@ -31,7 +44,7 @@ export class ValidacaoAgent extends RufloAgent {
     super(config);
   }
 
-  async run() {
+  async run(): Promise<ValidacaoRunResult> {
     const startTime = Date.now();
     console.log(`[${this.config.id}] Starting validation...`);
 
@@ -54,15 +67,17 @@ export class ValidacaoAgent extends RufloAgent {
     }
   }
 
-  private async runValidation() {
+  private async runValidation(): Promise<ValidationSummary> {
     // For MVP: simple validation using pesqele_registry
     console.log(`[${this.config.id}] Starting validation check...`);
 
     try {
-      // Check if we have any pesqele data
-      const { data, error } = await this.supabase
+      // Check if we have any pesqele data. head: true skips fetching rows —
+      // `count` comes back as the real row count, not data.length (which
+      // was always 1, since the old query returned a single aggregate row).
+      const { count, error } = await this.supabase
         .from("pesqele_registry")
-        .select("COUNT(*)", { count: "exact" });
+        .select("*", { count: "exact", head: true });
 
       if (error) {
         console.warn(`[${this.config.id}] Warning: ${error.message}`);
@@ -74,7 +89,7 @@ export class ValidacaoAgent extends RufloAgent {
         };
       }
 
-      const pollCount = data?.length || 0;
+      const pollCount = count ?? 0;
       console.log(
         `[${this.config.id}] Found ${pollCount} pesquisas in registry`
       );
@@ -113,7 +128,7 @@ export class ValidacaoAgent extends RufloAgent {
   }
 }
 
-export async function handleAlertGapWebhook(alert: any) {
+export async function handleAlertGapWebhook(alert: AlertData) {
   console.log("[alert-gap webhook] Received alert:", {
     election_id: alert.election_id,
     alert_type: alert.alert_type,

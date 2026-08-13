@@ -6,7 +6,7 @@
  */
 
 import { BrowserScraperBase } from './browser-scraper-base';
-import { Poll } from './institute-client-base';
+import { Poll, isRecord } from './institute-client-base';
 
 export class DatafolhaBrowserClient extends BrowserScraperBase {
   constructor() {
@@ -116,18 +116,22 @@ export class DatafolhaBrowserClient extends BrowserScraperBase {
   /**
    * Parse JSON structure
    */
-  private parseJSON(data: any): Poll[] {
+  private parseJSON(data: unknown): Poll[] {
     const polls: Poll[] = [];
+    if (!isRecord(data)) return polls;
+
     const pollsArray = data.pesquisas || data.polls || [];
 
     if (!Array.isArray(pollsArray)) return [];
 
     for (const rawPoll of pollsArray.slice(0, 5)) {
+      if (!isRecord(rawPoll)) continue;
+
       try {
         const poll = this.normalizePoll({
-          id: rawPoll.id || `df-${Date.now()}`,
-          publishDate: new Date(rawPoll.data_publicacao || new Date()),
-          fieldworkEnd: new Date(rawPoll.data_fim || new Date()),
+          id: String(rawPoll.id || `df-${Date.now()}`),
+          publishDate: new Date((rawPoll.data_publicacao || new Date()) as string | number | Date),
+          fieldworkEnd: new Date((rawPoll.data_fim || new Date()) as string | number | Date),
           sampleSize: parseInt(String(rawPoll.tamanho_amostra || 2000)),
           methodology: 'presencial',
           marginOfError: parseFloat(String(rawPoll.margem_erro || 2.2)),
@@ -149,12 +153,12 @@ export class DatafolhaBrowserClient extends BrowserScraperBase {
   /**
    * Parse results array
    */
-  private parseResults(results: any[]): Poll['results'] {
+  private parseResults(results: unknown): Poll['results'] {
     if (!Array.isArray(results)) return [];
 
     return results
       .map(r => {
-        if (!r || typeof r !== 'object') return null;
+        if (!isRecord(r)) return null;
         const name = String(r.candidato_nome || r.nome || '');
         const pct = parseFloat(String(r.percentual || r.pct || '0'));
         if (!name || pct <= 0) return null;

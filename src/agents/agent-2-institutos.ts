@@ -23,6 +23,33 @@ export interface InstituteConfig {
   timeout_ms: number;
 }
 
+export interface CompletedInstitute {
+  institute: string;
+  strategy: string;
+  poll_count: number;
+  duration_ms: number;
+}
+
+export interface FailedInstitute {
+  institute: string;
+  error: string;
+  attempted_strategies: string[];
+}
+
+export interface InstitutosScrapeRunSummary {
+  ok: boolean;
+  completed_count: number;
+  failed_count: number;
+  total_polls_inserted: number;
+  completed: CompletedInstitute[];
+  failed: FailedInstitute[];
+}
+
+export interface InstitutosScrapeResult extends InstitutosScrapeRunSummary {
+  duration_ms: number;
+  timestamp: string;
+}
+
 const INSTITUTES: InstituteConfig[] = [
   {
     id: "datafolha",
@@ -57,7 +84,7 @@ const INSTITUTES: InstituteConfig[] = [
 ];
 
 class ParallelQueue {
-  private queue: Array<() => Promise<any>> = [];
+  private queue: Array<() => Promise<void>> = [];
   private running = 0;
   private maxConcurrent: number;
 
@@ -65,7 +92,7 @@ class ParallelQueue {
     this.maxConcurrent = maxConcurrent;
   }
 
-  async add(fn: () => Promise<any>) {
+  async add(fn: () => Promise<void>) {
     this.queue.push(fn);
     await this.process();
   }
@@ -100,7 +127,7 @@ class ParallelQueue {
   }
 }
 
-export class InstitutusScrapeAgent extends RufloAgent {
+export class InstitutusScrapeAgent extends RufloAgent<InstitutosScrapeResult> {
   constructor(private parallelism: number = 5) {
     const config: AgentConfig = {
       name: "Institutos Scraping",
@@ -112,7 +139,7 @@ export class InstitutusScrapeAgent extends RufloAgent {
     super(config);
   }
 
-  async run() {
+  async run(): Promise<InstitutosScrapeResult> {
     const startTime = Date.now();
     console.log(
       `[${this.config.id}] Starting with parallelism=${this.parallelism}...`
@@ -140,19 +167,10 @@ export class InstitutusScrapeAgent extends RufloAgent {
     }
   }
 
-  private async runParallel() {
+  private async runParallel(): Promise<InstitutosScrapeRunSummary> {
     const queue = new ParallelQueue(this.parallelism);
-    const completed: Array<{
-      institute: string;
-      strategy: string;
-      poll_count: number;
-      duration_ms: number;
-    }> = [];
-    const failed: Array<{
-      institute: string;
-      error: string;
-      attempted_strategies: string[];
-    }> = [];
+    const completed: CompletedInstitute[] = [];
+    const failed: FailedInstitute[] = [];
 
     for (const institute of INSTITUTES) {
       await queue.add(async () => {
@@ -354,7 +372,7 @@ export class InstitutusScrapeAgent extends RufloAgent {
   }
 }
 
-export async function handleInstitutsCompleteWebhook(result: any) {
+export async function handleInstitutsCompleteWebhook(result: InstitutosScrapeResult) {
   console.log("[institutos-complete webhook] Received result:", {
     ok: result.ok,
     completed_count: result.completed_count,

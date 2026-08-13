@@ -7,6 +7,21 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
+import type { Database } from '@/types/database.types';
+
+type PollForWeight = Pick<
+  Database['public']['Tables']['polls']['Row'],
+  'id' | 'publication_date' | 'fieldwork_end' | 'sample_size' | 'methodology' | 'margin_of_error'
+> & {
+  institutes: Pick<
+    Database['public']['Tables']['institutes']['Row'],
+    'id' | 'name' | 'reliability_score'
+  > | null;
+  poll_results: Pick<
+    Database['public']['Tables']['poll_results']['Row'],
+    'candidate_id' | 'percentage'
+  >[];
+};
 
 const RECENCY_HALF_LIFE_DAYS = 14;
 const BASELINE_MOE = 2.5;
@@ -19,14 +34,14 @@ function getSampleSizeWeight(sampleSize: number): number {
   return Math.sqrt(sampleSize / 1000);
 }
 
-function getMethodologyWeight(methodology: string): number {
+function getMethodologyWeight(methodology: string | null): number {
   const weights: Record<string, number> = {
     presencial: 1.0,
     telefonica: 0.95,
     mista: 0.85,
     online: 0.9,
   };
-  return weights[methodology?.toLowerCase()] || 0.5;
+  return weights[methodology?.toLowerCase() ?? ''] || 0.5;
 }
 
 function getCredibilityWeight(score?: number): number {
@@ -34,7 +49,7 @@ function getCredibilityWeight(score?: number): number {
   return Math.pow(credScore / 10, 1.5);
 }
 
-function getMoEWeight(moe?: number): number {
+function getMoEWeight(moe?: number | null): number {
   if (!moe || moe <= 0) return 1.0;
   return Math.min(1.5, BASELINE_MOE / Math.max(0.5, moe));
 }
@@ -87,7 +102,8 @@ export async function GET(
         )
       `)
       .eq('election_id', electionId)
-      .order('fieldwork_end', { ascending: false });
+      .order('fieldwork_end', { ascending: false })
+      .returns<PollForWeight[]>();
 
     if (pollsError || !polls) {
       return NextResponse.json(
@@ -110,13 +126,13 @@ export async function GET(
       const rWeight = getRecencyWeight(daysOld);
       const sWeight = getSampleSizeWeight(poll.sample_size);
       const mWeight = getMethodologyWeight(poll.methodology);
-      const institute = (poll.institutes as any);
+      const institute = poll.institutes;
       const credibilityScore = institute?.reliability_score ? (institute.reliability_score * 10) : 5;
       const iWeight = getCredibilityWeight(credibilityScore);
       const moeWeight = getMoEWeight(poll.margin_of_error);
 
       // Calculate rough average for outlier detection
-      const percentages = poll.poll_results?.map((r: any) => r.percentage) || [];
+      const percentages = poll.poll_results?.map((r) => r.percentage) || [];
       const roughAvg =
         percentages.length > 0 ? percentages.reduce((a: number, b: number) => a + b, 0) / percentages.length : 0;
       const roughStdDev =
@@ -132,7 +148,7 @@ export async function GET(
         const outlierWeight = getOutlierWeight(result.percentage, roughAvg, roughStdDev);
         const finalWeight = rWeight * sWeight * mWeight * iWeight * moeWeight * outlierWeight;
 
-        const institute = (poll.institutes as any);
+        const institute = poll.institutes;
         const instName = institute?.name || 'Unknown';
         const credScore = institute?.reliability_score ? (institute.reliability_score * 10) : 5;
 

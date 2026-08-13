@@ -1,6 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
+interface TableCheckResult {
+  exists: boolean;
+  fields?: string[];
+  row_count?: number;
+}
+
 export async function GET() {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -20,7 +26,7 @@ export async function GET() {
       'institute_scores'
     ];
 
-    const result: Record<string, any> = {};
+    const result: Record<string, TableCheckResult> = {};
 
     for (const table of tables) {
       const { data, error, count } = await supabase

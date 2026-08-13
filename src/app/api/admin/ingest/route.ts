@@ -16,6 +16,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ingestPoll } from "@/lib/ingestion/ingest-poll";
 import type { PollIngestionPayload, IngestionReport } from "@/lib/ingestion/types";
+import type { Database } from "@/types/database.types";
+
+type ElectionWithPolls = Pick<
+  Database["public"]["Tables"]["elections"]["Row"],
+  "id" | "name" | "year" | "is_active"
+> & {
+  polls: Pick<Database["public"]["Tables"]["polls"]["Row"], "publication_date">[];
+};
 
 export async function POST(req: NextRequest) {
   // Autenticação por secret key
@@ -83,10 +91,11 @@ export async function GET(req: NextRequest) {
       id, name, year, is_active,
       polls (publication_date)
     `)
-    .order("year", { ascending: false });
+    .order("year", { ascending: false })
+    .returns<ElectionWithPolls[]>();
 
-  const status = (elections ?? []).map((e: any) => {
-    const dates = (e.polls ?? []).map((p: any) => p.publication_date).sort().reverse();
+  const status = (elections ?? []).map((e) => {
+    const dates = (e.polls ?? []).map((p) => p.publication_date).sort().reverse();
     const lastDate = dates[0] ?? null;
     const gapDays = lastDate
       ? Math.floor((Date.now() - new Date(lastDate).getTime()) / 86400000)

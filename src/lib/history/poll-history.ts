@@ -9,17 +9,19 @@
 
 import { supabaseAdmin as supabase } from '@/lib/supabase/admin';
 
+export interface SnapshotCandidate {
+  name: string
+  party?: string
+  percentage: number
+  confidence: number
+}
+
 export interface AggregationSnapshot {
   id: string
   state: string
   position: 'governador' | 'senador' | 'presidencial'
   snapshotDate: Date
-  candidates: Array<{
-    name: string
-    party?: string
-    percentage: number
-    confidence: number
-  }>
+  candidates: SnapshotCandidate[]
   qualityMetrics: {
     dataQualityScore: number
     coverageScore: number
@@ -133,8 +135,8 @@ class PollHistory {
       let rank = 1;
 
       for (const snapshot of data) {
-        const candidates = JSON.parse(snapshot.candidates_data || '[]');
-        const candidate = candidates.find((c: any) =>
+        const candidates: SnapshotCandidate[] = JSON.parse(snapshot.candidates_data || '[]');
+        const candidate = candidates.find((c) =>
           c.name.toLowerCase() === candidateName.toLowerCase()
         );
 
@@ -217,8 +219,8 @@ class PollHistory {
       let endPercentage = 0;
 
       for (let i = 0; i < data.length; i++) {
-        const candidates = JSON.parse(data[i].candidates_data || '[]');
-        const candidate = candidates.find((c: any) =>
+        const candidates: SnapshotCandidate[] = JSON.parse(data[i].candidates_data || '[]');
+        const candidate = candidates.find((c) =>
           c.name.toLowerCase() === candidateName.toLowerCase()
         );
 
@@ -317,13 +319,13 @@ class PollHistory {
         return null;
       }
 
-      const period1Candidates = JSON.parse(data1[0].candidates_data || '[]');
-      const period2Candidates = JSON.parse(data2[0].candidates_data || '[]');
+      const period1Candidates: SnapshotCandidate[] = JSON.parse(data1[0].candidates_data || '[]');
+      const period2Candidates: SnapshotCandidate[] = JSON.parse(data2[0].candidates_data || '[]');
 
       const changes: Array<{ name: string; change: number; percentChange: number }> = [];
 
       for (const candidate of period2Candidates) {
-        const p1Candidate = period1Candidates.find((c: any) =>
+        const p1Candidate = period1Candidates.find((c) =>
           c.name.toLowerCase() === candidate.name.toLowerCase()
         );
 

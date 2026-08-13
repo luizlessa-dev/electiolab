@@ -3,10 +3,14 @@
  * Used by agents to notify downstream (1→2, 2→3, 3→alerting)
  */
 
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database, Json } from "@/types/database.types";
+
 interface WebhookPayload {
   agent: string;
   timestamp: string;
-  data: Record<string, any>;
+  // Agent-specific payload — shape varies per downstream consumer (1→2, 2→3, 3→alerting).
+  data: Record<string, unknown>;
   attempt?: number;
 }
 
@@ -105,16 +109,19 @@ export async function sendWebhookWithRetry(
 export async function queueWebhook(
   url: string,
   payload: WebhookPayload,
-  supabase: any
+  supabase: SupabaseClient<Database>
 ): Promise<void> {
   try {
     await supabase.from("webhook_queue").insert({
       url,
-      payload,
+      // WebhookPayload is always JSON-serializable at runtime (it's built for
+      // JSON.stringify in sendWebhookWithRetry); Json's `unknown`-averse union
+      // just can't express that structurally, hence the assertion.
+      payload: payload as unknown as Json,
       status: "pending",
       attempts: 0,
-      next_retry_at: new Date(),
-      created_at: new Date(),
+      next_retry_at: new Date().toISOString(),
+      created_at: new Date().toISOString(),
     });
   } catch (e) {
     console.error("[webhook:queue] error:", e);
@@ -153,7 +160,7 @@ export async function logWebhookAttempt(
   url: string,
   result: WebhookResult,
   agent: string,
-  supabase: any
+  supabase: SupabaseClient<Database>
 ): Promise<void> {
   try {
     await supabase.from("webhook_logs").insert({
@@ -164,7 +171,7 @@ export async function logWebhookAttempt(
       error: result.error,
       attempts: result.attempts,
       duration_ms: result.duration_ms,
-      created_at: new Date(),
+      created_at: new Date().toISOString(),
     });
   } catch (e) {
     console.error("[webhook:log] error:", e);

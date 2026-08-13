@@ -10,6 +10,7 @@
 
 import { fetchTSECandidatos, fetchTSEEleicoes, TSECandidato, TSEEleicao } from './tse-client';
 import { discrepancyManager } from '@/lib/admin/discrepancy-manager';
+import type { RealCandidate } from '@/lib/candidates/real-candidates-2026';
 
 export interface TSESyncResult {
   state: string;
@@ -26,7 +27,7 @@ export interface SyncDiscrepancy {
   type: 'missing_in_research' | 'missing_in_tse' | 'name_mismatch' | 'status_change';
   candidateName: string;
   tseData?: TSECandidato;
-  researchData?: any;
+  researchData?: RealCandidate;
   details: string;
   severity: 'info' | 'warning' | 'critical';
 }

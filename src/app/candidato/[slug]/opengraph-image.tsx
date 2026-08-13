@@ -183,7 +183,7 @@ export default async function OG({ params }: { params: { slug: string } }) {
 
         {/* Foto */}
         {photo && (
-          // eslint-disable-next-line @next/next/no-img-element
+           
           <img
             src={photo}
             alt=""

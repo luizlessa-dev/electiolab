@@ -165,25 +165,37 @@ export class QuaestClientReal extends InstituteClientBase {
   /**
    * Parse Quaest JSON structure
    */
-  private parseQuaestJSON(data: any): Poll[] {
+  private parseQuaestJSON(data: unknown): Poll[] {
     const polls: Poll[] = [];
-    const pollsArray = data.polls || data.pesquisas || data.results || [];
+
+    if (typeof data !== 'object' || !data) return polls;
+    const obj = data as Record<string, unknown>;
+    const pollsArray = obj.polls || obj.pesquisas || obj.results || [];
 
     if (!Array.isArray(pollsArray)) {
       return [];
     }
 
-    for (const rawPoll of pollsArray) {
+    for (const rawPollUnknown of pollsArray) {
+      if (typeof rawPollUnknown !== 'object' || !rawPollUnknown) continue;
+      const rawPoll = rawPollUnknown as Record<string, unknown>;
+
       try {
         const poll = this.normalizePoll({
           id: rawPoll.id || `quaest-${Date.now()}-${Math.random()}`,
-          publishDate: new Date(rawPoll.publishedAt || rawPoll.publication_date || new Date()),
-          fieldworkEnd: new Date(rawPoll.fieldworkEnd || rawPoll.data_fim || new Date()),
+          publishDate: new Date(
+            (rawPoll.publishedAt || rawPoll.publication_date || new Date()) as string | number | Date
+          ),
+          fieldworkEnd: new Date(
+            (rawPoll.fieldworkEnd || rawPoll.data_fim || new Date()) as string | number | Date
+          ),
           sampleSize: parseInt(String(rawPoll.sampleSize || rawPoll.amostra || 0)),
-          methodology: this.normalizeMethodology(rawPoll.methodology),
-          marginOfError: this.parseMoE(rawPoll.marginOfError),
-          results: this.parseResults(rawPoll.results || rawPoll.candidatos || []),
-          sourceUrl: rawPoll.url || this.baseUrl,
+          methodology: this.normalizeMethodology(rawPoll.methodology as string | undefined),
+          marginOfError: this.parseMoE(rawPoll.marginOfError as string | number | undefined),
+          results: this.parseResults(
+            (rawPoll.results || rawPoll.candidatos || []) as unknown[]
+          ),
+          sourceUrl: (rawPoll.url as string | undefined) || this.baseUrl,
         });
 
         if (poll.sampleSize > 0 && poll.results.length > 0) {
@@ -200,12 +212,13 @@ export class QuaestClientReal extends InstituteClientBase {
   /**
    * Parse results
    */
-  private parseResults(results: any[]): Poll['results'] {
+  private parseResults(results: unknown[]): Poll['results'] {
     if (!Array.isArray(results)) return [];
 
     return results
-      .map(r => {
-        if (typeof r !== 'object' || !r) return null;
+      .map(item => {
+        if (typeof item !== 'object' || !item) return null;
+        const r = item as Record<string, unknown>;
 
         const name = String(r.candidateName || r.name || r.candidate || '');
         const percentage = parseFloat(String(r.percentage || r.pct || '0'));

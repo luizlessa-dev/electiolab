@@ -45,6 +45,18 @@ import {
   bainBrazilClient,
 } from '@/lib/institutes/tier3-institutes';
 import { Poll } from '@/lib/institutes/institute-client-base';
+import type { GenericScraper } from '@/lib/institutes/generic-scraper';
+
+/**
+ * Narrow accessor for the protected `scraperConfig` field exposed by
+ * GenericScraper subclasses — used only for diagnostics/labeling here.
+ */
+interface ScraperConfigAccessor {
+  scraperConfig?: {
+    instituteName?: string;
+    instituteId?: string;
+  };
+}
 
 /**
  * Generate mock poll data for a single institute
@@ -130,7 +142,7 @@ function generateMockTier3Data(): Record<string, Poll[]> {
 async function testSingleInstitute(
   instituteId: string
 ): Promise<{ institute: string; success: boolean; pollCount: number; error?: string }> {
-  const clientMap: Record<string, any> = {
+  const clientMap: Record<string, GenericScraper> = {
     ipesp: ipespClient,
     'vox-populi': voxPopuliClient,
     'data-estrategica': dataEstrategicaClient,
@@ -213,8 +225,8 @@ async function testAllInstitutes(): Promise<
           setTimeout(() => reject(new Error('Timeout after 30s')), 30000)
         ),
       ]).then((polls) => ({
-        institute: (client as any).scraperConfig?.instituteName || 'Unknown',
-        instituteId: (client as any).scraperConfig?.instituteId || 'unknown',
+        institute: (client as unknown as ScraperConfigAccessor).scraperConfig?.instituteName || 'Unknown',
+        instituteId: (client as unknown as ScraperConfigAccessor).scraperConfig?.instituteId || 'unknown',
         success: true,
         pollCount: (polls as Poll[]).length,
       }))
@@ -229,7 +241,7 @@ async function testAllInstitutes(): Promise<
         pollCount: result.value.pollCount,
       };
     } else {
-      const client = tier3Clients[index] as any;
+      const client = tier3Clients[index] as unknown as ScraperConfigAccessor;
       return {
         institute: client.scraperConfig?.instituteName || 'Unknown',
         success: false,

@@ -17,6 +17,7 @@ import { datafolhaClientReal } from '@/lib/institutes/datafolha-client-real';
 import { ipecClientReal } from '@/lib/institutes/ipec-client-real';
 import { quaestClientReal } from '@/lib/institutes/quaest-client-real';
 import { datafolhaMockClient, ipecMockClient, quaestMockClient } from '@/lib/institutes/mock-clients';
+import type { Poll } from '@/lib/institutes/institute-client-base';
 
 const REAL_CLIENTS = {
   datafolha: datafolhaClientReal,
@@ -29,6 +30,29 @@ const MOCK_CLIENTS = {
   ipec: ipecMockClient,
   quaest: quaestMockClient,
 };
+
+interface ScraperTestSuccess {
+  institute: string;
+  status: 'success';
+  pollsFound: number;
+  firstPoll: {
+    id: string;
+    publishDate: Date;
+    fieldworkEnd: Date;
+    sampleSize: number;
+    results: number;
+  } | null;
+  duration: number;
+}
+
+interface ScraperTestError {
+  institute: string;
+  status: 'error';
+  error: string;
+  duration?: number;
+}
+
+type ScraperTestResult = ScraperTestSuccess | ScraperTestError;
 
 export async function POST(request: NextRequest) {
   try {
@@ -48,7 +72,7 @@ export async function POST(request: NextRequest) {
     console.log(`[Test Scrapers] Testing ${instituteIds.join(', ')} (${clientType})`);
 
     const results = await Promise.allSettled(
-      instituteIds.map(async id => {
+      instituteIds.map(async (id): Promise<ScraperTestResult> => {
         const start = Date.now();
 
         // Validate institute exists
@@ -64,7 +88,7 @@ export async function POST(request: NextRequest) {
             setTimeout(() => reject(new Error('Fetch timeout')), timeout)
           );
 
-          const polls = await Promise.race([pollsPromise, timeoutPromise]) as any[];
+          const polls = await Promise.race([pollsPromise, timeoutPromise]) as Poll[];
 
           const duration = Date.now() - start;
 
@@ -94,13 +118,13 @@ export async function POST(request: NextRequest) {
     );
 
     // Format response
-    const testResults = results.map(result => {
+    const testResults: ScraperTestResult[] = results.map(result => {
       if (result.status === 'fulfilled') {
         return result.value;
       }
       return {
         institute: 'unknown',
-        status: 'error',
+        status: 'error' as const,
         error: result.reason instanceof Error ? result.reason.message : String(result.reason),
       };
     });
@@ -108,8 +132,8 @@ export async function POST(request: NextRequest) {
     const successful = testResults.filter(r => r.status === 'success');
     const failed = testResults.filter(r => r.status === 'error');
 
-    const totalPollsFound = successful.reduce((sum: number, r: any) => {
-      return sum + ('pollsFound' in r ? r.pollsFound : 0);
+    const totalPollsFound = successful.reduce((sum, r) => {
+      return sum + r.pollsFound;
     }, 0);
 
     console.log(`[Test Scrapers] Results:`, {

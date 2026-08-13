@@ -11,11 +11,34 @@ import { NextRequest, NextResponse } from 'next/server';
 import { slackNotifier } from '@/lib/notifications/slack-notifier';
 import { emailNotifier } from '@/lib/notifications/email-notifier';
 
+interface SlackTestResult {
+  status?: string;
+  configured?: boolean;
+  channel?: string;
+  tested?: boolean;
+  result?: string;
+  error?: string;
+}
+
+interface EmailTestResult {
+  status?: string;
+  configured?: boolean;
+  provider?: string;
+  fromEmail?: string;
+  note?: string;
+  error?: string;
+}
+
+interface NotificationTestResults {
+  slack?: SlackTestResult;
+  email?: EmailTestResult;
+}
+
 export async function GET(request: NextRequest) {
   try {
     const channel = request.nextUrl.searchParams.get('channel') || 'all';
 
-    const results: Record<string, any> = {};
+    const results: NotificationTestResults = {};
 
     // Test Slack
     if (channel === 'slack' || channel === 'all') {

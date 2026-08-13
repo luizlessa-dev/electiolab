@@ -128,27 +128,30 @@ export class TSEResultadosClient {
   }
 
   private formatarResultado(
-    data: any,
+    data: unknown,
     cargo: string,
     turno: 1 | 2,
     ano: number,
     estado?: string
   ): ResultadoTSE {
+    const d = data as Record<string, unknown>;
+    const candidatosRaw = (d.candidatos || []) as Record<string, unknown>[];
+
     return {
       cargo,
       turno,
       ano,
       estado,
-      dataApuracao: data.dataApuracao || new Date().toISOString(),
-      percentualApuração: data.percentualApuracao || 0,
-      seçõesApuradas: data.secoesApuradas || 0,
-      seçõesTotais: data.secoesTotais || 0,
-      candidatos: (data.candidatos || []).map((c: any) => ({
-        numeroCandidata: c.numero,
-        nomeCandidata: c.nome,
-        siglaPartido: c.sigla,
-        votosNominais: c.votos || 0,
-        percentual: c.percentual || 0,
+      dataApuracao: (d.dataApuracao as string) || new Date().toISOString(),
+      percentualApuração: (d.percentualApuracao as number) || 0,
+      seçõesApuradas: (d.secoesApuradas as number) || 0,
+      seçõesTotais: (d.secoesTotais as number) || 0,
+      candidatos: candidatosRaw.map((c) => ({
+        numeroCandidata: c.numero as string,
+        nomeCandidata: c.nome as string,
+        siglaPartido: c.sigla as string,
+        votosNominais: (c.votos as number) || 0,
+        percentual: (c.percentual as number) || 0,
       })),
     };
   }

@@ -239,7 +239,7 @@ async function main() {
   for (const ad of advertisers) {
     if (ad.spend_brl <= 0) continue; // ignora declarados sem gasto BR
     const adNameNorm = normalize(ad.nome_parsed);
-    let cands = candIdx.get(adNameNorm) ?? [];
+    const cands = candIdx.get(adNameNorm) ?? [];
 
     // Fuzzy: subset de tokens
     if (cands.length === 0) {

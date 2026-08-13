@@ -59,7 +59,7 @@ export class InstituteSyncManager {
    * Register an institute client
    */
   registerClient(client: InstituteClientBase): void {
-    const instituteId = (client as any).instituteId;
+    const instituteId = client.getInstituteId();
     this.clients.set(instituteId, client);
   }
 

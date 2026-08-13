@@ -231,7 +231,10 @@ export class RegionalAggregation {
     );
 
     const regionDifferences = commonCandidates.map(candidate => {
-      const percentages: Record<Region, number> = {} as any;
+      // Only regions present in `regionalResults` get a value below — the
+      // full-Region-keyed type is what the return shape (regionDifferences)
+      // declares, matching pre-existing behavior.
+      const percentages: Record<Region, number> = {} as Record<Region, number>;
 
       for (const { region, result } of regionalResults) {
         const cand = result.candidates.find(c => c.name.toLowerCase() === candidate.toLowerCase());

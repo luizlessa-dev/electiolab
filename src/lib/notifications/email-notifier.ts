@@ -34,6 +34,30 @@ export interface EmailTemplate {
   html: string
 }
 
+interface DailyDigestData {
+  totalStates: number
+  healthyStates: number
+  warningStates: number
+  criticalStates: number
+  totalAnomalies: number
+  topAnomalies: AnomalyAlert[]
+  summary: string
+}
+
+interface WeeklyChange {
+  candidate: string
+  state: string
+  change: number
+}
+
+interface WeeklySummaryData {
+  week: string
+  totalPolls: number
+  totalAnomalies: number
+  topChanges: WeeklyChange[]
+  trends: string
+}
+
 class EmailNotifier {
   private provider: 'sendgrid' | 'resend' | 'mailgun' | 'none' = 'none';
   private apiKey: string | null = null;
@@ -44,7 +68,7 @@ class EmailNotifier {
     const provider = process.env.EMAIL_PROVIDER?.toLowerCase();
 
     if (provider === 'sendgrid' || provider === 'resend' || provider === 'mailgun') {
-      this.provider = provider as any;
+      this.provider = provider;
       this.apiKey = process.env.EMAIL_API_KEY || null;
       this.isEnabled = !!this.apiKey;
     }
@@ -78,15 +102,7 @@ class EmailNotifier {
    * Send daily digest email
    */
   async sendDailyDigest(
-    data: {
-      totalStates: number
-      healthyStates: number
-      warningStates: number
-      criticalStates: number
-      totalAnomalies: number
-      topAnomalies: AnomalyAlert[]
-      summary: string
-    },
+    data: DailyDigestData,
     recipients: string[]
   ): Promise<void> {
     if (!this.isEnabled) return;
@@ -127,17 +143,7 @@ class EmailNotifier {
    * Send weekly summary
    */
   async sendWeeklySummary(
-    data: {
-      week: string
-      totalPolls: number
-      totalAnomalies: number
-      topChanges: Array<{
-        candidate: string
-        state: string
-        change: number
-      }>
-      trends: string
-    },
+    data: WeeklySummaryData,
     recipients: string[]
   ): Promise<void> {
     if (!this.isEnabled) return;
@@ -251,11 +257,11 @@ class EmailNotifier {
   /**
    * Create daily digest template
    */
-  private createDailyDigestTemplate(data: any): EmailTemplate {
+  private createDailyDigestTemplate(data: DailyDigestData): EmailTemplate {
     const anomalyRows = data.topAnomalies
       .slice(0, 5)
       .map(
-        (a: any) => `
+        (a) => `
         <tr style="border-bottom: 1px solid #f0f0f0;">
           <td style="padding: 10px;">${a.state}</td>
           <td style="padding: 10px;">${a.candidateName}</td>
@@ -397,11 +403,11 @@ class EmailNotifier {
   /**
    * Create weekly summary template
    */
-  private createWeeklySummaryTemplate(data: any): EmailTemplate {
+  private createWeeklySummaryTemplate(data: WeeklySummaryData): EmailTemplate {
     const topChanges = data.topChanges
       .slice(0, 10)
       .map(
-        (c: any) => `
+        (c) => `
         <tr style="border-bottom: 1px solid #f0f0f0;">
           <td style="padding: 10px;">${c.candidate}</td>
           <td style="padding: 10px;">${c.state}</td>
@@ -576,7 +582,7 @@ class EmailNotifier {
       headers: {
         'Authorization': `Basic ${Buffer.from(`api:${this.apiKey}`).toString('base64')}`,
       },
-      body: formData as any,
+      body: formData,
     });
 
     if (!response.ok) {

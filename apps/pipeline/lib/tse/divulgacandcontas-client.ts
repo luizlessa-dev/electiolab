@@ -27,7 +27,7 @@ export interface DivulgaCandidato {
 
 const BASE_URL = 'https://divulgacandcontas.tse.jus.br';
 const CACHE_TTL = 86400 * 1000; // 24 horas
-const cache = new Map<string, { data: any; timestamp: number }>();
+const cache = new Map<string, { data: DivulgaCandidato[]; timestamp: number }>();
 
 export class DivulgaCandContasClient {
   private retryCount = 0;

@@ -91,26 +91,42 @@ export class DatafolhaClientReal extends InstituteClientBase {
   /**
    * Parse Datafolha JSON structure
    */
-  private parseDatafolhaJSON(data: any): Poll[] {
+  private parseDatafolhaJSON(data: unknown): Poll[] {
     const polls: Poll[] = [];
 
+    if (typeof data !== 'object' || !data) return polls;
+    const obj = data as Record<string, unknown>;
+
     // Handle various JSON structure possibilities
-    const pollsArray = data.pesquisas || data.polls || data.data || [];
+    const pollsArray = obj.pesquisas || obj.polls || obj.data || [];
 
     if (!Array.isArray(pollsArray)) {
       return [];
     }
 
-    for (const rawPoll of pollsArray) {
+    for (const rawPollUnknown of pollsArray) {
+      if (typeof rawPollUnknown !== 'object' || !rawPollUnknown) continue;
+      const rawPoll = rawPollUnknown as Record<string, unknown>;
+
       try {
         const poll = this.normalizePoll({
           id: rawPoll.id || `df-${Date.now()}-${Math.random()}`,
-          publishDate: new Date(rawPoll.data_publicacao || rawPoll.publishDate || new Date()),
-          fieldworkEnd: new Date(rawPoll.data_fim || rawPoll.fieldworkEnd || new Date()),
+          publishDate: new Date(
+            (rawPoll.data_publicacao || rawPoll.publishDate || new Date()) as string | number | Date
+          ),
+          fieldworkEnd: new Date(
+            (rawPoll.data_fim || rawPoll.fieldworkEnd || new Date()) as string | number | Date
+          ),
           sampleSize: parseInt(String(rawPoll.tamanho_amostra || rawPoll.sampleSize || 0)),
-          methodology: this.normalizeMethodology(rawPoll.metodologia || rawPoll.methodology),
-          marginOfError: this.parseMoE(rawPoll.margem_erro || rawPoll.marginOfError),
-          results: this.parseResults(rawPoll.resultados || rawPoll.results || []),
+          methodology: this.normalizeMethodology(
+            (rawPoll.metodologia || rawPoll.methodology) as string | undefined
+          ),
+          marginOfError: this.parseMoE(
+            (rawPoll.margem_erro || rawPoll.marginOfError) as string | number | undefined
+          ),
+          results: this.parseResults(
+            (rawPoll.resultados || rawPoll.results || []) as unknown[]
+          ),
           sourceUrl: rawPoll.url || `${this.baseUrl}/pesquisa/`,
         });
 
@@ -203,12 +219,13 @@ export class DatafolhaClientReal extends InstituteClientBase {
   /**
    * Parse candidate results from various formats
    */
-  private parseResults(results: any[]): Poll['results'] {
+  private parseResults(results: unknown[]): Poll['results'] {
     if (!Array.isArray(results)) return [];
 
     return results
-      .map(r => {
-        if (typeof r !== 'object' || !r) return null;
+      .map(item => {
+        if (typeof item !== 'object' || !item) return null;
+        const r = item as Record<string, unknown>;
 
         const name = String(r.candidato_nome || r.candidateName || r.nome || '');
         const percentage = parseFloat(String(r.percentual || r.percentage || r.pct || '0'));

@@ -18,7 +18,7 @@ export interface ScraperRequest {
 export interface ScraperResponse {
   success: boolean;
   strategy: 'cheerio' | 'lambda' | 'external' | 'failed';
-  data?: any;
+  data?: unknown;
   duration: number;
   error?: string;
 }
@@ -66,7 +66,7 @@ export class ScraperRouter {
    */
   static async route(request: ScraperRequest): Promise<ScraperResponse> {
     const startTime = Date.now();
-    const strategy = this.determinStrategy(request.url, request.instituteType as any);
+    const strategy = this.determinStrategy(request.url, request.instituteType);
 
     try {
       switch (strategy) {
@@ -169,7 +169,7 @@ export class ScraperRouter {
    */
   private static returnFailure(
     strategy: string,
-    error: any,
+    error: unknown,
     startTime: number
   ): ScraperResponse {
     return {

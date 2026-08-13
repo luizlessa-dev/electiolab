@@ -72,18 +72,23 @@ export async function GET(request: NextRequest) {
           period1: {
             startDate: period1Start.toISOString(),
             endDate: period1End.toISOString(),
-            candidates: comparison.period1.map((c: any) => ({
+            // pollHistory.comparePeriods() declares period1/period2 items as
+            // { name, percentage }, but the underlying snapshot candidates
+            // (AggregationSnapshot['candidates']) also carry `party` — the
+            // declared return type just doesn't surface it. Narrow assertion
+            // instead of widening to `any`.
+            candidates: comparison.period1.map((c) => ({
               name: c.name,
-              party: c.party,
+              party: (c as { party?: string }).party,
               percentage: Math.round(c.percentage * 10) / 10,
             })),
           },
           period2: {
             startDate: period2Start.toISOString(),
             endDate: period2End.toISOString(),
-            candidates: comparison.period2.map((c: any) => ({
+            candidates: comparison.period2.map((c) => ({
               name: c.name,
-              party: c.party,
+              party: (c as { party?: string }).party,
               percentage: Math.round(c.percentage * 10) / 10,
             })),
           },

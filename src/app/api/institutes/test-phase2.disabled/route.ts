@@ -24,6 +24,7 @@ import {
   rtbdClient,
   genialQuaestClient,
 } from '@/lib/institutes/tier2-clients';
+import type { InstituteClientBase, Poll } from '@/lib/institutes/institute-client-base';
 
 const MOCK_CLIENTS = {
   datafolha: datafolhaMockClient,
@@ -39,7 +40,7 @@ const MOCK_CLIENTS = {
   tse: datafolhaMockClient,
 };
 
-const BROWSER_CLIENTS: Record<string, any> = process.env.NEXT_PUBLIC_ENV === 'production'
+const BROWSER_CLIENTS: Record<string, InstituteClientBase> = process.env.NEXT_PUBLIC_ENV === 'production'
   ? {} // Disable browser clients in production (no Playwright in serverless)
   : {
       datafolha: datafolhaBrowserClient,
@@ -52,7 +53,7 @@ const BROWSER_CLIENTS: Record<string, any> = process.env.NEXT_PUBLIC_ENV === 'pr
       genial: genialQuaestClient,
     };
 
-const API_CLIENTS: Record<string, any> = {
+const API_CLIENTS: Record<string, InstituteClientBase> = {
   tse: tseApiClient,
   poderdata: poderDataClient,
   atlasintel: atlasIntelClient,
@@ -62,6 +63,31 @@ const API_CLIENTS: Record<string, any> = {
   rtbd: rtbdClient,
   genial: genialQuaestClient,
 };
+
+interface PhaseTestSuccess {
+  institute: string;
+  status: 'success';
+  mode: 'mock' | 'browser' | 'api';
+  pollsFound: number;
+  firstPoll: {
+    id: string;
+    date: Date;
+    sampleSize: number;
+    candidates: number;
+    moe?: number;
+  } | null;
+  duration: number;
+}
+
+interface PhaseTestError {
+  institute: string;
+  status: 'error';
+  mode?: 'mock' | 'browser' | 'api';
+  error: string;
+  duration?: number;
+}
+
+type PhaseTestResult = PhaseTestSuccess | PhaseTestError;
 
 export async function POST(request: NextRequest) {
   try {
@@ -80,7 +106,7 @@ export async function POST(request: NextRequest) {
 
     const startTime = Date.now();
     const results = await Promise.allSettled(
-      instituteIds.map(async id => {
+      instituteIds.map(async (id): Promise<PhaseTestResult> => {
         const instStart = Date.now();
 
         try {
@@ -107,7 +133,7 @@ export async function POST(request: NextRequest) {
             setTimeout(() => reject(new Error('Timeout')), timeout)
           );
 
-          const polls = (await Promise.race([pollsPromise, timeoutPromise])) as any[];
+          const polls = (await Promise.race([pollsPromise, timeoutPromise])) as Poll[];
           const duration = Date.now() - instStart;
 
           return {
@@ -138,9 +164,9 @@ export async function POST(request: NextRequest) {
     );
 
     const totalDuration = Date.now() - startTime;
-    const testResults = results.map(r => (r.status === 'fulfilled' ? r.value : {
+    const testResults: PhaseTestResult[] = results.map(r => (r.status === 'fulfilled' ? r.value : {
       institute: 'unknown',
-      status: 'error',
+      status: 'error' as const,
       error: String(r.reason),
     }));
 
@@ -155,7 +181,7 @@ export async function POST(request: NextRequest) {
         total: testResults.length,
         successful: successful.length,
         failed: failed.length,
-        totalPollsFound: successful.reduce((sum: number, r: any) => sum + (r.pollsFound || 0), 0),
+        totalPollsFound: successful.reduce((sum, r) => sum + (r.pollsFound || 0), 0),
         totalDuration,
         avgPerInstitute: (totalDuration / testResults.length).toFixed(0) + 'ms',
       },

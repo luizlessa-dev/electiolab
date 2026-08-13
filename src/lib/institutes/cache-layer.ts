@@ -15,7 +15,7 @@ export interface CacheStats {
 }
 
 export class CacheLayer {
-  private memoryCache = new Map<string, { data: any; expires: number }>();
+  private memoryCache = new Map<string, { data: unknown; expires: number }>();
   private stats = { hits: 0, misses: 0, totalTime: 0, requests: 0 };
   private ttlMs = 24 * 60 * 60 * 1000; // 24 hours
 

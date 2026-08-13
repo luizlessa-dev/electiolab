@@ -8,7 +8,7 @@
  */
 
 import { validateCandidate } from '@/lib/aggregation/candidate-validator';
-import { fetchTSECandidatos } from './tse-client';
+import { fetchTSECandidatos, type TSECandidato } from './tse-client';
 
 export interface TSEValidationResult {
   candidateName: string;
@@ -203,11 +203,11 @@ class TSEValidator {
    */
   private fuzzyMatchCandidate(
     searchName: string,
-    candidates: any[]
-  ): { candidate: any; similarity: number } | null {
+    candidates: TSECandidato[]
+  ): { candidate: TSECandidato; similarity: number } | null {
     const SIMILARITY_THRESHOLD = 0.85;
 
-    let bestMatch: { candidate: any; similarity: number } | null = null;
+    let bestMatch: { candidate: TSECandidato; similarity: number } | null = null;
 
     for (const candidate of candidates) {
       const similarity = this.levenshteinSimilarity(searchName, this.normalizeName(candidate.nomeUrna));

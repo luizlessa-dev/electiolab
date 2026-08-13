@@ -33,7 +33,7 @@ export interface AtlasIntelSondagem {
 
 const BASE_URL = 'https://api.atlasinteligencia.com.br/v1';
 const CACHE_TTL = 48 * 60 * 60 * 1000; // 48 horas (menos frequente que Datafolha/Quaest)
-const cache = new Map<string, { data: any; timestamp: number }>();
+const cache = new Map<string, { data: AtlasIntelSondagem[]; timestamp: number }>();
 
 export class AtlasIntelClient {
   async buscarSondagensPresidente(ano: number = 2026): Promise<AtlasIntelSondagem[]> {

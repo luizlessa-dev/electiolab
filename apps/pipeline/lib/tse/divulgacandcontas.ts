@@ -116,13 +116,13 @@ export class DivulgaCandContasClient {
 
       return {
         success: true,
-        data: candidatos.map((cand: any) => ({
-          id: cand.sequencialCandidato || cand.id,
-          nome: cand.nomeUrna || cand.nome,
+        data: candidatos.map((cand: Record<string, unknown>) => ({
+          id: (cand.sequencialCandidato || cand.id) as string,
+          nome: (cand.nomeUrna || cand.nome) as string,
           estado: uf,
           cargo,
-          partido: cand.nomePartido,
-          numero: cand.numero,
+          partido: cand.nomePartido as string | undefined,
+          numero: cand.numero as string | undefined,
         })),
         timestamp: new Date().toISOString(),
         statusCode: 200,

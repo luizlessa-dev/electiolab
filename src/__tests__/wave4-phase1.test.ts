@@ -12,6 +12,7 @@ import { discrepancyManager } from '@/lib/admin/discrepancy-manager';
 import { slackNotifier } from '@/lib/notifications/slack-notifier';
 import { emailNotifier } from '@/lib/notifications/email-notifier';
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import type { TSECandidato } from '@/lib/tse/tse-client';
 
 describe('Wave 4 Phase 1: Alerts & Notifications', () => {
   // ============================================================================
@@ -41,7 +42,8 @@ describe('Wave 4 Phase 1: Alerts & Notifications', () => {
         candidateName: testCandidate,
         severity: 'warning',
         details: 'Test discrepancy',
-        tseData: { numero: 123456 } as any,
+        // Partial TSECandidato fixture — only `numero` matters for this test.
+        tseData: { numero: 123456 } as unknown as TSECandidato,
       });
 
       expect(result).toBeDefined();

@@ -1,29 +1,45 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { PollTable } from "@/components/dashboard/poll-table";
 import { getElections, getCandidates, getPolls } from "@/lib/queries";
+import type { Database } from "@/types/database.types";
+
+type ElectionRow = Database["public"]["Tables"]["elections"]["Row"];
+type CandidateRow = Database["public"]["Tables"]["candidates"]["Row"];
+type PollWithRelations = Database["public"]["Tables"]["polls"]["Row"] & {
+  institute: Pick<
+    Database["public"]["Tables"]["institutes"]["Row"],
+    "id" | "name" | "reliability_score" | "methodology_default"
+  > | null;
+  results: Pick<
+    Database["public"]["Tables"]["poll_results"]["Row"],
+    "id" | "candidate_id" | "percentage"
+  >[];
+};
 
 export default async function PesquisasPage() {
-  const elections = await getElections();
-  const election = elections.find((e: any) => e.is_active) ?? elections[0];
+  const elections = (await getElections()) as ElectionRow[];
+  const election = elections.find((e) => e.is_active) ?? elections[0];
   if (!election) return <p className="text-muted-foreground font-mono text-xs">NO DATA</p>;
 
-  const [candidates, polls] = await Promise.all([
+  const [candidatesRaw, pollsRaw] = await Promise.all([
     getCandidates(election.id),
     getPolls(election.id),
   ]);
+  const candidates = candidatesRaw as CandidateRow[];
+  const polls = pollsRaw as PollWithRelations[];
 
-  const instituteCount = new Set((polls as any[]).map((p) => p.institute?.name)).size;
-  const totalSample = (polls as any[]).reduce((s, p) => s + (p.sample_size ?? 0), 0);
+  const instituteCount = new Set(polls.map((p) => p.institute?.name)).size;
+  const totalSample = polls.reduce((s, p) => s + (p.sample_size ?? 0), 0);
 
-  const pollTableData = (polls as any[]).map((p) => ({
+  const pollTableData = polls.map((p) => ({
     id: p.id,
     publication_date: p.publication_date,
     institute_name: p.institute?.name ?? "—",
-    methodology: p.methodology,
+    methodology: p.methodology ?? "",
     sample_size: p.sample_size,
     margin_of_error: p.margin_of_error,
-    results: (p.results ?? []).map((r: any) => {
-      const cand = candidates.find((c: any) => c.id === r.candidate_id);
+    results: (p.results ?? []).map((r) => {
+      const cand = candidates.find((c) => c.id === r.candidate_id);
       return {
         candidate_name: cand?.name ?? "—",
         percentage: Number(r.percentage),

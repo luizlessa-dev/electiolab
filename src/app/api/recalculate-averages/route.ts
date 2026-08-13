@@ -10,9 +10,34 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
+import type { Database } from '@/types/database.types';
 
 const RECENCY_HALF_LIFE_DAYS = 14;
 const BASELINE_MOE = 2.5;
+
+type WeightedAverageInsert = Database['public']['Tables']['weighted_averages']['Insert'];
+
+interface PollResultJoin {
+  candidate_id: string;
+  percentage: number;
+}
+
+interface InstituteJoin {
+  id: string;
+  name: string;
+  reliability_score: number | null;
+}
+
+interface PollWithJoins {
+  id: string;
+  fieldwork_end: string;
+  sample_size: number;
+  methodology: string | null;
+  margin_of_error: number | null;
+  institute_id: string;
+  institutes: InstituteJoin | null;
+  poll_results: PollResultJoin[] | null;
+}
 
 function getRecencyWeight(daysOld: number): number {
   return Math.pow(0.5, daysOld / RECENCY_HALF_LIFE_DAYS);
@@ -22,14 +47,14 @@ function getSampleSizeWeight(sampleSize: number): number {
   return Math.sqrt(sampleSize / 1000);
 }
 
-function getMethodologyWeight(methodology: string): number {
+function getMethodologyWeight(methodology: string | null): number {
   const weights: Record<string, number> = {
     presencial: 1.0,
     telefonica: 0.95,
     mista: 0.85,
     online: 0.9,
   };
-  return weights[methodology?.toLowerCase()] || 0.5;
+  return weights[methodology?.toLowerCase() ?? ''] || 0.5;
 }
 
 function getCredibilityWeight(score?: number): number {
@@ -37,7 +62,7 @@ function getCredibilityWeight(score?: number): number {
   return Math.pow(credScore / 10, 1.5);
 }
 
-function getMoEWeight(moe?: number): number {
+function getMoEWeight(moe?: number | null): number {
   if (!moe || moe <= 0) return 1.0;
   return Math.min(1.5, BASELINE_MOE / Math.max(0.5, moe));
 }
@@ -55,7 +80,7 @@ export async function POST(request: NextRequest) {
     const electionId = searchParams.get('election_id');
     const keepHistory = searchParams.get('keep_history') === 'true';
 
-    const supabase = createClient(
+    const supabase = createClient<Database>(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
@@ -71,7 +96,7 @@ export async function POST(request: NextRequest) {
       console.log('Polls query:', { count: elections?.length, error: pollsError?.message });
 
       const uniqIds = Array.from(
-        new Set((elections ?? []).map((p: any) => p.election_id as string).filter(Boolean))
+        new Set((elections ?? []).map((p) => p.election_id).filter(Boolean))
       );
       console.log('Unique elections:', uniqIds.length);
       electionsToProcess.push(...uniqIds);
@@ -122,7 +147,8 @@ export async function POST(request: NextRequest) {
             poll_results(candidate_id, percentage)
           `)
           .eq('election_id', eId)
-          .order('fieldwork_end', { ascending: false });
+          .order('fieldwork_end', { ascending: false })
+          .returns<PollWithJoins[]>();
 
         console.log(`  Polls for ${eId}:`, { count: polls?.length || 0, error: pError?.message });
 
@@ -138,20 +164,20 @@ export async function POST(request: NextRequest) {
             .eq('election_id', eId);
         }
 
-        const rows: any[] = [];
+        const rows: WeightedAverageInsert[] = [];
 
         for (const candidate of candidates) {
-          const candidatePolls = polls.filter((p: any) =>
-            p.poll_results?.some((r: any) => r.candidate_id === candidate.id)
+          const candidatePolls = polls.filter((p) =>
+            p.poll_results?.some((r) => r.candidate_id === candidate.id)
           );
 
           if (!candidatePolls.length) continue;
 
           // Calculate rough average for outlier detection
           const percentages = candidatePolls
-            .flatMap((p: any) => p.poll_results || [])
-            .filter((r: any) => r.candidate_id === candidate.id)
-            .map((r: any) => r.percentage);
+            .flatMap((p) => p.poll_results || [])
+            .filter((r) => r.candidate_id === candidate.id)
+            .map((r) => r.percentage);
 
           const roughAvg =
             percentages.length > 0
@@ -173,7 +199,7 @@ export async function POST(request: NextRequest) {
           let pollCount = 0;
 
           for (const poll of candidatePolls) {
-            const result = poll.poll_results?.find((r: any) => r.candidate_id === candidate.id);
+            const result = poll.poll_results?.find((r) => r.candidate_id === candidate.id);
             if (!result) continue;
 
             const daysOld = Math.max(
@@ -184,7 +210,7 @@ export async function POST(request: NextRequest) {
             const rWeight = getRecencyWeight(daysOld);
             const sWeight = getSampleSizeWeight(poll.sample_size);
             const mWeight = getMethodologyWeight(poll.methodology);
-            const institute = (poll.institutes as any);
+            const institute = poll.institutes;
             const credibilityScore = institute?.reliability_score ? (institute.reliability_score * 10) : 5;
             const iWeight = getCredibilityWeight(credibilityScore);
             const moeWeight = getMoEWeight(poll.margin_of_error);
@@ -205,7 +231,7 @@ export async function POST(request: NextRequest) {
           // Calculate weighted std dev
           let varianceSum = 0;
           for (const poll of candidatePolls) {
-            const result = poll.poll_results?.find((r: any) => r.candidate_id === candidate.id);
+            const result = poll.poll_results?.find((r) => r.candidate_id === candidate.id);
             if (!result) continue;
 
             const daysOld = Math.max(
@@ -216,7 +242,7 @@ export async function POST(request: NextRequest) {
             const rWeight = getRecencyWeight(daysOld);
             const sWeight = getSampleSizeWeight(poll.sample_size);
             const mWeight = getMethodologyWeight(poll.methodology);
-            const institute = (poll.institutes as any);
+            const institute = poll.institutes;
             const credibilityScore = institute?.reliability_score ? (institute.reliability_score * 10) : 5;
             const iWeight = getCredibilityWeight(credibilityScore);
             const moeWeight = getMoEWeight(poll.margin_of_error);

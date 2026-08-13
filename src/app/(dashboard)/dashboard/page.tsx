@@ -17,12 +17,66 @@ import {
 } from "@/lib/weighting/calculate-weighted-average";
 import { BarChart3, TrendingUp, Building2, FileSearch, Users, Activity, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import type { Database } from "@/types/database.types";
+
+// Tipos derivados do schema real do Supabase (src/types/database.types.ts).
+// O client em src/lib/supabase/server.ts não é instanciado com o generic
+// `Database`, então os retornos de src/lib/queries.ts chegam como `any[]`
+// implícito — os aliases abaixo restauram a forma real dos dados (incluindo
+// os joins feitos via `.select()`) sem precisar alterar queries.ts/server.ts.
+type ElectionRecord = Database["public"]["Tables"]["elections"]["Row"];
+type CandidateRow = Database["public"]["Tables"]["candidates"]["Row"];
+type PollResultRow = Pick<
+  Database["public"]["Tables"]["poll_results"]["Row"],
+  "id" | "candidate_id" | "percentage"
+>;
+type PollInstitute = Pick<
+  Database["public"]["Tables"]["institutes"]["Row"],
+  "id" | "name" | "reliability_score" | "methodology_default"
+>;
+type PollWithRelations = Database["public"]["Tables"]["polls"]["Row"] & {
+  institute: PollInstitute | null;
+  results: PollResultRow[];
+};
+type InstituteAccuracyRow = Pick<
+  Database["public"]["Tables"]["institute_accuracy"]["Row"],
+  "election_id" | "mean_absolute_error"
+>;
+type InstituteWithAccuracy = Database["public"]["Tables"]["institutes"]["Row"] & {
+  accuracy: InstituteAccuracyRow[];
+};
+type ElectionResultCandidate = Pick<
+  CandidateRow,
+  "id" | "name" | "party" | "color" | "number"
+>;
+type ElectionResultRow = Database["public"]["Tables"]["election_results"]["Row"] & {
+  candidate: ElectionResultCandidate | null;
+};
+type EconomicIndicatorRow = Database["public"]["Tables"]["economic_indicators"]["Row"];
+
+// Forma exigida pelo prop `data` de <InstituteRanking> (src/components/charts/institute-ranking.tsx).
+// O componente assume reliability_score/total_polls sempre presentes, mas o schema real
+// permite null nessas colunas — mismatch pré-existente, fora do escopo deste arquivo.
+type InstituteRankingItem = {
+  name: string;
+  methodology_default: string | null;
+  reliability_score: number;
+  total_polls: number;
+};
 
 // Hoistado pro escopo do módulo (evita recriar o tipo de componente a cada
 // render do DashboardPage — ver react-hooks/static-components). Recebe
 // activeId em vez de fechar sobre `election`, já que não tem mais acesso
 // ao escopo da página.
-function ElectionPill({ e, label, activeId }: { e: any; label: string; activeId: string }) {
+function ElectionPill({
+  e,
+  label,
+  activeId,
+}: {
+  e: Pick<ElectionRecord, "id">;
+  label: string;
+  activeId: string;
+}) {
   return (
     <a
       key={e.id}
@@ -45,8 +99,8 @@ function ElectionRow({
   activeId,
 }: {
   label: string;
-  items: any[];
-  fmt: (e: any) => string;
+  items: ElectionRecord[];
+  fmt: (e: ElectionRecord) => string;
   activeId: string;
 }) {
   return items.length > 0 ? (
@@ -54,7 +108,7 @@ function ElectionRow({
       <span className="text-[10px] uppercase tracking-[0.15em] text-slate-500 font-mono mr-1 min-w-[5.5rem] text-right">
         {label}
       </span>
-      {items.map((e: any) => (
+      {items.map((e) => (
         <ElectionPill key={e.id} e={e} label={fmt(e)} activeId={activeId} />
       ))}
     </div>
@@ -67,14 +121,14 @@ export default async function DashboardPage({
   searchParams: Promise<{ election?: string }>;
 }) {
   const params = await searchParams;
-  const elections = await getElections();
+  const elections = (await getElections()) as ElectionRecord[];
 
-  let election: any;
+  let election: ElectionRecord | undefined;
   if (params.election) {
-    election = elections.find((e: any) => e.id === params.election);
+    election = elections.find((e) => e.id === params.election);
   }
   if (!election) {
-    election = elections.find((e: any) => e.is_active) ?? elections[0];
+    election = elections.find((e) => e.is_active) ?? elections[0];
   }
 
   if (!election) {
@@ -85,29 +139,37 @@ export default async function DashboardPage({
     );
   }
 
-  const [candidates, polls, institutes, electionResults] =
-    await Promise.all([
+  const [candidates, polls, institutes, electionResults] = (await Promise.all(
+    [
       getCandidates(election.id),
       getPolls(election.id),
       getInstitutes(),
       getElectionResults(election.id),
       getEconomicIndicators("ipca_12m", "2022-06-01", "2026-12-31"),
-    ]);
+    ]
+  )) as [
+    CandidateRow[],
+    PollWithRelations[],
+    InstituteWithAccuracy[],
+    ElectionResultRow[],
+    EconomicIndicatorRow[],
+  ];
 
   // Calculate weighted averages
-  const candidateAverages = candidates.map((c: any) => {
+  const candidateAverages = candidates.map((c) => {
     const pollInputs: PollInput[] = polls
-      .filter((p: any) =>
-        p.results?.some((r: any) => r.candidate_id === c.id)
-      )
-      .map((p: any) => ({
+      .filter((p) => p.results?.some((r) => r.candidate_id === c.id))
+      .map((p) => ({
         id: p.id,
         fieldworkEnd: new Date(p.fieldwork_end),
         sampleSize: p.sample_size,
-        methodology: p.methodology,
+        // methodology no banco é `string | null` (livre); o cast reflete que
+        // só os 4 valores validados abaixo chegam a esse campo na prática —
+        // mesma suposição implícita que já existia antes (via `any`).
+        methodology: p.methodology as PollInput["methodology"],
         instituteReliability: p.institute?.reliability_score ?? 0.7,
         percentage:
-          p.results.find((r: any) => r.candidate_id === c.id)?.percentage ?? 0,
+          p.results.find((r) => r.candidate_id === c.id)?.percentage ?? 0,
       }));
 
     const result = calculateWeightedAverage(pollInputs, {
@@ -130,12 +192,12 @@ export default async function DashboardPage({
 
   // Trend data
   const trendMap = new Map<string, Record<string, number | string>>();
-  for (const poll of polls as any[]) {
+  for (const poll of polls) {
     const date = poll.publication_date;
-    if (!trendMap.has(date)) trendMap.set(date, { date } as any);
+    if (!trendMap.has(date)) trendMap.set(date, { date });
     const row = trendMap.get(date)!;
     for (const result of poll.results ?? []) {
-      const cand = candidates.find((c: any) => c.id === result.candidate_id);
+      const cand = candidates.find((c) => c.id === result.candidate_id);
       if (cand) {
         const key = cand.name;
         if (row[key]) {
@@ -150,19 +212,23 @@ export default async function DashboardPage({
     String(a.date).localeCompare(String(b.date))
   );
   const trendCandidates = candidates
-    .filter((c: any) => candidateAverages.find((ca) => ca.name === c.name && ca.average > 3))
-    .map((c: any) => ({ name: c.name, color: c.color ?? "#6b7280" }));
+    .filter((c) => candidateAverages.find((ca) => ca.name === c.name && ca.average > 3))
+    .map((c) => ({ name: c.name, color: c.color ?? "#6b7280" }));
 
   // Poll table data
-  const pollTableData = (polls as any[]).map((p) => ({
+  const pollTableData = polls.map((p) => ({
     id: p.id,
     publication_date: p.publication_date,
     institute_name: p.institute?.name ?? "—",
-    methodology: p.methodology,
+    // methodology no banco é `string | null`; PollTable espera `string`.
+    // "" preserva o comportamento visual atual (null e "" renderizam igual:
+    // sem texto, dot cinza padrão em methodDot) — mesmo efeito que o `any`
+    // anterior já produzia.
+    methodology: p.methodology ?? "",
     sample_size: p.sample_size,
     margin_of_error: p.margin_of_error,
-    results: (p.results ?? []).map((r: any) => {
-      const cand = candidates.find((c: any) => c.id === r.candidate_id);
+    results: (p.results ?? []).map((r) => {
+      const cand = candidates.find((c) => c.id === r.candidate_id);
       return {
         candidate_name: cand?.name ?? "—",
         percentage: Number(r.percentage),
@@ -172,20 +238,20 @@ export default async function DashboardPage({
   }));
 
   // Official results
-  const officialResults = (electionResults as any[]).map((r) => ({
+  const officialResults = electionResults.map((r) => ({
     name: r.candidate?.name ?? "—",
     percentage: Number(r.percentage),
     color: r.candidate?.color ?? "#6b7280",
   }));
 
-  const totalSample = (polls as any[]).reduce((s, p) => s + (p.sample_size ?? 0), 0);
-  const instituteCount = new Set((polls as any[]).map((p) => p.institute?.name)).size;
+  const totalSample = polls.reduce((s, p) => s + (p.sample_size ?? 0), 0);
+  const instituteCount = new Set(polls.map((p) => p.institute?.name)).size;
 
   const topCandidate = [...candidateAverages].sort((a, b) => b.average - a.average)[0];
 
   // Última pesquisa — para dateModified no JSON-LD
-  const lastPollDate = (polls as any[])
-    .map((p: any) => p.publication_date as string)
+  const lastPollDate = polls
+    .map((p) => p.publication_date)
     .sort()
     .reverse()[0] ?? new Date().toISOString().slice(0, 10);
 
@@ -245,16 +311,16 @@ export default async function DashboardPage({
         </div>
         <div className="flex flex-col items-end gap-2">
           {(() => {
-            const sortByState = (a: any, b: any) =>
+            const sortByState = (a: ElectionRecord, b: ElectionRecord) =>
               String(a.state ?? "").localeCompare(String(b.state ?? "")) ||
               a.year - b.year;
-            const nationals = (elections as any[]).filter(
+            const nationals = elections.filter(
               (e) => e.type === "presidente" || (!e.state && !e.city)
             );
-            const govElections = (elections as any[])
+            const govElections = elections
               .filter((e) => e.type === "governador")
               .sort(sortByState);
-            const senElections = (elections as any[])
+            const senElections = elections
               .filter((e) => e.type === "senador")
               .sort(sortByState);
 
@@ -499,7 +565,7 @@ export default async function DashboardPage({
                 {institutes.length} institutos
               </span>
             </div>
-            <InstituteRanking data={institutes as any[]} />
+            <InstituteRanking data={institutes as unknown as InstituteRankingItem[]} />
           </div>
         </TabsContent>
       </Tabs>

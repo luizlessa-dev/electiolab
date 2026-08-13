@@ -1,9 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InstituteRanking } from "@/components/charts/institute-ranking";
 import { getInstitutes } from "@/lib/queries";
+import type { Database } from "@/types/database.types";
+
+type InstituteWithAccuracy = Database["public"]["Tables"]["institutes"]["Row"] & {
+  accuracy: Pick<
+    Database["public"]["Tables"]["institute_accuracy"]["Row"],
+    "election_id" | "mean_absolute_error"
+  >[];
+};
 
 export default async function InstitutosPage() {
-  const institutes = await getInstitutes();
+  const institutes = (await getInstitutes()) as InstituteWithAccuracy[];
 
   return (
     <div className="space-y-3">
@@ -16,7 +24,14 @@ export default async function InstitutosPage() {
 
       <Card className="border-border">
         <CardContent className="p-0">
-          <InstituteRanking data={institutes as any[]} />
+          <InstituteRanking
+            data={institutes.map((i) => ({
+              name: i.name,
+              methodology_default: i.methodology_default,
+              reliability_score: i.reliability_score ?? 0,
+              total_polls: i.total_polls ?? 0,
+            }))}
+          />
         </CardContent>
       </Card>
 

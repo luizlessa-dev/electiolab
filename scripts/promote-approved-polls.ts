@@ -11,8 +11,11 @@
  */
 
 import { createClient } from "@supabase/supabase-js";
+import type { Database } from "../src/types/database.types";
 
-const supabase = createClient(
+type PollDraft = Database["public"]["Tables"]["poll_drafts"]["Row"];
+
+const supabase = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL || "",
   process.env.SUPABASE_SERVICE_ROLE_KEY || ""
 );
@@ -72,16 +75,23 @@ async function resolveInstitute(
 }
 
 async function resolveCandidates(
-  electionId: string,
+  electionId: string | null,
   results: Array<{ name: string; pct: number }>
 ): Promise<{
   resolved: Array<{ candidate_id: string; percentage: number }>;
   missing: string[];
 }> {
+  // .eq() rejects `null` at the type level (SQL `=` never matches NULL —
+  // callers wanting that would use `.is()`), but a null electionId here is
+  // a real possibility (poll_drafts.election_id is nullable). Casting
+  // preserves the original behavior: the query runs with whatever value
+  // electionId has, unresolved candidates end up in `missing`, and
+  // promoteDraft() reports failure — same outcome as before this file had
+  // real types.
   const { data: candidates } = await supabase
     .from("candidates")
     .select("id, name, full_name")
-    .eq("election_id", electionId)
+    .eq("election_id", electionId as string)
     .eq("is_active", true);
 
   const resolved: Array<{ candidate_id: string; percentage: number }> = [];
@@ -113,7 +123,7 @@ async function resolveCandidates(
   return { resolved, missing };
 }
 
-async function promoteDraft(draft: any): Promise<{
+async function promoteDraft(draft: PollDraft): Promise<{
   status: "promoted" | "failed";
   reason?: string;
   pollId?: string;
@@ -128,9 +138,14 @@ async function promoteDraft(draft: any): Promise<{
   }
 
   // Resolve candidates
-  const results = Array.isArray(draft.results)
-    ? draft.results
-    : JSON.parse(draft.results || "[]");
+  // draft.results is jsonb (Json), normally already decoded to an array by
+  // Supabase, but historically some rows stored it as a raw JSON string —
+  // the Array.isArray guard covers both shapes. JSON.parse() coerces its
+  // argument to a string internally regardless of static type, so the `as
+  // string` cast here doesn't change what runs, only what typechecks.
+  const results: Array<{ name: string; pct: number }> = Array.isArray(draft.results)
+    ? (draft.results as Array<{ name: string; pct: number }>)
+    : JSON.parse((draft.results as string) || "[]");
   const { resolved, missing } = await resolveCandidates(
     draft.election_id,
     results
@@ -151,19 +166,26 @@ async function promoteDraft(draft: any): Promise<{
   }
 
   // Create poll (nota: source_url/source_kind/tse_protocolo são apenas em poll_drafts)
+  // election_id/fieldwork_end/sample_size/publication_date are nullable on
+  // poll_drafts but required on polls — by this point resolveCandidates()
+  // has already succeeded against draft.election_id (so it can't have been
+  // null) and an approved draft is expected to carry the rest. The
+  // assertions below preserve the original (pre-typing) runtime behavior:
+  // if one of these is unexpectedly null, the insert fails on the DB's
+  // NOT NULL constraint exactly like it did before, just later.
   const { data: poll, error: pollError } = await supabase
     .from("polls")
     .insert({
-      election_id: draft.election_id,
+      election_id: draft.election_id!,
       institute_id: institute.id,
       fieldwork_start: draft.fieldwork_start,
-      fieldwork_end: draft.fieldwork_end,
-      publication_date: draft.publication_date || draft.fieldwork_end,
-      sample_size: draft.sample_size,
+      fieldwork_end: draft.fieldwork_end!,
+      publication_date: (draft.publication_date || draft.fieldwork_end) as string,
+      sample_size: draft.sample_size!,
       margin_of_error: draft.margin_of_error,
       methodology: draft.methodology,
       scope: draft.scope,
-      round: draft.round,
+      round: draft.round as number,
       scenario_label: draft.scenario_label,
     })
     .select("id")

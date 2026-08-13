@@ -41,6 +41,34 @@ interface RetryConfig {
   backoffMultiplier: number;
 }
 
+/**
+ * Loosely-typed raw poll payload accepted by `normalizePoll()`.
+ *
+ * Subclasses build this object from unknown/untyped upstream sources
+ * (scraped HTML, JSON blobs with inconsistent key casing/language), so
+ * every field is `unknown` on purpose: callers narrow/cast values to the
+ * concrete type expected by each destination field inside `normalizePoll`.
+ */
+export interface RawPollInput {
+  id?: unknown;
+  publishDate?: unknown;
+  publication_date?: unknown;
+  fieldworkEnd?: unknown;
+  fieldwork_end?: unknown;
+  fieldworkStart?: unknown;
+  sampleSize?: unknown;
+  sample_size?: unknown;
+  marginOfError?: unknown;
+  margin_of_error?: unknown;
+  confidenceLevel?: unknown;
+  confidence_level?: unknown;
+  methodology?: unknown;
+  results?: unknown;
+  sourceUrl?: unknown;
+  source_url?: unknown;
+  isVerified?: unknown;
+}
+
 const DEFAULT_RETRY_CONFIG: RetryConfig = {
   maxRetries: 3,
   initialDelayMs: 1000,
@@ -191,23 +219,37 @@ export abstract class InstituteClientBase {
   /**
    * Normalize poll data to standard format
    */
-  protected normalizePoll(data: any): Poll {
+  protected normalizePoll(data: RawPollInput): Poll {
     return {
-      id: data.id,
+      id: data.id as string,
       instituteId: this.instituteId,
       instituteName: this.instituteName,
-      publishDate: new Date(data.publishDate || data.publication_date),
-      fieldworkEnd: new Date(data.fieldworkEnd || data.fieldwork_end),
-      fieldworkStart: data.fieldworkStart ? new Date(data.fieldworkStart) : undefined,
+      publishDate: new Date((data.publishDate || data.publication_date) as string | number | Date),
+      fieldworkEnd: new Date((data.fieldworkEnd || data.fieldwork_end) as string | number | Date),
+      fieldworkStart: data.fieldworkStart
+        ? new Date(data.fieldworkStart as string | number | Date)
+        : undefined,
       sampleSize: parseInt(String(data.sampleSize || data.sample_size)) || 0,
       marginOfError: parseFloat(String(data.marginOfError || data.margin_of_error)) || undefined,
-      confidenceLevel: data.confidenceLevel || data.confidence_level || 95,
-      methodology: (data.methodology || 'presencial').toLowerCase() as any,
-      results: Array.isArray(data.results) ? data.results : [],
-      sourceUrl: data.sourceUrl || data.source_url,
-      isVerified: data.isVerified || false,
+      confidenceLevel: (data.confidenceLevel || data.confidence_level || 95) as number,
+      methodology: String(data.methodology || 'presencial').toLowerCase() as Poll['methodology'],
+      results: Array.isArray(data.results) ? (data.results as PollResult[]) : [],
+      sourceUrl: (data.sourceUrl || data.source_url) as string | undefined,
+      isVerified: (data.isVerified || false) as boolean,
       reliabilityScore: this.reliabilityScore,
     };
+  }
+
+  /**
+   * Public accessor for the institute id.
+   *
+   * `instituteId` itself stays `protected` (it's an implementation detail
+   * subclasses rely on internally); this getter lets orchestration code
+   * such as `InstituteSyncManager` read the id without resorting to an
+   * `as any` cast to bypass the access modifier.
+   */
+  public getInstituteId(): string {
+    return this.instituteId;
   }
 }
 

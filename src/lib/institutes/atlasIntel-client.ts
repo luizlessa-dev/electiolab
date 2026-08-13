@@ -8,7 +8,7 @@
  */
 
 import { BrowserScraperBase } from './browser-scraper-base';
-import { Poll } from './institute-client-base';
+import { Poll, isRecord } from './institute-client-base';
 
 export class AtlasIntelClient extends BrowserScraperBase {
   constructor() {
@@ -109,24 +109,28 @@ export class AtlasIntelClient extends BrowserScraperBase {
   /**
    * Parse JSON data
    */
-  private parseJSON(data: any): Poll[] {
+  private parseJSON(data: unknown): Poll[] {
     const polls: Poll[] = [];
+
+    if (!isRecord(data)) return polls;
 
     const pollsArray = data.tracking || data.polls || data.pesquisas || data.results || [];
 
     if (!Array.isArray(pollsArray)) return [];
 
     for (const rawPoll of pollsArray.slice(0, 10)) {
+      if (!isRecord(rawPoll)) continue;
+
       try {
         const poll = this.normalizePoll({
-          id: rawPoll.id || `ai-${Date.now()}-${Math.random()}`,
-          publishDate: new Date(rawPoll.publishedAt || rawPoll.data_publicacao || rawPoll.date || new Date()),
-          fieldworkEnd: new Date(rawPoll.fieldworkEnd || rawPoll.data_coleta || rawPoll.date || new Date()),
+          id: String(rawPoll.id || `ai-${Date.now()}-${Math.random()}`),
+          publishDate: new Date((rawPoll.publishedAt || rawPoll.data_publicacao || rawPoll.date || new Date()) as string | number | Date),
+          fieldworkEnd: new Date((rawPoll.fieldworkEnd || rawPoll.data_coleta || rawPoll.date || new Date()) as string | number | Date),
           sampleSize: parseInt(String(rawPoll.sampleSize || rawPoll.n || rawPoll.amostra || 1000)),
-          methodology: this.normalizeMethodology(rawPoll.methodology || rawPoll.metodologia),
-          marginOfError: this.parseMoE(rawPoll.marginOfError || rawPoll.moe || rawPoll.margem),
+          methodology: this.normalizeMethodology((rawPoll.methodology || rawPoll.metodologia) as string | undefined),
+          marginOfError: this.parseMoE((rawPoll.marginOfError || rawPoll.moe || rawPoll.margem) as string | number | undefined),
           results: this.parseResults(rawPoll.results || rawPoll.candidatos || rawPoll.options || []),
-          sourceUrl: rawPoll.url || this.config.baseUrl,
+          sourceUrl: (rawPoll.url as string | undefined) || this.config.baseUrl,
         });
 
         if (poll.sampleSize > 0 && poll.results.length > 0) {
@@ -258,12 +262,12 @@ export class AtlasIntelClient extends BrowserScraperBase {
   /**
    * Parse results
    */
-  private parseResults(results: any[]): Poll['results'] {
+  private parseResults(results: unknown): Poll['results'] {
     if (!Array.isArray(results)) return [];
 
     return results
       .map(r => {
-        if (!r || typeof r !== 'object') return null;
+        if (!isRecord(r)) return null;
 
         const name = String(r.candidateName || r.name || r.candidato || r.candidate || r.option || '');
         const pct = parseFloat(String(r.percentage || r.pct || r.percentual || r.percent || '0'));

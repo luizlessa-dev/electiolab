@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
     const result = approvalAggregation.aggregateApprovalPolls(
       polls,
       position === 'governador' ? uf || undefined : undefined,
-      position as any,
+      position as 'presidencial' | 'governador',
       referenceDate
     );
 
