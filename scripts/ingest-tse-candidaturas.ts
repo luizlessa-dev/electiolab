@@ -1,21 +1,31 @@
 #!/usr/bin/env npx tsx
 /**
  * Ingest TSE candidaturas — popula/atualiza candidates com dados oficiais do TSE
- * para as corridas que o electiolab acompanha: Presidente, Governador (27) e
- * Senador (27), ano 2026 — mesmo escopo de `elections`.
+ * para todos os cargos que o electiolab acompanha, ano 2026: Presidente,
+ * Governador (27), Senador (27), Deputado Federal (27), Deputado Estadual (26)
+ * e Deputado Distrital (1, só DF) — mesmo escopo de `elections`.
  *
  * Reescrito em 2026-08-13: a versão anterior só fazia UPDATE via match fuzzy de
  * nome contra candidates pré-existentes (funcionava quando a base já vinha com
- * um shortlist curado). Com candidates zerada, isso não cria nada. Esta versão
- * faz upsert direto por tse_id/cpf, casando cada candidatura com a election_id
- * certa via (cargo, UF) — sem fuzzy match, sem aliases manuais.
+ * um shortlist curado). Esta versão faz upsert direto por tse_id/cpf, com
+ * fallback de match por nome escopado à própria eleição, casando cada
+ * candidatura com a election_id certa via (cargo, UF).
+ *
+ * Escopo ampliado no mesmo dia pra incluir os 3 cargos de Deputado — decisão
+ * de produto: candidatos famosos concorrendo a deputado geram mais engajamento
+ * que só as corridas majoritárias. Isso multiplica o volume por ~50x (335 →
+ * ~16.600 candidaturas), mas o ZIP fonte continua o mesmo de 2,5MB (só muda
+ * quais cargos filtramos pra dentro) — parser em memória continua adequado.
  *
  * Achado importante: candidatos a PRESIDENTE só aparecem no CSV agregado
  * `_BRASIL.csv` do TSE (não em nenhum arquivo por UF) — o script anterior e o
  * ingest-tse-extended.ts pulam esse arquivo inteiro como "agregado redundante"
  * e por isso nunca capturavam presidenciáveis. Aqui só pulamos BRASIL.csv para
- * cargos que já vêm por UF (GOVERNADOR/SENADOR, pra não duplicar) e extraímos
- * PRESIDENTE dele.
+ * cargos que já vêm por UF (evita duplicar) e extraímos PRESIDENTE dele.
+ *
+ * Fora do escopo por decisão (não são candidaturas votadas separadamente):
+ * VICE-GOVERNADOR, VICE-PRESIDENTE, 1º/2º SUPLENTE (de senador) — correm na
+ * chapa do titular, não aparecem na urna como nome próprio.
  *
  * Uso:
  *   npx tsx scripts/ingest-tse-candidaturas.ts             # dry-run, mostra diffs
@@ -71,7 +81,18 @@ const TSE_BENS_URL = (ano: number) =>
 const CACHE_DIR = path.join(os.tmpdir(), "tse-cache");
 fs.mkdirSync(CACHE_DIR, { recursive: true });
 
-const TRACKED_CARGOS = new Set(["PRESIDENTE", "GOVERNADOR", "SENADOR"]);
+const TRACKED_CARGOS = new Set([
+  "PRESIDENTE",
+  "GOVERNADOR",
+  "SENADOR",
+  "DEPUTADO FEDERAL",
+  "DEPUTADO ESTADUAL",
+  "DEPUTADO DISTRITAL",
+]);
+// Cargos por UF (tudo exceto PRESIDENTE, que só existe no agregado _BRASIL.csv)
+const PER_UF_CARGOS = new Set(
+  [...TRACKED_CARGOS].filter((c) => c !== "PRESIDENTE")
+);
 
 // ─────────────────────────────────────────────────────────────────
 // Helpers
@@ -294,9 +315,7 @@ async function loadCandidaturas(ano: number): Promise<TseRow[]> {
       continue;
     }
     console.log(`  📄 ${entry.entryName}`);
-    rows.push(
-      ...parseCandCsv(entry.getData(), { onlyCargos: new Set(["GOVERNADOR", "SENADOR"]) })
-    );
+    rows.push(...parseCandCsv(entry.getData(), { onlyCargos: PER_UF_CARGOS }));
   }
   console.log(`📊 Candidaturas relevantes (${[...TRACKED_CARGOS].join("/")}): ${rows.length}`);
   return rows;
@@ -326,10 +345,18 @@ async function loadElectionsMap(ano: number): Promise<Map<string, ElectionRef>> 
   return map;
 }
 
+const CARGO_TO_ELECTION_TYPE: Record<string, string> = {
+  GOVERNADOR: "governador",
+  SENADOR: "senador",
+  "DEPUTADO FEDERAL": "deputado_federal",
+  "DEPUTADO ESTADUAL": "deputado_estadual",
+  "DEPUTADO DISTRITAL": "deputado_distrital",
+};
+
 function electionKeyFor(row: TseRow): string {
   if (row.cargo === "PRESIDENTE") return "presidente";
-  if (row.cargo === "GOVERNADOR") return `governador:${row.uf}`;
-  return `senador:${row.uf}`; // SENADOR
+  const type = CARGO_TO_ELECTION_TYPE[row.cargo];
+  return `${type}:${row.uf}`;
 }
 
 // ─────────────────────────────────────────────────────────────────
