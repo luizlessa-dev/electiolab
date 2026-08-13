@@ -14,6 +14,21 @@ export interface PollData {
   percentage: number;
   fieldwork_end: string;
   institute: string;
+  sample_size?: number;
+}
+
+function normalizeSlug(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function normalizeName(s: string): string {
+  return s
+    .toUpperCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^A-Z0-9 ]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 export interface InstituteConfig {
@@ -128,6 +143,9 @@ class ParallelQueue {
 }
 
 export class InstitutusScrapeAgent extends RufloAgent<InstitutosScrapeResult> {
+  private institutesBySlug = new Map<string, string>();
+  private electionId: string | null = null;
+
   constructor(private parallelism: number = 5) {
     const config: AgentConfig = {
       name: "Institutos Scraping",
@@ -146,6 +164,13 @@ export class InstitutusScrapeAgent extends RufloAgent<InstitutosScrapeResult> {
     );
 
     try {
+      await this.resolveContext();
+      if (!this.electionId) {
+        throw new Error(
+          "Eleição presidencial 2026 1º turno não encontrada em `elections` — nada pra persistir"
+        );
+      }
+
       const result = await this.retry(async () => {
         return await this.runParallel();
       });
@@ -167,6 +192,61 @@ export class InstitutusScrapeAgent extends RufloAgent<InstitutosScrapeResult> {
     }
   }
 
+  /**
+   * Resolve institute_id (por slug normalizado, ex.: "atlasIntel" ↔ slug
+   * "atlas-intel") e election_id uma vez por run, antes de raspar.
+   *
+   * Assunção MVP: as URLs em INSTITUTES são páginas iniciais genéricas
+   * (ex.: datafolha.com.br/pesquisas-eleitorais/), sem sinal de cargo/UF no
+   * HTML pra distinguir presidencial de estadual — atrelamos tudo à
+   * corrida presidencial 2026, 1º turno (única eleição nacional, e o
+   * parser genérico "Nome: XX%" não separa cenários de 2º turno, que
+   * sempre nomeiam dois candidatos).
+   */
+  private async resolveContext(): Promise<void> {
+    const { data: institutes } = await this.supabase
+      .from("institutes")
+      .select("id, slug, name");
+
+    for (const inst of institutes ?? []) {
+      this.institutesBySlug.set(normalizeSlug(inst.slug || inst.name), inst.id);
+    }
+
+    const { data: election } = await this.supabase
+      .from("elections")
+      .select("id")
+      .eq("type", "presidente")
+      .eq("round", 1)
+      .eq("is_active", true)
+      .order("year", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    this.electionId = election?.id ?? null;
+  }
+
+  /**
+   * Best-effort: nenhum dos 3 parsers extrai sample_size (coluna NOT NULL
+   * em polls). Procura padrões comuns de metodologia BR na página inteira;
+   * se não achar, upsertPolls() descarta as pesquisas daquele instituto em
+   * vez de gravar um valor inventado.
+   */
+  private extractSampleSize(html: string): number | null {
+    const patterns = [
+      /amostra\s+de\s+([\d.,]+)\s*(?:entrevistas|pessoas|eleitores)/i,
+      /([\d.,]+)\s*entrevistas(?:\s+(?:presenciais|por telefone|online))?/i,
+      /ouviu\s+([\d.,]+)\s*(?:pessoas|eleitores)/i,
+    ];
+    for (const pattern of patterns) {
+      const match = html.match(pattern);
+      if (match) {
+        const n = parseInt(match[1].replace(/[.,]/g, ""), 10);
+        if (!isNaN(n) && n > 0) return n;
+      }
+    }
+    return null;
+  }
+
   private async runParallel(): Promise<InstitutosScrapeRunSummary> {
     const queue = new ParallelQueue(this.parallelism);
     const completed: CompletedInstitute[] = [];
@@ -177,6 +257,16 @@ export class InstitutusScrapeAgent extends RufloAgent<InstitutosScrapeResult> {
         const instStart = Date.now();
         const attemptedStrategies: string[] = [];
 
+        const instituteId = this.institutesBySlug.get(normalizeSlug(institute.id));
+        if (!instituteId) {
+          failed.push({
+            institute: institute.id,
+            error: `Instituto "${institute.id}" não encontrado em \`institutes\` (slug/nome não bateu)`,
+            attempted_strategies: [],
+          });
+          return;
+        }
+
         try {
           console.log(`[${this.config.id}] Scraping ${institute.id}...`);
 
@@ -184,6 +274,7 @@ export class InstitutusScrapeAgent extends RufloAgent<InstitutosScrapeResult> {
             institute.url,
             institute.timeout_ms
           );
+          const sampleSize = this.extractSampleSize(html);
 
           let polls: PollData[] | null = null;
           let strategyUsed = "";
@@ -201,6 +292,7 @@ export class InstitutusScrapeAgent extends RufloAgent<InstitutosScrapeResult> {
               }
 
               if (polls && polls.length > 0) {
+                polls = polls.map((p) => ({ ...p, sample_size: sampleSize ?? undefined }));
                 strategyUsed = strategy;
                 break;
               }
@@ -216,7 +308,7 @@ export class InstitutusScrapeAgent extends RufloAgent<InstitutosScrapeResult> {
           }
 
           // Upsert to Supabase
-          const upserted = await this.upsertPolls(polls);
+          const upserted = await this.upsertPolls(polls, instituteId, this.electionId!);
 
           completed.push({
             institute: institute.id,
@@ -362,13 +454,100 @@ export class InstitutusScrapeAgent extends RufloAgent<InstitutosScrapeResult> {
     return polls;
   }
 
-  private async upsertPolls(polls: PollData[]): Promise<number> {
-    // For MVP: just log polls (don't upsert to avoid schema issues)
-    // In production: would upsert to polls table properly
-    console.log(`[${this.config.id}] Would upsert ${polls.length} polls to database`);
+  private resolveCandidateId(
+    name: string,
+    candidates: Array<{ id: string; name: string; full_name: string | null }>
+  ): string | null {
+    const target = normalizeName(name);
+    for (const c of candidates) {
+      const cn = normalizeName(c.name);
+      const cfn = c.full_name ? normalizeName(c.full_name) : "";
+      if (cn.includes(target) || target.includes(cn) || (cfn && cfn.includes(target))) {
+        return c.id;
+      }
+    }
+    return null;
+  }
 
-    // Return count of polls processed
-    return polls.length;
+  /**
+   * Grava 1 poll (o scrape inteiro de um instituto) + N poll_results (1 por
+   * candidato resolvido). Pesquisas sem sample_size extraível são
+   * descartadas (não grava metodologia inventada); candidatos cujo nome
+   * raspado não bate com nenhum candidato ativo da eleição são ignorados
+   * individualmente, sem descartar o poll inteiro.
+   */
+  private async upsertPolls(
+    polls: PollData[],
+    instituteId: string,
+    electionId: string
+  ): Promise<number> {
+    const withSampleSize = polls.filter(
+      (p) => typeof p.sample_size === "number" && p.sample_size > 0
+    );
+    if (withSampleSize.length < polls.length) {
+      console.warn(
+        `[${this.config.id}] ${polls.length - withSampleSize.length} pesquisa(s) sem sample_size extraível, ignoradas`
+      );
+    }
+    if (withSampleSize.length === 0) return 0;
+
+    const { data: candidates } = await this.supabase
+      .from("candidates")
+      .select("id, name, full_name")
+      .eq("election_id", electionId)
+      .eq("is_active", true);
+
+    const resolved: Array<{ candidate_id: string; percentage: number }> = [];
+    let unresolvedCount = 0;
+    for (const p of withSampleSize) {
+      const candidateId = this.resolveCandidateId(p.candidate, candidates ?? []);
+      if (!candidateId) {
+        unresolvedCount++;
+        continue;
+      }
+      resolved.push({ candidate_id: candidateId, percentage: p.percentage });
+    }
+    if (unresolvedCount > 0) {
+      console.warn(`[${this.config.id}] ${unresolvedCount} candidato(s) não resolvido(s), ignorado(s)`);
+    }
+    if (resolved.length === 0) return 0;
+
+    // Sem publication_date real na página raspada — reusa fieldwork_end
+    // como aproximação (mesma lógica já usada em promote-approved-polls.ts).
+    const fieldworkEnd = withSampleSize[0].fieldwork_end;
+    const sampleSize = withSampleSize[0].sample_size as number;
+
+    const { data: poll, error: pollError } = await this.supabase
+      .from("polls")
+      .insert({
+        election_id: electionId,
+        institute_id: instituteId,
+        fieldwork_end: fieldworkEnd,
+        publication_date: fieldworkEnd,
+        sample_size: sampleSize,
+      })
+      .select("id")
+      .single();
+
+    if (pollError || !poll) {
+      console.error(`[${this.config.id}] Erro ao criar poll:`, pollError?.message);
+      return 0;
+    }
+
+    const { error: resultsError } = await this.supabase.from("poll_results").insert(
+      resolved.map((r) => ({
+        poll_id: poll.id,
+        candidate_id: r.candidate_id,
+        percentage: r.percentage,
+      }))
+    );
+
+    if (resultsError) {
+      console.error(`[${this.config.id}] Erro ao criar poll_results:`, resultsError.message);
+      return 0;
+    }
+
+    return resolved.length;
   }
 }
 
