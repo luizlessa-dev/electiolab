@@ -1,12 +1,16 @@
 /**
  * GET /api/cron/ingest-pesqele
  *
- * Vercel Cron — roda diariamente às 10:00 UTC (07:00 BRT).
+ * Removido do cron do Vercel em 2026-08-13 — redundante com a GitHub Action
+ * `.github/workflows/ingest-pesqele.yml` (11:00 UTC), que já cobre essa
+ * ingestão e ainda encadeia Wikipedia, draft matching e freshness check.
+ * Rota mantida para disparo manual (mesma auth CRON_SECRET), não agendada.
+ *
  * Fase A: baixa pesquisa_eleitoral_2026.zip do CDN do TSE, parseia CSV e
  * faz upsert em pesqele_registry. Atualiza a fila pesqele_missing que o
  * operador revisa em /dashboard para ingerir novos números.
  *
- * Auth: Authorization: Bearer $CRON_SECRET (injetado automaticamente pelo Vercel).
+ * Auth: Authorization: Bearer $CRON_SECRET.
  *
  * maxDuration: 300s — o ZIP do TSE pode ter 3-5MB e centenas de linhas CSV.
  */

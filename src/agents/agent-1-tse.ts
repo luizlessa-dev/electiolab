@@ -117,26 +117,13 @@ export class TseIngestAgent extends RufloAgent<TseIngestResult> {
       });
 
       if (!response.ok) {
-        console.warn(`[${this.config.id}] TSE CDN returned ${response.status}, using mock data`);
-        return this.createMockZip();
+        throw new Error(`TSE CDN returned ${response.status}`);
       }
 
       return await response.arrayBuffer();
     } finally {
       clearTimeout(timeoutId);
     }
-  }
-
-  private createMockZip(): ArrayBuffer {
-    // For MVP: create a minimal ZIP with mock CSV
-    const mockCsv = `protocol,institute,fieldwork_start,fieldwork_end,publication_date
-TSE-2026-001,Datafolha,2026-08-01,2026-08-05,2026-08-08
-TSE-2026-002,IPEC,2026-08-02,2026-08-06,2026-08-09
-TSE-2026-003,Quaest,2026-08-03,2026-08-07,2026-08-10`;
-
-    const zip = new AdmZip();
-    zip.addFile("pesquisa_eleitoral_2026.csv", Buffer.from(mockCsv, 'utf-8'));
-    return zip.toBuffer().buffer;
   }
 
   private extractCsv(zipBuffer: ArrayBuffer): string {
