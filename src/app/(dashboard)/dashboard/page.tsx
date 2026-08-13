@@ -9,7 +9,6 @@ import {
   getPolls,
   getInstitutes,
   getElectionResults,
-  getEconomicIndicators,
 } from "@/lib/queries";
 import {
   calculateWeightedAverage,
@@ -52,7 +51,6 @@ type ElectionResultCandidate = Pick<
 type ElectionResultRow = Database["public"]["Tables"]["election_results"]["Row"] & {
   candidate: ElectionResultCandidate | null;
 };
-type EconomicIndicatorRow = Database["public"]["Tables"]["economic_indicators"]["Row"];
 
 // Forma exigida pelo prop `data` de <InstituteRanking> (src/components/charts/institute-ranking.tsx).
 // O componente assume reliability_score/total_polls sempre presentes, mas o schema real
@@ -145,14 +143,12 @@ export default async function DashboardPage({
       getPolls(election.id),
       getInstitutes(),
       getElectionResults(election.id),
-      getEconomicIndicators("ipca_12m", "2022-06-01", "2026-12-31"),
     ]
   )) as [
     CandidateRow[],
     PollWithRelations[],
     InstituteWithAccuracy[],
     ElectionResultRow[],
-    EconomicIndicatorRow[],
   ];
 
   // Calculate weighted averages

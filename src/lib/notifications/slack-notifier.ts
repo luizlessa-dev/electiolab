@@ -8,8 +8,6 @@
  * - Admin actions
  */
 
-import type { SyncJobResult } from '@/lib/tse/tse-sync-job';
-
 export interface AnomalyAlert {
   state: string
   position: string
@@ -186,80 +184,6 @@ class SlackNotifier {
     if (mentions) {
       message.text = `${mentions}\n${message.text}`;
     }
-
-    await this.sendMessage(message);
-  }
-
-  /**
-   * Send sync job result notification
-   */
-  async sendSyncJobResult(result: SyncJobResult, status: 'success' | 'partial' | 'failed'): Promise<void> {
-    if (!this.isEnabled) return;
-
-    const icon = status === 'success' ? '✅' : status === 'partial' ? '⚠️' : '❌';
-    const color = status === 'success' ? '#36a64f' : status === 'partial' ? '#ff9900' : '#e20000';
-
-    const message: SlackMessage = {
-      channel: this.channel,
-      text: `${icon} TSE Sync Job Completed`,
-      blocks: [
-        {
-          type: 'header',
-          text: {
-            type: 'plain_text',
-            text: `${icon} Sync Job: ${status.toUpperCase()}`,
-          },
-        },
-        {
-          type: 'section',
-          fields: [
-            {
-              type: 'mrkdwn',
-              text: `*Job ID:*\n\`${result.jobId}\``,
-            },
-            {
-              type: 'mrkdwn',
-              text: `*Duration:*\n${(result.elapsedMs / 1000).toFixed(1)}s`,
-            },
-            {
-              type: 'mrkdwn',
-              text: `*States Synced:*\n${result.results.governors.length + result.results.senators.length}`,
-            },
-            {
-              type: 'mrkdwn',
-              text: `*Discrepancies:*\n${result.discrepancySummary.totalDiscrepancies}`,
-            },
-          ],
-        },
-      ],
-      attachments: [
-        {
-          color,
-          fields: [
-            {
-              title: 'Critical Issues',
-              value: result.discrepancySummary.byType.critical.toString(),
-              short: true,
-            },
-            {
-              title: 'Missing in TSE',
-              value: result.discrepancySummary.byType.missingInTSE.toString(),
-              short: true,
-            },
-            {
-              title: 'Missing in Research',
-              value: result.discrepancySummary.byType.missingInResearch.toString(),
-              short: true,
-            },
-            {
-              title: 'States Affected',
-              value: result.discrepancySummary.statesWithDiscrepancies.toString(),
-              short: true,
-            },
-          ],
-        },
-      ],
-    };
 
     await this.sendMessage(message);
   }

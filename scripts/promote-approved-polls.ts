@@ -166,26 +166,34 @@ async function promoteDraft(draft: PollDraft): Promise<{
   }
 
   // Create poll (nota: source_url/source_kind/tse_protocolo são apenas em poll_drafts)
-  // election_id/fieldwork_end/sample_size/publication_date are nullable on
-  // poll_drafts but required on polls — by this point resolveCandidates()
-  // has already succeeded against draft.election_id (so it can't have been
-  // null) and an approved draft is expected to carry the rest. The
-  // assertions below preserve the original (pre-typing) runtime behavior:
-  // if one of these is unexpectedly null, the insert fails on the DB's
-  // NOT NULL constraint exactly like it did before, just later.
+  // election_id/fieldwork_end/sample_size são nullable em poll_drafts mas
+  // obrigatórios em polls — valida explicitamente em vez de deixar o insert
+  // falhar na constraint NOT NULL do banco com um erro genérico. `round` tem
+  // default no banco (Insert opcional), então só entra no insert se vier
+  // preenchido — mandar `null` explícito pisaria no default.
+  if (!draft.election_id) {
+    return { status: "failed", reason: "poll_draft sem election_id" };
+  }
+  if (!draft.fieldwork_end) {
+    return { status: "failed", reason: "poll_draft sem fieldwork_end" };
+  }
+  if (!draft.sample_size) {
+    return { status: "failed", reason: "poll_draft sem sample_size" };
+  }
+
   const { data: poll, error: pollError } = await supabase
     .from("polls")
     .insert({
-      election_id: draft.election_id!,
+      election_id: draft.election_id,
       institute_id: institute.id,
       fieldwork_start: draft.fieldwork_start,
-      fieldwork_end: draft.fieldwork_end!,
-      publication_date: (draft.publication_date || draft.fieldwork_end) as string,
-      sample_size: draft.sample_size!,
+      fieldwork_end: draft.fieldwork_end,
+      publication_date: draft.publication_date || draft.fieldwork_end,
+      sample_size: draft.sample_size,
       margin_of_error: draft.margin_of_error,
       methodology: draft.methodology,
       scope: draft.scope,
-      round: draft.round as number,
+      ...(draft.round != null ? { round: draft.round } : {}),
       scenario_label: draft.scenario_label,
     })
     .select("id")
