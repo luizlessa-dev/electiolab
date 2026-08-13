@@ -1,8 +1,57 @@
 # Prompt para sessão dedicada — ingestão de prestação de contas TSE 2026
 
-Guardado em 2026-08-13. Copie o bloco abaixo numa nova janela do Claude Code
-quando for construir isso (esperar pelo menos até meados de setembro/2026 —
-ver "Timing" abaixo).
+**CONCLUÍDO em 2026-08-13** — não precisa mais rodar este prompt. Entregues:
+- `scripts/ingest-tse-prestacao-contas.ts` — ingestão streaming das 4
+  famílias (`unzip -p | iconv | csv-parse`, upsert incremental por lote).
+  Mapeamento de colunas validado contra dado real de 2022 (UF escopada +
+  dry-run nacional completo — ver números no final deste arquivo).
+- `scripts/refresh-candidate-fefc.ts` — substitui o antigo
+  `ingest-tse-extended.ts --only=fefc` (removido); calcula `candidate_fefc`
+  como agregado de `candidate_revenue`/`candidate_expense_paid` em vez de
+  baixar o ZIP de prestação de contas de novo.
+- `.github/workflows/ingest-tse-prestacao-contas.yml` — cron diário a partir
+  de 15/09/2026, com checagem de disponibilidade do dataset (pula sem falhar
+  enquanto o TSE não publicar).
+- `scripts/lib/tse-csv.ts` — helpers compartilhados (streaming, retry,
+  resolução de colunas por nome de header).
+
+O ZIP de 2026 ainda não existe no CDN do TSE (confirmado 404 em 2026-08-13).
+O `--apply` de verdade só roda quando o TSE publicar, em setembro — até lá o
+cron pula sozinho todo dia sem intervenção.
+
+## Achado que corrigiu o plano original: `_BRASIL.csv` não é redundante
+
+A suposição do prompt original abaixo ("o agregado é redundante com os
+arquivos por UF, não uma fonte exclusiva") **estava errada** — só foi
+descoberta ao medir contra dado real de 2022. `_BRASIL.csv` é um superset
+nacional exato (mesmas linhas dos 26 arquivos por UF, confirmado byte a byte
+por SQ_RECEITA) **mais** todos os candidatos a Presidente, que só existem
+nele — mesmo padrão de `consulta_cand`/`ingest-tse-candidaturas.ts`. O script
+final usa só `_BRASIL.csv` por família (não os 26 arquivos por UF); `--uf=XX`
+agora filtra linhas já parseadas, não seleciona arquivo.
+
+## Números reais (2022, última eleição geral — proxy pra 2026)
+
+Dry-run nacional completo, ~2:20min de execução, 385MB comprimido / ~1,9GB
+CSV total descomprimido:
+
+| Tabela | Linhas | Chave natural válida | Com candidate_id |
+|---|---:|---:|---:|
+| candidate_revenue | 674.944 | 671.965 | 501.083 |
+| candidate_expense_contracted | 2.209.819 | 2.204.872 | 1.082.559 |
+| candidate_revenue_original_donor | 199.241 | 174.230 | 0 (não tem candidate_id — chave é sq_receita+doador) |
+| candidate_expense_paid | 2.411.941 | 2.411.941 | 1.176.691 (48,8% — só P/G/S estão em `candidates`, o arquivo cobre todos os cargos) |
+
+`candidate_revenue_original_donor` tem ~13% de linhas sem chave natural — são
+placeholders genuínos do TSE (SQ_RECEITA=-1, tudo #NULO, sem doador
+originário a declarar), não um bug.
+
+DF (Distrito Federal) não tem arquivo dedicado por UF no pacote 2022 (só 26
+dos 27 estados) — mas está presente dentro do `_BRASIL.csv` (10.576 linhas em
+receitas), confirmado. Mais um motivo pra usar só o agregado: um pipeline
+baseado nos 26 arquivos por UF perderia DF inteiro, além de Presidente.
+
+Prompt original mantido abaixo como histórico da decisão.
 
 ---
 

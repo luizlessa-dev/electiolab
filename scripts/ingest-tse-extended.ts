@@ -1,9 +1,15 @@
 #!/usr/bin/env npx tsx
 /**
- * Ingest TSE extended datasets (3-em-1):
+ * Ingest TSE extended datasets (2-em-1):
  *   1. tse_bens         → candidate_assets        (bens individuais)
  *   2. tse_redes_sociais → candidate_social_media (redes oficiais)
- *   3. tse_fefc         → candidate_fefc          (Fundo Especial)
+ *
+ * `--only=fefc` (candidate_fefc, Fundo Especial) foi removido em 2026-08-13:
+ * baixava o mesmo ZIP de prestação de contas em memória inteiro só pra somar
+ * DS_FONTE_RECEITA ILIKE FEFC. Agora candidate_fefc é um agregado calculado
+ * por scripts/refresh-candidate-fefc.ts a partir de candidate_revenue/
+ * candidate_expense_paid (populadas por scripts/ingest-tse-prestacao-contas.ts),
+ * sem baixar o arquivo duas vezes.
  *
  * Estratégia:
  *   - Baixa ZIPs bulk do TSE (cdn.tse.jus.br) com cache local em /tmp/tse-cache
@@ -66,8 +72,6 @@ const TSE_BENS = (a: number) =>
   `https://cdn.tse.jus.br/estatistica/sead/odsele/bem_candidato/bem_candidato_${a}.zip`;
 const TSE_REDES = (a: number) =>
   `https://cdn.tse.jus.br/estatistica/sead/odsele/consulta_cand/rede_social_candidato_${a}_BR.zip`;
-const TSE_FEFC = (a: number) =>
-  `https://cdn.tse.jus.br/estatistica/sead/odsele/prestacao_contas/prestacao_de_contas_eleitorais_candidatos_${a}.zip`;
 const TSE_CAND = (a: number) =>
   `https://cdn.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_${a}.zip`;
 
@@ -346,64 +350,6 @@ async function ingestRedesSociais(byCpf: Map<string, CandRef>) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// 3. INGEST FEFC
-// ─────────────────────────────────────────────────────────────────
-async function ingestFefc(byCpf: Map<string, CandRef>) {
-  console.log("\n━━━ TSE_FEFC ━━━");
-  // FEFC vem dentro de prestação de contas — normalmente em receitas_candidatos.csv
-  // Filtramos por DS_ORIGEM_RECEITA contendo "FUNDO ESPECIAL"
-  for (const ano of ANOS) {
-    let buf: Buffer;
-    try {
-      buf = await downloadCached(TSE_FEFC(ano), `prestacao_de_contas_eleitorais_candidatos_${ano}.zip`);
-    } catch (e) {
-      console.warn(`⚠️  Skip ${ano}:`, (e as Error).message);
-      continue;
-    }
-    const zip = new AdmZip(buf);
-    const fefcByCpf = new Map<string, { received: number; party: string | null }>();
-    let totalRows = 0;
-
-    for (const entry of zip.getEntries()) {
-      const name = entry.entryName.toLowerCase();
-      if (!name.endsWith(".csv")) continue;
-      if (!name.includes("receitas") || /_brasil\.csv$/i.test(name)) continue;
-      const { header, rows } = parseCsv(entry.getData());
-      const iCpf = header.indexOf("NR_CPF_CANDIDATO");
-      const iFonte = header.indexOf("DS_FONTE_RECEITA");
-      const iValor = header.indexOf("VR_RECEITA");
-      const iPartido = header.indexOf("SG_PARTIDO");
-      if (iCpf < 0 || iValor < 0 || iFonte < 0) continue;
-
-      for (const r of rows) {
-        totalRows++;
-        const fonte = (r[iFonte] ?? "").toUpperCase();
-        // FEFC = "FUNDO ESPECIAL" (CD_FONTE_RECEITA=2)
-        if (!fonte.includes("FUNDO ESPECIAL") && !fonte.includes("FEFC")) continue;
-        const cpf = cleanCpf(r[iCpf]);
-        if (!cpf) continue;
-        if (!byCpf.has(cpf)) continue;
-        const valor = parseValor(r[iValor]) ?? 0;
-        const cur = fefcByCpf.get(cpf) ?? { received: 0, party: null };
-        cur.received += valor;
-        cur.party = cur.party ?? NULO(r[iPartido]);
-        fefcByCpf.set(cpf, cur);
-      }
-    }
-
-    const inserted = Array.from(fefcByCpf.entries()).map(([cpf, v]) => ({
-      candidate_id: byCpf.get(cpf)!.id,
-      cpf,
-      election_year: ano,
-      amount_received: v.received,
-      party_acronym: v.party,
-    }));
-    console.log(`  📊 ${ano}: ${totalRows.toLocaleString("pt-BR")} receitas → ${inserted.length} candidatos com FEFC`);
-    await insertBatch("candidate_fefc", inserted, "candidate_id,election_year");
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────
 // MAIN
 // ─────────────────────────────────────────────────────────────────
 (async () => {
@@ -420,7 +366,6 @@ async function ingestFefc(byCpf: Map<string, CandRef>) {
 
   if (!ONLY || ONLY === "bens") await ingestBens(byCpf);
   if (!ONLY || ONLY === "redes") await ingestRedesSociais(byCpf);
-  if (!ONLY || ONLY === "fefc") await ingestFefc(byCpf);
 
   console.log("\n✅ Concluído");
   if (!APPLY) console.log("   (rodou em dry-run; use --apply pra gravar)");

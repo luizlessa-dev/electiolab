@@ -1,0 +1,120 @@
+name: Ingest TSE Prestação de Contas 2026 (daily)
+
+# TSE só divulga a prestação de contas parcial de 2026 em 15/09/2026 (prazo de
+# prestação: 9-13/09) — antes disso o dataset não existe no CDN. O job checa
+# disponibilidade (HEAD request) antes de baixar e pula silenciosamente,
+# sem abrir issue de falha, enquanto o pacote não existir. Diário durante a
+# janela ativa pra capturar retificações; revisar cadência ~2 semanas depois
+# de observar o padrão real de atualização do TSE (pode caber semanal se o
+# TSE só republicar o pacote esporadicamente).
+#
+# Ordem importa dentro do job: despesas_pagas precisa do mapa
+# sq_prestador_contas→candidate_id construído durante receitas/despesas
+# contratadas — por isso um único `npx tsx` roda as 4 famílias em sequência
+# (sem --only), não jobs paralelos.
+
+on:
+  schedule:
+    - cron: "0 12 * * *" # diário 12:00 UTC (09:00 BRT) — depois do ingest-tse-candidaturas (08:30 BRT)
+  workflow_dispatch:
+    inputs:
+      year:
+        description: "Ano da eleição (default 2026)"
+        required: false
+        default: "2026"
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Checar se o TSE já publicou o dataset do ano
+        id: check
+        run: |
+          YEAR="${{ inputs.year || '2026' }}"
+          URL="https://cdn.tse.jus.br/estatistica/sead/odsele/prestacao_contas/prestacao_de_contas_eleitorais_candidatos_${YEAR}.zip"
+          STATUS=$(curl -sI -o /dev/null -w "%{http_code}" --max-time 30 "$URL")
+          echo "status=$STATUS" >> "$GITHUB_OUTPUT"
+          if [ "$STATUS" != "200" ]; then
+            echo "⏭️  Dataset $YEAR ainda não publicado (HTTP $STATUS) — pulando execução, sem falha."
+          fi
+
+      - name: Ingest prestação de contas TSE (receitas, despesas, doador originário)
+        if: steps.check.outputs.status == '200'
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          YEAR_ARG="--year=${{ inputs.year || '2026' }}"
+          npx tsx scripts/ingest-tse-prestacao-contas.ts --apply $YEAR_ARG
+
+      - name: Refresh candidate_fefc (agregado de candidate_revenue/candidate_expense_paid)
+        if: success() && steps.check.outputs.status == '200'
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          YEAR_ARG="--year=${{ inputs.year || '2026' }}"
+          npx tsx scripts/refresh-candidate-fefc.ts --apply $YEAR_ARG
+
+      - name: Open issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const today = new Date().toISOString().slice(0, 10);
+            const title = `🚨 Cron TSE Prestação de Contas falhou — ${today}`;
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              labels: "cron-failure",
+              per_page: 50,
+            });
+            const existing = issues.find((i) => i.title.includes("Cron TSE Prestação de Contas falhou"));
+            const body = [
+              `Workflow **Ingest TSE Prestação de Contas 2026 (daily)** falhou.`,
+              ``,
+              `**Run:** ${runUrl}`,
+              `**Quando:** ${new Date().toISOString()}`,
+              `**Disparo:** ${context.eventName}`,
+              ``,
+              `(O job pula silenciosamente sem abrir issue quando o dataset do TSE`,
+              `ainda não foi publicado — HTTP 404. Essa falha é outra coisa.)`,
+              ``,
+              `Rodar manual:`,
+              `\`\`\`bash`,
+              `gh workflow run ingest-tse-prestacao-contas.yml`,
+              `\`\`\``,
+            ].join("\n");
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body: `Nova falha — ${runUrl}`,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ["cron-failure", "automated"],
+              });
+            }
