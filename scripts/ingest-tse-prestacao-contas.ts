@@ -146,13 +146,25 @@ function newStats(): Stats {
 
 async function flushBatch(table: string, rows: Record<string, unknown>[], onConflict: string, stats: Stats) {
   if (rows.length === 0) return;
-  stats.wouldInsert += rows.length;
+  // TSE às vezes repete a mesma chave natural dentro do mesmo lote (retificação
+  // duplicada na fonte) — um único INSERT ... ON CONFLICT DO UPDATE não pode
+  // afetar a mesma linha duas vezes (Postgres rejeita com erro), então dedupe
+  // por chave antes de upsertar. Mantém a última ocorrência (mesma lógica que
+  // uma retificação mais recente deveria sobrescrever a anterior).
+  const keyCols = onConflict.split(",");
+  const deduped = new Map<string, Record<string, unknown>>();
+  for (const row of rows) {
+    const key = keyCols.map((k) => String(row[k] ?? "")).join(" ");
+    deduped.set(key, row);
+  }
+  const finalRows = Array.from(deduped.values());
+  stats.wouldInsert += finalRows.length;
   if (APPLY) {
     await withRetry(async () => {
-      const { error } = await sb.from(table).upsert(rows, { onConflict, ignoreDuplicates: false });
+      const { error } = await sb.from(table).upsert(finalRows, { onConflict, ignoreDuplicates: false });
       if (error) throw new Error(error.message);
     }, `upsert ${table}`);
-    stats.inserted += rows.length;
+    stats.inserted += finalRows.length;
   }
   rows.length = 0;
 }
@@ -341,7 +353,6 @@ async function processDespesasContratadas(
       despesa_date: c.despesaDate ? parseDateBR(row[c.despesaDate]) : null,
       description: c.description ? NULO(row[c.description]) : null,
       value_brl: c.valor ? parseValor(row[c.valor]) : null,
-      source_url: TSE_ZIP_URL(YEAR),
       raw: row,
     });
 
@@ -494,7 +505,6 @@ async function processDespesasPagas(
       payment_date: c.paymentDate ? parseDateBR(row[c.paymentDate]) : null,
       description: c.description ? NULO(row[c.description]) : null,
       value_brl: c.valor ? parseValor(row[c.valor]) : null,
-      source_url: TSE_ZIP_URL(YEAR),
       raw: row,
     });
 
