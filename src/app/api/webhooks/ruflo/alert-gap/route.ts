@@ -9,7 +9,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { handleAlertGapWebhook } from "@/agents/agent-3-validacao";
 
+function isAuthorized(req: NextRequest): boolean {
+  const token = (req.headers.get("authorization") ?? "").replace("Bearer ", "").trim();
+  const secret = process.env.CRON_SECRET;
+  return Boolean(secret) && token === secret;
+}
+
 export async function POST(req: NextRequest) {
+  if (!isAuthorized(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const body = await req.json();
 

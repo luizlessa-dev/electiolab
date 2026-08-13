@@ -1,6 +1,10 @@
 {
   "crons": [
     {
+      "path": "/api/agents/run-agent-1",
+      "schedule": "0 8 * * *"
+    },
+    {
       "path": "/api/cron/daily-sync",
       "schedule": "0 9 * * *"
     },
