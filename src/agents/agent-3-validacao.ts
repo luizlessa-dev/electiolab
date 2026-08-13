@@ -24,6 +24,7 @@ export class ValidacaoAgent extends RufloAgent {
     const config: AgentConfig = {
       name: "Validação + Alertas",
       id: "validation-001",
+      agent_name: "agent-3-validacao",
       timeout_ms: 60000,
       max_retries: 1,
     };

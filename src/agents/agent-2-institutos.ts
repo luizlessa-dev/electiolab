@@ -105,6 +105,7 @@ export class InstitutusScrapeAgent extends RufloAgent {
     const config: AgentConfig = {
       name: "Institutos Scraping",
       id: "institutos-scraping-001",
+      agent_name: "agent-2-institutos",
       timeout_ms: 600000,
       max_retries: 2,
     };

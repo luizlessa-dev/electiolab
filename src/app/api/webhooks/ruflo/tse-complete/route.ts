@@ -24,11 +24,13 @@ export async function POST(req: NextRequest) {
     // Process the webhook
     await handleTseIngestWebhook(body);
 
-    // Trigger Agent 2 (institutos scraping)
+    // Trigger Agent 2 (institutos scraping). No timeout imposed here: Agent 2
+    // itself runs for up to 10min (config.timeout_ms), so a short-timeout
+    // retry wrapper would falsely report failure mid-run.
     if (body.ok) {
       console.log("[tse-complete] Triggering Agent 2...");
       try {
-        const agent2Response = await fetch("http://localhost:3001/api/agents/run-agent-2", {
+        const agent2Response = await fetch(`${req.nextUrl.origin}/api/agents/run-agent-2`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ triggered_by: "tse-complete" }),

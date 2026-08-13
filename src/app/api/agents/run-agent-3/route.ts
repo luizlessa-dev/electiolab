@@ -5,10 +5,10 @@
  * Called by Agent 2 webhook on completion
  */
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { ValidacaoAgent } from "@/agents/agent-3-validacao";
 
-export async function POST() {
+export async function POST(req: NextRequest) {
   try {
     console.log("[run-agent-3] Starting Agent 3 (validação + alertas)...");
 
@@ -21,6 +21,24 @@ export async function POST() {
       alerts_count: result.alerts_count,
       status: result.status,
     });
+
+    // Terminal step: notify alert-gap for each alert found (short-lived call, no chain after it).
+    if (result.alerts_count > 0 && result.alerts) {
+      for (const alert of result.alerts) {
+        try {
+          const alertResponse = await fetch(`${req.nextUrl.origin}/api/webhooks/ruflo/alert-gap`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(alert),
+          });
+          if (!alertResponse.ok) {
+            console.warn("[run-agent-3] alert-gap webhook failed:", alertResponse.status);
+          }
+        } catch (e) {
+          console.warn("[run-agent-3] alert-gap webhook error:", e);
+        }
+      }
+    }
 
     return NextResponse.json({
       ok: true,

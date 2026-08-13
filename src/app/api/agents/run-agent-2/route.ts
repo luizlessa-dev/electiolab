@@ -5,10 +5,13 @@
  * Called by Agent 1 webhook on completion
  */
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { InstitutusScrapeAgent } from "@/agents/agent-2-institutos";
 
-export async function POST() {
+// Matches InstitutusScrapeAgent's own config.timeout_ms (600000ms).
+export const maxDuration = 600;
+
+export async function POST(req: NextRequest) {
   try {
     console.log("[run-agent-2] Starting Agent 2 (institutos scraping)...");
 
@@ -22,14 +25,22 @@ export async function POST() {
       total_polls_inserted: result.total_polls_inserted,
     });
 
-    // TODO: Trigger Agent 3 webhook after Agent 2 completes
-    // if (result.ok) {
-    //   await fetch("http://localhost:3001/api/webhooks/ruflo/institutos-complete", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify(result),
-    //   });
-    // }
+    // No timeout imposed here: Agent 3 runs after this, so a short-timeout
+    // retry wrapper isn't appropriate (see run-agent-1 for the same reasoning).
+    if (result.ok) {
+      try {
+        const webhookResponse = await fetch(`${req.nextUrl.origin}/api/webhooks/ruflo/institutos-complete`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(result),
+        });
+        if (!webhookResponse.ok) {
+          console.warn("[run-agent-2] institutos-complete webhook failed:", webhookResponse.status);
+        }
+      } catch (e) {
+        console.warn("[run-agent-2] institutos-complete webhook error:", e);
+      }
+    }
 
     return NextResponse.json({
       ok: true,

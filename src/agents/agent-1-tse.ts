@@ -28,6 +28,7 @@ export class TseIngestAgent extends RufloAgent {
     const config: AgentConfig = {
       name: "TSE Ingestão",
       id: "tse-ingestion-001",
+      agent_name: "agent-1-tse",
       timeout_ms: 300000,
       max_retries: 4,
     };

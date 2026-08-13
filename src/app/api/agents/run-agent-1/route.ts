@@ -4,10 +4,13 @@
  * Manually trigger Agent 1 (TSE Ingestão)
  */
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { TseIngestAgent } from "@/agents/agent-1-tse";
 
-export async function POST() {
+// Matches TseIngestAgent's own config.timeout_ms (300000ms).
+export const maxDuration = 300;
+
+export async function POST(req: NextRequest) {
   try {
     console.log("[run-agent-1] Starting Agent 1 (TSE ingestão)...");
 
@@ -20,6 +23,23 @@ export async function POST() {
       upserted_count: result.upserted_count,
       duration_ms: result.duration_ms,
     });
+
+    // No timeout imposed here: the downstream chain (Agent 2 + Agent 3) can
+    // take several minutes, so a short-timeout retry wrapper isn't appropriate.
+    if (result.ok) {
+      try {
+        const webhookResponse = await fetch(`${req.nextUrl.origin}/api/webhooks/ruflo/tse-complete`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(result),
+        });
+        if (!webhookResponse.ok) {
+          console.warn("[run-agent-1] tse-complete webhook failed:", webhookResponse.status);
+        }
+      } catch (e) {
+        console.warn("[run-agent-1] tse-complete webhook error:", e);
+      }
+    }
 
     return NextResponse.json({
       ok: true,

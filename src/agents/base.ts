@@ -12,6 +12,7 @@ import { createClient } from "@supabase/supabase-js";
 export interface AgentConfig {
   name: string;
   id: string;
+  agent_name: string; // matches agent_runs.agent_name / VALID_AGENTS (health endpoint)
   timeout_ms: number;
   max_retries: number;
 }
@@ -45,8 +46,22 @@ export abstract class RufloAgent {
 
     console.log(`[${this.config.id}] audit:`, audit);
 
-    // TODO: Insert into data_source_audit table
-    // await this.supabase.from("data_source_audit").insert({ ... });
+    const { error: insertError } = await this.supabase.from("agent_runs").insert({
+      agent_name: this.config.agent_name,
+      success: !error,
+      error: error?.message ?? null,
+      duration_ms: result?.duration_ms ?? null,
+      row_count: result?.row_count ?? null,
+      upserted_count: result?.upserted_count ?? null,
+      poll_count: result?.total_polls_inserted ?? result?.poll_count ?? null,
+      completed_count: result?.completed_count ?? null,
+      failed_count: result?.failed_count ?? null,
+      output: error ? { error: error.message } : result,
+    });
+
+    if (insertError) {
+      console.warn(`[${this.config.id}] failed to insert agent_runs:`, insertError.message);
+    }
   }
 
   protected async retry<T>(

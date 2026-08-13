@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     if (body.ok) {
       console.log("[institutos-complete] Triggering Agent 3...");
       try {
-        const agent3Response = await fetch("http://localhost:3001/api/agents/run-agent-3", {
+        const agent3Response = await fetch(`${req.nextUrl.origin}/api/agents/run-agent-3`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ triggered_by: "institutos-complete" }),
