@@ -1,22 +1,28 @@
 #!/usr/bin/env npx tsx
 /**
- * Ingest TSE candidaturas — popula candidates com dados oficiais do TSE.
+ * Ingest TSE candidaturas — popula/atualiza candidates com dados oficiais do TSE
+ * para as corridas que o electiolab acompanha: Presidente, Governador (27) e
+ * Senador (27), ano 2026 — mesmo escopo de `elections`.
  *
- * Estratégia:
- *   1. Baixa CSVs bulk do TSE (consulta_cand) para os anos {2022, 2024}
- *      — cobre presidente, governador, senador, deputado federal/estadual (2022)
- *      e prefeitos/vereadores (2024). 2026 ainda não tem candidaturas registradas.
- *   2. Indexa por nome normalizado (sem acentos, lower).
- *   3. Faz match com candidates da nossa base (que ainda não tem full_name)
- *      preferindo o registro mais recente.
- *   4. Upsert: full_name, profession, education, birth_date, tse_id, photo_url.
+ * Reescrito em 2026-08-13: a versão anterior só fazia UPDATE via match fuzzy de
+ * nome contra candidates pré-existentes (funcionava quando a base já vinha com
+ * um shortlist curado). Com candidates zerada, isso não cria nada. Esta versão
+ * faz upsert direto por tse_id/cpf, casando cada candidatura com a election_id
+ * certa via (cargo, UF) — sem fuzzy match, sem aliases manuais.
+ *
+ * Achado importante: candidatos a PRESIDENTE só aparecem no CSV agregado
+ * `_BRASIL.csv` do TSE (não em nenhum arquivo por UF) — o script anterior e o
+ * ingest-tse-extended.ts pulam esse arquivo inteiro como "agregado redundante"
+ * e por isso nunca capturavam presidenciáveis. Aqui só pulamos BRASIL.csv para
+ * cargos que já vêm por UF (GOVERNADOR/SENADOR, pra não duplicar) e extraímos
+ * PRESIDENTE dele.
  *
  * Uso:
- *   npx tsx scripts/ingest-tse-candidaturas.ts             # dry-run, mostra matches
+ *   npx tsx scripts/ingest-tse-candidaturas.ts             # dry-run, mostra diffs
  *   npx tsx scripts/ingest-tse-candidaturas.ts --apply     # grava no banco
+ *   npx tsx scripts/ingest-tse-candidaturas.ts --year=2026 # default 2026
  *
- * Dependências:
- *   npm i -D adm-zip iconv-lite @types/adm-zip
+ * Dependências: adm-zip, iconv-lite (já instaladas)
  */
 
 import { createClient } from "@supabase/supabase-js";
@@ -52,87 +58,36 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 const APPLY = process.argv.includes("--apply");
+const YEAR = parseInt(process.argv.find((a) => a.startsWith("--year="))?.split("=")[1] ?? "2026");
 
 // ─────────────────────────────────────────────────────────────────
 // Config
 // ─────────────────────────────────────────────────────────────────
-const ANOS = [2024, 2022]; // mais recente primeiro
 const TSE_ZIP_URL = (ano: number) =>
   `https://cdn.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_${ano}.zip`;
 const TSE_BENS_URL = (ano: number) =>
   `https://cdn.tse.jus.br/estatistica/sead/odsele/bem_candidato/bem_candidato_${ano}.zip`;
 
-// Cache local pra não baixar de novo a cada execução
 const CACHE_DIR = path.join(os.tmpdir(), "tse-cache");
 fs.mkdirSync(CACHE_DIR, { recursive: true });
+
+const TRACKED_CARGOS = new Set(["PRESIDENTE", "GOVERNADOR", "SENADOR"]);
 
 // ─────────────────────────────────────────────────────────────────
 // Helpers
 // ─────────────────────────────────────────────────────────────────
-function normalize(s: string): string {
-  return s
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "") // diacríticos combinantes
-    .toLowerCase()
-    .replace(/[^a-z0-9 ]/g, " ") // remove pontuação (DR. → DR)
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function tokens(s: string): string[] {
-  return normalize(s).split(" ").filter((t) => t.length >= 2);
-}
-
-// Aliases manuais — apelidos políticos comuns que TSE não tem com o nome curto
-const ALIASES: Record<string, string> = {
-  "dr daniel": "daniel santos",
-  "dr furlan": "antonio furlan",
-  "ratinho jr": "carlos roberto massa junior",
-  "ratinho junior": "carlos roberto massa junior",
-  "lula": "luiz inacio lula da silva",
-  "bolsonaro": "jair messias bolsonaro",
-  "ciro": "ciro ferreira gomes",
-  "ciro gomes": "ciro ferreira gomes",
-  "haddad": "fernando haddad",
-  "tarcisio": "tarcisio gomes de freitas",
-  "zema": "romeu zema neto",
-  "caiado": "ronaldo ramos caiado",
-  "kalil": "alexandre kalil",
-  "alexandre kalil": "alexandre kalil",
-  "kim kataguiri": "fabio kim kataguiri",
-  "felipe davila": "luiz felipe d avila",
-  "felipe d avila": "luiz felipe d avila",
-  "magno malta": "magno pereira malta",
-  "professora dorinha": "maria auxiliadora seabra rezende",
-  "ratinho-jr": "carlos roberto massa junior",
-  "garotinho": "anthony william matheus de oliveira",
-  "anthony garotinho": "anthony william matheus de oliveira",
-  // Adições
-  "rafa luz": "bombeiro rafa luz",
-  "manuela davila": "manuela pucci d avila",
-  "manuela d avila": "manuela pucci d avila",
-  "jhc": "joao henrique caldas",
-  "tonny kerley": "tonny kerley de alencar rodrigues",
-  "ben mendes": "benedito de lira",
-  "marcos rotta": "marcos jose rotta",
-  "fabio mitidieri": "fabio henrique mitidieri",
-  "michelle bolsonaro": "michelle de paula firmo reinaldo bolsonaro",
-  "carlos bolsonaro": "carlos nantes bolsonaro",
-  "flavio bolsonaro": "flavio nantes bolsonaro",
-};
-
-function parseDateBR(s: string): string | null {
-  // dd/mm/yyyy → yyyy-mm-dd
-  const m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-  if (!m) return null;
-  return `${m[3]}-${m[2]}-${m[1]}`;
-}
-
 function clean(s: string | undefined): string | null {
   if (!s) return null;
   const t = s.replace(/^"|"$/g, "").trim();
   if (!t || t === "#NULO#" || t === "#NE#" || t === "-1" || t === "NÃO INFORMADO") return null;
   return t;
+}
+
+function parseDateBR(s: string | null): string | null {
+  if (!s) return null;
+  const m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (!m) return null;
+  return `${m[3]}-${m[2]}-${m[1]}`;
 }
 
 function titleCase(s: string): string {
@@ -147,9 +102,50 @@ function titleCase(s: string): string {
     .join(" ");
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Download TSE bulk
-// ─────────────────────────────────────────────────────────────────
+function slugify(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function normalize(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function tokens(s: string): string[] {
+  return normalize(s).split(" ").filter((t) => t.length >= 2);
+}
+
+// Apelidos políticos que o TSE não registra com o nome curto usado no shortlist
+// curado de `candidates` (ex: "Lula", "Ciro", "Tarcisio" sem sobrenome completo).
+const ALIASES: Record<string, string> = {
+  "lula": "luiz inacio lula da silva",
+  "bolsonaro": "jair messias bolsonaro",
+  "ciro": "ciro ferreira gomes",
+  "haddad": "fernando haddad",
+  "tarcisio": "tarcisio gomes de freitas",
+  "zema": "romeu zema neto",
+  "caiado": "ronaldo ramos caiado",
+  "kalil": "alexandre kalil",
+  "ratinho": "carlos roberto massa junior",
+  "ratinho jr": "carlos roberto massa junior",
+  "flavio": "flavio bolsonaro",
+  "flavio bolsonaro": "flavio nantes bolsonaro",
+  "renan": "renan santos",
+  "rebelo": "aldo rebelo",
+  "soraya": "soraya thronicke",
+  "simone tebet": "simone nassar tebet",
+};
+
 async function downloadCached(url: string, cacheName: string): Promise<Buffer> {
   const cachePath = path.join(CACHE_DIR, cacheName);
   if (fs.existsSync(cachePath)) {
@@ -165,13 +161,8 @@ async function downloadCached(url: string, cacheName: string): Promise<Buffer> {
   return buf;
 }
 
-const downloadZip = (ano: number) =>
-  downloadCached(TSE_ZIP_URL(ano), `consulta_cand_${ano}.zip`);
-const downloadBensZip = (ano: number) =>
-  downloadCached(TSE_BENS_URL(ano), `bem_candidato_${ano}.zip`);
-
 // ─────────────────────────────────────────────────────────────────
-// Net worth — soma dos bens declarados por sq_candidato
+// Bens — soma dos valores declarados por sq_candidato
 // ─────────────────────────────────────────────────────────────────
 function parseBensCsv(buf: Buffer): Map<string, number> {
   const text = iconv.decode(buf, "latin1");
@@ -195,53 +186,47 @@ function parseBensCsv(buf: Buffer): Map<string, number> {
   return sums;
 }
 
-async function loadAllBens(): Promise<Map<string, number>> {
-  const all = new Map<string, number>();
-  for (const ano of ANOS) {
-    let buf: Buffer;
-    try {
-      buf = await downloadBensZip(ano);
-    } catch (e) {
-      console.warn(`⚠️  Bens skip ${ano}:`, e instanceof Error ? e.message : e);
-      continue;
-    }
-    const zip = new AdmZip(buf);
-    for (const entry of zip.getEntries()) {
-      if (!entry.entryName.toLowerCase().endsWith(".csv")) continue;
-      if (/_brasil\.csv$/i.test(entry.entryName)) continue;
-      const sums = parseBensCsv(entry.getData());
-      for (const [sq, v] of sums) {
-        // Como ANOS=[2024,2022], 2024 carrega primeiro e vence; 2022 só preenche
-        if (!all.has(sq)) all.set(sq, v);
-      }
-    }
-    console.log(`  💰 Bens ${ano}: ${all.size} candidatos com declaração`);
+async function loadBens(ano: number): Promise<Map<string, number>> {
+  const sums = new Map<string, number>();
+  let buf: Buffer;
+  try {
+    buf = await downloadCached(TSE_BENS_URL(ano), `bem_candidato_${ano}.zip`);
+  } catch (e) {
+    console.warn(`⚠️  Bens indisponível pra ${ano}:`, e instanceof Error ? e.message : e);
+    return sums;
   }
-  return all;
+  const zip = new AdmZip(buf);
+  for (const entry of zip.getEntries()) {
+    if (!entry.entryName.toLowerCase().endsWith(".csv")) continue;
+    if (/_brasil\.csv$/i.test(entry.entryName)) continue; // presidente não declara bens aqui separado; cobertura futura se necessário
+    for (const [sq, v] of parseBensCsv(entry.getData())) {
+      sums.set(sq, (sums.get(sq) ?? 0) + v);
+    }
+  }
+  console.log(`💰 Bens ${ano}: ${sums.size.toLocaleString("pt-BR")} candidatos com declaração`);
+  return sums;
 }
 
 // ─────────────────────────────────────────────────────────────────
-// Parse CSV
+// Candidaturas — só PRESIDENTE / GOVERNADOR / SENADOR
 // ─────────────────────────────────────────────────────────────────
 type TseRow = {
-  ano: number;
-  uf: string;
+  uf: string | null; // null pra presidente
   cargo: string;
   sq_candidato: string;
   nome: string;
   nome_urna: string;
-  cpf: string;
-  partido: string;
-  num_candidato: string;
+  cpf: string | null;
+  partido: string | null;
+  num_candidato: string | null;
   dt_nascimento: string | null;
   ocupacao: string | null;
   grau_instrucao: string | null;
-  id_eleicao: string;
   situacao: string | null;
   situacao_detalhe: string | null;
 };
 
-function parseCsvBuffer(buf: Buffer, ano: number): TseRow[] {
+function parseCandCsv(buf: Buffer, opts: { onlyCargos: Set<string> }): TseRow[] {
   const text = iconv.decode(buf, "latin1");
   const lines = text.split(/\r?\n/);
   if (lines.length < 2) return [];
@@ -260,7 +245,6 @@ function parseCsvBuffer(buf: Buffer, ano: number): TseRow[] {
   const iNasc = idx("DT_NASCIMENTO");
   const iOcup = idx("DS_OCUPACAO");
   const iGrau = idx("DS_GRAU_INSTRUCAO");
-  const iEleicao = idx("CD_ELEICAO");
   const iSit = idx("DS_SITUACAO_CANDIDATURA");
   const iSitDetalhe = idx("DS_DETALHE_SITUACAO_CAND");
 
@@ -268,21 +252,25 @@ function parseCsvBuffer(buf: Buffer, ano: number): TseRow[] {
   for (let i = 1; i < lines.length; i++) {
     const cols = lines[i].split(";");
     if (cols.length < header.length) continue;
-    const get = (j: number) => clean(cols[j]) ?? "";
+    const cargo = clean(cols[iCargo]);
+    if (!cargo || !opts.onlyCargos.has(cargo)) continue;
+
+    const sq = clean(cols[iSq]);
+    const nome = clean(cols[iNome]);
+    if (!sq || !nome) continue;
+
     rows.push({
-      ano,
-      uf: get(iUF),
-      cargo: get(iCargo),
-      sq_candidato: get(iSq),
-      nome: get(iNome),
-      nome_urna: get(iUrna),
-      cpf: get(iCpf),
-      partido: get(iPart),
-      num_candidato: get(iNum),
-      dt_nascimento: parseDateBR(get(iNasc)),
+      uf: cargo === "PRESIDENTE" ? null : clean(cols[iUF]),
+      cargo,
+      sq_candidato: sq,
+      nome,
+      nome_urna: clean(cols[iUrna]) ?? nome,
+      cpf: clean(cols[iCpf]),
+      partido: clean(cols[iPart]),
+      num_candidato: clean(cols[iNum]),
+      dt_nascimento: parseDateBR(clean(cols[iNasc])),
       ocupacao: clean(cols[iOcup]),
       grau_instrucao: clean(cols[iGrau]),
-      id_eleicao: get(iEleicao),
       situacao: iSit >= 0 ? clean(cols[iSit]) : null,
       situacao_detalhe: iSitDetalhe >= 0 ? clean(cols[iSitDetalhe]) : null,
     });
@@ -290,304 +278,243 @@ function parseCsvBuffer(buf: Buffer, ano: number): TseRow[] {
   return rows;
 }
 
-async function loadAllRows(): Promise<TseRow[]> {
-  const all: TseRow[] = [];
-  for (const ano of ANOS) {
-    let buf: Buffer;
-    try {
-      buf = await downloadZip(ano);
-    } catch (e) {
-      console.warn(`⚠️  Skip ${ano}:`, e instanceof Error ? e.message : e);
+async function loadCandidaturas(ano: number): Promise<TseRow[]> {
+  const buf = await downloadCached(TSE_ZIP_URL(ano), `consulta_cand_${ano}.zip`);
+  const zip = new AdmZip(buf);
+  const rows: TseRow[] = [];
+
+  for (const entry of zip.getEntries()) {
+    if (!entry.entryName.toLowerCase().endsWith(".csv")) continue;
+    const isBrasil = /_brasil\.csv$/i.test(entry.entryName);
+    if (isBrasil) {
+      // Único lugar onde PRESIDENTE aparece — GOVERNADOR/SENADOR aqui seriam
+      // duplicata do que já vem no CSV de cada UF.
+      console.log(`  📄 ${entry.entryName} (só PRESIDENTE)`);
+      rows.push(...parseCandCsv(entry.getData(), { onlyCargos: new Set(["PRESIDENTE"]) }));
       continue;
     }
-    const zip = new AdmZip(buf);
-    for (const entry of zip.getEntries()) {
-      if (!entry.entryName.toLowerCase().endsWith(".csv")) continue;
-      // Pular o BRASIL.csv (agregado, gigante — UFs cobrem tudo).
-      if (/_brasil\.csv$/i.test(entry.entryName)) {
-        console.log(`  ⏭️  skip ${entry.entryName} (agregado)`);
-        continue;
-      }
-      console.log(`  📄 ${entry.entryName}`);
-      const rows = parseCsvBuffer(entry.getData(), ano);
-      // push em chunks pra não estourar stack
-      for (let i = 0; i < rows.length; i += 5000) {
-        all.push(...rows.slice(i, i + 5000));
-      }
-    }
+    console.log(`  📄 ${entry.entryName}`);
+    rows.push(
+      ...parseCandCsv(entry.getData(), { onlyCargos: new Set(["GOVERNADOR", "SENADOR"]) })
+    );
   }
-  console.log(`📊 Total de linhas TSE: ${all.length.toLocaleString("pt-BR")}`);
-  return all;
+  console.log(`📊 Candidaturas relevantes (${[...TRACKED_CARGOS].join("/")}): ${rows.length}`);
+  return rows;
 }
 
 // ─────────────────────────────────────────────────────────────────
-// Build index name → best row
+// Elections lookup
 // ─────────────────────────────────────────────────────────────────
-type Candidate = {
-  id: string;
-  name: string;
-  full_name: string | null;
-  party: string | null;
-  bio: string | null;
-  birth_date: string | null;
-  profession: string | null;
-  education: string | null;
-  tse_id: string | null;
-  photo_url: string | null;
-  state: string | null;
-};
+type ElectionRef = { id: string; type: string; state: string | null; name: string };
 
-function buildIndex(rows: TseRow[]): Map<string, TseRow[]> {
-  const idx = new Map<string, TseRow[]>();
-  for (const r of rows) {
-    if (!r.nome) continue;
-    const keys = new Set<string>();
-    keys.add(normalize(r.nome));
-    if (r.nome_urna) keys.add(normalize(r.nome_urna));
-    for (const k of keys) {
-      const arr = idx.get(k);
-      if (arr) arr.push(r);
-      else idx.set(k, [r]);
-    }
+async function loadElectionsMap(ano: number): Promise<Map<string, ElectionRef>> {
+  const { data, error } = await supabase
+    .from("elections")
+    .select("id, name, year, type, state")
+    .eq("year", ano)
+    .eq("is_active", true);
+  if (error) throw error;
+
+  const map = new Map<string, ElectionRef>();
+  for (const e of data ?? []) {
+    const key = e.type === "presidente" ? "presidente" : `${e.type}:${e.state}`;
+    // Presidente tem 2 rows (1º/2º turno) — candidatura se registra uma vez só,
+    // usa a de 1º turno como election_id canônico.
+    if (e.type === "presidente" && !String(e.name).includes("1º Turno")) continue;
+    map.set(key, { id: e.id as string, type: e.type as string, state: e.state as string | null, name: e.name as string });
   }
-  return idx;
+  return map;
 }
 
-/**
- * Fuzzy match: dado o nome do candidato (e UF target opcional), procura no TSE
- * candidatos cujo conjunto de tokens contenha TODOS os tokens do candidato OU
- * vice-versa. Útil pra "Cleitinho" matchar "CLEITINHO AZEVEDO".
- */
-function fuzzyMatch(
-  candidateName: string,
-  rows: TseRow[],
-  targetUf: string | null
-): TseRow[] {
-  const want = tokens(candidateName);
-  if (want.length === 0) return [];
-  const matches: TseRow[] = [];
-  for (const r of rows) {
-    // Hard filter só por UF; cargo deixa pra pickBest decidir
-    if (targetUf && r.uf !== targetUf) continue;
-    const have = new Set([...tokens(r.nome), ...tokens(r.nome_urna)]);
-    // todos os tokens do candidato presentes no TSE
-    if (want.every((t) => have.has(t))) {
-      matches.push(r);
-    }
-  }
-  return matches;
+function electionKeyFor(row: TseRow): string {
+  if (row.cargo === "PRESIDENTE") return "presidente";
+  if (row.cargo === "GOVERNADOR") return `governador:${row.uf}`;
+  return `senador:${row.uf}`; // SENADOR
 }
 
-const HIGH_OFFICE = new Set([
-  "PRESIDENTE",
-  "GOVERNADOR",
-  "VICE-GOVERNADOR",
-  "SENADOR",
-  "DEPUTADO FEDERAL",
-  "DEPUTADO ESTADUAL",
-  "DEPUTADO DISTRITAL",
-]);
-const CARGO_RANK: Record<string, number> = {
-  PRESIDENTE: 9,
-  GOVERNADOR: 8,
-  SENADOR: 7,
-  "DEPUTADO FEDERAL": 6,
-  "DEPUTADO ESTADUAL": 5,
-  "DEPUTADO DISTRITAL": 5,
-  "VICE-GOVERNADOR": 4,
-  PREFEITO: 3,
-  "VICE-PREFEITO": 2,
-  VEREADOR: 1,
-};
+// ─────────────────────────────────────────────────────────────────
+// Match por nome dentro da mesma eleição — fallback quando tse_id/cpf não
+// batem. candidates já vem pré-populada por corrida (shortlist curado, muitos
+// sem tse_id/cpf ainda), então casar só por nome dentro do pool pequeno de uma
+// eleição (poucas dezenas de candidatos) é seguro — bem mais que o fuzzy match
+// global por UF/cargo que a versão anterior fazia contra a base inteira.
+function findByName(
+  pool: Record<string, unknown>[],
+  row: TseRow,
+  claimed: Set<string>
+): Record<string, unknown> | undefined {
+  const normFull = normalize(row.nome);
+  const normUrna = normalize(row.nome_urna);
+  const nameKeys = new Set([normFull, normUrna]);
+  const alias = ALIASES[normFull] ?? ALIASES[normUrna];
+  if (alias) nameKeys.add(alias);
 
-/**
- * Aceita só matches plausíveis. Retorna null se nenhum row TSE bate com confiança.
- *
- * Regras:
- * - presidenciáveis (state=null): tenta primeiro cargo=PRESIDENTE; se vazio
- *   E o full_name (passado como candidateName) for 3+ palavras, aceita qualquer
- *   cargo nacionalmente (ex: Caiado/Zema nunca foram presidentes mas aparecem
- *   como pré-candidatos 2026).
- * - estaduais (state=UF): exige mesmo UF.
- *   - 1 palavra (apelido): só HIGH_OFFICE (gov/sen/dep federal)
- *   - 2+ palavras: aceita qualquer cargo (incl. prefeito 2024)
- */
-function pickBest(
-  rows: TseRow[],
-  targetUf: string | null,
-  candidateName: string
-): TseRow | null {
-  const wordCount = candidateName.trim().split(/\s+/).length;
-  let pool: TseRow[];
-
-  if (targetUf === null) {
-    pool = rows.filter((r) => r.cargo === "PRESIDENTE");
-    if (pool.length === 0 && wordCount >= 2) {
-      // fallback: qualquer cargo, qualquer UF (presidenciáveis que nunca foram
-      // candidatos a presidente, ex: Caiado, Zema, Eduardo Leite). Exige 2+
-      // palavras pra evitar match enganoso de "Lula" → vereador "Lula".
-      pool = rows.slice();
-    }
-  } else {
-    pool = rows.filter((r) => r.uf === targetUf);
-    if (wordCount < 2) {
-      pool = pool.filter((r) => HIGH_OFFICE.has(r.cargo));
+  for (const c of pool) {
+    if (claimed.has(c.id as string)) continue;
+    const cName = normalize((c.name as string) ?? "");
+    const cFull = normalize((c.full_name as string) ?? "");
+    const cKeys = new Set([cName, cFull]);
+    const cAlias = ALIASES[cName] ?? ALIASES[cFull];
+    if (cAlias) cKeys.add(cAlias);
+    for (const k of nameKeys) {
+      if (k && cKeys.has(k)) return c;
     }
   }
 
-  if (pool.length === 0) return null;
-
-  // Cargo domina o score (presidente > gov > sen > dep > prefeito > vereador).
-  // Ano só desempata. Evita matchar Eduardo Leite (gov RS 2022) com prefeito SP 2024.
-  const score = (r: TseRow) => (CARGO_RANK[r.cargo] ?? 0) * 10000 + r.ano;
-  return pool.slice().sort((a, b) => score(b) - score(a))[0];
+  // Fuzzy: nome curto do shortlist ("Lula", "Zema") é subconjunto de tokens do TSE
+  const tseTokens = new Set([...tokens(row.nome), ...tokens(row.nome_urna)]);
+  for (const c of pool) {
+    if (claimed.has(c.id as string)) continue;
+    const cTokens = tokens((c.name as string) ?? "");
+    if (cTokens.length === 0) continue;
+    if (cTokens.every((t) => tseTokens.has(t))) return c;
+  }
+  return undefined;
 }
 
 // ─────────────────────────────────────────────────────────────────
 // Run
 // ─────────────────────────────────────────────────────────────────
 async function main() {
-  console.log(`▶️  TSE ingest — modo: ${APPLY ? "APPLY (grava)" : "DRY RUN (não grava)"}`);
+  console.log(`▶️  TSE candidaturas ${YEAR} — modo: ${APPLY ? "APPLY (grava)" : "DRY RUN (não grava)"}`);
 
-  // 1. Carrega dados TSE
-  const rows = await loadAllRows();
-  if (rows.length === 0) {
-    console.error("❌ Sem dados TSE carregados.");
-    process.exit(1);
-  }
-  const idx = buildIndex(rows);
-  console.log(`🔎 Index: ${idx.size.toLocaleString("pt-BR")} chaves de nome`);
+  const [rows, bensBySq, electionsMap] = await Promise.all([
+    loadCandidaturas(YEAR),
+    loadBens(YEAR),
+    loadElectionsMap(YEAR),
+  ]);
 
-  // 1b. Carrega bens declarados
-  const bensBySq = await loadAllBens();
-  console.log(`💰 Bens carregados: ${bensBySq.size.toLocaleString("pt-BR")} candidatos`);
+  console.log(`🗳️  Eleições ${YEAR} carregadas: ${electionsMap.size} (esperado: 27 gov + 27 sen + 1 presidente = 55)`);
 
-  // 2. Carrega candidatos da nossa base (sem full_name OU sem profession)
-  const { data: candidates, error } = await supabase
+  const { data: existing, error } = await supabase
     .from("candidates")
     .select(
-      "id, name, full_name, party, bio, birth_date, profession, education, tse_id, photo_url, net_worth, cpf, election:elections(state)"
-    )
-    .eq("is_active", true);
+      "id, tse_id, cpf, name, full_name, birth_date, profession, education, net_worth, photo_url, election_id, slug"
+    );
+  if (error) throw error;
 
-  if (error) {
-    console.error("❌ Erro lendo candidates:", error);
-    process.exit(1);
+  console.log(`👥 Candidatos já cadastrados: ${(existing ?? []).length}`);
+
+  const byTseId = new Map<string, Record<string, unknown>>();
+  const byCpf = new Map<string, Record<string, unknown>>();
+  const byElection = new Map<string, Record<string, unknown>[]>();
+  for (const c of existing ?? []) {
+    if (c.tse_id) byTseId.set(c.tse_id as string, c);
+    if (c.cpf) byCpf.set(c.cpf as string, c);
+    if (c.election_id) {
+      const arr = byElection.get(c.election_id as string) ?? [];
+      arr.push(c);
+      byElection.set(c.election_id as string, arr);
+    }
   }
 
-  const flat: (Candidate & { net_worth: number | null; cpf: string | null })[] = (candidates ?? []).map(
-    (c: Record<string, unknown>) => ({
-      id: c.id as string,
-      name: c.name as string,
-      full_name: c.full_name as string | null,
-      party: c.party as string | null,
-      bio: c.bio as string | null,
-      birth_date: c.birth_date as string | null,
-      profession: c.profession as string | null,
-      education: c.education as string | null,
-      tse_id: c.tse_id as string | null,
-      photo_url: c.photo_url as string | null,
-      net_worth: (c.net_worth as number | null) ?? null,
-      cpf: (c.cpf as string | null) ?? null,
-      state: ((c.election as { state?: string } | null)?.state) ?? null,
-    })
-  );
+  const toInsert: Record<string, unknown>[] = [];
+  const toUpdate: Array<{ id: string; patch: Record<string, unknown> }> = [];
+  let unmatched = 0;
+  let matchedByName = 0;
+  const claimed = new Set<string>();
 
-  console.log(`👥 Candidatos na base: ${flat.length}`);
+  // Slug é único por (slug, election_id) — não globalmente. Semeia com o que já
+  // existe no banco pra não colidir com a constraint real na hora do insert.
+  const usedSlugs = new Set<string>();
+  for (const c of existing ?? []) {
+    if (c.slug && c.election_id) usedSlugs.add(`${c.election_id}:${c.slug}`);
+  }
 
-  // 3. Match
-  let matched = 0;
-  let updated = 0;
-  let skipped = 0;
-  const updates: Array<{ id: string; patch: Record<string, unknown>; debug: string }> = [];
-
-  for (const c of flat) {
-    const candidates: TseRow[] = [];
-    const baseName = normalize(c.full_name ?? c.name);
-    const aliasName = ALIASES[normalize(c.name)] ?? ALIASES[baseName];
-
-    const keys = new Set<string>();
-    keys.add(baseName);
-    keys.add(normalize(c.name));
-    if (aliasName) keys.add(aliasName);
-
-    for (const k of keys) {
-      if (!k) continue;
-      const found = idx.get(k);
-      if (found) candidates.push(...found);
-    }
-
-    // Fallback: fuzzy token-subset match
-    if (candidates.length === 0) {
-      const fuzzy = fuzzyMatch(c.full_name ?? c.name, rows, c.state);
-      candidates.push(...fuzzy);
-    }
-    if (candidates.length === 0) {
-      skipped++;
+  for (const row of rows) {
+    const key = electionKeyFor(row);
+    const election = electionsMap.get(key);
+    if (!election) {
+      unmatched++;
       continue;
     }
-    const best = pickBest(candidates, c.state, c.full_name ?? c.name);
-    if (!best) {
-      skipped++;
-      continue;
-    }
-    matched++;
 
-    const patch: Record<string, unknown> = {};
-    if (!c.full_name && best.nome) patch.full_name = titleCase(best.nome);
-    if (!c.birth_date && best.dt_nascimento) patch.birth_date = best.dt_nascimento;
-    if (!c.profession && best.ocupacao) patch.profession = titleCase(best.ocupacao);
-    if (!c.education && best.grau_instrucao) patch.education = best.grau_instrucao;
-    if (!c.tse_id && best.sq_candidato) patch.tse_id = best.sq_candidato;
-    if (!c.cpf && best.cpf && /^\d{11}$/.test(best.cpf)) patch.cpf = best.cpf;
-    // Situação da candidatura mais recente — sempre atualiza pra refletir registro mais novo
-    if (best.situacao) {
-      patch.tse_last_situation = best.situacao;
-      patch.tse_last_situation_year = best.ano;
-      if (best.situacao_detalhe) patch.tse_last_situation_detail = best.situacao_detalhe;
+    let current =
+      byTseId.get(row.sq_candidato) ?? (row.cpf ? byCpf.get(row.cpf) : undefined);
+    if (!current) {
+      current = findByName(byElection.get(election.id) ?? [], row, claimed);
+      if (current) matchedByName++;
     }
-    // Foto oficial TSE — formato: /img/{cd_eleicao}/{sq_candidato}/{UF}
-    if (!c.photo_url && best.sq_candidato && best.id_eleicao && best.uf) {
-      patch.photo_url = `https://divulgacandcontas.tse.jus.br/divulga/rest/arquivo/img/${best.id_eleicao}/${best.sq_candidato}/${best.uf}`;
-    }
-    // Patrimônio declarado (somatório dos bens)
-    if (!c.net_worth && best.sq_candidato) {
-      const nw = bensBySq.get(best.sq_candidato);
-      if (nw && nw > 0) patch.net_worth = nw;
-    }
+    if (current) claimed.add(current.id as string);
+    const netWorth = bensBySq.get(row.sq_candidato);
 
-    if (Object.keys(patch).length === 0) continue;
-    updates.push({
-      id: c.id,
-      patch,
-      debug: `${c.name} (${c.state ?? "-"}) ← ${best.cargo} ${best.uf} ${best.ano} [${best.partido}] sq=${best.sq_candidato}`,
-    });
+    const tseFields: Record<string, unknown> = {
+      tse_id: row.sq_candidato,
+      tse_last_situation: row.situacao,
+      tse_last_situation_year: YEAR,
+      tse_last_situation_detail: row.situacao_detalhe,
+    };
+
+    if (current) {
+      const patch: Record<string, unknown> = { ...tseFields };
+      if (!current.election_id) patch.election_id = election.id;
+      if (!current.cpf && row.cpf) patch.cpf = row.cpf;
+      if (!current.full_name && row.nome) patch.full_name = titleCase(row.nome);
+      if (!current.birth_date && row.dt_nascimento) patch.birth_date = row.dt_nascimento;
+      if (!current.profession && row.ocupacao) patch.profession = titleCase(row.ocupacao);
+      if (!current.education && row.grau_instrucao) patch.education = row.grau_instrucao;
+      if (!current.net_worth && netWorth && netWorth > 0) patch.net_worth = netWorth;
+      if (!current.photo_url) {
+        patch.photo_url = `https://divulgacandcontas.tse.jus.br/divulga/rest/arquivo/img/${YEAR}/${row.sq_candidato}/${row.uf ?? "BR"}`;
+      }
+      toUpdate.push({ id: current.id as string, patch });
+    } else {
+      let slug = slugify(row.nome_urna);
+      let n = 2;
+      while (usedSlugs.has(`${election.id}:${slug}`)) slug = `${slugify(row.nome_urna)}-${n++}`;
+      usedSlugs.add(`${election.id}:${slug}`);
+
+      toInsert.push({
+        ...tseFields,
+        election_id: election.id,
+        name: titleCase(row.nome_urna),
+        full_name: titleCase(row.nome),
+        party: row.partido,
+        number: row.num_candidato ? parseInt(row.num_candidato) : null,
+        cpf: row.cpf,
+        birth_date: row.dt_nascimento,
+        profession: row.ocupacao ? titleCase(row.ocupacao) : null,
+        education: row.grau_instrucao,
+        net_worth: netWorth && netWorth > 0 ? netWorth : null,
+        photo_url: `https://divulgacandcontas.tse.jus.br/divulga/rest/arquivo/img/${YEAR}/${row.sq_candidato}/${row.uf ?? "BR"}`,
+        slug,
+        is_active: true,
+      });
+    }
   }
 
   console.log(`\n📈 Estatísticas:`);
-  console.log(`   matches: ${matched}`);
-  console.log(`   updates pendentes: ${updates.length}`);
-  console.log(`   sem match: ${skipped}`);
+  console.log(`   novos candidatos:      ${toInsert.length}`);
+  console.log(`   atualizações:          ${toUpdate.length}`);
+  console.log(`     (match por nome:     ${matchedByName})`);
+  console.log(`   sem election_id (bug): ${unmatched}`);
 
-  if (updates.length === 0) {
-    console.log("Nada a fazer.");
-    return;
-  }
-
-  // Sample
-  console.log(`\n🔬 Amostra (primeiros 10):`);
-  for (const u of updates.slice(0, 10)) {
-    console.log(`   ${u.debug}`);
-    console.log(`      patch: ${JSON.stringify(u.patch)}`);
+  console.log(`\n🔬 Amostra de novos (até 10):`);
+  for (const c of toInsert.slice(0, 10)) {
+    console.log(`   ${c.name} (${c.party}) — election_id=${c.election_id} slug=${c.slug}`);
   }
 
   if (!APPLY) {
-    console.log(`\n💡 Rode com --apply para gravar (${updates.length} updates).`);
+    console.log(`\n💡 Rode com --apply para gravar (${toInsert.length} inserts, ${toUpdate.length} updates).`);
     return;
   }
 
-  console.log(`\n💾 Aplicando ${updates.length} updates…`);
-  for (const u of updates) {
+  console.log(`\n💾 Gravando…`);
+  const BATCH = 500;
+  let inserted = 0;
+  for (let i = 0; i < toInsert.length; i += BATCH) {
+    const slice = toInsert.slice(i, i + BATCH);
+    const { error: ie } = await supabase.from("candidates").insert(slice);
+    if (ie) {
+      console.error(`❌ Insert batch ${i}:`, ie.message);
+      break;
+    }
+    inserted += slice.length;
+  }
+  console.log(`✅ ${inserted}/${toInsert.length} candidatos criados.`);
+
+  let updated = 0;
+  for (const u of toUpdate) {
     const { error: ue } = await supabase.from("candidates").update(u.patch).eq("id", u.id);
     if (ue) {
       console.error(`   ❌ ${u.id}:`, ue.message);
@@ -595,7 +522,7 @@ async function main() {
       updated++;
     }
   }
-  console.log(`✅ ${updated} candidatos atualizados.`);
+  console.log(`✅ ${updated}/${toUpdate.length} candidatos atualizados.`);
 }
 
 main().catch((e) => {

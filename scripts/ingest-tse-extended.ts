@@ -260,7 +260,7 @@ async function ingestBens(byCpf: Map<string, CandRef>) {
       }
     }
     console.log(`  📊 ${ano}: ${totalRows.toLocaleString("pt-BR")} linhas no TSE → ${inserted.length} match com nossa base`);
-    await insertBatch("candidate_assets", inserted);
+    await insertBatch("candidate_assets", inserted, "candidate_id,election_year,asset_order");
   }
 }
 
