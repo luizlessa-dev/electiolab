@@ -1,0 +1,88 @@
+name: Ingest TSE Candidaturas 2026 (daily)
+
+# Diário enquanto a situação da candidatura ainda pode mudar (deferido/indeferido/
+# recurso) logo após o fechamento do registro em 15/08/2026. Revisar por volta de
+# 2026-08-29 (2 semanas depois) e reduzir a cadência ou desligar — a essa altura
+# a maioria das situações já deve ter estabilizado.
+
+on:
+  schedule:
+    - cron: "30 11 * * *" # diário 11:30 UTC (08:30 BRT) — logo após o ingest-pesqele (11:00)
+  workflow_dispatch:
+    inputs:
+      year:
+        description: "Ano da candidatura (default 2026)"
+        required: false
+        default: "2026"
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Ingest candidaturas TSE (Presidente/Governador/Senador)
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          YEAR_ARG="--year=${{ inputs.year || '2026' }}"
+          npx tsx scripts/ingest-tse-candidaturas.ts --apply $YEAR_ARG
+
+      - name: Open issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const today = new Date().toISOString().slice(0, 10);
+            const title = `🚨 Cron TSE Candidaturas falhou — ${today}`;
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              labels: "cron-failure",
+              per_page: 50,
+            });
+            const existing = issues.find((i) => i.title.includes("Cron TSE Candidaturas falhou"));
+            const body = [
+              `Workflow **Ingest TSE Candidaturas 2026 (daily)** falhou.`,
+              ``,
+              `**Run:** ${runUrl}`,
+              `**Quando:** ${new Date().toISOString()}`,
+              `**Disparo:** ${context.eventName}`,
+              ``,
+              `Rodar manual:`,
+              `\`\`\`bash`,
+              `gh workflow run ingest-tse-candidaturas.yml`,
+              `\`\`\``,
+            ].join("\n");
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body: `Nova falha — ${runUrl}`,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ["cron-failure", "automated"],
+              });
+            }
