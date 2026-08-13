@@ -96,38 +96,6 @@ async function fetchCandidates(slugs: string[]): Promise<ComparedCandidate[]> {
   return slugs.map((s) => map.get(s)).filter((x): x is ComparedCandidate => Boolean(x));
 }
 
-async function fetchAllSlugs(): Promise<Array<{ slug: string; name: string; party: string | null; election_type: string; election_state: string | null }>> {
-  const sb = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { auth: { persistSession: false } }
-  );
-  const { data } = await sb
-    .from("candidates")
-    .select("slug, name, party, election:elections!inner(type, state, year)")
-    .eq("is_active", true)
-    .eq("election.year", 2026)
-    .order("name");
-  type OptionRow = {
-    slug: string;
-    name: string;
-    party: string | null;
-    election: { type: string; state: string | null; year: number } | { type: string; state: string | null; year: number }[] | null;
-  };
-  return ((data ?? []) as unknown as OptionRow[])
-    .filter((c) => c.slug)
-    .map((c) => {
-      const elec = Array.isArray(c.election) ? c.election[0] : c.election;
-      return {
-        slug: c.slug,
-        name: c.name,
-        party: c.party,
-        election_type: elec?.type ?? "",
-        election_state: elec?.state ?? null,
-      };
-    });
-}
-
 export async function generateMetadata({
   searchParams,
 }: {
@@ -167,10 +135,7 @@ export default async function CompararPage({
 }) {
   const sp = await searchParams;
   const slugs = [sp.a, sp.b, sp.c].filter((s): s is string => Boolean(s));
-  const [candidates, allOptions] = await Promise.all([
-    fetchCandidates(slugs),
-    fetchAllSlugs(),
-  ]);
+  const candidates = await fetchCandidates(slugs);
 
   return (
     <div className="min-h-screen bg-background">
@@ -207,7 +172,7 @@ export default async function CompararPage({
           </p>
         </section>
 
-        <CompareView initialCandidates={candidates} options={allOptions} />
+        <CompareView initialCandidates={candidates} />
       </main>
 
       <footer className="border-t border-border py-6 mt-12">

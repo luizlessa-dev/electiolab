@@ -46,6 +46,7 @@ export type ComparedCandidate = {
 };
 
 type Option = {
+  id: string;
   slug: string;
   name: string;
   party: string | null;
@@ -55,10 +56,20 @@ type Option = {
 
 type Props = {
   initialCandidates: ComparedCandidate[];
-  options: Option[];
 };
 
+const SEARCH_DEBOUNCE_MS = 300;
+
 const SLOTS: Array<"a" | "b" | "c"> = ["a", "b", "c"];
+
+const TYPE_LABEL: Record<string, string> = {
+  presidente: "Presidente",
+  governador: "Governador",
+  senador: "Senador",
+  deputado_federal: "Deputado Federal",
+  deputado_estadual: "Deputado Estadual",
+  deputado_distrital: "Deputado Distrital",
+};
 
 function age(birth: string | null): number | null {
   if (!birth) return null;
@@ -78,7 +89,7 @@ function fmtMoney(v: number | null): string {
   return `R$ ${v.toFixed(0)}`;
 }
 
-export function CompareView({ initialCandidates, options }: Props) {
+export function CompareView({ initialCandidates }: Props) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -91,7 +102,35 @@ export function CompareView({ initialCandidates, options }: Props) {
   const [candidates, setCandidates] = useState<ComparedCandidate[]>(initialCandidates);
   const [pickerOpen, setPickerOpen] = useState<number | null>(null);
   const [pickerQuery, setPickerQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<Option[]>([]);
+  const [searching, setSearching] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  // Busca no servidor em vez de filtrar uma lista carregada inteira no client —
+  // com 16.909 candidatos (Presidente até Deputado Estadual/Distrital) não dá
+  // mais pra mandar tudo pro browser só pro picker de comparação.
+  useEffect(() => {
+    if (pickerOpen === null) return;
+    let cancelled = false;
+    setSearching(true);
+    const t = setTimeout(() => {
+      fetch(`/api/v1/candidates-search?q=${encodeURIComponent(pickerQuery.trim())}`)
+        .then((r) => r.json())
+        .then((d: { data?: Option[] }) => {
+          if (!cancelled) setSearchResults(d.data ?? []);
+        })
+        .catch(() => {
+          if (!cancelled) setSearchResults([]);
+        })
+        .finally(() => {
+          if (!cancelled) setSearching(false);
+        });
+    }, SEARCH_DEBOUNCE_MS);
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+    };
+  }, [pickerOpen, pickerQuery]);
 
   // Sync URL ↔ slots
   useEffect(() => {
@@ -159,13 +198,9 @@ export function CompareView({ initialCandidates, options }: Props) {
   }
 
   const filteredOptions = useMemo(() => {
-    const q = pickerQuery.trim().toLowerCase();
     const taken = new Set(slots.filter(Boolean));
-    return options
-      .filter((o) => !taken.has(o.slug))
-      .filter((o) => !q || o.name.toLowerCase().includes(q))
-      .slice(0, 50);
-  }, [options, pickerQuery, slots]);
+    return searchResults.filter((o) => !taken.has(o.slug));
+  }, [searchResults, slots]);
 
   const filledCount = candidates.length;
   const shareUrl =
@@ -292,18 +327,20 @@ export function CompareView({ initialCandidates, options }: Props) {
               </div>
             </div>
             <div className="max-h-80 overflow-y-auto">
-              {filteredOptions.length === 0 ? (
+              {searching && filteredOptions.length === 0 ? (
+                <p className="p-4 text-sm text-muted-foreground text-center">Buscando…</p>
+              ) : filteredOptions.length === 0 ? (
                 <p className="p-4 text-sm text-muted-foreground text-center">Nenhum encontrado.</p>
               ) : (
                 filteredOptions.map((o) => (
                   <button
-                    key={o.slug}
+                    key={o.id}
                     onClick={() => setSlot(pickerOpen, o.slug)}
                     className="w-full px-3 py-2 text-left text-sm hover:bg-muted/50 border-b border-border/30 last:border-0 flex items-center justify-between"
                   >
                     <span className="font-medium">{o.name}</span>
                     <span className="text-xs text-muted-foreground">
-                      {o.party} · {o.election_type}
+                      {o.party} · {TYPE_LABEL[o.election_type] ?? o.election_type}
                       {o.election_state ? ` ${o.election_state}` : ""}
                     </span>
                   </button>
@@ -324,8 +361,13 @@ function CandidateSlotCard({
   c: ComparedCandidate;
   onRemove: () => void;
 }) {
+  const inapto = c.tse_last_situation === "INAPTO";
   return (
-    <div className="rounded-lg border border-border bg-card p-4 relative">
+    <div
+      className={`rounded-lg border bg-card p-4 relative ${
+        inapto ? "border-warning/50" : "border-border"
+      }`}
+    >
       <button
         onClick={onRemove}
         className="absolute top-2 right-2 p-1 rounded hover:bg-muted/50 text-muted-foreground hover:text-foreground"
@@ -349,10 +391,13 @@ function CandidateSlotCard({
             {c.tse_last_situation === "APTO" && (
               <CheckCircle2 className="h-3.5 w-3.5 text-positive" aria-label="Apto" />
             )}
-            {c.tse_last_situation === "INAPTO" && (
-              <AlertTriangle className="h-3.5 w-3.5 text-warning" aria-label="Indeferido" />
-            )}
           </div>
+          {inapto && (
+            <div className="mb-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide bg-warning/15 text-warning">
+              <AlertTriangle className="h-3 w-3" />
+              Candidatura indeferida pelo TSE
+            </div>
+          )}
           {c.party && (
             <span
               className="px-1.5 py-0.5 rounded text-[10px] font-mono uppercase border"
@@ -362,7 +407,7 @@ function CandidateSlotCard({
             </span>
           )}
           <p className="text-xs text-muted-foreground mt-1">
-            {c.election?.type ?? ""}
+            {TYPE_LABEL[c.election?.type ?? ""] ?? c.election?.type ?? ""}
             {c.election?.state ? ` · ${c.election.state}` : ""} · {c.election?.year ?? ""}
           </p>
         </div>

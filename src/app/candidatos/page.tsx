@@ -35,41 +35,146 @@ type CandidateRow = {
   election: { type: string; state: string | null; year: number; name: string } | null;
 };
 
-async function getAll(): Promise<CandidateRow[]> {
-  const sb = createClient(
+const PAGE_SIZE = 24;
+const YEAR = 2026;
+
+function sb() {
+  return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     { auth: { persistSession: false } }
   );
-  const { data } = await sb
-    .from("candidates")
-    .select(
-      `id, slug, name, party, color, current_position, bio, photo_url, tse_last_situation, birth_date,
-       election:elections!inner(type, state, year, name),
-       averages:weighted_averages(weighted_average, calculated_at, scenario_label)`
-    )
-    .eq("is_active", true)
-    .eq("election.year", 2026)
-    .order("name");
+}
 
-  // Achata a média mais recente por candidato
-  return ((data ?? []) as unknown as Array<
-    CandidateRow & { averages?: Array<{ weighted_average: number; calculated_at: string; scenario_label: string | null }> }
-  >)
-    .filter((c) => c.slug && c.election?.type !== undefined)
-    .map((c) => {
-      // Filtra apenas 1T (scenario_label = null). 2T tem 1 linha por cenário
-      // (par de candidatos) e não tem número único interpretável aqui — pra
-      // ver 2T detalhado, ir pra página dedicada do candidato/eleição.
-      const latest = (c.averages ?? [])
+/**
+ * Filtro/ordenação/paginação no servidor — antes carregava todos os
+ * candidatos ativos numa query só e filtrava no client, o que funcionava
+ * com ~580 linhas (só presidente/governador/senador). Com Deputado Federal/
+ * Estadual/Distrital, isso passou a ser 16.909 linhas de uma vez; não dá
+ * mais pra mandar tudo pro browser em toda visita.
+ *
+ * Exceção: sortKey="average" não dá pra paginar/ordenar direto no Postgres
+ * sem uma view dedicada, porque a "média mais recente" precisa filtrar por
+ * scenario_label=null e pegar o calculated_at mais novo por candidato — e só
+ * ~300 candidatos (os majoritários com pesquisa) têm weighted_averages, então
+ * buscar só esses via inner join e ordenar em memória continua barato.
+ */
+async function getPage(filters: InitialFilters): Promise<{ rows: CandidateRow[]; total: number }> {
+  const client = sb();
+
+  if (filters.sortKey === "average") {
+    const { data } = await client
+      .from("candidates")
+      .select(
+        `id, slug, name, party, color, current_position, bio, photo_url, tse_last_situation, birth_date,
+         election:elections!inner(type, state, year, name),
+         averages:weighted_averages!inner(weighted_average, calculated_at, scenario_label)`
+      )
+      .eq("is_active", true)
+      .eq("election.year", YEAR);
+
+    let rows: CandidateRow[] = ((data ?? []) as unknown as Array<
+      CandidateRow & { averages?: Array<{ weighted_average: number; calculated_at: string; scenario_label: string | null }> }
+    >).map(({ averages, ...c }) => {
+      const latest = (averages ?? [])
         .filter((a) => a.scenario_label === null)
         .slice()
         .sort((a, b) => (b.calculated_at ?? "").localeCompare(a.calculated_at ?? ""))[0];
-      return {
-        ...c,
-        weighted_average: latest?.weighted_average ?? null,
-      };
+      return { ...c, weighted_average: latest?.weighted_average ?? null };
     });
+
+    rows = applyFilters(rows, filters);
+    rows.sort((a, b) => {
+      const dirMul = filters.sortDir === "asc" ? 1 : -1;
+      const aHas = a.weighted_average !== null;
+      const bHas = b.weighted_average !== null;
+      if (aHas && !bHas) return -1;
+      if (!aHas && bHas) return 1;
+      if (!aHas && !bHas) return a.name.localeCompare(b.name, "pt-BR");
+      return ((a.weighted_average ?? 0) - (b.weighted_average ?? 0)) * dirMul;
+    });
+    const total = rows.length;
+    const start = (filters.page - 1) * PAGE_SIZE;
+    return { rows: rows.slice(start, start + PAGE_SIZE), total };
+  }
+
+  let query = client
+    .from("candidates")
+    .select(
+      `id, slug, name, party, color, current_position, bio, photo_url, tse_last_situation, birth_date,
+       election:elections!inner(type, state, year, name)`,
+      { count: "exact" }
+    )
+    .eq("is_active", true)
+    .eq("election.year", YEAR);
+
+  if (filters.query) query = query.ilike("name", `%${filters.query}%`);
+  if (filters.type !== "all") query = query.eq("election.type", filters.type);
+  if (filters.uf !== "all") query = query.eq("election.state", filters.uf);
+  if (filters.party !== "all") query = query.eq("party", filters.party);
+  if (filters.tse === "apto") query = query.eq("tse_last_situation", "APTO");
+  if (filters.tse === "inapto") query = query.eq("tse_last_situation", "INAPTO");
+  if (filters.tse === "unknown") query = query.is("tse_last_situation", null);
+  if (filters.hasBio) query = query.not("bio", "is", null);
+  if (filters.hasPhoto) query = query.not("photo_url", "is", null);
+
+  if (filters.sortKey === "age") {
+    // Idade asc = nascimento mais recente primeiro; nulls sempre por último.
+    query = query.order("birth_date", { ascending: filters.sortDir === "desc", nullsFirst: false });
+  } else {
+    query = query.order("name", { ascending: filters.sortDir === "asc" });
+  }
+
+  const start = (filters.page - 1) * PAGE_SIZE;
+  const { data, count } = await query.range(start, start + PAGE_SIZE - 1);
+
+  const rows = ((data ?? []) as unknown as CandidateRow[]).map((c) => ({
+    ...c,
+    weighted_average: null,
+  }));
+  return { rows, total: count ?? 0 };
+}
+
+function applyFilters(rows: CandidateRow[], f: InitialFilters): CandidateRow[] {
+  const q = f.query.trim().toLowerCase();
+  return rows.filter((c) => {
+    if (q && !c.name.toLowerCase().includes(q)) return false;
+    if (f.type !== "all" && c.election?.type !== f.type) return false;
+    if (f.uf !== "all" && c.election?.state !== f.uf) return false;
+    if (f.party !== "all" && c.party !== f.party) return false;
+    if (f.tse === "apto" && c.tse_last_situation !== "APTO") return false;
+    if (f.tse === "inapto" && c.tse_last_situation !== "INAPTO") return false;
+    if (f.tse === "unknown" && c.tse_last_situation) return false;
+    if (f.hasBio && !c.bio) return false;
+    if (f.hasPhoto && !c.photo_url) return false;
+    return true;
+  });
+}
+
+async function getPartyOptions(): Promise<string[]> {
+  const { data } = await sb().rpc("get_active_parties", { p_year: YEAR });
+  return ((data ?? []) as Array<{ party: string }>).map((r) => r.party);
+}
+
+const TYPE_KEYS = [
+  "presidente",
+  "governador",
+  "senador",
+  "deputado_federal",
+  "deputado_estadual",
+  "deputado_distrital",
+] as const;
+
+async function getStats(): Promise<{ total: number; byType: Record<string, number> }> {
+  const { data } = await sb().rpc("get_candidate_type_counts", { p_year: YEAR });
+  const byType: Record<string, number> = {};
+  let total = 0;
+  for (const row of (data ?? []) as Array<{ election_type: string; total: number }>) {
+    byType[row.election_type] = Number(row.total);
+    total += Number(row.total);
+  }
+  for (const k of TYPE_KEYS) byType[k] ??= 0;
+  return { total, byType };
 }
 
 export default async function CandidatosIndexPage({
@@ -94,15 +199,20 @@ export default async function CandidatosIndexPage({
     page: Math.max(1, parseInt(pickStr(sp.page) ?? "1", 10) || 1),
   };
 
-  const all = await getAll();
+  const [{ rows, total: filteredTotal }, typeStats, parties] = await Promise.all([
+    getPage(initial),
+    getStats(),
+    getPartyOptions(),
+  ]);
 
-  // Estatísticas pra header
   const stats = {
-    total: all.length,
-    presidentes: all.filter((c) => c.election?.type === "presidente").length,
-    governadores: all.filter((c) => c.election?.type === "governador").length,
-    senadores: all.filter((c) => c.election?.type === "senador").length,
-    com_bio: all.filter((c) => c.bio).length,
+    total: typeStats.total,
+    presidentes: typeStats.byType.presidente,
+    governadores: typeStats.byType.governador,
+    senadores: typeStats.byType.senador,
+    deputados_federais: typeStats.byType.deputado_federal,
+    deputados_estaduais: typeStats.byType.deputado_estadual,
+    deputados_distritais: typeStats.byType.deputado_distrital,
   };
 
   const jsonLd = {
@@ -111,9 +221,10 @@ export default async function CandidatosIndexPage({
       {
         "@type": "ItemList",
         name: "Candidatos eleições 2026",
-        description: "Lista completa de candidatos brasileiros a Presidente, Governador e Senador.",
-        numberOfItems: stats.total,
-        itemListElement: all.slice(0, 50).map((c, idx) => ({
+        description:
+          "Lista completa de candidatos brasileiros a Presidente, Governador, Senador, Deputado Federal, Deputado Estadual e Deputado Distrital.",
+        numberOfItems: filteredTotal,
+        itemListElement: rows.slice(0, 24).map((c, idx) => ({
           "@type": "ListItem",
           position: idx + 1,
           item: {
@@ -166,15 +277,23 @@ export default async function CandidatosIndexPage({
             Todos os candidatos 2026
           </h1>
           <p className="text-base text-muted-foreground max-w-prose">
-            {stats.total} perfis ativos: {stats.presidentes} presidenciáveis,{" "}
-            {stats.governadores} governadores estaduais, {stats.senadores} senadores.
-            Cada perfil reúne dados oficiais TSE, votações no Senado/Câmara, patrimônio
-            declarado, foto oficial e {stats.com_bio} têm biografia completa.
+            {stats.total.toLocaleString("pt-BR")} perfis ativos: {stats.presidentes} presidenciáveis,{" "}
+            {stats.governadores} governadores, {stats.senadores} senadores,{" "}
+            {(stats.deputados_federais + stats.deputados_estaduais + stats.deputados_distritais).toLocaleString(
+              "pt-BR"
+            )}{" "}
+            candidatos a deputado (federal, estadual e distrital). Cada perfil reúne dados oficiais
+            TSE, votações no Senado/Câmara, patrimônio declarado e foto oficial.
           </p>
         </section>
 
         {/* Lista interativa (filtros + grid) */}
-        <CandidatesIndex candidates={all} initial={initial} />
+        <CandidatesIndex
+          candidates={rows}
+          initial={initial}
+          total={filteredTotal}
+          parties={parties}
+        />
       </main>
 
       <footer className="border-t border-border py-6 mt-12">

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import {
   Search,
@@ -32,9 +32,17 @@ type Candidate = {
   election: { type: string; state: string | null; year: number; name: string } | null;
 };
 
+export type CargoType =
+  | "presidente"
+  | "governador"
+  | "senador"
+  | "deputado_federal"
+  | "deputado_estadual"
+  | "deputado_distrital";
+
 export type InitialFilters = {
   query: string;
-  type: "all" | "presidente" | "governador" | "senador";
+  type: "all" | CargoType;
   uf: string;
   party: string;
   tse: "all" | "apto" | "inapto" | "unknown";
@@ -45,12 +53,20 @@ export type InitialFilters = {
   page: number;
 };
 
-type Props = { candidates: Candidate[]; initial: InitialFilters };
+type Props = {
+  candidates: Candidate[]; // já é só a página atual — filtro/sort/paginação rodam no servidor
+  initial: InitialFilters;
+  total: number; // total de candidatos depois do filtro (todas as páginas)
+  parties: string[];
+};
 
 const TYPE_LABEL: Record<string, string> = {
   presidente: "Presidente",
   governador: "Governador",
   senador: "Senador",
+  deputado_federal: "Deputado Federal",
+  deputado_estadual: "Deputado Estadual",
+  deputado_distrital: "Deputado Distrital",
 };
 const STATES = [
   "AC","AL","AM","AP","BA","CE","DF","ES","GO","MA",
@@ -59,6 +75,7 @@ const STATES = [
 ];
 
 const PAGE_SIZE = 24;
+const SEARCH_DEBOUNCE_MS = 400;
 
 type SortKey = "name" | "average" | "age";
 type SortDir = "asc" | "desc";
@@ -81,11 +98,13 @@ function ageOf(birth: string | null): number | null {
   return a;
 }
 
-export function CandidatesIndex({ candidates, initial }: Props) {
+export function CandidatesIndex({ candidates, initial, total, parties }: Props) {
   const router = useRouter();
   const pathname = usePathname();
 
-  // Estado inicial vem das props (server-side reads searchParams)
+  // query tem debounce próprio (custa round-trip ao servidor agora, não é
+  // mais filtro local); os demais campos aplicam na hora.
+  const [queryInput, setQueryInput] = useState(initial.query);
   const [query, setQuery] = useState(initial.query);
   const [type, setType] = useState<InitialFilters["type"]>(initial.type);
   const [uf, setUf] = useState(initial.uf);
@@ -97,6 +116,15 @@ export function CandidatesIndex({ candidates, initial }: Props) {
   const [sortDir, setSortDir] = useState<SortDir>(initial.sortDir);
   const [page, setPage] = useState<number>(initial.page);
 
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => setQuery(queryInput), SEARCH_DEBOUNCE_MS);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [queryInput]);
+
   // Reset paginação quando filtro/sort muda — ajustado durante o render (não
   // em effect) pra evitar um passo de render extra; ver
   // https://react.dev/learn/you-might-not-need-an-effect#adjusting-state-based-on-a-prop-or-state-change
@@ -107,7 +135,8 @@ export function CandidatesIndex({ candidates, initial }: Props) {
     setPage(1);
   }
 
-  // Sincroniza estado → URL (replace, sem novo entry no histórico)
+  // Sincroniza estado → URL. page.tsx é force-dynamic e lê searchParams no
+  // servidor, então essa navegação já dispara o refetch filtrado/paginado.
   useEffect(() => {
     const params = new URLSearchParams();
     if (query) params.set("q", query);
@@ -123,73 +152,23 @@ export function CandidatesIndex({ candidates, initial }: Props) {
 
     const qs = params.toString();
     const target = qs ? `${pathname}?${qs}` : pathname;
-    // scroll: false → não pula pro topo a cada filtro
     router.replace(target, { scroll: false });
   }, [query, type, uf, party, tse, hasBio, hasPhoto, sortKey, sortDir, page, pathname, router]);
-
-  const parties = useMemo(() => {
-    const set = new Set<string>();
-    for (const c of candidates) if (c.party) set.add(c.party);
-    return Array.from(set).sort();
-  }, [candidates]);
 
   const enriched = useMemo(
     () => candidates.map((c) => ({ ...c, _age: ageOf(c.birth_date) })),
     [candidates]
   );
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return enriched.filter((c) => {
-      if (q && !c.name.toLowerCase().includes(q)) return false;
-      if (type !== "all" && c.election?.type !== type) return false;
-      if (uf !== "all" && c.election?.state !== uf) return false;
-      if (party !== "all" && c.party !== party) return false;
-      if (tse === "apto" && c.tse_last_situation !== "APTO") return false;
-      if (tse === "inapto" && c.tse_last_situation !== "INAPTO") return false;
-      if (tse === "unknown" && c.tse_last_situation) return false;
-      if (hasBio && !c.bio) return false;
-      if (hasPhoto && !c.photo_url) return false;
-      return true;
-    });
-  }, [enriched, query, type, uf, party, tse, hasBio, hasPhoto]);
-
-  const sorted = useMemo(() => {
-    const arr = filtered.slice();
-    const dirMul = sortDir === "asc" ? 1 : -1;
-    if (sortKey === "name") {
-      arr.sort((a, b) => a.name.localeCompare(b.name, "pt-BR") * dirMul);
-    } else if (sortKey === "average") {
-      arr.sort((a, b) => {
-        const aHas = a.weighted_average !== null && a.weighted_average !== undefined;
-        const bHas = b.weighted_average !== null && b.weighted_average !== undefined;
-        if (aHas && !bHas) return -1;
-        if (!aHas && bHas) return 1;
-        if (!aHas && !bHas) return a.name.localeCompare(b.name, "pt-BR");
-        return ((a.weighted_average ?? 0) - (b.weighted_average ?? 0)) * dirMul;
-      });
-    } else if (sortKey === "age") {
-      arr.sort((a, b) => {
-        const aHas = a._age !== null;
-        const bHas = b._age !== null;
-        if (aHas && !bHas) return -1;
-        if (!aHas && bHas) return 1;
-        if (!aHas && !bHas) return a.name.localeCompare(b.name, "pt-BR");
-        return ((a._age ?? 0) - (b._age ?? 0)) * dirMul;
-      });
-    }
-    return arr;
-  }, [filtered, sortKey, sortDir]);
-
-  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);
-  const pageItems = sorted.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
   const hasFilter =
     query || type !== "all" || uf !== "all" || party !== "all" ||
     tse !== "all" || hasBio || hasPhoto;
 
   const reset = useCallback(() => {
+    setQueryInput("");
     setQuery("");
     setType("all");
     setUf("all");
@@ -230,8 +209,8 @@ export function CandidatesIndex({ candidates, initial }: Props) {
             <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
             <input
               type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              value={queryInput}
+              onChange={(e) => setQueryInput(e.target.value)}
               placeholder="Buscar por nome..."
               className="w-full pl-9 pr-3 py-2 rounded-md text-sm bg-background border border-border focus:outline-none focus:ring-2 focus:ring-ring"
             />
@@ -247,6 +226,9 @@ export function CandidatesIndex({ candidates, initial }: Props) {
             <option value="presidente">Presidente</option>
             <option value="governador">Governador</option>
             <option value="senador">Senador</option>
+            <option value="deputado_federal">Deputado Federal</option>
+            <option value="deputado_estadual">Deputado Estadual</option>
+            <option value="deputado_distrital">Deputado Distrital</option>
           </select>
 
           <select
@@ -360,80 +342,87 @@ export function CandidatesIndex({ candidates, initial }: Props) {
         <div className="text-xs text-muted-foreground">
           Exibindo{" "}
           <span className="font-mono font-semibold">
-            {sorted.length === 0 ? 0 : (safePage - 1) * PAGE_SIZE + 1}–
-            {Math.min(safePage * PAGE_SIZE, sorted.length)}
+            {total === 0 ? 0 : (safePage - 1) * PAGE_SIZE + 1}–
+            {Math.min(safePage * PAGE_SIZE, total)}
           </span>{" "}
-          de <span className="font-mono font-semibold">{sorted.length}</span> candidato
-          {sorted.length === 1 ? "" : "s"}
-          {hasFilter && ` (de ${candidates.length} totais)`}
+          de <span className="font-mono font-semibold">{total.toLocaleString("pt-BR")}</span> candidato
+          {total === 1 ? "" : "s"}
         </div>
       </div>
 
       {/* Grid */}
-      {pageItems.length === 0 ? (
+      {enriched.length === 0 ? (
         <div className="rounded-lg border border-border bg-card p-12 text-center text-sm text-muted-foreground">
           Nenhum candidato encontrado com esses filtros.
         </div>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {pageItems.map((c) => (
-            <Link
-              key={c.id}
-              href={`/candidato/${c.slug}`}
-              prefetch={true}
-              className="group rounded-lg border border-border bg-card p-4 hover:border-primary/50 hover:shadow-sm transition-all flex items-start gap-3"
-            >
-              <div
-                className="w-1 self-stretch rounded-full"
-                style={{ backgroundColor: c.color ?? "#6b7280" }}
-              />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap mb-1">
-                  <h3 className="text-sm font-semibold truncate group-hover:text-primary transition-colors">
-                    {c.name}
-                  </h3>
-                  {c.tse_last_situation === "APTO" && (
-                    <CheckCircle2 className="h-3.5 w-3.5 text-positive shrink-0" aria-label="Apto TSE" />
+          {enriched.map((c) => {
+            const inapto = c.tse_last_situation === "INAPTO";
+            return (
+              <Link
+                key={c.id}
+                href={`/candidato/${c.slug}`}
+                prefetch={true}
+                className={`group rounded-lg border bg-card p-4 hover:shadow-sm transition-all flex items-start gap-3 ${
+                  inapto ? "border-warning/50 hover:border-warning" : "border-border hover:border-primary/50"
+                }`}
+              >
+                <div
+                  className="w-1 self-stretch rounded-full"
+                  style={{ backgroundColor: c.color ?? "#6b7280" }}
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap mb-1">
+                    <h3 className="text-sm font-semibold truncate group-hover:text-primary transition-colors">
+                      {c.name}
+                    </h3>
+                    {c.tse_last_situation === "APTO" && (
+                      <CheckCircle2 className="h-3.5 w-3.5 text-positive shrink-0" aria-label="Apto TSE" />
+                    )}
+                  </div>
+                  {inapto && (
+                    <div className="mb-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide bg-warning/15 text-warning">
+                      <AlertTriangle className="h-3 w-3" />
+                      Candidatura indeferida pelo TSE
+                    </div>
                   )}
-                  {c.tse_last_situation === "INAPTO" && (
-                    <AlertTriangle className="h-3.5 w-3.5 text-warning shrink-0" aria-label="Indeferido TSE" />
-                  )}
-                </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1.5 flex-wrap">
-                  {c.party && (
-                    <span
-                      className="px-1.5 py-0.5 rounded text-[10px] font-mono uppercase border"
-                      style={{ borderColor: c.color ?? undefined, color: c.color ?? undefined }}
-                    >
-                      {c.party}
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1.5 flex-wrap">
+                    {c.party && (
+                      <span
+                        className="px-1.5 py-0.5 rounded text-[10px] font-mono uppercase border"
+                        style={{ borderColor: c.color ?? undefined, color: c.color ?? undefined }}
+                      >
+                        {c.party}
+                      </span>
+                    )}
+                    <span className="truncate">
+                      {TYPE_LABEL[c.election?.type ?? ""] ?? c.election?.type}
+                      {c.election?.state ? ` · ${c.election.state}` : ""}
                     </span>
-                  )}
-                  <span className="truncate">
-                    {TYPE_LABEL[c.election?.type ?? ""] ?? c.election?.type}
-                    {c.election?.state ? ` · ${c.election.state}` : ""}
-                  </span>
-                  {c._age !== null && <span>· {c._age} anos</span>}
+                    {c._age !== null && <span>· {c._age} anos</span>}
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {c.weighted_average !== null && c.weighted_average !== undefined && (
+                      <span
+                        className="text-xs font-mono font-bold tabular-nums"
+                        style={{ color: c.color ?? undefined }}
+                        title="Média ponderada das pesquisas"
+                      >
+                        {Number(c.weighted_average).toFixed(1)}%
+                      </span>
+                    )}
+                    {c.current_position && (
+                      <p className="text-xs text-muted-foreground truncate">
+                        {c.current_position}
+                      </p>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  {c.weighted_average !== null && c.weighted_average !== undefined && (
-                    <span
-                      className="text-xs font-mono font-bold tabular-nums"
-                      style={{ color: c.color ?? undefined }}
-                      title="Média ponderada das pesquisas"
-                    >
-                      {Number(c.weighted_average).toFixed(1)}%
-                    </span>
-                  )}
-                  {c.current_position && (
-                    <p className="text-xs text-muted-foreground truncate">
-                      {c.current_position}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0 mt-1" />
-            </Link>
-          ))}
+                <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0 mt-1" />
+              </Link>
+            );
+          })}
         </div>
       )}
 
