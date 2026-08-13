@@ -82,9 +82,6 @@ export async function GET(req: NextRequest) {
   const { createClient } = await import("@/lib/supabase/server");
   const supabase = await createClient();
 
-  try { await supabase.rpc("get_ingestion_status"); } catch { /* fallback below */ }
-
-  // Fallback: query direta
   const { data: elections } = await supabase
     .from("elections")
     .select(`

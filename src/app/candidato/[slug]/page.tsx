@@ -30,102 +30,13 @@ import {
 import { DriftChartLazy as DriftChart } from "./drift-chart-lazy";
 import { CandidateEditorialBio } from "@/components/candidate-editorial-bio";
 import { CandidateSchema } from "./candidate-schema";
-import type { Database } from "@/types/database.types";
 
 export const revalidate = 3600; // 1h ISR — gera sob demanda na primeira request
 
-// getCandidateBySlug() (src/lib/queries.ts) monta o Supabase client sem o
-// generic <Database>, então o retorno da query chega como `any` em runtime.
-// O shape abaixo espelha exatamente as colunas pedidas no `.select(...)`
-// daquela função, usando os tipos reais gerados em database.types.ts —
-// dá pra tipar o dado sem tocar em lib/queries.ts (fora do escopo desta tarefa).
-type CandidateRow = Database["public"]["Tables"]["candidates"]["Row"];
-type ElectionRow = Database["public"]["Tables"]["elections"]["Row"];
-type PollRow = Database["public"]["Tables"]["polls"]["Row"];
-type InstituteRow = Database["public"]["Tables"]["institutes"]["Row"];
-type PollResultRow = Database["public"]["Tables"]["poll_results"]["Row"];
-type ElectionResultRow = Database["public"]["Tables"]["election_results"]["Row"];
-type CampaignFinanceRow = Database["public"]["Tables"]["campaign_finances"]["Row"];
-type DigitalAdRow = Database["public"]["Tables"]["digital_ads"]["Row"];
-type LegislativeVoteRow = Database["public"]["Tables"]["legislative_votes"]["Row"];
-type JudicialProceedingRow = Database["public"]["Tables"]["judicial_proceedings"]["Row"];
-type CandidateAssetRow = Database["public"]["Tables"]["candidate_assets"]["Row"];
-type CandidateSocialMediaRow = Database["public"]["Tables"]["candidate_social_media"]["Row"];
-type CandidateFefcRow = Database["public"]["Tables"]["candidate_fefc"]["Row"];
-type PriorElectionResultRow = Database["public"]["Tables"]["prior_election_results"]["Row"];
-
-interface CandidateDetail extends CandidateRow {
-  election: Pick<
-    ElectionRow,
-    "id" | "name" | "type" | "state" | "year" | "round" | "election_date"
-  > | null;
-  poll_results: Array<
-    Pick<PollResultRow, "percentage"> & {
-      poll:
-        | (Pick<PollRow, "id" | "publication_date" | "sample_size" | "methodology"> & {
-            institute: Pick<InstituteRow, "name" | "slug"> | null;
-          })
-        | null;
-    }
-  >;
-  election_results: Array<
-    Pick<ElectionResultRow, "total_votes" | "percentage" | "is_elected" | "result_description">
-  >;
-  campaign_finances: Array<
-    Pick<
-      CampaignFinanceRow,
-      "total_received" | "total_spent" | "fund_partidario" | "fund_especial" | "receita_pf" | "receita_pj"
-    >
-  >;
-  digital_ads: Array<
-    Pick<
-      DigitalAdRow,
-      | "id"
-      | "platform"
-      | "page_name"
-      | "spend_lower"
-      | "spend_upper"
-      | "impressions_lower"
-      | "impressions_upper"
-      | "delivery_start"
-      | "creative_text"
-    >
-  >;
-  legislative_votes: Array<
-    Pick<LegislativeVoteRow, "id" | "vote_date" | "bill_title" | "vote" | "topic" | "importance">
-  >;
-  judicial_proceedings: Array<
-    Pick<
-      JudicialProceedingRow,
-      | "id"
-      | "process_number"
-      | "court"
-      | "process_class"
-      | "process_subject"
-      | "current_status"
-      | "is_relevant"
-      | "source_url"
-    >
-  >;
-  candidate_assets: Array<
-    Pick<CandidateAssetRow, "id" | "election_year" | "asset_type_name" | "description" | "value_brl">
-  >;
-  candidate_social_media: Array<
-    Pick<CandidateSocialMediaRow, "id" | "election_year" | "platform" | "url" | "handle">
-  >;
-  candidate_fefc: Array<
-    Pick<CandidateFefcRow, "id" | "election_year" | "amount_received" | "amount_spent" | "party_acronym">
-  >;
-  // total_votes/result_status são nullable no schema (prior_election_results), mas o
-  // código abaixo sempre os trata como presentes — mesma suposição que já existia no
-  // tipo manual anterior. Não é corrigido aqui (mudança de tipo, não de runtime).
-  prior_election_results: Array<
-    Pick<PriorElectionResultRow, "id" | "year" | "round" | "election_type" | "state" | "city" | "party"> & {
-      total_votes: number;
-      result_status: string;
-    }
-  >;
-}
+// getCandidateBySlug() agora usa o client tipado (Database generic em
+// src/lib/supabase/server.ts), então o shape abaixo vem direto da query
+// real em src/lib/queries.ts — sem tipo manual duplicado pra manter em sincronia.
+type CandidateDetail = NonNullable<Awaited<ReturnType<typeof getCandidateBySlug>>>;
 
 export async function generateMetadata({
   params,
@@ -156,7 +67,7 @@ export default async function CandidatoPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const c = (await getCandidateBySlug(slug)) as CandidateDetail | null;
+  const c: CandidateDetail | null = await getCandidateBySlug(slug);
   if (!c) notFound();
 
   const editorial = await getCandidateEditorial(slug);
@@ -678,11 +589,11 @@ export default async function CandidatoPage({
                         )}
                       </div>
                       <p className="text-[11px] text-muted-foreground mt-0.5">
-                        {r.party ?? "—"} · <span className={cor}>{statusLabel[r.result_status] ?? r.result_status}</span>
+                        {r.party ?? "—"} · <span className={cor}>{r.result_status ? (statusLabel[r.result_status] ?? r.result_status) : "—"}</span>
                       </p>
                     </div>
                     <span className="font-mono font-bold tabular-nums text-sm shrink-0">
-                      {r.total_votes.toLocaleString("pt-BR")} votos
+                      {r.total_votes?.toLocaleString("pt-BR") ?? "—"} votos
                     </span>
                   </div>
                 );
