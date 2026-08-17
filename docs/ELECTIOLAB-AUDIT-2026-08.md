@@ -490,3 +490,78 @@ Ainda pendente do §7: item 3 (curadoria do Tier 1), item 5 (conferir os 5 proto
 `scripts/pending-polls.ts` lia `pesqele_missing` sem paginação e batia no teto padrão de 1.000 linhas do PostgREST, reportando "1000 totais" como se fosse o universo. São 1.668. Mesma classe do bug C2 do sitemap. Corrigido com paginação explícita.
 
 Os totais priorizados não mudaram (145) porque a view ordena por `fieldwork_end desc` e a janela de 45 dias cabia dentro das primeiras 1.000 — o corte afetava análise histórica e janelas longas, não o Tier 1 de hoje.
+
+---
+
+## 9. Pendências fechadas em 17/08/2026 (terceira passada)
+
+### 9.1 Wikipedia removida do banco — decisão: apagar, não mais marcar
+
+Decisão do Luiz: a Wikipedia não é usada em momento nenhum, nem como validação nem como descoberta. O papel de descoberta é do `pesqele_registry`, que é fonte estritamente melhor — 1.714 pesquisas com protocolo, instituto, amostra e metodologia oficiais.
+
+Executado via `scripts/purge-wikipedia-polls.ts --apply` (dry-run antes, backup JSON obrigatório em `backups/`, fora do git):
+
+| Removido | Quantidade |
+|---|---:|
+| `polls` com `source_kind='wikipedia'` | 52 |
+| `poll_results` desses polls (CASCADE) | 210 |
+| `poll_drafts` de proveniência Wikipedia | 606 (533 pending, 52 imported, 21 approved) |
+| `pesqele_registry` — linhas seed | 3 |
+
+Ordem de deleção importa: `poll_drafts.promoted_poll_id` referencia `polls` **sem** `ON DELETE CASCADE`, então os drafts saem primeiro. O script trata isso.
+
+**Achado novo: mock dentro do `pesqele_registry`.** As linhas `TSE-2026-001/002/003` (Datafolha, IPEC, Quaest — todas com o mesmo `ingested_at` de 12/08 17h47) não vêm do CSV do TSE: foram plantadas à mão. Estavam inflando o denominador de cobertura presidencial (651 → 648 depois da remoção) e poluindo a fila editorial. Mesma classe do achado C1, mas na tabela que serve de fonte de verdade — o cron diário não as recria, porque não existem no CSV oficial.
+
+**Efeitos colaterais resolvidos de graça:** as 14 pesquisas com data de nov/dez 2026 e os 21 drafts presos em `approved` desapareceram junto. `polls` de 2026 vai de 237 para **185**; `poll_drafts` de 615 para **9** (todos `manual`).
+
+As guardas de código (§8.2) continuam no lugar como defesa em profundidade — não custam nada e impedem reintrodução.
+
+### 9.2 Os 40 registros com cenário embutido — normalizados
+
+Solução adotada: **`tse_registration` guarda só o protocolo; o cenário vai para `scenario_label`**. O protocolo é chave estrangeira para a realidade e precisa casar com o TSE; cenário é dimensão editorial. A coluna `scenario_label` já existia e estava subutilizada.
+
+Ao inspecionar, os 40 eram duas classes distintas — não uma:
+
+- **23 cenários de verdade** (`-2T-FLAVIO`, `-CEN2`, `-CEN3`, `-EXPANDED`). Doze já tinham `scenario_label` preenchida, ou seja, o dado estava duplicado entre as duas colunas. Para as 11 restantes o rótulo foi derivado dos **próprios `poll_results`** (todas têm exatamente 2 candidatos no 2º turno), não de um parse do sufixo — mais confiável e no mesmo formato dos rótulos que já existiam: `"Lula vs Zema"`, `"Flavio Bolsonaro vs Lula"`.
+- **17 rótulos vazios de informação** (`-S1` em 16 pesquisas de senador, `-SEN` em 1). Não são cenário: **nenhuma linha tem `-S2`**, então o sufixo não distinguia nada. Descartados sem virar rótulo.
+
+Para travar a recorrência — foi por curadoria manual que os sufixos surgiram — entrou um CHECK:
+
+```sql
+check (tse_registration is null
+       or tse_registration ~ '^[A-Z]{2}-[0-9]{4,5}/[0-9]{4}$')
+```
+
+Duplicata de protocolo continua **permitida de propósito**: é o que representa múltiplos cenários da mesma pesquisa. Não há (nem deve haver) unique constraint em `tse_registration`. Confirmado depois: 0 linhas fora do formato, 0 sufixos restantes.
+
+### 9.3 Os 205 sem proveniência — marcados como `legacy`, mantidos visíveis
+
+`source_kind` NULL era ambíguo: não distinguia "sem proveniência registrada" de "ainda não classificado". Agora todas as linhas têm valor explícito, e `legacy` significa uma coisa só: lote importado antes de existir registro de proveniência — a pesquisa pode ser real, mas de onde veio o percentual não é recuperável do banco.
+
+Optei por **manter visíveis** em vez de ocultar, e a razão é de proporção: ocultar 110 pesquisas esvaziaria o produto inteiro a sete semanas do pleito, e diferente do caso Wikipedia não há evidência de que o número esteja errado — só não há como provar de onde veio. Ocultar dado provavelmente correto por falta de metadado é um custo maior que o risco.
+
+O gradiente de confiança, para priorizar recuração:
+
+| Grupo | Linhas | Situação |
+|---|---:|---|
+| Com `source_url` | 75 | Auditável ponta a ponta |
+| Sem `source_url`, **com** `tse_registration` | 63 | A pesquisa comprovadamente existe (protocolo bate com o TSE); falta a fonte do número |
+| Sem `source_url` e sem `tse_registration` | 47 | Elo mais fraco do acervo — recurar ou aposentar primeiro |
+
+Os 47 do último grupo são o alvo natural depois do Tier 1.
+
+### 9.4 Estado do banco depois das três passadas
+
+| Métrica | Antes (17/08 manhã) | Depois |
+|---|---:|---:|
+| `polls` 2026 | 237 | **185** |
+| `poll_drafts` | 615 | **9** |
+| `pesqele_registry` 2026 | 1.717 | **1.714** |
+| Polls com data posterior ao pleito | 14 | **0** |
+| Polls sem `source_kind` | 237 | **0** |
+| `tse_registration` fora do formato canônico | 40 | **0** |
+| Cobertura (protocolos distintos) | 49 / 1.717 | **49 / 1.714** |
+
+A cobertura não mudou porque nada do que saiu era cobertura: as 52 linhas Wikipedia não tinham protocolo do TSE. O que mudou foi a proporção de lixo — e agora todo número que o produto exibe tem proveniência declarada.
+
+**Segue pendente e é o que importa:** curar o Tier 1 (58 pendências presidenciais com resultado já público), conferir os 5 protocolos sem correspondência, revisar `SUSPECT_TOKENS` à luz da suspensão da AtlasIntel, e avaliar o hub da Gazeta do Povo como fonte de ingestão.

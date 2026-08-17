@@ -46,3 +46,6 @@ supabase/.temp/
 # SEO drift snapshots (gerados localmente)
 tools/seo-baselines/
 tmp/
+
+# Backups de purga de dados (snapshot de linhas apagadas)
+backups/
