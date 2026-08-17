@@ -107,17 +107,27 @@ function suggestSource(row: MissingRow): string {
 // ── Main ───────────────────────────────────────────────────────────────────────
 
 async function main() {
-  const { data, error } = await sb
-    .from("pesqele_missing")
-    .select("protocolo, uf, cargos, instituto, fieldwork_end, publication_date, sample_size, days_since_fieldwork")
-    .order("fieldwork_end", { ascending: false });
+  // Paginação explícita: PostgREST corta em 1000 linhas por padrão e a view tem
+  // ~1,7k pendências. Sem isso a fila truncava em silêncio e reportava "1000
+  // totais" como se fosse o universo completo.
+  const PAGE = 1000;
+  const rows: MissingRow[] = [];
+  for (let from = 0; ; from += PAGE) {
+    const { data, error } = await sb
+      .from("pesqele_missing")
+      .select("protocolo, uf, cargos, instituto, fieldwork_end, publication_date, sample_size, days_since_fieldwork")
+      .order("fieldwork_end", { ascending: false })
+      .range(from, from + PAGE - 1);
 
-  if (error) {
-    console.error("❌ erro ao ler pesqele_missing:", error.message);
-    process.exit(1);
+    if (error) {
+      console.error("❌ erro ao ler pesqele_missing:", error.message);
+      process.exit(1);
+    }
+
+    const page = (data ?? []) as MissingRow[];
+    rows.push(...page);
+    if (page.length < PAGE) break;
   }
-
-  const rows = (data ?? []) as MissingRow[];
 
   // Filtra: recência (campo terminou nos últimos DAYS dias e não no futuro)
   const recent = rows.filter((r) => {

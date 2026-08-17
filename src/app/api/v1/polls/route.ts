@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { authenticate, applyRateLimitHeaders } from "@/lib/api-auth";
 import { NextResponse } from "next/server";
+import { PROVENIENCIA_PUBLICA } from "@/lib/poll-provenance";
 
 type PollRow = {
   id: string;
@@ -86,6 +87,7 @@ export async function GET(request: Request) {
       results:poll_results(candidate_id, percentage, candidate:candidates(name, party))
     `
     )
+    .or(PROVENIENCIA_PUBLICA)
     .order("publication_date", { ascending: false })
     .limit(limit);
 

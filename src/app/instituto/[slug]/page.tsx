@@ -10,6 +10,7 @@ import {
   ExternalLink,
   Globe,
 } from "lucide-react";
+import { PROVENIENCIA_PUBLICA } from "@/lib/poll-provenance";
 
 export const revalidate = 3600;
 
@@ -62,6 +63,7 @@ async function getInstitute(slug: string): Promise<{ institute: Institute; polls
        election:elections(name, type, state)`
     )
     .eq("institute_id", inst.id)
+    .or(PROVENIENCIA_PUBLICA)
     .order("publication_date", { ascending: false })
     .limit(50);
 

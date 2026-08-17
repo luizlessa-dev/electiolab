@@ -123,11 +123,29 @@ async function resolveCandidates(
   return { resolved, missing };
 }
 
+/**
+ * Proveniências que NÃO podem virar resultado publicado.
+ *
+ * A Wikipedia serve como sinal de *descoberta* (aquela pesquisa existe), nunca
+ * como *validação* do número. Em 30/07/2026 52 drafts de Wikipedia foram
+ * promovidos e, como a promoção descartava source_url, viraram linhas sem
+ * fonte nenhuma em `polls` — invisíveis a qualquer checagem de proveniência.
+ * Ver docs/ELECTIOLAB-AUDIT-2026-08.md §5.1.
+ */
+const PROVENIENCIA_BLOQUEADA = new Set(["wikipedia"]);
+
 async function promoteDraft(draft: PollDraft): Promise<{
   status: "promoted" | "failed";
   reason?: string;
   pollId?: string;
 }> {
+  if (draft.source_kind && PROVENIENCIA_BLOQUEADA.has(draft.source_kind)) {
+    return {
+      status: "failed",
+      reason: `Proveniência bloqueada: ${draft.source_kind} — resultado precisa de fonte primária (release do instituto, imprensa ou TSE)`,
+    };
+  }
+
   // Resolve institute
   const institute = await resolveInstitute(draft.institute_name);
   if (!institute) {
@@ -165,7 +183,9 @@ async function promoteDraft(draft: PollDraft): Promise<{
     };
   }
 
-  // Create poll (nota: source_url/source_kind/tse_protocolo são apenas em poll_drafts)
+  // Create poll. source_url/source_kind/tse_protocolo são propagados do draft:
+  // antes eram descartados aqui, o que apagava a proveniência na promoção e
+  // deixava a linha em `polls` indistinguível de dado sem fonte.
   // election_id/fieldwork_end/sample_size são nullable em poll_drafts mas
   // obrigatórios em polls — valida explicitamente em vez de deixar o insert
   // falhar na constraint NOT NULL do banco com um erro genérico. `round` tem
@@ -195,6 +215,9 @@ async function promoteDraft(draft: PollDraft): Promise<{
       scope: draft.scope,
       ...(draft.round != null ? { round: draft.round } : {}),
       scenario_label: draft.scenario_label,
+      source_url: draft.source_url,
+      source_kind: draft.source_kind,
+      tse_registration: draft.tse_protocolo,
     })
     .select("id")
     .single();

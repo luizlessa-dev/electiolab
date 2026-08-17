@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@supabase/supabase-js";
 import { ArrowLeft, Building2, Award, ChevronRight } from "lucide-react";
+import { PROVENIENCIA_PUBLICA } from "@/lib/poll-provenance";
 
 export const revalidate = 3600;
 
@@ -45,6 +46,7 @@ async function getInstitutes(): Promise<Institute[]> {
       const { count } = await sb
         .from("polls")
         .select("id", { count: "exact", head: true })
+        .or(PROVENIENCIA_PUBLICA)
         .eq("institute_id", i.id);
       return { ...i, poll_count: count ?? 0 } as Institute;
     })

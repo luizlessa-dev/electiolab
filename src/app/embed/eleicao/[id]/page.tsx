@@ -11,6 +11,7 @@
 
 import { createClient } from "@supabase/supabase-js";
 import type { Metadata } from "next";
+import { PROVENIENCIA_PUBLICA } from "@/lib/poll-provenance";
 
 export const dynamic = "force-dynamic";
 
@@ -49,6 +50,7 @@ async function getData(id: string) {
     .from("polls")
     .select("id", { count: "exact", head: true })
     .eq("election_id", id)
+    .or(PROVENIENCIA_PUBLICA)
     .eq("round", isSecondRound ? 2 : 1);
 
   const flat: Average[] = ((averages ?? []) as unknown as Array<{

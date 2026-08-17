@@ -5,6 +5,7 @@
  * Todas as páginas que importam daqui devem declarar `export const revalidate = 3600;`.
  */
 import { createClient } from "@supabase/supabase-js";
+import { PROVENIENCIA_PUBLICA } from "./poll-provenance";
 
 function sb() {
   return createClient(
@@ -65,6 +66,7 @@ async function getLatestStatePollByType(
        results:poll_results(percentage, candidate:candidates(name, party, color))`
     )
     .eq("election_id", election.id)
+    .or(PROVENIENCIA_PUBLICA)
     .order("publication_date", { ascending: false })
     .limit(10);
 
@@ -182,6 +184,7 @@ export async function getStateRunoffScenarios(uf: string): Promise<RunoffScenari
        results:poll_results(percentage, candidate:candidates(name, party, color, slug))`
     )
     .eq("election_id", election.id)
+    .or(PROVENIENCIA_PUBLICA)
     .not("scenario_label", "is", null)
     .order("publication_date", { ascending: false });
 
@@ -366,6 +369,7 @@ export async function getLatestPresidentialPoll(): Promise<StatePollSnapshot | n
        results:poll_results(percentage, candidate:candidates(name, party, color))`
     )
     .eq("election_id", election.id)
+    .or(PROVENIENCIA_PUBLICA)
     .order("publication_date", { ascending: false })
     .limit(5);
 

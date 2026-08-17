@@ -249,3 +249,244 @@ Eleição em **04/10/2026** — ~7,5 semanas a partir de hoje (13/08). Pico de b
 ---
 
 **Próxima revisão sugerida:** depois da Semana 2 (fechados os itens de C1-C6), re-rodar o teste de visibilidade em busca por IA e confirmar via GSC (uma vez configurado) se a cobertura de indexação subiu.
+
+---
+
+# Acompanhamento — Verificação de cobertura PesqEle (TSE) × ElectioLab
+
+**Data:** 2026-08-17 (~15h BRT) · **HEAD:** `ef5838d` · **Escopo:** medir o gap entre o que o TSE registrou para 2026 e o que o ElectioLab tem como resultado curado. Somente leitura — nenhuma escrita em `polls`/`poll_drafts` nesta passada.
+
+Esta seção fecha a pendência deixada em aberto no achado C1 ("o gap de cobertura em si continua"). Todos os números foram medidos do zero contra o banco (`xoxztzologqeqbajlhya`) nesta data, depois da limpeza das 243 linhas mock.
+
+## 1. Estado da base (pré-condição)
+
+A limpeza de C1 está **confirmada e completa**:
+
+| Verificação | Resultado |
+|---|---|
+| `polls` total (todos os anos) | 266 (29 de 2022 + 237 de 2026) |
+| `polls` 2026 com `source_url ilike '%example.com%'` | **0** |
+| `polls` 2026 com `raw_data` contendo "mock" | **0** |
+| `polls` 2026 sem nenhuma linha em `poll_results` | **0** |
+| `pesqele_registry` 2026 | 1.717 registros, `dt_registro` até 16/08, ingestão de 17/08 11h14 UTC |
+
+O cron `daily-sync` não existe mais (rota deletada, entrada removida do `vercel.json`). Não há resíduo mock a descontar da análise de cobertura.
+
+## 2. Correção de duas inferências do C1
+
+**(a) A coincidência do "237" é coincidência mesmo.** O C1 registrou que os 237 polls de 2026 batiam exatamente com o "Retained 237" da limpeza de Wikipedia documentada em `docs/TSE_INTEGRATION_ROADMAP.md`, e concluiu que "a cobertura real de pesquisas curadas não cresceu desde aquela limpeza". A distribuição por data de criação mostra que a composição mudou:
+
+```
+abr/2026 (13 a 30)   153 polls
+mai-jun/2026          32 polls   → subtotal 185
+30/07/2026            52 polls   ← lote Wikipedia (ver §5)
+                     ─────────
+                     237 polls
+```
+
+Os 52 do dia 30/07 entraram **depois** da Fase 1 do roadmap. O total voltar a 237 é aritmética casual, não evidência de estagnação. A conclusão de fundo do C1 (a curadoria está parada) continua válida por outro caminho, mais forte: **a última pesquisa curada com fonte primária entrou em 01/06/2026** — 11 semanas atrás. O único lote posterior é o de Wikipedia.
+
+**(b) A cobertura real é bem menor que os "103 com `tse_registration`" usados como piso.** Ver §3.
+
+## 3. Cobertura real — TSE registrado × ElectioLab curado
+
+Contra 1.717 registros do TSE para 2026, o ElectioLab cobre **49 protocolos distintos (2,9%)**. Destes, só 15 têm `source_url` e 13 são `is_verified`.
+
+| Cargo | Registrado no TSE | Coberto (protocolo) | Com `source_url` | `is_verified` | Cobertura |
+|---|---:|---:|---:|---:|---:|
+| Presidente | 651 | 7 | 3 | 2 | **1,1%** |
+| Governador | 1.033 | 42 | 12 | 11 | **4,1%** |
+| Senador | 999 | 38 | 12 | 11 | **3,8%** |
+| Deputado (fed/est/dist) | 498 | 3 | 2 | 2 | **0,6%** |
+| **Total de registros** | **1.717** | **49** | **15** | **13** | **2,9%** |
+
+Os cargos somam mais que 1.717 porque `pesqele_registry.cargos` é multi-valorado: um mesmo registro cobre tipicamente governador + senador + deputados na mesma ida a campo. As linhas acima são flags independentes, não buckets exclusivos.
+
+Medido pelo critério mais estrito do prompt — resultado numérico rastreável a uma fonte primária não-Wikipedia — a cobertura é de **15 em 1.717 (0,9%)**.
+
+Recorte por UF (governador e senador, protocolos distintos):
+
+| UF | Gov TSE | Gov cob. | Sen TSE | Sen cob. | | UF | Gov TSE | Gov cob. | Sen TSE | Sen cob. |
+|---|---:|---:|---:|---:|---|---|---:|---:|---:|---:|
+| PI | 109 | 1 | 112 | 0 | | AM | 29 | 2 | 27 | 1 |
+| GO | 106 | 2 | 101 | 2 | | MS | 26 | 0 | 26 | 0 |
+| RN | 72 | 0 | 73 | 0 | | MG | 26 | 4 | 23 | 4 |
+| PB | 63 | 1 | 62 | 1 | | BA | 25 | 3 | 25 | 3 |
+| PE | 54 | 2 | 49 | 2 | | ES | 23 | 2 | 22 | 2 |
+| SP | 53 | 4 | 48 | 4 | | MT | 23 | 1 | 23 | 1 |
+| SE | 51 | 0 | 53 | 0 | | RS | 21 | 2 | 21 | 2 |
+| PR | 42 | 5 | 42 | 5 | | RO | 21 | 1 | 20 | 1 |
+| MA | 40 | 1 | 41 | 1 | | AL | 20 | 0 | 20 | 0 |
+| TO | 37 | 1 | 35 | 1 | | AC | 20 | 0 | 20 | 0 |
+| PA | 36 | 2 | 37 | 2 | | AP | 17 | 1 | 17 | 1 |
+| RJ | 36 | 3 | 30 | 2 | | SC | 15 | 1 | 13 | 0 |
+| DF | 32 | 1 | 29 | 1 | | RR | 5 | 0 | 4 | 0 |
+| CE | 31 | 2 | 26 | 2 | | | | | | |
+
+**Sete UFs com cobertura zero em governador** (RN, SE, MS, AL, AC, RR + MS) e nove em senador. PI e RN chamam atenção: 109 e 72 pesquisas de governador registradas, praticamente nada capturado — volume de registro alto não correlaciona com o que o produto cobre.
+
+**Hipótese dos cargos proporcionais: refutada.** O prompt supunha que deputado federal/estadual/distrital provavelmente não teria pesquisa registrada no TSE. Tem, e em volume relevante: **498 registros** mencionam deputado (29% do total). O que induzia ao erro era a própria view `pesqele_coverage`, que reportava apenas 12 — ver §4.
+
+## 4. 🔴 Defeito estrutural na view `pesqele_coverage`
+
+A view (`20260511013046_pesqele_normalize_match.sql`, definição confirmada em produção via `pg_get_viewdef`) tem dois defeitos que, somados, tornam seu output não confiável como métrica de cobertura:
+
+**Defeito 1 — bucket exclusivo sobre campo multi-valorado.** O `CASE` classifica cada registro em um único cargo, na ordem governador → presidente → senador → deputado. Como a maioria dos registros estaduais traz "Governador, Senador, Deputado Federal..." no mesmo campo, tudo cai no primeiro ramo. Efeito medido:
+
+| Cargo | Base reportada pela view | Base real | Erro |
+|---|---:|---:|---|
+| Senador | 20 | 999 | **−98%** |
+| Deputado | 12 | 498 | **−97,6%** |
+
+A view diz que o ElectioLab tem 0% de cobertura sobre uma base de 20 pesquisas de senador. A base é 999. Foi essa leitura que sustentou a hipótese (falsa) sobre cargos proporcionais.
+
+**Defeito 2 — `count(*)` depois de `LEFT JOIN`.** `total_tse` conta linhas do produto do join, não registros do TSE. Quando `polls` tem `tse_registration` duplicado, o registro correspondente é contado mais de uma vez: a view reporta 1.043 registros de governador contra 1.033 reais. Deveria ser `count(distinct r.protocolo)`.
+
+Consequência prática: `coverage_pct` está errado nos dois numeradores e denominadores. **Não usar a view para decisão editorial enquanto não for corrigida.** `pesqele_missing` não sofre do defeito 1 (não classifica cargo) e continua utilizável como fila — foi a base do §6.
+
+## 5. Achados de qualidade de dado
+
+### 5.1 🔴 52 pesquisas em produção cujo único lastro é Wikipedia — e sem rastro
+
+Este é o achado mais sério da passada, e é pior do que a regressão que o prompt antecipava.
+
+Em 30/07/2026, 52 `poll_drafts` com `source_kind = 'wikipedia'` foram promovidos para `polls`. Nas linhas resultantes:
+
+- `source_url` = **NULL** nas 52 (o URL da Wikipedia do draft não foi propagado)
+- `raw_data` = **NULL** nas 52
+- `tse_registration` = NULL nas 52
+- `is_verified` = false nas 52
+
+Ou seja: uma busca por `source_url ilike '%wikipedia%'` em `polls` retorna **zero** — a regressão é invisível pelo teste óbvio. As 52 linhas são indistinguíveis, olhando só para `polls`, das outras 110 linhas sem fonte. O vínculo só sobrevive em `poll_drafts.promoted_poll_id`.
+
+Contexto: **606 dos 615 `poll_drafts` são Wikipedia** (533 `pending`, 52 `imported`, 21 `approved`); só 9 são `manual`. O acervo de drafts é essencialmente um espelho da Wikipedia, e 21 drafts Wikipedia estão em `approved`, ou seja, na fila para virar `polls`.
+
+Desligar o step do cron (feito em `ef5838d`) impede novos casos, mas **não desfaz estes 52** nem esvazia os 21 aprovados na fila.
+
+**Ação sugerida (decisão sua, não executei):** as 52 linhas são identificáveis com precisão via `poll_drafts.promoted_poll_id` + `source_kind='wikipedia'`. As opções são (a) deletar, (b) marcar com um `source_kind`/flag visível em `polls` para não circularem como dado curado, ou (c) recurar uma a uma contra fonte primária. Vale decidir antes de qualquer nova promoção de drafts, porque os 21 `approved` seguem o mesmo caminho.
+
+### 5.2 🟡 162 das 237 pesquisas de 2026 (68%) não têm `source_url`
+
+Além das 52 acima, outras 110 vêm dos lotes de abril (13, 23, 26 e 27/04) sem `source_url` **e** sem `raw_data` — nenhuma proveniência recuperável a partir do banco. Destas, 59 têm `tse_registration` (confirma que a pesquisa existe, não de onde veio o número).
+
+Num produto que se vende como auditável, 68% do acervo de 2026 não sustenta a pergunta "de onde veio esse percentual?".
+
+### 5.3 🟡 Checagem reversa: 5 pesquisas sem registro TSE correspondente (não 45)
+
+A leitura direta sugeria 45 polls com `tse_registration` sem correspondência em `pesqele_registry` — 44% dos protocolos. **40 dos 45 são falso positivo do join.** São sufixos de cenário anexados ao protocolo:
+
+```
+BR-03770/2026-2T-FLAVIO    BR-09285/2026-2T-ZEMA    BR-01075/2026-CEN2
+SP-00378/2026-S1           PR-02588/2026-SEN        BR-07992/2026-EXPANDED
+```
+
+O protocolo base existe no registry; a normalização (`regexp_replace` removendo só não-alfanuméricos) preserva as letras do sufixo e o match falha. Isso também subestima `pesqele_missing`. **A coluna `polls.scenario_label` existe exatamente para isso** e está sendo subutilizada — o cenário deveria morar nela, com `tse_registration` guardando o protocolo limpo.
+
+Sobram **5 casos reais**, e a maioria parece erro de transcrição, não dado inventado:
+
+| `tse_registration` | Instituto | Cargo | Campo | `source_url` |
+|---|---|---|---|---|
+| BR-06543/2026 | Atlas Intel | Presidente | 23/03 | — |
+| MS-00334/2026 | Veritá | Gov. MS | 09/03 | — |
+| SP-08392/2026 | Vox Brasil | Gov. SP | 25/04 | Exame ✅ |
+| PE-04372/2026 | Genial/Quaest | Gov. PE | 26/04 | Exame ✅ |
+| PE-04372/2026 | Genial/Quaest | Gov. PE | 26/04 | Exame ✅ (duplicata exata) |
+
+Três têm matéria de imprensa real como fonte — o número do protocolo é que não bate. Vale conferir os 5 protocolos manualmente contra o portal do TSE.
+
+### 5.4 🟡 Duplicatas em `polls`
+
+Sete protocolos aparecem em mais de uma linha (`PR-02588/2026` ×4, `RJ-00613` ×3, `MG-08646` ×3) — em parte legítimo (cenários), em parte não: `PE-04372/2026` é duplicata exata (mesmo instituto, campo, amostra e `source_url`). Há ainda 6 grupos de polls presidenciais sem `tse_registration` com mesmo instituto e mesma data de campo (até 5 linhas). Sem `scenario_label` preenchido, não dá para distinguir cenário de duplicata pelo banco.
+
+### 5.5 🟡 `SUSPECT_TOKENS` provavelmente incompleto
+
+`scripts/pending-polls.ts` sinaliza apenas `"verita"` — que responde por **223 dos 1.717 registros de 2026 (13%)**, e domina o Tier 3 da fila. Preservei o comportamento (sinaliza, não remove).
+
+Registro um dado novo sem tomar decisão: o TSE **suspendeu em junho/2026 a divulgação de uma pesquisa presidencial da AtlasIntel por suspeita de indução ao eleitor** ([TSE](https://www.tse.jus.br/comunicacao/noticias/2026/Junho/tse-suspende-divulgacao-de-pesquisa-da-atlasintel-sobre-disputa-para-presidente-por-suspeita-de-inducao-ao-eleitor)). AtlasIntel está hoje em `REPUTABLE_TOKENS` e não em `SUSPECT_TOKENS`. Se o critério do token é "teve pesquisa suspensa pela Justiça Eleitoral em 2026", o critério agora alcança mais de um instituto. Decisão editorial sua.
+
+## 6. Fila priorizada — e o diagnóstico que ela revela
+
+`scripts/pending-polls.ts --days 45` (janela de 45 dias, rodado hoje): **1.669 pendências totais, 529 na janela, 145 priorizadas**.
+
+| Tier | Critério | Pendências |
+|---|---|---:|
+| **Tier 1** | Presidente, instituto reputado, n≥1.500 | **58** |
+| **Tier 2** | Governador em estado-chave, reputado, n≥1.000 | **50** |
+| **Tier 3** | Demais governadores reputáveis, n≥800 | **37** |
+
+Dos 1.717 registros, 1.660 já têm campo encerrado — o gap é de curadoria, não de espera.
+
+**O ponto decisivo: os resultados já estão públicos.** Verifiquei em fonte primária/imprensa os três itens mais recentes do Tier 1. Nos três, resultado completo publicado **com o protocolo TSE citado na própria matéria** — e nos três o protocolo está em `pesqele_missing`:
+
+| Pesquisa | Protocolo | Publicado | Status no ElectioLab |
+|---|---|---|---|
+| Quaest, 10–13/08, n=2.004 | BR-06773/2026 | Lula 38% × Flávio 31%; 2º turno 43×40 | ausente |
+| PoderData, 09–12/08, n=2.400 | BR-06868/2026 | Lula 41% × Flávio 35%; 2º turno 46×45 | ausente |
+| AtlasIntel, 22–27/07, n=5.021 | BR-08602/2026 | Lula +9,1 p.p. sobre Flávio no 1º turno | ausente |
+
+Três de três. Não é amostra grande, mas é o topo exato da fila, e o padrão é inequívoco: **a hipótese "ainda não há resultado publicado" está descartada para o Tier 1 recente.** O gargalo é curadoria manual, não disponibilidade de fonte.
+
+Achado operacional derivado: a Gazeta do Povo mantém um hub sistemático de pesquisas 2026 (`/eleicoes/2026/pesquisa-eleitoral-2026/`) publicando resultado + protocolo TSE por pesquisa — é a fonte secundária com melhor razão esforço/cobertura que apareceu na verificação, e resolve o problema que derrubou o Agente 2 (sites de instituto sem HTML raspável) sem recorrer a Wikipedia. Não implementei nada: o prompt limitava o escopo a medir e reportar, e construir extração nova é decisão à parte.
+
+## 7. Resumo do que fazer
+
+Ordenado por razão impacto/esforço. Nada foi executado — a sessão foi read-only por definição de escopo.
+
+| # | Ação | Esforço | Por quê |
+|---|---|---|---|
+| 1 | Decidir o destino das 52 linhas Wikipedia (§5.1) e dos 21 drafts `approved` | 1-2h | Dado sem lastro circulando como curado, invisível ao teste óbvio |
+| 2 | Corrigir `pesqele_coverage` (`count(distinct)` + cargo multi-valorado) | 1-2h | Métrica de cobertura hoje erra por até 98% |
+| 3 | Curar o Tier 1 presidencial (58 pendências, resultados já públicos) | contínuo | Maior ganho editorial a 7 semanas do 1º turno |
+| 4 | Migrar sufixo de cenário de `tse_registration` para `scenario_label` (40 linhas) | 2-4h | Conserta join, `pesqele_missing` e a detecção de duplicata |
+| 5 | Conferir os 5 protocolos sem correspondência TSE (§5.3) | 30min | Sensível num produto que se vende como auditável |
+| 6 | Revisar `SUSPECT_TOKENS` à luz da suspensão da AtlasIntel | decisão | Editorial, não técnica |
+| 7 | Avaliar ingestão a partir do hub da Gazeta do Povo | dias | Substituto viável do Agente 2, sem Wikipedia |
+
+**Nenhuma escrita foi feita em `polls` ou `poll_drafts` nesta verificação.**
+
+---
+
+## 8. Executado em 17/08/2026 (mesma data, sessão seguinte)
+
+Itens 1, 2 e 4 do §7 aplicados. Migration `20260817120000_polls_source_kind_e_fix_pesqele_views.sql` no banco, `npx tsc --noEmit` e `npm run build` limpos.
+
+### 8.1 Proveniência em `polls` — as 52 linhas Wikipedia
+
+Decisão: **marcar, não deletar.**
+
+- Nova coluna `polls.source_kind` (`wikipedia` | `manual` | ... | NULL para o lote legado de abr/2026).
+- Backfill a partir de `poll_drafts.promoted_poll_id` — o único vínculo que sobreviveu à promoção. Atingiu exatamente **52 `wikipedia` + 9 `manual`**, conferido em dry-run antes de aplicar.
+- Novo `src/lib/poll-provenance.ts` exporta o filtro, aplicado em **7 consultas** nos caminhos públicos: `marketing-data.ts` (3), `queries.ts`, `api/v1/polls`, `instituto/[slug]`, `embed/eleicao/[id]`, `institutos`.
+- `pesqele_missing` e `pesqele_coverage` também deixam de contar linhas Wikipedia como cobertura.
+
+Nada foi deletado: as 52 continuam no banco, rastreáveis e reversíveis.
+
+**Dois achados novos que apareceram ao medir o alcance da marcação:**
+
+- **14 pesquisas com `publication_date` em nov/dez 2026** — depois do pleito de 04/10. Todas as 14 são do lote Wikipedia; nenhuma outra poll de 2026 tem data futura. Provável erro de parsing de data no scraping.
+- **32 das 52 eram a pesquisa mais recente da sua eleição.** Eram o que as páginas de governador de 16 UFs exibiam como "última pesquisa" — em RS, DF, MT, SE e AL, com data futura.
+
+**Custo honesto da correção:** ao ocultá-las, a "última pesquisa" de várias UFs recua bastante — ES vai de 21/07 para 28/03, DF para 27/03, MT para 26/03. As páginas ficam visivelmente desatualizadas. É pior de olhar e melhor de confiar: exibir pesquisa de proveniência Wikipedia datada de dezembro/2026 como a mais recente era o pior dos dois mundos. Reforça a prioridade do §7 item 3 (curar o Tier 1).
+
+### 8.2 Causa raiz da perda de proveniência — corrigida nos dois caminhos
+
+`scripts/promote-approved-polls.ts` descartava `source_url`/`source_kind`/`tse_protocolo` ao promover, com um comentário afirmando que esses campos "são apenas em poll_drafts". Era isso que transformava draft-com-URL-da-Wikipedia em poll-sem-fonte-nenhuma.
+
+- **Script:** passa a propagar os três campos e recusa draft de proveniência bloqueada (`PROVENIENCIA_BLOQUEADA`, hoje só `wikipedia`).
+- **Rota admin** (`api/admin/poll-drafts/[id]`): já propagava `source_url` e `tse_protocolo`, faltava `source_kind` — adicionado, mais a mesma guarda.
+
+Com isso os **21 drafts Wikipedia em `approved`** deixam de ter caminho para produção pelos dois fluxos, sem precisar mexer no status deles.
+
+### 8.3 Views corrigidas
+
+- `pesqele_coverage`: cargo virou multi-valorado via `cross join lateral` (um registro conta em todos os cargos que menciona) e as contagens passaram a `count(distinct protocolo)`. Nova coluna `com_fonte_primaria`. A view agora reproduz exatamente os números apurados à mão no §3 — 651/7, 1.033/42, 999/38, 498/3.
+- Nova função `tse_protocolo_base(text)`: extrai o protocolo canônico ignorando sufixo de cenário. `'BR-03770/2026-2T-FLAVIO' → 'BR037702026'`, com fallback para o strip antigo quando o padrão não casa. Usada nas duas views + índice funcional.
+- `pesqele_missing`: casa por protocolo base e desconsidera linhas Wikipedia.
+
+Ainda pendente do §7: item 3 (curadoria do Tier 1), item 5 (conferir os 5 protocolos), item 6 (`SUSPECT_TOKENS`) e item 7 (hub da Gazeta). O item 4 do §7 foi resolvido na leitura (as views casam por base), mas os **40 registros continuam com o cenário embutido em `tse_registration`** em vez de `scenario_label` — a normalização de dados em si não foi feita, só contornada.
+
+### 8.4 Achado extra: a fila truncava em 1.000
+
+`scripts/pending-polls.ts` lia `pesqele_missing` sem paginação e batia no teto padrão de 1.000 linhas do PostgREST, reportando "1000 totais" como se fosse o universo. São 1.668. Mesma classe do bug C2 do sitemap. Corrigido com paginação explícita.
+
+Os totais priorizados não mudaram (145) porque a view ordena por `fieldwork_end desc` e a janela de 45 dias cabia dentro das primeiras 1.000 — o corte afetava análise histórica e janelas longas, não o Tier 1 de hoje.

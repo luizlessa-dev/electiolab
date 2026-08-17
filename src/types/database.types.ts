@@ -1662,6 +1662,7 @@ export type Database = {
           sample_size: number
           scenario_label: string | null
           scope: string | null
+          source_kind: string | null
           source_url: string | null
           tse_registration: string | null
           updated_at: string | null
@@ -1684,6 +1685,7 @@ export type Database = {
           sample_size: number
           scenario_label?: string | null
           scope?: string | null
+          source_kind?: string | null
           source_url?: string | null
           tse_registration?: string | null
           updated_at?: string | null
@@ -1706,6 +1708,7 @@ export type Database = {
           sample_size?: number
           scenario_label?: string | null
           scope?: string | null
+          source_kind?: string | null
           source_url?: string | null
           tse_registration?: string | null
           updated_at?: string | null

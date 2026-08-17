@@ -39,6 +39,9 @@ function squash(s: string): string {
   return normalize(s).replace(/\s+/g, "");
 }
 
+/** Proveniências que não podem virar resultado publicado. */
+const PROVENIENCIA_BLOQUEADA = new Set(["wikipedia"]);
+
 async function approve(draftId: string) {
   const sb = admin();
   const { data: d, error: e1 } = await sb
@@ -49,6 +52,14 @@ async function approve(draftId: string) {
   if (e1 || !d) return { error: e1?.message ?? "Draft não encontrado", status: 404 };
   if (d.status === "imported") return { error: "Draft já importado", status: 409 };
   if (!d.election_id) return { error: "Draft sem election_id", status: 400 };
+  // Wikipedia vale como descoberta ("essa pesquisa existe"), nunca como validação
+  // do número — ver docs/ELECTIOLAB-AUDIT-2026-08.md §5.1.
+  if (d.source_kind && PROVENIENCIA_BLOQUEADA.has(d.source_kind)) {
+    return {
+      error: `Proveniência bloqueada: ${d.source_kind}. O resultado precisa de fonte primária (release do instituto, imprensa ou TSE) antes de virar poll.`,
+      status: 422,
+    };
+  }
 
   // 1. Resolver institute_id por fuzzy match em institutes.name
   let instituteId: string | null = d.institute_id;
@@ -128,6 +139,7 @@ async function approve(draftId: string) {
       round: d.round,
       scenario_label: d.scenario_label ?? null, // carrega o cenário (estimulada A/B/C, 2T par-a-par)
       source_url: d.source_url,
+      source_kind: d.source_kind,
       is_verified: false,
     })
     .select("id")

@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { PROVENIENCIA_PUBLICA } from "./poll-provenance";
 
 export async function getActiveElection() {
   const supabase = await createClient();
@@ -52,6 +53,7 @@ export async function getPolls(electionId: string) {
       results:poll_results(id, candidate_id, percentage)
     `)
     .eq("election_id", electionId)
+    .or(PROVENIENCIA_PUBLICA)
     .order("publication_date", { ascending: false });
   return data ?? [];
 }

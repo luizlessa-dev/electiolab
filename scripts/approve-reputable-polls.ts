@@ -231,6 +231,12 @@ async function main() {
     `
     )
     .eq("status", "pending")
+    // Wikipedia é sinal de descoberta, não validação do número: um draft de
+    // proveniência Wikipedia nunca deve ser auto-aprovado. Foi por aqui que os
+    // 21 drafts em `approved` passaram. A promoção também barra (guarda em
+    // promote-approved-polls.ts), mas não faz sentido enfileirar o que não pode
+    // ser promovido. Ver docs/ELECTIOLAB-AUDIT-2026-08.md §5.1.
+    .or("source_kind.is.null,source_kind.neq.wikipedia")
     .in("elections.type", ["presidencial", "governador"]) // TIER 1+2
     .order("fieldwork_end", { ascending: false })
     .limit(100);
