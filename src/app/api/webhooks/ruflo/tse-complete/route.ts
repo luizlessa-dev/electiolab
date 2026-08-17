@@ -1,9 +1,14 @@
 /**
  * POST /api/webhooks/ruflo/tse-complete
  *
- * Receives TSE ingestão completion from Agent 1's background task and
- * triggers Agent 2 (institutos scraping). Internal hop — same
- * CRON_SECRET auth as run-agent-1/2/3.
+ * Receives TSE ingestão completion from Agent 1's background task.
+ * Internal hop — same CRON_SECRET auth as run-agent-1/2/3.
+ *
+ * Não dispara mais o Agente 2: aposentado do fluxo automático em
+ * 2026-08-17 (0/4 institutos scrapáveis contra os sites reais — ver
+ * docs/ELECTIOLAB-AUDIT-2026-08.md, achado C1/achado 4). Descoberta de
+ * pesquisa hoje depende de pesqele_registry (TSE) + curadoria manual,
+ * ver docs/prompt-verificacao-cobertura-pesqele-tse.md.
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -34,34 +39,9 @@ export async function POST(req: NextRequest) {
     // Process the webhook
     await handleTseIngestWebhook(body);
 
-    // Trigger Agent 2 (institutos scraping). run-agent-2 acks immediately
-    // and does the actual scraping in the background, so this stays a
-    // fast round trip regardless of how long Agent 2 itself takes.
-    if (body.ok) {
-      console.log("[tse-complete] Triggering Agent 2...");
-      try {
-        const agent2Response = await fetch(`${req.nextUrl.origin}/api/agents/run-agent-2`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: req.headers.get("authorization") ?? "",
-          },
-          body: JSON.stringify({ triggered_by: "tse-complete" }),
-        });
-
-        if (!agent2Response.ok) {
-          console.warn("[tse-complete] Agent 2 trigger failed:", agent2Response.status);
-        } else {
-          console.log("[tse-complete] Agent 2 triggered successfully");
-        }
-      } catch (e) {
-        console.warn("[tse-complete] Agent 2 trigger error:", e);
-      }
-    }
-
     return NextResponse.json({
       ok: true,
-      message: "TSE webhook processed, Agent 2 triggered",
+      message: "TSE webhook processed",
       received_at: new Date().toISOString(),
     });
   } catch (e) {

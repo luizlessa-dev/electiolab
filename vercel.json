@@ -5,10 +5,6 @@
       "schedule": "0 8 * * *"
     },
     {
-      "path": "/api/cron/daily-sync",
-      "schedule": "0 9 * * *"
-    },
-    {
       "path": "/api/cron/check-polls",
       "schedule": "7 12 * * 1"
     }

@@ -10,10 +10,6 @@ on:
         description: "Ano do PesqEle (default 2026)"
         required: false
         default: "2026"
-      skip_wikipedia:
-        description: "Pular ingestão Wikipedia (true/false)"
-        required: false
-        default: "false"
 
 permissions:
   contents: read
@@ -42,20 +38,6 @@ jobs:
           YEAR_ARG=""
           if [ -n "${{ inputs.year }}" ]; then YEAR_ARG="--year=${{ inputs.year }}"; fi
           npx tsx scripts/ingest-pesqele.ts --apply $YEAR_ARG
-
-      - name: Auto-ingest Wikipedia (governadores)
-        if: ${{ inputs.skip_wikipedia != 'true' }}
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: npx tsx scripts/auto-ingest-wikipedia.ts --type=governador --apply
-
-      - name: Auto-ingest Wikipedia (senadores)
-        if: ${{ inputs.skip_wikipedia != 'true' }}
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: npx tsx scripts/auto-ingest-wikipedia.ts --type=senador --apply
 
       - name: Match drafts → PesqEle
         env:
