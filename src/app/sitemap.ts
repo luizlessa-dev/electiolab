@@ -7,17 +7,93 @@ const SITE_URL = "https://electiolab.com";
 // Atualizar manualmente sempre que dados de uma pesquisa forem revisados.
 const GOVERNOR_PAGES_DATE = "2026-04-23T00:00:00.000Z";
 
+const UFS = [
+  "ac", "al", "am", "ap", "ba", "ce", "df", "es", "go", "ma", "mg", "ms",
+  "mt", "pa", "pb", "pe", "pi", "pr", "rj", "rn", "ro", "rr", "rs", "sc",
+  "se", "sp", "to",
+];
+
+/**
+ * Famílias de rota por UF. Estavam inteiramente ausentes do sitemap: 135 URLs
+ * que nenhum crawler alcançava, incluindo as 27 páginas de senador e as 27 de
+ * eleição por estado. Geradas a partir de UFS em vez de listadas à mão, que é
+ * como as ~30 rotas do array original foram ficando para trás.
+ */
+const FAMILIAS_UF: Array<{ prefixo: string; priority: number; freq: "weekly" | "monthly" | "yearly" }> = [
+  { prefixo: "eleicoes", priority: 0.8, freq: "weekly" },
+  { prefixo: "pesquisas-senador", priority: 0.8, freq: "weekly" },
+  { prefixo: "pesquisas", priority: 0.7, freq: "weekly" },
+  { prefixo: "eleicao-2022", priority: 0.5, freq: "yearly" },
+  { prefixo: "eleicao-2018", priority: 0.4, freq: "yearly" },
+];
+
+/**
+ * Páginas estáticas públicas que faltavam no array manual. Rotas privadas
+ * (dashboard/*, admin/*, auth/*), transacionais (newsletter/confirmar,
+ * newsletter/cancelado) e de teste (sentry-example-page) ficam fora de
+ * propósito — não são conteúdo indexável.
+ */
+const PAGINAS_EDITORIAIS: Array<{ path: string; priority: number }> = [
+  { path: "metodologia", priority: 0.9 },
+  { path: "eleicoes-governador-2026", priority: 0.9 },
+  { path: "pesquisas", priority: 0.8 },
+  { path: "aprovacao-governo-lula", priority: 0.8 },
+  { path: "rejeicao-candidatos-presidente-2026", priority: 0.8 },
+  { path: "dinheiro-e-votos-pesquisas-2026", priority: 0.7 },
+  { path: "dinheiro", priority: 0.6 },
+  { path: "margem-de-erro-pesquisa-eleitoral", priority: 0.7 },
+  { path: "empate-tecnico-pesquisa-eleitoral", priority: 0.7 },
+  { path: "pesquisa-estimulada-vs-espontanea", priority: 0.7 },
+  { path: "pesquisa-presencial-vs-online", priority: 0.7 },
+  { path: "por-que-institutos-dao-numeros-diferentes", priority: 0.7 },
+  { path: "pesquisas-eleitorais-sao-confiaveis", priority: 0.7 },
+  { path: "pesquisas-erraram-2022", priority: 0.7 },
+  { path: "glossario-pesquisa-eleitoral", priority: 0.6 },
+  { path: "newsletter", priority: 0.5 },
+];
+
+/**
+ * Relatórios semanais. A série está pausada desde a semana 22, então
+ * changeFrequency é "never" — declarar "weekly" numa página que não muda há
+ * meses é sinal falso de frescor.
+ */
+const RELATORIOS = [17, 18, 19, 20, 21, 22];
+
+/**
+ * Paginação explícita: o PostgREST corta em 1000 linhas por padrão e a base tem
+ * ~16.9k candidatos. Sem isso o sitemap listava 895 deles (5,3%) e o resto do
+ * site ficava inalcançável para crawler — a paginação de /candidatos usa
+ * <button onClick>, que o Googlebot não segue. Ver ELECTIOLAB-AUDIT-2026-08 C2.
+ */
 async function getCandidatesForSitemap(): Promise<{ slug: string }[]> {
   try {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
-    const { data } = await supabase
-      .from("candidates")
-      .select("slug,bio,birth_date,profession,tse_id")
-      .eq("is_active", true);
-    const filtered = (data ?? []).filter((c) => {
+    const PAGE = 1000;
+    const rows: Array<{
+      slug: string | null;
+      bio: string | null;
+      birth_date: string | null;
+      profession: string | null;
+      tse_id: string | null;
+    }> = [];
+
+    for (let from = 0; ; from += PAGE) {
+      const { data, error } = await supabase
+        .from("candidates")
+        .select("slug,bio,birth_date,profession,tse_id")
+        .eq("is_active", true)
+        .order("slug", { ascending: true })
+        .range(from, from + PAGE - 1);
+      if (error) break;
+      const page = data ?? [];
+      rows.push(...page);
+      if (page.length < PAGE) break;
+    }
+
+    const filtered = rows.filter((c) => {
       if (!c.slug) return false;
       if (c.bio) return true;
       return Boolean(c.birth_date && c.profession && c.tse_id);
@@ -79,10 +155,53 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [
+  const ufPages: MetadataRoute.Sitemap = FAMILIAS_UF.flatMap((f) =>
+    UFS.map((uf) => ({
+      url: `${SITE_URL}/${f.prefixo}/${uf}`,
+      lastModified: now,
+      changeFrequency: f.freq,
+      priority: f.priority,
+    }))
+  );
+
+  const editorialPages: MetadataRoute.Sitemap = PAGINAS_EDITORIAIS.map((p) => ({
+    url: `${SITE_URL}/${p.path}`,
+    lastModified: now,
+    changeFrequency: "weekly" as const,
+    priority: p.priority,
+  }));
+
+  const relatorioPages: MetadataRoute.Sitemap = RELATORIOS.map((n) => ({
+    url: `${SITE_URL}/relatorio/semana-${n}-2026`,
+    lastModified: GOVERNOR_PAGES_DATE,
+    changeFrequency: "never" as const,
+    priority: 0.5,
+  }));
+
+  /**
+   * Dedupe por URL. Duas origens: slug repetido em `candidates` (~400 casos —
+   * várias linhas apontando para a mesma página de candidato, ver o item de
+   * dedupe por tse_id no backlog da auditoria) e sobreposição entre as listas
+   * geradas e o array manual. URL repetida em sitemap é desperdício de crawl
+   * budget e sinal de baixa qualidade; deduplicar aqui é barato e não depende
+   * de arrumar o dado primeiro.
+   */
+  const dedupe = (entradas: MetadataRoute.Sitemap): MetadataRoute.Sitemap => {
+    const vistas = new Set<string>();
+    return entradas.filter((e) => {
+      if (vistas.has(e.url)) return false;
+      vistas.add(e.url);
+      return true;
+    });
+  };
+
+  return dedupe([
     ...candidatePages,
     ...institutePages,
     ...partyPages,
+    ...ufPages,
+    ...editorialPages,
+    ...relatorioPages,
     {
       url: `${SITE_URL}/institutos`,
       lastModified: now,
@@ -407,5 +526,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         },
       ],
     ),
-  ];
+  ]);
 }
