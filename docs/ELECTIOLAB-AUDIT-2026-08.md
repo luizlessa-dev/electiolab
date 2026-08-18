@@ -565,3 +565,56 @@ Os 47 do último grupo são o alvo natural depois do Tier 1.
 A cobertura não mudou porque nada do que saiu era cobertura: as 52 linhas Wikipedia não tinham protocolo do TSE. O que mudou foi a proporção de lixo — e agora todo número que o produto exibe tem proveniência declarada.
 
 **Segue pendente e é o que importa:** curar o Tier 1 (58 pendências presidenciais com resultado já público), conferir os 5 protocolos sem correspondência, revisar `SUSPECT_TOKENS` à luz da suspensão da AtlasIntel, e avaliar o hub da Gazeta do Povo como fonte de ingestão.
+
+---
+
+## 10. Pipeline de ingestão via imprensa (17/08/2026)
+
+Ataca o item de maior impacto do §7: 58 pendências presidenciais com resultado já publicado e nenhum caminho automatizado para curá-las.
+
+### 10.1 Por que automatizar
+
+O ritmo de entrada mata a curadoria manual. Pesquisas presidenciais registradas no TSE, por semana de fim de campo:
+
+| Semana | Registros | Presidenciais |
+|---|---:|---:|
+| 06/07 | 70 | 27 |
+| 13/07 | 61 | 27 |
+| 20/07 | 86 | 33 |
+| 27/07 | 107 | 41 |
+| 10/08 | 88 | 33 |
+
+**~30 presidenciais por semana, em alta**, e a campanha só começou oficialmente em 17/08. O backlog de 58 é o problema pequeno; o fluxo de 4-5/dia até 04/10 é o real. Editar o array `PENDING_POLLS` à mão não acompanha isso.
+
+### 10.2 Desenho: a trava tripla
+
+`scripts/ingest-imprensa.ts`. Por pendência da fila:
+
+1. Busca a matéria via **web search server-side** do Claude (sem SDK de busca próprio, sem raspagem de HTML).
+2. Extrai os percentuais com **structured output** (schema JSON).
+3. **Valida contra o registro oficial do TSE.**
+4. Grava em `poll_drafts` com `source_kind='imprensa'` + `source_url`, `status='pending'` — para revisão humana.
+
+O passo 3 é o que distingue isto do Agente 2. Nada é aceito por confiança na extração: **protocolo, tamanho de amostra e datas de campo têm que bater com o que o TSE publicou**. Esses três campos existiam antes de qualquer matéria ser escrita, então uma extração que casa nos três está ancorada numa fonte independente do extrator. Divergiu, vira pendência de revisão — não dado publicado.
+
+Isso também resolve a fragilidade que matou o Agente 2: não depende do site do instituto servir HTML raspável, e a chave de casamento é protocolo exato em vez de fuzzy match de nome e data.
+
+A trava vive em `src/lib/imprensa-validacao.ts` como função pura, com **18 testes** em `src/lib/__tests__/` — incluindo protocolo divergente, amostra alucinada com protocolo certo, datas trocadas, Wikipedia como URL, extração truncada e o caso legítimo do Senado somando acima de 100% (2 vagas, o eleitor escolhe dois nomes). O argumento de correção do pipeline é testável sem rede e sem chave de API.
+
+### 10.3 O que não está verificado
+
+**A extração ao vivo nunca rodou.** O repo não tinha SDK de LLM nem `ANTHROPIC_API_KEY`; adicionei `@anthropic-ai/sdk` mas a chave é decisão do Luiz. Verificado: `tsc`, `npm run build`, os 18 testes da trava, e o guard de env falhando limpo. **Não verificado:** a chamada à API, o comportamento do web search nos sites brasileiros, e a taxa de aceitação real da trava.
+
+O primeiro `--apply` deve ser pequeno (`--limit 5`) e conferido linha a linha antes de confiar no resto.
+
+### 10.4 Custo
+
+Um registro por chamada; web search a US$ 10/1.000 buscas. Com ~130 pesquisas/semana e ~6 buscas por pendência, o custo dominante é a busca, não os tokens.
+
+O padrão é `claude-opus-5`. `--model claude-haiku-4-5` derruba o custo de token em ~5× para uma tarefa que é essencialmente extração estruturada — vale medir a taxa de acerto dos dois numa amostra antes de fixar. Decisão editorial, não técnica: a trava rejeita extração ruim independente do modelo, então o risco de um modelo mais barato é taxa de aceitação menor, não dado errado entrando.
+
+### 10.5 Limites assumidos
+
+- **Depende de terceiro.** A cobertura vem de quem publica resultado citando protocolo. A Gazeta do Povo mantém um hub sistemático (`/eleicoes/2026/pesquisa-eleitoral-2026/`) e foi a melhor razão esforço/cobertura encontrada, mas convém suportar mais de uma fonte antes de depender disso.
+- **A trava rejeita casos legítimos.** Matéria que não cita o `n` ou omite as datas cai fora mesmo estando certa. É o comportamento desejado — cai para revisão manual em vez de entrar sem conferência — mas reduz a taxa de automação.
+- **Nada é promovido automaticamente.** Os drafts entram como `pending`. A promoção continua exigindo aprovação humana e passa pelas guardas do §8.2.
