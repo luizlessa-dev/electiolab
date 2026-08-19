@@ -158,3 +158,37 @@
 
 **Criado:** 2026-08-22 (durante agent run)  
 **Status:** PRELIMINARY (dados agent pendentes)
+
+---
+
+## 🚨 ACHADO CRÍTICO: AMBOS os Portais TSE Bloqueados
+
+**Confirmado 2026-08-22 23:55 UTC:**
+
+```
+❌ https://dadosabertos.tse.jus.br/          → HTTP 403
+❌ https://divulgacandcontas.tse.jus.br/     → HTTP 403
+❌ https://pesqele-divulgacao.tse.jus.br/api → HTTP 403
+✅ https://pesqele-divulgacao.tse.jus.br/    → HTTP 200 (web portal, sem API direto)
+```
+
+### Implicação
+
+**Acesso direto ao TSE via programmatic access é IMPOSSÍVEL** (não é IP-specific ou temporário).
+
+### Conclusão Reforçada
+
+**CepespData (FGV) é NÃO APENAS uma alternativa, mas a ÚNICA via viável** para acesso automatizado a candidaturas 2026.
+
+### Hierarquia Final Confirmada
+
+1. ⭐ **CepespData** — Única opção automática confiável
+2. ✅ **PesqEle Portal** — Web-scraper legal (pesquisas)
+3. ✅ **GitHub comunitário** — Datasets processados
+4. 🟡 **LAI** — Backup gratuito (20 dias)
+5. ❌ **TSE CDN/Portal** — Bloqueado (não viável)
+
+---
+
+**Atualizado:** 2026-08-22 23:55 UTC
+
