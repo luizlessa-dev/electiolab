@@ -446,7 +446,7 @@ async function main() {
 
     for (const poll of valid) {
       // Fuzzy match: buscar por chave exata ou parcial
-      let instituteId = instituteIds[poll.institute.toLowerCase()];
+      let instituteId: string | null = instituteIds[poll.institute.toLowerCase()];
       if (!instituteId) {
         // Tentar match parcial
         const partialKey = Object.keys(instituteIds).find(
