@@ -1,8 +1,21 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/types/database.types";
 import { PROVENIENCIA_PUBLICA } from "./poll-provenance";
 
+// Client sem cookies — todas as queries deste arquivo são de dado público
+// (eleições, candidatos, pesquisas), sem contexto de sessão. Usar o client
+// baseado em cookies (@/lib/supabase/server) aqui força renderização dinâmica
+// em qualquer rota que importe este arquivo, mesmo com `revalidate` declarado
+// (cookies()/headers() opta a rota inteira fora do ISR no App Router) — era
+// a causa raiz do cache quebrado em /candidato/[slug]. Generic <Database>
+// preserva a tipagem que o client de cookies tinha.
+const supabase = createClient<Database>(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  { auth: { persistSession: false } }
+);
+
 export async function getActiveElection() {
-  const supabase = await createClient();
   const { data } = await supabase
     .from("elections")
     .select("*")
@@ -14,7 +27,6 @@ export async function getActiveElection() {
 }
 
 export async function getElections() {
-  const supabase = await createClient();
   const { data } = await supabase
     .from("elections")
     .select("*")
@@ -23,7 +35,6 @@ export async function getElections() {
 }
 
 export async function getElectionById(id: string) {
-  const supabase = await createClient();
   const { data } = await supabase
     .from("elections")
     .select("*")
@@ -33,7 +44,6 @@ export async function getElectionById(id: string) {
 }
 
 export async function getCandidates(electionId: string) {
-  const supabase = await createClient();
   const { data } = await supabase
     .from("candidates")
     .select("*")
@@ -44,7 +54,6 @@ export async function getCandidates(electionId: string) {
 }
 
 export async function getPolls(electionId: string) {
-  const supabase = await createClient();
   const { data } = await supabase
     .from("polls")
     .select(`
@@ -59,7 +68,6 @@ export async function getPolls(electionId: string) {
 }
 
 export async function getInstitutes() {
-  const supabase = await createClient();
   const { data } = await supabase
     .from("institutes")
     .select(`
@@ -71,7 +79,6 @@ export async function getInstitutes() {
 }
 
 export async function getElectionResults(electionId: string) {
-  const supabase = await createClient();
   const { data } = await supabase
     .from("election_results")
     .select("*, candidate:candidates(id, name, party, color, number)")
@@ -85,7 +92,6 @@ export async function getEconomicIndicators(
   startDate?: string,
   endDate?: string
 ) {
-  const supabase = await createClient();
   let query = supabase
     .from("economic_indicators")
     .select("*")
@@ -100,7 +106,6 @@ export async function getEconomicIndicators(
 }
 
 export async function getCampaignFinances(electionId: string) {
-  const supabase = await createClient();
   const { data } = await supabase
     .from("campaign_finances")
     .select("*, candidate:candidates(id, name, party, color)")
@@ -110,7 +115,6 @@ export async function getCampaignFinances(electionId: string) {
 }
 
 export async function getCandidateBySlug(slug: string) {
-  const supabase = await createClient();
 
   // Resolver primeiro o registro mais recente (eleição mais nova) para o slug.
   // Slugs podem ser duplicados em múltiplas eleições (ex.: Lula 2022 1T, 2022 2T,
@@ -186,7 +190,6 @@ export async function getCandidateBySlug(slug: string) {
 }
 
 export async function getCandidatesWithBio() {
-  const supabase = await createClient();
   const { data } = await supabase
     .from("candidates")
     .select("id, name, slug, party, color, current_position, election:elections(state, type, year)")
@@ -197,7 +200,6 @@ export async function getCandidatesWithBio() {
 }
 
 export async function getPartyFunds() {
-  const supabase = await createClient();
   const { data } = await supabase
     .from("party_fund_transfers")
     .select("*")
@@ -207,7 +209,6 @@ export async function getPartyFunds() {
 }
 
 export async function getDigitalAdsAggregate() {
-  const supabase = await createClient();
   const { data } = await supabase
     .from("digital_ads")
     .select(`
