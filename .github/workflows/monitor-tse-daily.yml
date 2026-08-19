@@ -1,0 +1,50 @@
+name: P1.1 Monitor TSE — Social Media 2026
+
+on:
+  schedule:
+    # Daily 07:00 UTC (2:00 AM BRT)
+    - cron: '0 7 * * *'
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  check-tse-publication:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Run monitor
+        run: npx tsx scripts/monitor-tse-social-media-2026.ts
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: Check cache for publication
+        id: check
+        run: |
+          if [ -f .env.local.p11-monitor ]; then
+            DETECTED=$(jq -r '.detected' .env.local.p11-monitor)
+            echo "detected=$DETECTED" >> $GITHUB_OUTPUT
+          else
+            echo "detected=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Notify on publication
+        if: steps.check.outputs.detected == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🔔 **P1.1 Alert:** TSE Social Media 2026 detectado!\n\nAções necessárias:\n1. `npx tsx scripts/ingest-pesqele.ts --apply`\n2. `npx tsx scripts/import-social-media-2026.ts --apply`\n3. Remover avisos `/redes-sociais`'
+            })
