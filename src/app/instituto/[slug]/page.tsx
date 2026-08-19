@@ -14,6 +14,13 @@ import { PROVENIENCIA_PUBLICA } from "@/lib/poll-provenance";
 
 export const revalidate = 3600;
 
+// Sem isso, `revalidate` sozinho não registra a rota no pipeline de ISR da
+// Vercel — Next.js exige um array de generateStaticParams (mesmo vazio)
+// pra tratar a rota como cacheável em vez de dinâmica em toda request.
+export async function generateStaticParams() {
+  return [];
+}
+
 type Institute = {
   id: string;
   name: string;

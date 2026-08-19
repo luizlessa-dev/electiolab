@@ -33,8 +33,16 @@ import { CandidateSchema } from "./candidate-schema";
 
 export const revalidate = 3600; // 1h ISR — gera sob demanda na primeira request
 
-// getCandidateBySlug() agora usa o client tipado (Database generic em
-// src/lib/supabase/server.ts), então o shape abaixo vem direto da query
+// Sem isso, `revalidate` sozinho não registra a rota no pipeline de ISR da
+// Vercel — o Next.js renderiza como dinâmico completo em toda request
+// (confirmado na doc oficial: generateStaticParams precisa retornar um
+// array, mesmo vazio, senão "the route will be dynamically rendered").
+export async function generateStaticParams() {
+  return [];
+}
+
+// getCandidateBySlug() usa o client tipado (Database generic em
+// src/lib/queries.ts), então o shape abaixo vem direto da query
 // real em src/lib/queries.ts — sem tipo manual duplicado pra manter em sincronia.
 type CandidateDetail = NonNullable<Awaited<ReturnType<typeof getCandidateBySlug>>>;
 
