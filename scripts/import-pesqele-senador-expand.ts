@@ -1,6 +1,7 @@
 #!/usr/bin/env npx tsx
 /**
- * Extract ~50 senator (senador) polls from TSE PesqEle 2026
+ * Extract ~100+ senator (senador) polls from TSE PesqEle 2026
+ * Expanded version for ALL 27 states/UFs coverage
  *
  * Filters by Tier 1 institutes only:
  * - Datafolha, Quaest, Atlas Intel, Ipec, Genial, Nexus, Paraná Pesquisas, SMS Direct, Verita
@@ -8,11 +9,11 @@
  * Validates: fieldwork dates, sample size 800-2000, margin 2-4%
  *
  * Usage:
- *   npx tsx scripts/import-pesqele-senador.ts                    # dry-run, export to /tmp/pesqele_senador_import.json
- *   npx tsx scripts/import-pesqele-senador.ts --limit=30         # limit results
- *   npx tsx scripts/import-pesqele-senador.ts --apply            # apply to database
+ *   npx tsx scripts/import-pesqele-senador-expand.ts                    # dry-run, export to /tmp/pesqele_senador_expand_import.json
+ *   npx tsx scripts/import-pesqele-senador-expand.ts --limit=30         # limit results
+ *   npx tsx scripts/import-pesqele-senador-expand.ts --apply            # apply to database
  *
- * Output: /tmp/pesqele_senador_import.json
+ * Output: /tmp/pesqele_senador_expand_import.json
  */
 
 import { createClient } from "@supabase/supabase-js";
@@ -57,11 +58,18 @@ const TIER1_INSTITUTOS = [
   "Verita",
 ];
 
+// All 27 Brazilian states
+const ALL_STATES = [
+  "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO",
+  "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR",
+  "RJ", "RN", "RO", "RR", "RS", "SC", "SP", "SE", "TO"
+];
+
 // Mapeamento de institute names → UUIDs (consultado do banco)
 const INSTITUTE_UUID_MAP: Record<string, string> = {
   "datafolha": "38744dae-cbdf-4ed1-84f9-ada191886146",
   "genial/quaest": "47f691d9-9176-42db-8ef0-c8ee4d9d8a5e",
-  "quaest": "c1f2b5e1-9e6f-44e2-8c2d-5f0a3e8b1d4c", // placeholder, will fetch from DB
+  "quaest": "c1f2b5e1-9e6f-44e2-8c2d-5f0a3e8b1d4c",
   "nexus": "f7b6c037-0909-4f94-b99a-1b38a624fb12",
   "atlas intel": "9441a73b-5eee-497f-8084-d7893cc14ac9",
   "paraná pesquisas": "fe96ee0f-0c0a-4fd7-9acb-91a483028efb",
@@ -69,9 +77,6 @@ const INSTITUTE_UUID_MAP: Record<string, string> = {
   "sms direct": "8f4d5c3b-2e1a-4f7c-9b3e-1d5f8c2a4b6e",
   "verita": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
 };
-
-// Election IDs for senador (national, per state eventually)
-const SENADOR_ELECTION_ID = "a1b2c3d4-e5f6-4ghi-9jkl-mnopqrstuvwx"; // placeholder
 
 interface PesqEleSenadoRaw {
   protocolo: string;
@@ -158,8 +163,8 @@ async function getInstituteIds(): Promise<Record<string, string>> {
   }
 }
 
-async function fetchSenadoRPolls(
-  limit: number = 50
+async function fetchSenadoPolls(
+  limit: number = 200
 ): Promise<PesqEleSenadoRaw[]> {
   console.log(`\n🔍 Buscando pesquisas de senador no PesqEle 2026...`);
 
@@ -172,7 +177,7 @@ async function fetchSenadoRPolls(
       .not("dt_fim", "is", null)
       .not("qt_entrevistados", "is", null)
       .order("dt_fim", { ascending: false })
-      .limit(limit * 2); // fetch 2x to account for filtering
+      .limit(limit);
 
     if (error) {
       console.error(`❌ Query error: ${error.message}`);
@@ -272,22 +277,23 @@ async function processRecords(
 async function main() {
   const APPLY = process.argv.includes("--apply");
   const LIMIT = parseInt(
-    process.argv.find((a) => a.startsWith("--limit="))?.split("=")[1] || "50"
+    process.argv.find((a) => a.startsWith("--limit="))?.split("=")[1] || "200"
   );
 
-  console.log("\n" + "━".repeat(60));
-  console.log("📊 Import PesqEle Senador 2026");
-  console.log("━".repeat(60));
+  console.log("\n" + "━".repeat(70));
+  console.log("📊 Import PesqEle Senador 2026 — EXPANDED (All 27 UFs)");
+  console.log("━".repeat(70));
   console.log(`Mode: ${APPLY ? "✍️  APPLY" : "🔍 DRY-RUN"}`);
   console.log(`Limit: ${LIMIT} polls`);
   console.log(`Tier 1 institutos: ${TIER1_INSTITUTOS.length}`);
+  console.log(`Target UFs: ${ALL_STATES.length} (all Brazilian states)`);
 
   // Fetch institute IDs
   const instituteIds = await getInstituteIds();
   console.log(`✓ ${Object.keys(instituteIds).length} institutos no mapa`);
 
   // Fetch raw senador polls
-  const raw = await fetchSenadoRPolls(LIMIT * 2);
+  const raw = await fetchSenadoPolls(LIMIT);
   if (raw.length === 0) {
     console.error("❌ Nenhuma pesquisa encontrada no PesqEle");
     return;
@@ -326,12 +332,65 @@ async function main() {
 
   console.log(`\n📦 Por instituto:`);
   for (const [inst, polls] of Array.from(byInst).sort((a, b) => b[1].length - a[1].length)) {
-    console.log(`   ${inst.padEnd(25)} ${polls.length} pesquisas`);
+    console.log(`   ${inst.padEnd(35)} ${polls.length.toString().padStart(3)} pesquisas`);
   }
+
+  // Group by state for distribution analysis
+  const byState = new Map<string, PesqEleSenadorProcessed[]>();
+  for (const p of valid) {
+    const cur = byState.get(p.state) || [];
+    cur.push(p);
+    byState.set(p.state, cur);
+  }
+
+  console.log(`\n🗺️  Distribuição por UF (${byState.size}/${ALL_STATES.length} estados cobertos):`);
+  console.log("━".repeat(70));
+
+  // Calculate coverage stats
+  let minPolls = Infinity;
+  let maxPolls = 0;
+  let avgPolls = 0;
+  const coveredStates = Array.from(byState.keys()).sort();
+  const uncoveredStates = ALL_STATES.filter(s => !coveredStates.includes(s)).sort();
+
+  for (const state of coveredStates) {
+    const count = byState.get(state)?.length || 0;
+    minPolls = Math.min(minPolls, count);
+    maxPolls = Math.max(maxPolls, count);
+    avgPolls += count;
+  }
+  avgPolls = Math.round(avgPolls / coveredStates.length * 10) / 10;
+
+  // Display state distribution
+  const stateLines: string[] = [];
+  for (const state of ALL_STATES) {
+    const count = byState.get(state)?.length || 0;
+    const status = count > 0 ? "✓" : "✗";
+    const bar = "█".repeat(Math.ceil(count / 2));
+    stateLines.push(`   ${status} ${state.padEnd(3)} ${bar.padEnd(15)} ${count.toString().padStart(2)} polls`);
+  }
+
+  // Print in columns
+  const colWidth = 40;
+  const cols = 2;
+  for (let i = 0; i < stateLines.length; i += cols) {
+    const line1 = stateLines[i] || "";
+    const line2 = stateLines[i + 1] || "";
+    console.log(`${line1.padEnd(colWidth)}${line2}`);
+  }
+
+  console.log("\n" + "━".repeat(70));
+  console.log(`📊 Cobertura: ${coveredStates.length}/${ALL_STATES.length} estados (${Math.round(coveredStates.length/ALL_STATES.length*100)}%)`);
+  if (uncoveredStates.length > 0) {
+    console.log(`⚠️  Não cobertos: ${uncoveredStates.join(", ")}`);
+  } else {
+    console.log(`✅ TODAS 27 UFs cobertas!`);
+  }
+  console.log(`📈 Distribuição: min=${minPolls}, max=${maxPolls}, avg=${avgPolls.toFixed(1)}`);
 
   // Sample of 5 polls
   console.log(`\n📝 Amostra (primeiras 5 válidas):`);
-  console.log("━".repeat(60));
+  console.log("━".repeat(70));
   for (const p of valid.slice(0, 5)) {
     console.log(`  ID: ${p.id}`);
     console.log(`  Instituto: ${p.institute}`);
@@ -342,14 +401,22 @@ async function main() {
   }
 
   // Export to JSON
-  const outputPath = path.join(os.tmpdir(), "pesqele_senador_import.json");
+  const outputPath = path.join(os.tmpdir(), "pesqele_senador_expand_import.json");
   const exportData = {
     metadata: {
       exported_at: new Date().toISOString(),
       total_raw: raw.length,
       total_processed: processed.length,
       total_valid: valid.length,
+      states_covered: coveredStates.length,
+      states_total: ALL_STATES.length,
+      coverage_pct: Math.round((coveredStates.length / ALL_STATES.length) * 100),
       tier1_institutes: TIER1_INSTITUTOS,
+      distribution_stats: {
+        min_polls: minPolls,
+        max_polls: maxPolls,
+        avg_polls: avgPolls,
+      },
     },
     polls: valid,
   };
@@ -415,7 +482,7 @@ async function main() {
           scope: `uf:${poll.state}`,
           fieldwork_start: poll.fieldwork_start,
           fieldwork_end: poll.fieldwork_end,
-          publication_date: poll.date, // Use poll publication date
+          publication_date: poll.date,
           sample_size: poll.sample_size,
           margin_of_error: poll.margin_error,
           tse_registration: tseRegistration,
@@ -437,7 +504,7 @@ async function main() {
     console.log(`\n💡 Próximo: revisar amostra acima, depois rodar com --apply`);
   }
 
-  console.log("━".repeat(60) + "\n");
+  console.log("━".repeat(70) + "\n");
 }
 
 main().catch(console.error);
