@@ -360,8 +360,51 @@ async function main() {
 
   if (APPLY) {
     console.log(`\n⏳ Aplicando ao banco de dados...`);
-    // TODO: implement actual DB insertion
-    console.log(`   (Apply feature not yet implemented)`);
+
+    const instituteIds = await getInstituteIds();
+    let inserted = 0;
+
+    for (const poll of valid) {
+      // Fuzzy match: buscar por chave exata ou parcial
+      let instituteId = instituteIds[poll.institute.toLowerCase()];
+      if (!instituteId) {
+        // Tentar match parcial
+        const partialKey = Object.keys(instituteIds).find(
+          k => poll.institute.toLowerCase().includes(k) || k.includes(poll.institute.toLowerCase().split(' ')[0])
+        );
+        instituteId = partialKey ? instituteIds[partialKey] : null;
+      }
+
+      if (!instituteId) {
+        console.warn(`⚠️  Instituto não encontrado: ${poll.institute}`);
+        continue;
+      }
+
+      const { error } = await supabase
+        .from("polls")
+        .insert({
+          institute_id: instituteId,
+          election_id: null, // Senador polls sem election_id explícito (pode ser agregado)
+          scope: `uf:${poll.state}`,
+          fieldwork_start: poll.fieldwork_start,
+          fieldwork_end: poll.fieldwork_end,
+          sample_size: poll.sample_size,
+          margin_of_error: poll.margin_error,
+          tse_registration: poll.tse_register,
+          source_url: poll.source_url,
+          source_kind: "tse-pesqele-senador",
+          is_verified: true,
+          round: 1
+        });
+
+      if (error) {
+        console.error(`❌ Erro inserindo ${poll.id}: ${error.message}`);
+      } else {
+        inserted++;
+      }
+    }
+
+    console.log(`   ✓ ${inserted}/${valid.length} pesquisas inseridas`);
   } else {
     console.log(`\n💡 Próximo: revisar amostra acima, depois rodar com --apply`);
   }

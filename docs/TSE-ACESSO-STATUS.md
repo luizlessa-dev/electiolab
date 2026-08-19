@@ -1,13 +1,13 @@
 # TSE 2026 — Status de Acesso & Transparência
 
-## 🔴 Bloqueios Observados (Agosto 2026)
+## 🔴 Bloqueios Observados (Agosto 2026) — CONFIRMADO
 
-| URL | Status | Motivo Inferido | Alternativa |
-|-----|--------|-----------------|-------------|
-| `https://cdn.tse.jus.br/.../pesquisa_eleitoral_2026.zip` | **403 Forbidden** | WAF/Rate limit/Geo-block | Wikipedia, Poder360, sites institutos |
-| `https://dadosabertos.tse.jus.br/` | 🟡 Unknown (agent checking) | Possível redirecionamento | Portal oficial TSE |
-| `https://www.tse.jus.br/.../redes-sociais/` | 🟡 Unknown (agent checking) | Dados 2026 ainda em processamento | LAI + Proposta Ouvidor |
-| `https://www.tse.jus.br/.../candidatos/` | 🟡 Unknown (agent checking) | Parcialmente publicado? | TSE portal direto |
+| URL | Status | Motivo | Alternativa | Prioridade |
+|-----|--------|--------|-------------|-----------|
+| `https://dadosabertos.tse.jus.br/` | **403 Forbidden** | Cloudflare WAF (bot detection) | **CepespData API** ⭐ | 🟢 Use CepespData |
+| `https://cdn.tse.jus.br/.../pesquisa_eleitoral_2026.zip` | **403 Forbidden** | Cloudflare WAF | PesqEle Portal web + scraper | 🟢 Use PesqEle |
+| `https://www.tse.jus.br/eleicoes/pesquisas-eleitorais` | **403 Forbidden** | Cloudflare WAF | GitHub comunitário + CepespData | 🟢 Use alternativas |
+| Browser access (via navegador) | **200 OK** | Funciona normalmente | ✅ Funciona se manual | 🟡 Fallback |
 
 ---
 
@@ -31,37 +31,47 @@
 
 ---
 
-## 🛠️ Instrumentos Públicos TSE
+## ⭐ Vias de Acesso RECOMENDADAS (Confirmadas Funcionando)
 
-### 1. **TSE Dados Abertos**
-- URL: https://dadosabertos.tse.jus.br/
-- Formato: CSV, JSON, XLSX
-- Licença: CC (livre uso)
-- **Problema:** CDN pode estar bloqueada regionalmente
+### 1. **CepespData (FGV)** — ⭐ PRIMÁRIA
+- URL: https://github.com/Cepesp-Fgv/cepesp-rest
+- API REST estável, bem documentada, sem bloqueios
+- Dados: Candidaturas 2026, histórico 1945+
+- Manutenção: Ativa (Universidade FGV)
+- **Risk Score:** 1/5 (recomendado)
+- **Uso em ElectioLab:** Integrar como fonte candidaturas
 
-### 2. **Portal Eleições 2026**
-- URL: https://www.tse.jus.br/eleitor/eleicoes/2026/
-- Conteúdo: Cronograma, notícias, links
+### 2. **PesqEle Portal**
+- URL: https://pesqele-divulgacao.tse.jus.br/
+- Sem bloqueio de bot detection
+- Pesquisas em tempo real (últimos 30d públicos)
+- **Risk Score:** 1/5 (recomendado)
+- **Uso:** Scraper Selenium/Playwright legal
 
-### 3. **API TSE**
-- **Status:** Existem APIs (não é REST padrão)
-- **Autenticação:** Varia por endpoint
-- **Rate limiting:** Sim (proteção contra scraping)
+### 3. **GitHub Comunitário**
+- eleicoes-2026-monitor (carlosduplar): Tracker automatizado
+- eleicoes-brasil (turicas): Scripts import
+- dados_abertos_TSE (henriquemeca): BD estruturado
+- **Risk Score:** 1/5 (dados públicos, processados)
 
-### 4. **LAI (Lei Acesso Informação)**
+### 4. **TSE Dados Abertos (EVITAR VIA BOT)**
+- ❌ Bloqueado para acesso programático (403)
+- ✅ Funciona via navegador manual
+- ✅ Funciona via CepespData (que espelha dados TSE)
+- **Recomendação:** Use CepespData em vez de direto
+
+### 5. **LAI (Lei Acesso Informação)** — BACKUP
 - Portal: https://informabr.cgu.gov.br/
 - **Prazo:** 20 dias úteis
 - **Custo:** R$ 0
 - **Taxa sucesso:** ~95% (histórico)
+- **Uso:** Se CepespData/PesqEle falhar
 
-### 5. **Ouvidoria TSE**
+### 6. **Ouvidoria TSE**
 - URL: https://www2.tse.jus.br/apps/ouvidor/
-- **Tipo:** Sugestões, reclamações, pedidos
+- **Tipo:** Sugestões, reclamações
 - **Prazo:** ~5-10 dias (informal)
-
-### 6. **Fóruns Públicos / GitHub TSE**
-- GitHub: https://github.com/tse (verificar se existe)
-- Issues/discussions: Pode ter Q&A sobre 2026
+- **Uso:** Sugestão de melhorias na publicação
 
 ---
 
@@ -109,15 +119,26 @@
 
 ---
 
-## 💡 Recomendações Prioritárias
+## 💡 Recomendações Prioritárias (ATUALIZADO COM ACHADOS)
 
-**Hierarquia de acesso:**
-1. ✅ **TSE Dados Abertos (CDN)** — Preferido (oficial, gratuito, auditável)
-2. ✅ **Aggregadores** (Wikipedia, Poder360, Base dos Dados) — Rápido, confiável
-3. ✅ **Sites institutos** (GERP, Vox, etc) — Complemento específico
-4. 🟡 **LAI** — Backup gratuito (prazo 20d, sempre funciona)
-5. 🟡 **Ouvidoria** — Sugestão (prazo 5-10d, informal)
-6. ❌ **Custom scraper** — Última opção (legal mas frágil)
+**Hierarquia de acesso (CONFIRMADA pelo agent):**
+
+1. ⭐ **CepespData (FGV)** — Primária (API estável, sem bloqueios, oficial)
+2. ✅ **PesqEle Portal** — Pesquisas (sem bloqueio, dados reais, scraper legal)
+3. ✅ **GitHub Comunitário** — Backup (dados públicos processados)
+4. 🟡 **TSE Manual (via navegador)** — Fallback (lento mas funciona)
+5. 🟡 **LAI** — Backup gratuito (prazo 20d, sempre funciona)
+6. ❌ **TSE Dados Abertos CDN** — NÃO USAR (bloqueado 403)
+7. ❌ **Custom scraper** — Evitar (frágil, risco legal)
+
+**Score de Risco:**
+- CepespData: 1/5 ✅
+- PesqEle Portal: 1/5 ✅
+- GitHub: 1/5 ✅
+- Manual TSE: 2/5 🟡
+- LAI: 2/5 🟡
+- TSE CDN: 3/5 ❌
+- Custom scraper: 4/5 ❌
 
 ---
 

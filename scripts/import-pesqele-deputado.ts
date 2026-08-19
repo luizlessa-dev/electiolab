@@ -234,7 +234,7 @@ async function importBatch(
             source_kind: "tse-pesqele-deputado",
             poll_type: r.poll_type || "estimulada",
             is_verified: true,
-            tse_register_id: r.tse_register || null,
+            tse_registration: r.tse_register || null,
           };
         })
       )
