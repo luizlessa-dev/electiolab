@@ -20,6 +20,17 @@ const supabase = createClient<Database>(
   process.env.SUPABASE_SERVICE_ROLE_KEY || ""
 );
 
+// poll_drafts.tse_protocolo vem cru de pesqele_registry.protocolo (ex.:
+// "BR033172026"). polls.tse_registration exige o formato canônico
+// UF-NNNNN/AAAA (constraint polls_tse_registration_formato, ver migration
+// 20260817140000) — sem essa conversão, todo draft com protocolo TSE falha
+// a promoção com "violates check constraint".
+function toTseRegistrationFormat(protocolo: string | null): string | null {
+  if (!protocolo) return null;
+  const m = protocolo.match(/^([A-Z]{2})(\d{4,5})(\d{4})$/);
+  return m ? `${m[1]}-${m[2]}/${m[3]}` : protocolo;
+}
+
 function normalize(s: string): string {
   return s
     .toUpperCase()
@@ -102,13 +113,32 @@ async function resolveCandidates(
     let matched: string | null = null;
 
     if (candidates) {
+      // Passo 1: match exato primeiro. Sem isso, "Flávio Bolsonaro" casava
+      // com o candidato "Bolsonaro"/"Jair Bolsonaro" via target.includes(cn)
+      // (sobrenome comum é substring do nome completo do candidato errado) —
+      // achado ao vivo em 2026-08-19 promovendo pesquisas presidenciais reais,
+      // que gravaram % do Flávio no Jair. Match exato evita a ambiguidade
+      // sempre que o nome usado no draft bate 1:1 com name/full_name.
       for (const c of candidates) {
         const cn = normalize(c.name);
         const cfn = c.full_name ? normalize(c.full_name) : "";
-
-        if (cn.includes(target) || target.includes(cn) || cfn.includes(target)) {
+        if (cn === target || cfn === target) {
           matched = c.id;
           break;
+        }
+      }
+
+      // Passo 2: fallback pro heurístico de substring original, só quando
+      // não há match exato — cobre casos como target="Luiz Inácio Lula da
+      // Silva" contra candidato name="Lula" (target.includes(cn)).
+      if (!matched) {
+        for (const c of candidates) {
+          const cn = normalize(c.name);
+          const cfn = c.full_name ? normalize(c.full_name) : "";
+          if (cn.includes(target) || target.includes(cn) || cfn.includes(target)) {
+            matched = c.id;
+            break;
+          }
         }
       }
     }
@@ -134,7 +164,7 @@ async function resolveCandidates(
  */
 const PROVENIENCIA_BLOQUEADA = new Set(["wikipedia"]);
 
-async function promoteDraft(draft: PollDraft): Promise<{
+async function promoteDraft(draft: PollDraft, dryRun: boolean): Promise<{
   status: "promoted" | "failed";
   reason?: string;
   pollId?: string;
@@ -183,6 +213,15 @@ async function promoteDraft(draft: PollDraft): Promise<{
     };
   }
 
+  // --dry-run parava aqui só de nome: promoteDraft() sempre executou os
+  // inserts de verdade (poll + poll_results) e marcava o draft como
+  // 'imported', independente da flag — só o print final do main() mudava.
+  // Descoberto ao vivo em 2026-08-19 promovendo 6 pesquisas reais em modo
+  // "dry-run". A partir daqui simula sem tocar o banco.
+  if (dryRun) {
+    return { status: "promoted", pollId: "(dry-run — nada foi gravado)" };
+  }
+
   // Create poll. source_url/source_kind/tse_protocolo são propagados do draft:
   // antes eram descartados aqui, o que apagava a proveniência na promoção e
   // deixava a linha em `polls` indistinguível de dado sem fonte.
@@ -217,7 +256,7 @@ async function promoteDraft(draft: PollDraft): Promise<{
       scenario_label: draft.scenario_label,
       source_url: draft.source_url,
       source_kind: draft.source_kind,
-      tse_registration: draft.tse_protocolo,
+      tse_registration: toTseRegistrationFormat(draft.tse_protocolo),
     })
     .select("id")
     .single();
@@ -302,7 +341,7 @@ async function main() {
     failed = 0;
 
   for (const draft of drafts) {
-    const result = await promoteDraft(draft);
+    const result = await promoteDraft(draft, isDryRun);
 
     if (result.status === "promoted") {
       promoted++;
