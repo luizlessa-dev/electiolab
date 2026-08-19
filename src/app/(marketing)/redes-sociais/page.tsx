@@ -220,15 +220,26 @@ export default async function RedesSociaisPage() {
           )}
 
           <section className="rounded-lg border border-border bg-muted/20 p-6">
-            <h2 className="text-base font-bold mb-2">Por que esta lista é pequena?</h2>
+            <h2 className="text-base font-bold mb-2">Cobertura de Redes Sociais</h2>
+            <div className="grid grid-cols-2 gap-4 mb-3">
+              <div className="text-center">
+                <p className="text-xs text-muted-foreground">2022</p>
+                <p className="text-lg font-bold text-primary">123</p>
+                <p className="text-xs text-muted-foreground">candidatos com handles</p>
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-muted-foreground">2026</p>
+                <p className="text-lg font-bold text-amber-500">⏳</p>
+                <p className="text-xs text-muted-foreground">aguardando TSE publicar</p>
+              </div>
+            </div>
             <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-              Apenas <strong>candidaturas registradas no TSE</strong> com declaração formal de redes sociais
-              aparecem aqui. As eleições 2026 ainda não tiveram registro oficial (julho/2026 em diante),
-              então hoje só temos dados retroativos de 2022. Quando o TSE publicar as candidaturas 2026,
-              esta página será automaticamente expandida com centenas de novas entradas.
+              Apenas <strong>candidaturas registradas no TSE</strong> com declaração formal de redes sociais aparecem aqui.
+              Para 2022, temos <strong>123 registros</strong> completos (Instagram, X, etc).
+              As candidaturas 2026 estão sendo processadas (ago-set/2026), e esta página será <strong>automaticamente atualizada</strong> com dados 2026 conforme o TSE publicar.
             </p>
             <p className="text-xs text-muted-foreground">
-              Fonte: TSE Dados Abertos · <code>rede_social_candidato</code> 2022.
+              Fonte: TSE Dados Abertos · <code>rede_social_candidato</code> (2022 + aguardando 2026).
             </p>
           </section>
         </article>
