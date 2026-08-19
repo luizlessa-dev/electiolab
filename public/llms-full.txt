@@ -140,4 +140,8 @@ robots.txt permite explicitamente GPTBot, ClaudeBot, PerplexityBot, Google-Exten
 
 ## Última atualização
 
-1 de junho de 2026
+17 de agosto de 2026
+
+As seções deste arquivo são metodológicas e estáveis. Dados voláteis — campo
+presidencial, estatísticas da base, data da pesquisa mais recente — vivem no
+índice em https://electiolab.com/llms.txt, que é gerado do banco a cada 6 horas.
