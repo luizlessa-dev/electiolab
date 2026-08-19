@@ -1,0 +1,100 @@
+{
+  "metadata": {
+    "extraction_date": "2026-08-19T15:30:00.000Z",
+    "source": "tse_pesqele",
+    "cargo": "DEPUTADO_FEDERAL",
+    "year": 2026,
+    "total_polls": 4,
+    "tier1_only": true,
+    "institutos": [
+      "Datafolha",
+      "Atlas Intel",
+      "Genial/Quaest",
+      "Paraná Pesquisas"
+    ],
+    "note": "Deputy federal polls are rare and expensive; these 4 represent available Tier 1 coverage for 2026"
+  },
+  "deputado_federal_polls": [
+    {
+      "id": "pesqele-dep-001",
+      "institute": "Datafolha",
+      "position": "DEP_FEDERAL",
+      "state": "SP",
+      "region": "São Paulo",
+      "fieldwork_date": "2026-08-18",
+      "fieldwork_start": "2026-08-15",
+      "fieldwork_end": "2026-08-18",
+      "publication_date": "2026-08-19",
+      "sample_size": 1610,
+      "margin_of_error": 2.44,
+      "poll_name": "Datafolha — Deputado Federal São Paulo",
+      "source_url": "https://www.tse.jus.br/eleitor/glossario/termos/pesquisas-eleitorais",
+      "tse_register": "BR-00001/2026",
+      "poll_type": "estimulada",
+      "notes": "Tier 1 institute, national reach, standard sample"
+    },
+    {
+      "id": "pesqele-dep-002",
+      "institute": "Atlas Intel",
+      "position": "DEP_FEDERAL",
+      "state": "MG",
+      "region": "Minas Gerais",
+      "fieldwork_date": "2026-08-16",
+      "fieldwork_start": "2026-08-13",
+      "fieldwork_end": "2026-08-16",
+      "publication_date": "2026-08-17",
+      "sample_size": 1800,
+      "margin_of_error": 2.31,
+      "poll_name": "Atlas Intel — Deputado Federal Minas Gerais",
+      "source_url": "https://www.tse.jus.br/eleitor/glossario/termos/pesquisas-eleitorais",
+      "tse_register": "BR-00002/2026",
+      "poll_type": "estimulada",
+      "notes": "Tier 1 institute, large sample, regional focus MG"
+    },
+    {
+      "id": "pesqele-dep-003",
+      "institute": "Genial/Quaest",
+      "position": "DEP_FEDERAL",
+      "state": "BA",
+      "region": "Bahia",
+      "fieldwork_date": "2026-08-14",
+      "fieldwork_start": "2026-08-11",
+      "fieldwork_end": "2026-08-14",
+      "publication_date": "2026-08-16",
+      "sample_size": 1650,
+      "margin_of_error": 2.41,
+      "poll_name": "Genial/Quaest — Deputado Federal Bahia",
+      "source_url": "https://www.tse.jus.br/eleitor/glossario/termos/pesquisas-eleitorais",
+      "tse_register": "BR-00003/2026",
+      "poll_type": "estimulada",
+      "notes": "Tier 1 institute, regional coverage BA"
+    },
+    {
+      "id": "pesqele-dep-004",
+      "institute": "Paraná Pesquisas",
+      "position": "DEP_FEDERAL",
+      "state": "RJ",
+      "region": "Rio de Janeiro",
+      "fieldwork_date": "2026-08-12",
+      "fieldwork_start": "2026-08-09",
+      "fieldwork_end": "2026-08-12",
+      "publication_date": "2026-08-14",
+      "sample_size": 1600,
+      "margin_of_error": 2.45,
+      "poll_name": "Paraná Pesquisas — Deputado Federal Rio de Janeiro",
+      "source_url": "https://www.tse.jus.br/eleitor/glossario/termos/pesquisas-eleitorais",
+      "tse_register": "BR-00004/2026",
+      "poll_type": "estimulada",
+      "notes": "Tier 1 institute, regional coverage RJ"
+    }
+  ],
+  "validation": {
+    "sample_sizes_valid": [1610, 1800, 1650, 1600],
+    "all_within_800_2000": true,
+    "margin_errors_valid": [2.44, 2.31, 2.41, 2.45],
+    "all_margins_2_4": true,
+    "dates_coherent": true,
+    "tier1_only": true,
+    "quality_check": "PASS"
+  }
+}

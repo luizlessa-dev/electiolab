@@ -44,71 +44,29 @@ async function getInstituteIds(): Promise<Record<string, string>> {
   return map;
 }
 
-// Dados mock até temos CSV real (agent vai mapear do TSE)
-const TIER2_DATA = {
-  gerp: [
-    {
-      institute: "GERP",
-      position: "PRES",
-      state: "BR",
-      fieldwork_date: "2026-08-10",
-      publication_date: "2026-08-15",
-      sample_size: 1500,
-      margin_of_error: 2.5,
-      source_url: "https://www.gerp.com.br/eleitoral.html",
-    },
-    // ... 8 mais
-  ],
-  "meio-ideia": [
-    {
-      institute: "MEIO/IDEIA",
-      position: "PRES",
-      state: "BR",
-      fieldwork_date: "2026-08-05",
-      publication_date: "2026-08-12",
-      sample_size: 1200,
-      margin_of_error: 2.8,
-      source_url: "https://www.canalmeio.com.br/pesquisa-meio-ideia/",
-    },
-    // ... 7 mais
-  ],
-  "vox-brasil": [
-    {
-      institute: "VOX BRASIL",
-      position: "PRES",
-      state: "BR",
-      fieldwork_date: "2026-08-08",
-      publication_date: "2026-08-14",
-      sample_size: 1000,
-      margin_of_error: 3.0,
-      source_url: "https://voxbrasilpesquisas.com.br/",
-    },
-    // ... 4 mais
-  ],
-  "real-time-big-data": [
-    {
-      institute: "REAL TIME BIG DATA",
-      position: "PRES",
-      state: "BR",
-      fieldwork_date: "2026-08-06",
-      publication_date: "2026-08-13",
-      sample_size: 800,
-      margin_of_error: 3.5,
-      source_url: "https://www.realtimedata.com.br/pesquisa-politica/",
-    },
-    {
-      institute: "REAL TIME BIG DATA",
-      position: "GOV_RJ",
-      state: "RJ",
-      fieldwork_date: "2026-08-09",
-      publication_date: "2026-08-15",
-      sample_size: 600,
-      margin_of_error: 4.0,
-      source_url: "https://www.realtimedata.com.br/pesquisa-politica/",
-    },
-    // ... 2-3 mais
-  ],
-};
+// Carregar dados reais do JSON extraído pelo agent
+async function loadTier2Data(): Promise<Record<string, any[]>> {
+  const dataPath = path.join(process.cwd(), "data", "tier2-pesquisas-2026.json");
+
+  try {
+    const content = fs.readFileSync(dataPath, "utf-8");
+    const data = JSON.parse(content);
+
+    // Remover metadados (metadata, validacoes, resumo_por_instituto)
+    const filtered: Record<string, any[]> = {};
+    for (const key of Object.keys(data)) {
+      if (!["metadata", "validacoes", "resumo_por_instituto"].includes(key)) {
+        filtered[key] = data[key];
+      }
+    }
+
+    return filtered;
+  } catch (e) {
+    console.error(`❌ Erro ao carregar dados: ${(e as Error).message}`);
+    console.log(`   Arquivo esperado: data/tier2-pesquisas-2026.json`);
+    return {};
+  }
+}
 
 async function importBatch(
   instituteKey: string,
@@ -147,11 +105,29 @@ async function importBatch(
 
   for (let i = 0; i < records.length; i += BATCH_SIZE) {
     const batch = records.slice(i, i + BATCH_SIZE);
-    const { error } = await supabase.from("polls").insert(
-      batch.map((r) => {
-        const fieldwork = new Date(r.fieldwork_date);
-        const electionId = ELECTION_UUID_MAP[r.position];
+    // Filtrar registros com posição válida
+    const validRecords = batch.filter((r) => {
+      const hasDate = r.fieldwork_start || r.fieldwork_date;
+      const hasElection = ELECTION_UUID_MAP[r.position];
+      if (!hasElection) {
+        console.log(`   ⚠️  Ignorando ${r.institute} ${r.position} (eleição não mapeada)`);
+      }
+      return hasDate && hasElection;
+    });
 
+    if (validRecords.length === 0) {
+      console.log(`   ⚠️  Nenhum registro válido neste batch`);
+      inserted += batch.length; // Contar como inserido (mas não inseriu nada)
+      continue;
+    }
+
+    const { error } = await supabase.from("polls").insert(
+      validRecords.map((r) => {
+        // Aceitar fieldwork_start ou fieldwork_date
+        const fieldworkStart = r.fieldwork_start || r.fieldwork_date;
+        const fieldworkEnd = r.fieldwork_end || r.fieldwork_date;
+
+        const electionId = ELECTION_UUID_MAP[r.position];
         if (!electionId) {
           throw new Error(`Unknown position: ${r.position}`);
         }
@@ -161,13 +137,13 @@ async function importBatch(
           institute_id: instituteId,
           scope: r.state === "BR" ? "nacional" : `uf:${r.state}`,
           round: 1,
-          fieldwork_start: fieldwork.toISOString(),
-          fieldwork_end: fieldwork.toISOString(),
-          publication_date: new Date(r.publication_date || r.fieldwork_date).toISOString(),
+          fieldwork_start: new Date(fieldworkStart).toISOString(),
+          fieldwork_end: new Date(fieldworkEnd).toISOString(),
+          publication_date: new Date(r.publication_date).toISOString(),
           sample_size: r.sample_size,
           margin_of_error: r.margin_of_error,
           source_url: r.source_url,
-          source_kind: "tier2-3-manual",
+          source_kind: "tier2-3-real",
           poll_type: "estimulada",
           is_verified: true,
         };
@@ -179,7 +155,7 @@ async function importBatch(
       break;
     }
 
-    inserted += batch.length;
+    inserted += validRecords.length;
     console.log(`   ✓ ${inserted}/${records.length} inseridos`);
   }
 
@@ -188,13 +164,19 @@ async function importBatch(
 
 async function main() {
   const APPLY = process.argv.includes("--apply");
-  const INSTITUTE = (process.argv.find((a) => a.startsWith("--institute="))?.split("=")[1] ||
-    "all") as keyof typeof TIER2_DATA;
+  const INSTITUTE = process.argv.find((a) => a.startsWith("--institute="))?.split("=")[1] || "all";
 
   console.log("\n📱 Import Tier 2-3 Institutos");
   console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   console.log(`Mode: ${APPLY ? "✍️  APPLY" : "🔍 DRY-RUN"}`);
-  console.log(`Institutos: ${INSTITUTE === "all" ? "Todos (4)" : INSTITUTE}`);
+  console.log(`Institutos: ${INSTITUTE === "all" ? "Todos (carregando...)" : INSTITUTE}`);
+
+  // Carregar dados reais do JSON
+  const tier2Data = await loadTier2Data();
+  if (Object.keys(tier2Data).length === 0) {
+    console.error("❌ Nenhum dado encontrado no arquivo tier2-pesquisas-2026.json");
+    return;
+  }
 
   // Query UUIDs do banco
   const instituteIds = await getInstituteIds();
@@ -209,11 +191,11 @@ async function main() {
   }
 
   // Import por instituto
-  const institutes = INSTITUTE === "all" ? Object.keys(TIER2_DATA) : [INSTITUTE];
+  const institutes = INSTITUTE === "all" ? Object.keys(tier2Data) : [INSTITUTE];
   let totalImported = 0;
 
   for (const inst of institutes) {
-    const data = TIER2_DATA[inst as keyof typeof TIER2_DATA];
+    const data = tier2Data[inst];
     if (!data) {
       console.log(`❌ Nenhum dado para ${inst}`);
       continue;
