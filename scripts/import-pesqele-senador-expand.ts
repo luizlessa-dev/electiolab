@@ -277,7 +277,7 @@ async function processRecords(
 async function main() {
   const APPLY = process.argv.includes("--apply");
   const LIMIT = parseInt(
-    process.argv.find((a) => a.startsWith("--limit="))?.split("=")[1] || "200"
+    process.argv.find((a) => a.startsWith("--limit="))?.split("=")[1] || "1000"
   );
 
   console.log("\n" + "━".repeat(70));
