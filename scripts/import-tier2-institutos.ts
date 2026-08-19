@@ -27,13 +27,22 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-// Tier 2-3 institutos mapeados do agent report
-const TIER2_INSTITUTES: Record<string, string> = {
-  "gerp": "gerp-pesquisas-uuid",  // TODO: query DB pra UUID real
-  "meio-ideia": "meio-ideia-uuid",
-  "vox-brasil": "vox-brasil-uuid",
-  "real-time-big-data": "real-time-big-data-uuid",
-};
+// Tier 2-3 institutos — UUIDs queryados do banco dinamicamente
+async function getInstituteIds(): Promise<Record<string, string>> {
+  const { data } = await supabase
+    .from("institutes")
+    .select("id, name")
+    .in("tier", [2, 3]);
+
+  if (!data) return {};
+
+  const map: Record<string, string> = {};
+  for (const inst of data) {
+    const key = inst.name.toLowerCase().replace(/\//g, "-").replace(/ /g, "-");
+    map[key] = inst.id;
+  }
+  return map;
+}
 
 // Dados mock até temos CSV real (agent vai mapear do TSE)
 const TIER2_DATA = {
@@ -101,35 +110,10 @@ const TIER2_DATA = {
   ],
 };
 
-async function queryInstituteIds(): Promise<Record<string, string>> {
-  console.log("🔍 Consultando UUIDs de institutos no banco...");
-  const { data: institutes } = await supabase
-    .from("institutes")
-    .select("id, name")
-    .in("name", Object.keys(TIER2_INSTITUTES).map((k) => k.replace("-", " ")));
-
-  if (!institutes) {
-    console.error(
-      "❌ Nenhum instituto Tier 2-3 encontrado. Precisa criar registros manualmente."
-    );
-    console.log("\n   Comando para registrar institutos:");
-    console.log(
-      "   INSERT INTO institutes (name, tier) VALUES ('GERP', 2), ('MEIO/IDEIA', 2), ('VOX BRASIL', 2), ('REAL TIME BIG DATA', 2);"
-    );
-    return {};
-  }
-
-  const map: Record<string, string> = {};
-  for (const inst of institutes) {
-    const key = inst.name.toLowerCase().replace(/ /g, "-");
-    map[key] = inst.id;
-  }
-  return map;
-}
-
 async function importBatch(
   instituteKey: string,
   records: any[],
+  instituteIds: Record<string, string>,
   apply: boolean = false
 ) {
   console.log(`\n📥 Instituto: ${instituteKey.toUpperCase()}`);
@@ -140,12 +124,66 @@ async function importBatch(
     return 0;
   }
 
-  // TODO: Map positions → election_ids
-  // TODO: Map institutos → UUIDs (via queryInstituteIds)
-  // TODO: Batch insert como em import-pesqele-batch.ts
+  // Mapear positions → election_ids (de ELECTION_UUID_MAP)
+  const ELECTION_UUID_MAP: Record<string, string> = {
+    "PRES": "21f8e9a3-5ff8-4baf-b0ae-6b00d2614248",
+    "GOV_MG": "ce047ca5-9962-4c94-95dd-f400a1994d03",
+    "GOV_SP": "8bda2fee-4c66-48f5-803a-703bec52a5cd",
+    "GOV_RJ": "4d5eaa69-74ec-4eda-8a43-d64c68af0412",
+    "GOV_BA": "b5defdb3-8247-4722-8447-3aeb97635bf2",
+    "GOV_PE": "0cffd39e-1922-49fc-819b-7d9c7829f127",
+  };
 
-  console.log("   [TODO] Implementar upsert em 'polls' table");
-  return 0;
+  // Mapear institute key → UUID
+  const instituteId = instituteIds[instituteKey.toLowerCase().replace(/ /g, "-")];
+  if (!instituteId) {
+    console.error(`   ❌ Instituto UUID não encontrado para ${instituteKey}`);
+    return 0;
+  }
+
+  // Batch insert (similar a import-pesqele-batch.ts)
+  let inserted = 0;
+  const BATCH_SIZE = 10;
+
+  for (let i = 0; i < records.length; i += BATCH_SIZE) {
+    const batch = records.slice(i, i + BATCH_SIZE);
+    const { error } = await supabase.from("polls").insert(
+      batch.map((r) => {
+        const fieldwork = new Date(r.fieldwork_date);
+        const electionId = ELECTION_UUID_MAP[r.position];
+
+        if (!electionId) {
+          throw new Error(`Unknown position: ${r.position}`);
+        }
+
+        return {
+          election_id: electionId,
+          institute_id: instituteId,
+          scope: r.state === "BR" ? "nacional" : `uf:${r.state}`,
+          round: 1,
+          fieldwork_start: fieldwork.toISOString(),
+          fieldwork_end: fieldwork.toISOString(),
+          publication_date: new Date(r.publication_date || r.fieldwork_date).toISOString(),
+          sample_size: r.sample_size,
+          margin_of_error: r.margin_of_error,
+          source_url: r.source_url,
+          source_kind: "tier2-3-manual",
+          poll_type: "estimulada",
+          is_verified: true,
+        };
+      })
+    );
+
+    if (error) {
+      console.error(`   ❌ Batch falhou:`, error.message);
+      break;
+    }
+
+    inserted += batch.length;
+    console.log(`   ✓ ${inserted}/${records.length} inseridos`);
+  }
+
+  return inserted;
 }
 
 async function main() {
@@ -158,11 +196,17 @@ async function main() {
   console.log(`Mode: ${APPLY ? "✍️  APPLY" : "🔍 DRY-RUN"}`);
   console.log(`Institutos: ${INSTITUTE === "all" ? "Todos (4)" : INSTITUTE}`);
 
-  // Query UUIDs
-  const instituteIds = await queryInstituteIds();
+  // Query UUIDs do banco
+  const instituteIds = await getInstituteIds();
   console.log(
-    `✓ ${Object.keys(instituteIds).length} institutos encontrados no banco`
+    `✓ ${Object.keys(instituteIds).length} institutos encontrados no banco (Tier 2-3)`
   );
+
+  if (Object.keys(instituteIds).length === 0) {
+    console.error("❌ Nenhum instituto Tier 2-3 encontrado!");
+    console.log("   Rode a migration antes: supabase migration up --linked");
+    return;
+  }
 
   // Import por instituto
   const institutes = INSTITUTE === "all" ? Object.keys(TIER2_DATA) : [INSTITUTE];
@@ -175,7 +219,7 @@ async function main() {
       continue;
     }
 
-    const imported = await importBatch(inst, data, APPLY);
+    const imported = await importBatch(inst, data, instituteIds, APPLY);
     totalImported += imported;
   }
 
