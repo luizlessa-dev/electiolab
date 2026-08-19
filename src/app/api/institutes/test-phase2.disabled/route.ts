@@ -12,6 +12,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { validateTestApiKey } from '@/lib/auth/test-api-guard';
 import { datafolhaMockClient, ipecMockClient, quaestMockClient } from '@/lib/institutes/mock-clients';
 import { datafolhaBrowserClient } from '@/lib/institutes/datafolha-browser-client';
 import { tseApiClient } from '@/lib/institutes/tse-api-client';
@@ -90,6 +91,10 @@ interface PhaseTestError {
 type PhaseTestResult = PhaseTestSuccess | PhaseTestError;
 
 export async function POST(request: NextRequest) {
+  // Validate API key
+  const authError = validateTestApiKey(request);
+  if (authError) return authError;
+
   try {
     const { searchParams } = new URL(request.url);
     const mode = (searchParams.get('mode') || 'mock') as 'mock' | 'browser' | 'api';

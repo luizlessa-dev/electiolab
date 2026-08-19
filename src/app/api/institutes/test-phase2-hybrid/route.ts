@@ -13,6 +13,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { validateTestApiKey } from '@/lib/auth/test-api-guard';
 import { router as scraperRouter } from '@/lib/institutes/scraper-router';
 import { cache } from '@/lib/institutes/cache-layer';
 
@@ -73,6 +74,10 @@ interface TestResult {
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
+  // Validate API key
+  const authError = validateTestApiKey(request);
+  if (authError) return authError;
+
   const mode = request.nextUrl.searchParams.get('mode') || 'parallel';
   const instituteId = request.nextUrl.searchParams.get('institute');
 

@@ -13,6 +13,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { validateTestApiKey } from '@/lib/auth/test-api-guard';
 import {
   tier3Clients,
   ipespClient,
@@ -256,6 +257,10 @@ async function testAllInstitutes(): Promise<
  * Main handler
  */
 export async function GET(request: NextRequest) {
+  // Validate API key
+  const authError = validateTestApiKey(request);
+  if (authError) return authError;
+
   const searchParams = request.nextUrl.searchParams;
   const mode = searchParams.get('mode') || 'mock';
   const instituteId = searchParams.get('institute');
