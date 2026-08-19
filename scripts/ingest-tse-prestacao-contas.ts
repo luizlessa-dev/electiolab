@@ -86,30 +86,62 @@ const TSE_ZIP_URL = (ano: number) =>
   `https://cdn.tse.jus.br/estatistica/sead/odsele/prestacao_contas/prestacao_de_contas_eleitorais_candidatos_${ano}.zip`;
 
 // ─────────────────────────────────────────────────────────────────
-// Candidatos por CPF (reusa a mesma fonte que ingest-tse-extended.ts)
+// Candidatos por CPF e por SQ_CANDIDATO (tse_id)
+//
+// Descoberto em 2026-08-19: NR_CPF_CANDIDATO vem mascarado ("-4", "-3" etc —
+// sentinela negativa de privacidade) nos 4 arquivos de prestação de contas,
+// diferente de consulta_cand (onde o CPF é real). cleanCpf() não tratava
+// esses sentinelas (só "-1" está em NULL_SENTINELS), então "-4" virava
+// "00000000004" e nunca batia com nenhum CPF real — candidate_id saía
+// sempre null, 0/3082 nas primeiras ~3 mil linhas ingeridas. SQ_CANDIDATO,
+// por outro lado, vem preenchido corretamente e é o mesmo identificador
+// usado como candidates.tse_id (ver ingest-tse-candidaturas.ts) — match
+// primário agora é por aí, com CPF como fallback pros poucos casos em que
+// SQ_CANDIDATO não bate (candidato sem tse_id ainda gravado).
 // ─────────────────────────────────────────────────────────────────
 type CandRef = { id: string; cpf: string };
 
-async function loadCandidates(): Promise<Map<string, CandRef>> {
-  const map = new Map<string, CandRef>();
+async function loadCandidates(): Promise<{
+  byCpf: Map<string, CandRef>;
+  bySqCandidato: Map<string, string>;
+}> {
+  const byCpf = new Map<string, CandRef>();
+  const bySqCandidato = new Map<string, string>();
   let from = 0;
   while (true) {
     const { data, error } = await sb
       .from("candidates")
-      .select("id, cpf")
-      .not("cpf", "is", null)
+      .select("id, cpf, tse_id")
       .range(from, from + 999);
     if (error) throw error;
     if (!data || data.length === 0) break;
     for (const c of data) {
-      const cpf = cleanCpf(c.cpf as string);
-      if (cpf) map.set(cpf, { id: c.id as string, cpf });
+      const cpf = c.cpf ? cleanCpf(c.cpf as string) : null;
+      if (cpf) byCpf.set(cpf, { id: c.id as string, cpf });
+      if (c.tse_id) bySqCandidato.set(c.tse_id as string, c.id as string);
     }
     if (data.length < 1000) break;
     from += 1000;
   }
-  console.log(`👥 ${map.size} candidatos com CPF na base`);
-  return map;
+  console.log(`👥 ${byCpf.size} candidatos com CPF | ${bySqCandidato.size} com tse_id na base`);
+  return { byCpf, bySqCandidato };
+}
+
+function resolveCandidateId(
+  sqCandidato: string | null,
+  cpf: string | null,
+  bySqCandidato: Map<string, string>,
+  byCpf: Map<string, CandRef>,
+): string | null {
+  if (sqCandidato) {
+    const id = bySqCandidato.get(sqCandidato);
+    if (id) return id;
+  }
+  if (cpf) {
+    const ref = byCpf.get(cpf);
+    if (ref) return ref.id;
+  }
+  return null;
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -201,6 +233,7 @@ async function processReceitas(
   allMembers: string[],
   zipPath: string,
   byCpf: Map<string, CandRef>,
+  bySqCandidato: Map<string, string>,
   sqPrestadorToCandidate: Map<string, string>,
 ): Promise<Stats> {
   const stats = newStats();
@@ -228,14 +261,15 @@ async function processReceitas(
       continue;
     }
     const cpf = c.cpf ? cleanCpf(row[c.cpf]) : null;
-    const candidateId = cpf ? byCpf.get(cpf)?.id ?? null : null;
+    const sqCandidato = c.sqCandidato ? NULO(row[c.sqCandidato]) : null;
+    const candidateId = resolveCandidateId(sqCandidato, cpf, bySqCandidato, byCpf);
     if (candidateId) stats.matchedCandidate++;
     const sqPrestador = c.sqPrestador ? NULO(row[c.sqPrestador]) : null;
     if (sqPrestador && candidateId) sqPrestadorToCandidate.set(sqPrestador, candidateId);
 
     batch.push({
       candidate_id: candidateId,
-      sq_candidato: c.sqCandidato ? NULO(row[c.sqCandidato]) : null,
+      sq_candidato: sqCandidato,
       sq_prestador_contas: sqPrestador,
       cpf,
       election_year: YEAR,
@@ -298,6 +332,7 @@ async function processDespesasContratadas(
   allMembers: string[],
   zipPath: string,
   byCpf: Map<string, CandRef>,
+  bySqCandidato: Map<string, string>,
   sqPrestadorToCandidate: Map<string, string>,
 ): Promise<Stats> {
   const stats = newStats();
@@ -325,14 +360,15 @@ async function processDespesasContratadas(
       continue;
     }
     const cpf = c.cpf ? cleanCpf(row[c.cpf]) : null;
-    const candidateId = cpf ? byCpf.get(cpf)?.id ?? null : null;
+    const sqCandidato = c.sqCandidato ? NULO(row[c.sqCandidato]) : null;
+    const candidateId = resolveCandidateId(sqCandidato, cpf, bySqCandidato, byCpf);
     if (candidateId) stats.matchedCandidate++;
     const sqPrestador = c.sqPrestador ? NULO(row[c.sqPrestador]) : null;
     if (sqPrestador && candidateId) sqPrestadorToCandidate.set(sqPrestador, candidateId);
 
     batch.push({
       candidate_id: candidateId,
-      sq_candidato: c.sqCandidato ? NULO(row[c.sqCandidato]) : null,
+      sq_candidato: sqCandidato,
       sq_prestador_contas: sqPrestador,
       cpf,
       election_year: YEAR,
@@ -536,17 +572,17 @@ function printStats(label: string, s: Stats) {
   const allMembers = listZipMembers(zipPath);
   console.log(`📦 ${allMembers.length} arquivos no ZIP`);
 
-  const byCpf = await loadCandidates();
+  const { byCpf, bySqCandidato } = await loadCandidates();
   const sqPrestadorToCandidate = new Map<string, string>();
 
   const results: Record<string, Stats> = {};
 
   if (!ONLY || ONLY === "receitas") {
-    results.receitas = await processReceitas(allMembers, zipPath, byCpf, sqPrestadorToCandidate);
+    results.receitas = await processReceitas(allMembers, zipPath, byCpf, bySqCandidato, sqPrestadorToCandidate);
     printStats("candidate_revenue", results.receitas);
   }
   if (!ONLY || ONLY === "despesas-contratadas") {
-    results.despesasContratadas = await processDespesasContratadas(allMembers, zipPath, byCpf, sqPrestadorToCandidate);
+    results.despesasContratadas = await processDespesasContratadas(allMembers, zipPath, byCpf, bySqCandidato, sqPrestadorToCandidate);
     printStats("candidate_expense_contracted", results.despesasContratadas);
   }
   if (!ONLY || ONLY === "doador-originario") {

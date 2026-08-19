@@ -44,6 +44,10 @@ export function parseValor(s: string | undefined | null): number | null {
 export function cleanCpf(s: string | undefined | null): string | null {
   const t = NULO(s);
   if (!t) return null;
+  // CPF/CNPJ nunca é negativo — TSE usa sentinelas tipo "-3"/"-4" pra
+  // mascarar por privacidade em alguns datasets (ex: prestação de contas de
+  // candidatos), além do "-1" já coberto por NULL_SENTINELS.
+  if (t.startsWith("-")) return null;
   const digits = t.replace(/\D/g, "");
   if (!digits) return null;
   return digits.padStart(11, "0").slice(-11);

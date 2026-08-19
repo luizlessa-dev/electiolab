@@ -2,11 +2,23 @@ name: Ingest TSE Prestação de Contas 2026 (daily)
 
 # TSE só divulga a prestação de contas parcial de 2026 em 15/09/2026 (prazo de
 # prestação: 9-13/09) — antes disso o dataset não existe no CDN. O job checa
-# disponibilidade (HEAD request) antes de baixar e pula silenciosamente,
-# sem abrir issue de falha, enquanto o pacote não existir. Diário durante a
-# janela ativa pra capturar retificações; revisar cadência ~2 semanas depois
-# de observar o padrão real de atualização do TSE (pode caber semanal se o
-# TSE só republicar o pacote esporadicamente).
+# disponibilidade antes de baixar e pula silenciosamente, sem abrir issue de
+# falha, enquanto o pacote não existir. Diário durante a janela ativa pra
+# capturar retificações; revisar cadência ~2 semanas depois de observar o
+# padrão real de atualização do TSE (pode caber semanal se o TSE só
+# republicar o pacote esporadicamente).
+#
+# Corrigido em 2026-08-19: o check usava `curl -sI` (HEAD). Descoberto que o
+# WAF Akamai do TSE bloqueia especificamente clientes HTTP tipo curl (e
+# requests HEAD mesmo via outros clientes) com 403, mesmo quando o mesmo
+# arquivo responde 200 via GET com `fetch()` do Node — que é o cliente que
+# `ingest-tse-prestacao-contas.ts` de fato usa (scripts/lib/tse-csv.ts).
+# Resultado prático: o dataset de 2026 já existe desde ~15/08 (primeiras
+# doações de campanha), mas o check falso-negativou na maioria dos dias e o
+# job pulou a ingestão real silenciosamente — só rodou de verdade quando o
+# 403 do curl calhou de não disparar naquele dia. Trocado o check pra usar
+# `fetch()` do Node (GET, igual ao script real), que nos testes manuais foi
+# 100% consistente onde o curl falhava de forma intermitente.
 #
 # Ordem importa dentro do job: despesas_pagas precisa do mapa
 # sq_prestador_contas→candidate_id construído durante receitas/despesas
@@ -47,7 +59,11 @@ jobs:
         run: |
           YEAR="${{ inputs.year || '2026' }}"
           URL="https://cdn.tse.jus.br/estatistica/sead/odsele/prestacao_contas/prestacao_de_contas_eleitorais_candidatos_${YEAR}.zip"
-          STATUS=$(curl -sI -o /dev/null -w "%{http_code}" --max-time 30 "$URL")
+          STATUS=$(node -e "
+            fetch(process.argv[1])
+              .then(r => { console.log(r.status); r.body?.cancel(); })
+              .catch(() => console.log('000'));
+          " "$URL")
           echo "status=$STATUS" >> "$GITHUB_OUTPUT"
           if [ "$STATUS" != "200" ]; then
             echo "⏭️  Dataset $YEAR ainda não publicado (HTTP $STATUS) — pulando execução, sem falha."
