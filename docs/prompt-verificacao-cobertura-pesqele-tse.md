@@ -1,9 +1,26 @@
 # Prompt para sessão dedicada — verificação de cobertura PesqEle (TSE) × ElectioLab
 
-**Atualizado em 2026-08-17, mesmo dia da escrita original.** Duas premissas abaixo mudaram antes mesmo de esta sessão começar:
-- O step "Auto-ingest Wikipedia" **já foi removido** de `.github/workflows/ingest-pesqele.yml` — não é mais preciso desligá-lo, a restrição abaixo agora é sobre não usar Wikipedia via nenhum outro caminho, não sobre um step ativo.
-- As 243 linhas mock em `polls` (cron `daily-sync`, ver `docs/ELECTIOLAB-AUDIT-2026-08.md` C1) **já foram apagadas**. `polls` de 2026 caiu de 480 para **237** — todos os números "já medidos" abaixo estão desatualizados por causa disso; a seção fica como registro histórico do raciocínio, **re-meça do zero antes de montar o relatório final**.
-- Achado extra do processo de limpeza: 237 é exatamente o número que `docs/TSE_INTEGRATION_ROADMAP.md` registra como "retido" depois da limpeza de Wikipedia de uma fase anterior — ou seja, a cobertura real pode não ter crescido desde então. Vale confirmar isso como parte do relatório.
+**CONCLUÍDO em 2026-08-17** — outra janela pegou este prompt (ou chegou ao mesmo problema por conta própria, em paralelo) e entregou mais do que ele pedia, direto em `main`, sem PR:
+
+- `fix: registra proveniência em polls e corrige views de cobertura PesqEle` (`b0b259e`) — coluna `polls.source_kind`, filtro central em `src/lib/poll-provenance.ts` aplicado nas 7 consultas públicas, `approve-reputable-polls.ts` parou de auto-aprovar draft de Wikipedia.
+- `fix: apaga dado Wikipedia, normaliza tse_registration e marca lote legado` (`d3a1277`) — decisão editorial: **apagar**, não só marcar. Removidos 52 `polls` de origem Wikipedia + 210 `poll_results` em cascata + 606 `poll_drafts`, incluindo 14 pesquisas com data pós-eleição (nov/dez/2026) e 21 drafts presos em `approved`. Achado extra no caminho: `pesqele_registry` tinha 3 linhas seed plantadas à mão (`TSE-2026-001/002/003`) inflando o denominador presidencial — removidas também.
+
+Depois disso, a mesma sessão (ou outra em sequência) ainda resolveu C2 (sitemap) e C6 (llms.txt) da auditoria geral, numa branch separada (`fix/llms-txt-e-sitemap`) — mesclada em `main` via PR #58 em 2026-08-17.
+
+**Números finais confirmados (17/08, pós tudo):**
+```
+pesqele_registry (2026):  1.714 registros  (3 seeds falsos removidos)
+polls (2026):                185 linhas    (era 237 — 52 de origem Wikipedia removidas de vez)
+  - verificadas:               59           (32%, intacto — nada de real foi tocado)
+poll_drafts:                    9           (era 615)
+source_kind='wikipedia':        0 residual
+```
+
+**Gap real que continua aberto, não é bug de código:** 1.714 pesquisas registradas no TSE pra 2026 vs. 185 curadas (10,8%), das quais só 59 verificadas (3,4%). Isso é trabalho editorial de curadoria contínuo — ver `scripts/pending-polls.ts` pra fila priorizada (tier 1 presidencial, tier 2 governador estado-chave, tier 3 demais), curar via `scripts/ingest-manual.ts`.
+
+O prompt original fica abaixo como registro do raciocínio (a restrição sobre Wikipedia, em particular, segue valendo pra qualquer curadoria futura — só que agora é regra de produto confirmada, não mais uma checagem a fazer).
+
+---
 
 **Contexto:** campanha eleitoral 2026 abriu oficialmente em 17/08/2026. 1º turno em 04/10/2026 (~7 semanas). A partir de agora o volume de pesquisas registradas no TSE tende a crescer rápido — vale medir o gap de cobertura agora, antes que fique maior.
 

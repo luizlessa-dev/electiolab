@@ -4,6 +4,8 @@
 
 Este documento substitui os relatórios soltos de `docs/archive/SEO-AUDIT*.md` como referência viva. Cobre 3 frentes — produto/código/dados, SEO técnico+conteúdo, GEO — sintetizadas num plano único, porque os achados das três se sobrepõem na causa raiz mais vezes do que se esperaria.
 
+**Atualização 2026-08-17:** C1, C2 e C6 (os 3 achados críticos mais mecânicos — dado fake em produção, sitemap, llms.txt) já foram resolvidos, ver os próprios achados abaixo pra detalhe de commit/PR. Os scores da seção 1 são o snapshot original de 13/08 e ainda não foram recalculados — a nota real hoje é mais alta que a tabela mostra, principalmente em SEO técnico (C2 era o maior peso negativo ali) e GEO (C6). C3, C4 e C5 continuam abertos como estavam.
+
 ---
 
 ## 1. Health score
@@ -35,11 +37,12 @@ Ordenados por urgência real, não por frente de origem — vários se combinam.
   - Achado adicional durante a investigação, fora do escopo original de C1: o pipeline diário de PesqEle (`​.github/workflows/ingest-pesqele.yml`) estava rodando `scripts/auto-ingest-wikipedia.ts --apply` de verdade todo dia, pra governador e senador — apesar do roadmap documentar essa fonte como removida numa fase anterior. Desligado (steps removidos do workflow) — ver `docs/prompt-verificacao-cobertura-pesqele-tse.md` pro contexto completo.
 - **Pendente, não resolvido nesta passada:** o gap de cobertura em si (1.717 pesquisas registradas no TSE pra 2026 vs. 237 curadas, das quais só 59 verificadas) continua — isso é trabalho editorial contínuo, não um bug de código. Ver prompt dedicado acima.
 
-### 🔴 C2 — Sitemap estruturalmente quebrado por dois bugs distintos, que se combinam para esconder ~99% do site de crawlers (Google e IA)
+### ✅ C2 — RESOLVIDO em 2026-08-17 — Sitemap estruturalmente quebrado por dois bugs distintos, que se combinam para esconder ~99% do site de crawlers (Google e IA)
 - **Bug 1 (paginação):** a query de candidatos em `src/app/sitemap.ts` não usa `.range()`/`.limit()` — bate no teto padrão de 1000 linhas do PostgREST. De 16.909 candidatos, só **895 (5,3%)** aparecem no sitemap. O mesmo padrão sem paginação existe em `partido/[slug]/page.tsx`.
 - **Bug 2 (array hardcoded incompleto):** dezenas de rotas estáticas nunca foram adicionadas manualmente ao array do `sitemap.ts` — confirmado ausentes: as 27 páginas de `/pesquisas-senador/{uf}`, as 27 de `/eleicoes/{uf}`, os 6 relatórios semanais, e ~10 páginas do cluster editorial (`metodologia`, `glossario-pesquisa-eleitoral`, `pesquisas-erraram-2022`, `por-que-institutos-dao-numeros-diferentes` etc — justamente o conteúdo mais citável para GEO).
 - **Agravante:** a paginação de `/candidatos` (única listagem completa) usa `<button onClick>` em vez de `<Link href="?page=N">` — Googlebot não segue clique JS, então nem por lá dá pra alcançar o resto. As 27 páginas estáticas de governador (maior prioridade do sitemap) também não linkam para nenhum candidato individual.
 - **Ação:** corrigir paginação da query (baixo esforço, horas) + adicionar as ~70+27 URLs faltantes ao array, idealmente gerando a lista programaticamente em vez de hardcode manual, ou migrando para `generateSitemaps()` (sitemap index) do Next.js dado o volume. Isso é, isoladamente, o item de maior impacto/esforço de toda a auditoria.
+- **✅ RESOLVIDO em 2026-08-17** (PR #58, `da24e3a`, merged `6497723`): sitemap paginado (895→16.448 candidatos) + `partido/[slug]` corrigido junto; as ~70+27 URLs faltantes (senador/eleição-UF/pesquisas-UF/drilldowns 2018-2022/cluster editorial/relatórios) agora geradas de `UFS` em vez de listadas à mão.
 
 ### 🔴 C3 — Cache ISR não está funcionando em `candidato/[slug]`, `instituto/[slug]`, `partido/[slug]` (todas as 3 famílias de rota dinâmica)
 - `curl` em produção mostra `cache-control: no-store`, `x-vercel-cache: MISS` em toda requisição repetida, apesar de `revalidate = 3600` estar no código. TTFB 6-10x mais lento que páginas estáticas (0,76-1,4s vs 0,12-0,15s). Causa raiz não fechada (pode ser client Supabase com `cookies()` forçando renderização dinâmica, ou configuração Fluid Compute/PPR da Vercel anulando o ISR) — precisa checar o dashboard da Vercel, não só o código.
@@ -55,10 +58,11 @@ Ordenados por urgência real, não por frente de origem — vários se combinam.
 - `candidate-schema.tsx` usa `AggregateRating` pra representar % de intenção de voto — exatamente o erro que o próprio time já identificou e evitou em `instituto/[slug]/page.tsx`, com comentário no código explicando por que isso é "spammy markup" segundo as diretrizes do Google. A correção não se propagou para o arquivo irmão.
 - **Ação:** ambos são fixes de baixo esforço (30min-1h cada) — remover o `Person` duplicado, trocar `AggregateRating` por `additionalProperty`/`PropertyValue` no mesmo padrão já usado em `instituto/[slug]`.
 
-### 🔴 C6 — `llms.txt`/`llms-full.txt` desatualizados com erro factual sobre quem está na disputa presidencial
+### ✅ C6 — RESOLVIDO em 2026-08-17 — `llms.txt`/`llms-full.txt` desatualizados com erro factual sobre quem está na disputa presidencial
 - Datados de 01/06/2026, listam Jair Bolsonaro como candidato monitorado — mas o candidato ativo do PL hoje é **Flávio Bolsonaro**, conforme a própria página `/pesquisas-presidenciais-2026` e conforme confirmado por busca externa nesta auditoria. Ciro Gomes e Ratinho Jr, citados no arquivo, não aparecem no top 10 real.
 - **Por que isso pesa mais do que parece:** `llms.txt` é o arquivo desenhado especificamente para ser lido por LLMs como fonte de verdade. Um erro factual ali é o tipo de sinal que reduz a confiança de um modelo em citar a fonte — o oposto do que se quer numa janela de 7 semanas pré-eleição.
 - **Ação:** atualizar os dois arquivos agora (1-2h) e, se possível, automatizar a seção de "candidatos monitorados"/estatísticas a partir do banco em vez de escrita manual, pra não repetir.
+- **✅ RESOLVIDO em 2026-08-17** (PR #58, `da24e3a`, merged `6497723`): `public/llms.txt` saiu do ar e virou `src/app/llms.txt/route.ts`, gerado do banco com `revalidate` de 6h — candidatos monitorados e estatísticas passam a refletir o dado real, não texto escrito à mão. Também corrige duas promessas falsas que o arquivo fazia (cadência semanal de relatórios, pesquisas ingeridas em até 24h). `llms-full.txt` ajustado nas seções que dependiam do mesmo dado.
 
 ---
 
