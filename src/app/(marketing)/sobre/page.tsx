@@ -340,7 +340,7 @@ export default async function SobrePage() {
               },
               {
                 q: "Com que frequência os dados são atualizados?",
-                a: "Semanalmente, à medida que novos polls são publicados pelos institutos. Cada nova pesquisa entra no agregado automaticamente, atualizando a média ponderada de todos os candidatos.",
+                a: "Não numa cadência fixa: o registro de pesquisas no TSE (PesqEle) é sincronizado todo dia, e cada resultado é curado e conferido contra fonte primária antes de entrar na média ponderada — o ritmo acompanha o volume real de pesquisas publicadas pelos institutos, que sobe perto da eleição.",
               },
             ].map((item) => (
               <details key={item.q} className="border border-border rounded-sm bg-card group">

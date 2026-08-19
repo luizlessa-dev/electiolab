@@ -203,9 +203,9 @@ export default function ImprensaPage() {
                  className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-border rounded-sm text-xs font-mono text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors">
                 <ExternalLink className="h-3 w-3" /> JSON
               </a>
-              <Link href="/relatorio/semana-17-2026"
+              <Link href="/relatorio/semana-22-2026"
                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 border border-primary/20 rounded-sm text-xs font-mono text-primary hover:bg-primary/20 transition-colors">
-                <TrendingUp className="h-3 w-3" /> Relatório semanal
+                <TrendingUp className="h-3 w-3" /> Relatórios
               </Link>
             </div>
           </div>

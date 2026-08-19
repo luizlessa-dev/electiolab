@@ -8,21 +8,19 @@ interface CandidateSchemaProps {
 }
 
 export function CandidateSchema({ candidate, latestPollPercentage }: CandidateSchemaProps) {
+  // O nó Person já existe no <script> de page.tsx (mesmo @id) — não duplicar
+  // aqui com dado pior (jobTitle hardcoded em inglês, sem description/url).
+  // @id cruzando os dois <script type="application/ld+json"> da mesma página
+  // resolve normalmente (mesmo padrão usado em instituto/[slug] pra @id
+  // cross-page, ex.: author referenciando /sobre#founder).
+  //
+  // % de pesquisa vai como additionalProperty/PropertyValue, não
+  // AggregateRating: não é avaliação de usuário, e rating auto-atribuído
+  // viola as diretrizes de structured data do Google (mesmo motivo já
+  // documentado em instituto/[slug]/page.tsx).
   const schema = {
     "@context": "https://schema.org",
     "@graph": [
-      {
-        "@type": "Person",
-        "@id": `https://electiolab.com/candidato/${candidate.slug}#person`,
-        name: candidate.name,
-        image: candidate.photo_url || undefined,
-        birthDate: candidate.birth_date || undefined,
-        jobTitle: "Political Candidate",
-        affiliation: {
-          "@type": "Organization",
-          name: candidate.party || undefined,
-        },
-      },
       {
         "@type": "CreativeWork",
         "@id": `https://electiolab.com/candidato/${candidate.slug}#creative`,
@@ -32,13 +30,14 @@ export function CandidateSchema({ candidate, latestPollPercentage }: CandidateSc
           "@type": "Person",
           "@id": `https://electiolab.com/candidato/${candidate.slug}#person`,
         },
-        ...(latestPollPercentage && {
-          aggregateRating: {
-            "@type": "AggregateRating",
-            ratingValue: latestPollPercentage.toFixed(1),
-            bestRating: 100,
-            worstRating: 0,
-            ratingCount: 1,
+        ...(latestPollPercentage != null && {
+          additionalProperty: {
+            "@type": "PropertyValue",
+            name: "Intenção de voto — pesquisa mais recente",
+            value: latestPollPercentage,
+            unitText: "PERCENT",
+            minValue: 0,
+            maxValue: 100,
           },
         }),
       },
