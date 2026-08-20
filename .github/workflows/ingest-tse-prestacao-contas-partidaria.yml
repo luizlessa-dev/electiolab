@@ -1,0 +1,111 @@
+name: Ingest TSE Prestação de Contas Partidária 2026 (daily)
+
+# Prestação de contas PARTIDÁRIA (receita/despesa anual dos partidos) —
+# distinto do cron de prestação de contas de CANDIDATOS
+# (ingest-tse-prestacao-contas.yml). Dataset já publicado desde 15/08/2026
+# quando este cron foi criado (achado em 2026-08-19/20: TSE não bloqueia,
+# só faltava o ingestor). Diário porque partidos retificam/atualizam ao
+# longo do ano.
+#
+# Check de disponibilidade via fetch() do Node (GET), não curl -sI (HEAD) —
+# ver comentário em ingest-tse-prestacao-contas.yml pro achado de que o
+# WAF do TSE bloqueia especificamente curl/HEAD de forma intermitente,
+# mesmo quando o arquivo existe e fetch() GET funciona.
+
+on:
+  schedule:
+    - cron: "30 13 * * *" # diário 13:30 UTC (10:30 BRT) — depois do ingest-tse-redes-sociais (10:00 BRT)
+  workflow_dispatch:
+    inputs:
+      year:
+        description: "Ano da eleição (default 2026)"
+        required: false
+        default: "2026"
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Checar se o TSE já publicou o dataset do ano
+        id: check
+        run: |
+          YEAR="${{ inputs.year || '2026' }}"
+          URL="https://cdn.tse.jus.br/estatistica/sead/odsele/prestacao_contas_anual_partidaria/prestacao_contas_anual_partidaria_${YEAR}.zip"
+          STATUS=$(node -e "
+            fetch(process.argv[1])
+              .then(r => { console.log(r.status); r.body?.cancel(); })
+              .catch(() => console.log('000'));
+          " "$URL")
+          echo "status=$STATUS" >> "$GITHUB_OUTPUT"
+          if [ "$STATUS" != "200" ]; then
+            echo "⏭️  Dataset $YEAR ainda não publicado (HTTP $STATUS) — pulando execução, sem falha."
+          fi
+
+      - name: Ingest prestação de contas partidária TSE (receitas + despesas)
+        if: steps.check.outputs.status == '200'
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          YEAR_ARG="--year=${{ inputs.year || '2026' }}"
+          npx tsx scripts/ingest-tse-prestacao-contas-partidaria.ts --apply $YEAR_ARG
+
+      - name: Open issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const today = new Date().toISOString().slice(0, 10);
+            const title = `🚨 Cron TSE Prestação de Contas Partidária falhou — ${today}`;
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              labels: "cron-failure",
+              per_page: 50,
+            });
+            const existing = issues.find((i) => i.title.includes("Cron TSE Prestação de Contas Partidária falhou"));
+            const body = [
+              `Workflow **Ingest TSE Prestação de Contas Partidária 2026 (daily)** falhou.`,
+              ``,
+              `**Run:** ${runUrl}`,
+              `**Quando:** ${new Date().toISOString()}`,
+              `**Disparo:** ${context.eventName}`,
+              ``,
+              `Rodar manual:`,
+              `\`\`\`bash`,
+              `gh workflow run ingest-tse-prestacao-contas-partidaria.yml`,
+              `\`\`\``,
+            ].join("\n");
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body: `Nova falha — ${runUrl}`,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ["cron-failure", "automated"],
+              });
+            }
