@@ -1,35 +1,46 @@
 #!/usr/bin/env npx tsx
 /**
  * Ingest planos de governo — baixa o PDF de "Proposta de Governo" de cada
- * presidenciável 2026, calcula hash SHA-256, salva em disco e registra em
- * `plano_governo`. Idempotente: se o hash bater com o que já está gravado
- * pro candidato, pula o download/gravação.
+ * candidato (PRESIDENTE ou GOVERNADOR) 2026, calcula hash SHA-256, salva em
+ * disco e registra em `plano_governo`. Idempotente: se o hash bater com o
+ * que já está gravado pro candidato, pula o download/gravação.
  *
- * Só cobre PRESIDENTE — planos de governo de GOVERNADOR ficam pra depois se
- * a feature expandir (arquivo por UF, não nacional).
+ * Estendido em 2026-08-22 pra cobrir GOVERNADOR (26 estados + DF), além de
+ * PRESIDENTE (etapa 1 original). `plano_governo` não precisou de coluna nova
+ * — cargo e UF já são rastreáveis via candidato_id → candidates.election_id
+ * → elections(type, state). A diferença real entre os dois cargos é onde
+ * cada um vive nos arquivos do TSE: PRESIDENTE só existe no recurso nacional
+ * (_BRASIL.csv / ZIP de proposta "BR"); GOVERNADOR vive nos arquivos por UF
+ * (_<UF>.csv / ZIP de proposta por UF) — por isso GOVERNADOR exige --uf.
  *
  * Fonte: dataset "Candidatos - 2026" do Portal de Dados Abertos do TSE
  * (dadosabertos.tse.jus.br). Dois arquivos:
  *   1. consulta_cand_2026.zip — mesma fonte que scripts/ingest-tse-candidaturas.ts
- *      usa, aqui só pra filtrar PRESIDENTE e pegar SQ_CANDIDATO. Não filtra por
- *      DS_SITUACAO_CANDIDATURA = "APTO" — esse valor é de contagem/apuração, não
- *      de registro deferido; o dry-run mostra a distribuição real de situações
- *      encontrada pra decidir o filtro certo antes de qualquer --apply.
+ *      usa, aqui só pra filtrar por cargo (DS_CARGO) e pegar SQ_CANDIDATO. Não
+ *      filtra por DS_SITUACAO_CANDIDATURA = "APTO" — esse valor é de
+ *      contagem/apuração, não de registro deferido; o dry-run mostra a
+ *      distribuição real de situações encontrada pra decidir o filtro certo
+ *      antes de qualquer --apply.
  *   2. proposta_governo_2026_<UF>.zip — um PDF por candidato. Presidente só
  *      existe no recurso nacional (mesmo padrão do consulta_cand, onde
  *      PRESIDENTE só aparece em _BRASIL.csv) — mas não consegui confirmar de
  *      antemão se o TSE nomeia esse recurso "BR" ou "BRASIL" (o ambiente que
  *      escreveu este script não tem acesso de rede ao TSE). O script tenta os
- *      dois nomes em sequência e loga qual funcionou.
+ *      dois nomes em sequência e loga qual funcionou. Confirmado em produção:
+ *      é "BR". Governador usa a UF diretamente (proposta_governo_2026_MG.zip
+ *      etc.), sem essa ambiguidade.
  *
  * A convenção de nome do PDF dentro do ZIP também não pôde ser confirmada
  * antes de rodar — o script lista todas as entradas do ZIP e tenta casar por
  * SQ_CANDIDATO no nome do arquivo. Se não achar, avisa e NÃO adivinha.
  *
  * Uso:
- *   npx tsx scripts/ingest-planos-governo.ts             # dry-run: mostra candidatos + URLs, não baixa PDF nem grava
- *   npx tsx scripts/ingest-planos-governo.ts --apply      # baixa, salva em data/planos/, grava no banco
- *   npx tsx scripts/ingest-planos-governo.ts --year=2026  # default 2026
+ *   npx tsx scripts/ingest-planos-governo.ts                              # dry-run PRESIDENTE
+ *   npx tsx scripts/ingest-planos-governo.ts --apply                      # PRESIDENTE: baixa, salva em data/planos/, grava no banco
+ *   npx tsx scripts/ingest-planos-governo.ts --cargo=governador --uf=MG   # dry-run GOVERNADOR de uma UF
+ *   npx tsx scripts/ingest-planos-governo.ts --cargo=governador --uf=ALL  # dry-run GOVERNADOR nas 27 UFs, uma por vez
+ *   npx tsx scripts/ingest-planos-governo.ts --cargo=governador --uf=MG --apply
+ *   npx tsx scripts/ingest-planos-governo.ts --year=2026                  # default 2026
  *
  * Dependências: adm-zip, iconv-lite, pdf-lib (já instaladas)
  */
@@ -70,6 +81,17 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 const APPLY = process.argv.includes("--apply");
 const YEAR = parseInt(process.argv.find((a) => a.startsWith("--year="))?.split("=")[1] ?? "2026");
+const CARGO = (process.argv.find((a) => a.startsWith("--cargo="))?.split("=")[1] ?? "presidente").toLowerCase();
+const UF_ARG = process.argv.find((a) => a.startsWith("--uf="))?.split("=")[1]?.toUpperCase();
+
+if (CARGO !== "presidente" && CARGO !== "governador") {
+  console.error(`❌ --cargo inválido: "${CARGO}". Use "presidente" ou "governador".`);
+  process.exit(1);
+}
+if (CARGO === "governador" && !UF_ARG) {
+  console.error(`❌ --cargo=governador exige --uf=<UF> (ex.: --uf=MG) ou --uf=ALL pra rodar as 27.`);
+  process.exit(1);
+}
 
 // ─────────────────────────────────────────────────────────────────
 // Config
@@ -80,6 +102,11 @@ const TSE_PROPOSTA_ZIP_URL = (ano: number, uf: string) =>
   `https://cdn.tse.jus.br/estatistica/sead/odsele/proposta_governo/proposta_governo_${ano}_${uf}.zip`;
 // Nomes candidatos pro recurso nacional — não confirmado, ver comentário no topo.
 const PROPOSTA_NACIONAL_UF_CANDIDATES = ["BR", "BRASIL"];
+// 26 estados + DF — usado só quando --cargo=governador --uf=ALL.
+const ALL_UFS = [
+  "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT",
+  "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO",
+];
 
 const CACHE_DIR = path.join(os.tmpdir(), "tse-cache");
 const OUT_DIR = path.join(process.cwd(), "data", "planos", String(YEAR));
@@ -125,11 +152,11 @@ async function tryDownloadCached(
 }
 
 // ─────────────────────────────────────────────────────────────────
-// Candidaturas — PRESIDENTE / situação APTO, a partir do consulta_cand oficial
+// Candidaturas — PRESIDENTE ou GOVERNADOR, a partir do consulta_cand oficial
 // (não da tabela `candidates`, que mistura shortlist editorial com dados TSE
 // reais e tem linhas duplicadas/inconsistentes entre 1º/2º turno).
 // ─────────────────────────────────────────────────────────────────
-type PresidencialRow = {
+type CandidaturaRow = {
   sq_candidato: string;
   nome: string;
   nome_urna: string;
@@ -138,7 +165,7 @@ type PresidencialRow = {
   situacao: string | null;
 };
 
-function parsePresidenteCsv(buf: Buffer): PresidencialRow[] {
+function parseCandidaturaCsv(buf: Buffer, dsCargo: string): CandidaturaRow[] {
   const text = iconv.decode(buf, "latin1");
   const lines = text.split(/\r?\n/);
   if (lines.length < 2) return [];
@@ -153,11 +180,11 @@ function parsePresidenteCsv(buf: Buffer): PresidencialRow[] {
   const iPart = idx("SG_PARTIDO");
   const iSit = idx("DS_SITUACAO_CANDIDATURA");
 
-  const rows: PresidencialRow[] = [];
+  const rows: CandidaturaRow[] = [];
   for (let i = 1; i < lines.length; i++) {
     const cols = lines[i].split(";");
     if (cols.length < header.length) continue;
-    if (clean(cols[iCargo]) !== "PRESIDENTE") continue;
+    if (clean(cols[iCargo]) !== dsCargo) continue;
     const sq = clean(cols[iSq]);
     const nome = clean(cols[iNome]);
     if (!sq || !nome) continue;
@@ -174,37 +201,45 @@ function parsePresidenteCsv(buf: Buffer): PresidencialRow[] {
   return rows;
 }
 
-async function loadPresidenciaveis(ano: number): Promise<PresidencialRow[]> {
+// cargo: "presidente" (só existe em _BRASIL.csv, recurso nacional) ou
+// "governador" (vive nos CSVs por UF, ex.: consulta_cand_2026_MG.csv).
+async function loadCandidaturas(ano: number, cargo: string, uf?: string): Promise<CandidaturaRow[]> {
   const buf = await downloadCached(TSE_CAND_ZIP_URL(ano), `consulta_cand_${ano}.zip`);
   const zip = new AdmZip(buf);
+  const dsCargo = cargo.toUpperCase();
+  const entryPattern = cargo === "presidente" ? /_brasil\.csv$/i : new RegExp(`_${uf}\\.csv$`, "i");
   for (const entry of zip.getEntries()) {
-    if (!/_brasil\.csv$/i.test(entry.entryName)) continue; // PRESIDENTE só existe aqui
+    if (!entryPattern.test(entry.entryName)) continue;
     console.log(`  📄 ${entry.entryName}`);
-    return parsePresidenteCsv(entry.getData());
+    return parseCandidaturaCsv(entry.getData(), dsCargo);
   }
-  throw new Error("Não achei *_BRASIL.csv dentro de consulta_cand — formato do ZIP mudou?");
+  const esperado = cargo === "presidente" ? "*_BRASIL.csv" : `*_${uf}.csv`;
+  throw new Error(`Não achei ${esperado} dentro de consulta_cand — formato do ZIP mudou ou UF inválida?`);
 }
 
 // ─────────────────────────────────────────────────────────────────
 // Match contra `candidates` já populada (por scripts/ingest-tse-candidaturas.ts).
 // Este script NÃO cria candidato novo — só liga plano_governo a quem já existe.
 // ─────────────────────────────────────────────────────────────────
-async function loadCandidatoIdByTseId(ano: number): Promise<Map<string, string>> {
-  const { data: elections, error: eErr } = await supabase
-    .from("elections")
-    .select("id, name")
-    .eq("year", ano)
-    .eq("type", "presidente");
+async function loadCandidatoIdByTseId(ano: number, cargo: string, uf?: string): Promise<Map<string, string>> {
+  let query = supabase.from("elections").select("id, name").eq("year", ano).eq("type", cargo);
+  if (uf) query = query.eq("state", uf);
+  const { data: elections, error: eErr } = await query;
   if (eErr) throw eErr;
-  if (!elections || elections.length === 0) throw new Error(`Não achei eleição 'presidente' pra ${ano}`);
+  if (!elections || elections.length === 0) {
+    throw new Error(`Não achei eleição '${cargo}' pra ${ano}${uf ? ` (${uf})` : ""}`);
+  }
 
-  // Busca em TODAS as linhas de eleição presidencial (1º e 2º turno), não só
-  // 1º turno: achado em produção (2026-08-22) — o tse_id de alguns candidatos
-  // (ex. Lula, Zema) está desatualizado na linha de 1º turno e só está correto
-  // na linha duplicada de 2º turno (efeito colateral de re-execuções passadas
-  // de ingest-tse-candidaturas.ts com CSVs de datas diferentes). Como o plano
-  // de governo é um dado do candidato, não da corrida, casar por tse_id em
-  // qualquer linha resolve sem precisar mexer em `candidates`.
+  // Busca em TODAS as linhas de eleição (1º e 2º turno), não só 1º turno:
+  // achado em produção (2026-08-22, presidencial) — o tse_id de alguns
+  // candidatos (ex. Lula, Zema) está desatualizado na linha de 1º turno e só
+  // está correto na linha duplicada de 2º turno (efeito colateral de
+  // re-execuções passadas de ingest-tse-candidaturas.ts com CSVs de datas
+  // diferentes). Como o plano de governo é um dado do candidato, não da
+  // corrida, casar por tse_id em qualquer linha resolve sem precisar mexer em
+  // `candidates`. Governador 2026 só tem round=1 cadastrado até agora, então
+  // isso é no-op ali, mas mantém o mesmo comportamento se/quando 2º turno for
+  // adicionado.
   const { data: candidatos, error: cErr } = await supabase
     .from("candidates")
     .select("id, tse_id")
@@ -234,41 +269,53 @@ function findPdfEntry(zip: AdmZip, sqCandidato: string) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// Run
+// Run — uma passada completa pra um (cargo, uf). uf é undefined pra
+// presidente (nacional); obrigatório pra governador.
 // ─────────────────────────────────────────────────────────────────
-async function main() {
-  console.log(`▶️  Planos de governo ${YEAR} — modo: ${APPLY ? "APPLY (baixa e grava)" : "DRY RUN (só lista)"}`);
+async function processCargoUf(cargo: string, uf?: string) {
+  const label = uf ? `${cargo.toUpperCase()} (${uf})` : cargo.toUpperCase();
+  console.log(`\n▶️  ${label} ${YEAR} — modo: ${APPLY ? "APPLY (baixa e grava)" : "DRY RUN (só lista)"}`);
 
-  const [presidenciaveis, candidatoIdByTseId] = await Promise.all([
-    loadPresidenciaveis(YEAR),
-    loadCandidatoIdByTseId(YEAR),
+  const [candidaturas, candidatoIdByTseId] = await Promise.all([
+    loadCandidaturas(YEAR, cargo, uf),
+    loadCandidatoIdByTseId(YEAR, cargo, uf),
   ]);
 
   const porSituacao = new Map<string, number>();
-  for (const p of presidenciaveis) {
+  for (const p of candidaturas) {
     const k = p.situacao ?? "(vazio)";
     porSituacao.set(k, (porSituacao.get(k) ?? 0) + 1);
   }
-  console.log(`\n👥 PRESIDENTE no consulta_cand ${YEAR}: ${presidenciaveis.length} linhas. Distribuição por DS_SITUACAO_CANDIDATURA:`);
+  console.log(`\n👥 ${label} no consulta_cand ${YEAR}: ${candidaturas.length} linhas. Distribuição por DS_SITUACAO_CANDIDATURA:`);
   for (const [sit, n] of [...porSituacao.entries()].sort((a, b) => b[1] - a[1])) {
     console.log(`   ${sit}: ${n}`);
   }
 
-  const proposta = await tryDownloadCached(
-    PROPOSTA_NACIONAL_UF_CANDIDATES.map((uf) => ({
-      url: TSE_PROPOSTA_ZIP_URL(YEAR, uf),
-      cacheName: `proposta_governo_${YEAR}_${uf}.zip`,
-    }))
-  );
+  // Presidente: recurso nacional, nome "BR" ou "BRASIL" (ver comentário no
+  // topo do arquivo). Governador: ZIP de proposta é direto por UF, sem essa
+  // ambiguidade.
+  const propostaTargets =
+    cargo === "presidente"
+      ? PROPOSTA_NACIONAL_UF_CANDIDATES.map((u) => ({
+          url: TSE_PROPOSTA_ZIP_URL(YEAR, u),
+          cacheName: `proposta_governo_${YEAR}_${u}.zip`,
+        }))
+      : [{ url: TSE_PROPOSTA_ZIP_URL(YEAR, uf!), cacheName: `proposta_governo_${YEAR}_${uf}.zip` }];
+
+  const proposta = await tryDownloadCached(propostaTargets);
 
   if (!proposta) {
     console.error(
-      `\n❌ Não consegui baixar o ZIP de proposta de governo nacional (tentei: ${PROPOSTA_NACIONAL_UF_CANDIDATES.join(", ")}).`
+      `\n❌ Não consegui baixar o ZIP de proposta de governo de ${label} (tentei: ${propostaTargets
+        .map((t) => t.url)
+        .join(", ")}).`
     );
-    console.error(
-      `   Confirme o nome certo do recurso em https://dadosabertos.tse.jus.br/dataset/candidatos-${YEAR} e ajuste PROPOSTA_NACIONAL_UF_CANDIDATES neste script.`
-    );
-    process.exit(1);
+    if (cargo === "presidente") {
+      console.error(
+        `   Confirme o nome certo do recurso em https://dadosabertos.tse.jus.br/dataset/candidatos-${YEAR} e ajuste PROPOSTA_NACIONAL_UF_CANDIDATES neste script.`
+      );
+    }
+    return;
   }
   console.log(`\n✅ ZIP de proposta de governo: ${proposta.url}`);
 
@@ -280,10 +327,10 @@ async function main() {
   // candidatura registrada com plano de governo — sinal mais direto que
   // DS_SITUACAO_CANDIDATURA (que aqui reflete estado de apuração, não de
   // deferimento do registro).
-  console.log(`\n📋 Todos os PRESIDENTE encontrados (situação real do TSE, sem filtro):`);
+  console.log(`\n📋 Todos os ${cargo.toUpperCase()} encontrados (situação real do TSE, sem filtro):`);
   type Plan = { sq: string; nome: string; candidatoId: string; entryName: string };
   const plans: Plan[] = [];
-  for (const p of presidenciaveis) {
+  for (const p of candidaturas) {
     const candidatoId = candidatoIdByTseId.get(p.sq_candidato);
     const entry = findPdfEntry(zip, p.sq_candidato);
     const temPdf = entry ? "📄 tem PDF" : "— sem PDF";
@@ -296,10 +343,10 @@ async function main() {
   }
 
   const pdfsSemMatch = pdfEntries.filter(
-    (e) => !presidenciaveis.some((p) => e.entryName.includes(p.sq_candidato))
+    (e) => !candidaturas.some((p) => e.entryName.includes(p.sq_candidato))
   );
   if (pdfsSemMatch.length > 0) {
-    console.log(`\n⚠️  ${pdfsSemMatch.length} PDF(s) no ZIP sem candidato PRESIDENTE correspondente no consulta_cand:`);
+    console.log(`\n⚠️  ${pdfsSemMatch.length} PDF(s) no ZIP sem candidato ${cargo.toUpperCase()} correspondente no consulta_cand:`);
     for (const e of pdfsSemMatch) console.log(`   ${e.entryName}`);
   }
 
@@ -359,6 +406,17 @@ async function main() {
       console.log(`   ✅ ${plan.nome}: ${numPaginas ?? "?"} páginas, salvo em ${filePath}`);
     }
   }
+}
+
+async function main() {
+  if (CARGO === "governador" && UF_ARG === "ALL") {
+    console.log(`▶️  GOVERNADOR ${YEAR} — rodando as ${ALL_UFS.length} UFs em sequência (${APPLY ? "APPLY" : "DRY RUN"})`);
+    for (const uf of ALL_UFS) {
+      await processCargoUf("governador", uf);
+    }
+    return;
+  }
+  await processCargoUf(CARGO, CARGO === "governador" ? UF_ARG : undefined);
 }
 
 main().catch((e) => {
