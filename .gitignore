@@ -49,3 +49,6 @@ tmp/
 
 # Backups de purga de dados (snapshot de linhas apagadas)
 backups/
+
+# PDFs baixados de planos de governo (hash + metadados já ficam em `plano_governo`)
+data/planos/
