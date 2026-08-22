@@ -413,14 +413,26 @@ async function main() {
 
   console.log(`🗳️  Eleições ${YEAR} carregadas: ${electionsMap.size} (esperado: 27 gov + 27 sen + 1 presidente = 55)`);
 
-  const { data: existing, error } = await supabase
-    .from("candidates")
-    .select(
-      "id, tse_id, cpf, name, full_name, birth_date, profession, education, net_worth, photo_url, election_id, slug"
-    );
-  if (error) throw error;
+  // Paginado: select() sem .range() corta em 1000 linhas (default do
+  // PostgREST/Supabase) — com 16.900+ candidatos já cadastrados, um select
+  // sem paginação faz o script "esquecer" a maior parte da base e tratar
+  // candidatos existentes como novos (achado em 2026-08-22, quase duplicou a
+  // base inteira num --apply).
+  const PAGE_SIZE = 1000;
+  const existing: Record<string, unknown>[] = [];
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const { data: page, error } = await supabase
+      .from("candidates")
+      .select(
+        "id, tse_id, cpf, name, full_name, birth_date, profession, education, net_worth, photo_url, election_id, slug"
+      )
+      .range(from, from + PAGE_SIZE - 1);
+    if (error) throw error;
+    existing.push(...(page ?? []));
+    if (!page || page.length < PAGE_SIZE) break;
+  }
 
-  console.log(`👥 Candidatos já cadastrados: ${(existing ?? []).length}`);
+  console.log(`👥 Candidatos já cadastrados: ${existing.length}`);
 
   const byTseId = new Map<string, Record<string, unknown>>();
   const byCpf = new Map<string, Record<string, unknown>>();
