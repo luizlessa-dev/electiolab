@@ -211,8 +211,23 @@ async function main() {
   }
 
   if (!FORCE) {
-    const { data: jaExtraidos } = await supabase.from("plano_pagina").select("plano_id");
-    const extraidoSet = new Set((jaExtraidos ?? []).map((r) => r.plano_id as string));
+    // Paginado: select() sem .range() corta em 1000 linhas (default do
+    // PostgREST/Supabase) — `plano_pagina` já passou de 1.605 linhas. Mesma
+    // classe de bug achada em ingest-tse-candidaturas.ts e
+    // classify-planos-trechos.ts (2026-08-22/23); aqui não chegou a duplicar
+    // porque o upsert() abaixo já é por (plano_id, numero), mas reprocessaria
+    // OCR à toa em planos já feitos.
+    const PAGE_SIZE = 1000;
+    const extraidoSet = new Set<string>();
+    for (let from = 0; ; from += PAGE_SIZE) {
+      const { data: page, error: pageErr } = await supabase
+        .from("plano_pagina")
+        .select("plano_id")
+        .range(from, from + PAGE_SIZE - 1);
+      if (pageErr) throw pageErr;
+      for (const r of page ?? []) extraidoSet.add(r.plano_id as string);
+      if (!page || page.length < PAGE_SIZE) break;
+    }
     const antes = alvo.length;
     alvo = alvo.filter((p) => !extraidoSet.has(p.id));
     if (antes !== alvo.length) {

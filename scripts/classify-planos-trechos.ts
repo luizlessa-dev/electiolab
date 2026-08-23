@@ -273,8 +273,23 @@ async function main() {
   }
 
   if (!FORCE) {
-    const { data: jaClassificados } = await supabase.from("plano_trecho").select("plano_id");
-    const feitoSet = new Set((jaClassificados ?? []).map((r) => r.plano_id as string));
+    // Paginado: select() sem .range() corta em 1000 linhas (default do
+    // PostgREST/Supabase) — mesmo bug já achado e corrigido em
+    // ingest-tse-candidaturas.ts (2026-08-22), reintroduzido aqui por
+    // esquecimento e que causou reprocessamento + duplicata real em produção
+    // (2026-08-23: Renan/Rui Costa Pimenta/Clariana Barão duplicados e
+    // limpos manualmente antes deste fix).
+    const PAGE_SIZE = 1000;
+    const feitoSet = new Set<string>();
+    for (let from = 0; ; from += PAGE_SIZE) {
+      const { data: page, error: pageErr } = await supabase
+        .from("plano_trecho")
+        .select("plano_id")
+        .range(from, from + PAGE_SIZE - 1);
+      if (pageErr) throw pageErr;
+      for (const r of page ?? []) feitoSet.add(r.plano_id as string);
+      if (!page || page.length < PAGE_SIZE) break;
+    }
     const antes = alvo.length;
     alvo = alvo.filter((p) => !feitoSet.has(p.id));
     if (antes !== alvo.length) {
