@@ -2059,6 +2059,7 @@ export type Database = {
           hash: string
           id: string
           num_paginas: number | null
+          pdf_url_publico: string | null
           url_origem: string
         }
         Insert: {
@@ -2069,6 +2070,7 @@ export type Database = {
           hash: string
           id?: string
           num_paginas?: number | null
+          pdf_url_publico?: string | null
           url_origem: string
         }
         Update: {
@@ -2079,6 +2081,7 @@ export type Database = {
           hash?: string
           id?: string
           num_paginas?: number | null
+          pdf_url_publico?: string | null
           url_origem?: string
         }
         Relationships: [
