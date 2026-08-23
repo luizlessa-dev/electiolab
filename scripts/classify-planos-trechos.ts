@@ -47,6 +47,13 @@ import { createClient } from "@supabase/supabase-js";
 import Anthropic from "@anthropic-ai/sdk";
 import * as fs from "fs";
 import * as path from "path";
+import {
+  extractKeywords,
+  splitParagraphs,
+  algumMatcherBate,
+  normalize,
+  type KeywordMatcher,
+} from "../src/lib/planos-governo/classificacao";
 
 // ─────────────────────────────────────────────────────────────────
 // Env loader (igual aos outros scripts/ingest-tse-*.ts)
@@ -100,62 +107,9 @@ const PRECO_OUTPUT_POR_TOKEN = 5.0 / 1_000_000;
 let gastoAcumuladoUsd = 0;
 let orcamentoEstourado = false;
 
-// ─────────────────────────────────────────────────────────────────
-// Helpers
-// ─────────────────────────────────────────────────────────────────
-function normalize(s: string): string {
-  return s
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase();
-}
-
-type KeywordMatcher = { regex: RegExp; caseSensitive: boolean; label: string };
-
-function escapeRegExp(s: string): string {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-// Extrai os termos da cláusula "Entra: ...." de descricao_escopo — ignora
-// "Não entra" de propósito (são exemplos negativos, dariam falso-positivo).
-//
-// Achado em produção (2026-08-22): match por substring cru (`includes`) fazia
-// a keyword de 2 letras "ia" (de "IA", tema tecnologia) bater em qualquer
-// palavra terminada em "-ia" — "economia", "democracia", "estratégia" — e
-// isso inflou falso-positivo (368 trechos em tecnologia, quase 25% do total,
-// vários claramente errados, ex. financiamento de saúde classificado como
-// tecnologia). Fronteira de palavra (\b) resolve isso.
-//
-// Segundo achado, no mesmo dia: fronteira de palavra sozinha não resolve
-// sigla que colide com palavra comum — "SUAS" (Sistema Único de Assistência
-// Social) é também o pronome possessivo "suas" ("suas famílias"), então
-// qualquer keyword que no texto original está TODA em maiúscula (sigla —
-// IA, SUS, BPC, STF, INSS, SUAS, CRAS, BRICS) passa a exigir match sensível
-// a maiúscula/minúscula contra o parágrafo original (não o normalizado):
-// documento oficial escreve sigla em caixa alta, texto corrido normal não.
-function extractKeywords(descricaoEscopo: string): KeywordMatcher[] {
-  const m = descricaoEscopo.match(/Entra:\s*(.+?)\.\s*N[ãa]o entra:/i);
-  if (!m) return [];
-  return m[1]
-    .split(",")
-    .map((raw) => raw.trim())
-    .filter(Boolean)
-    .map((raw) => {
-      const isSigla = /^[A-ZÀ-Ý]+$/.test(raw);
-      const label = isSigla ? raw : normalize(raw);
-      return { regex: new RegExp(`\\b${escapeRegExp(label)}\\b`), caseSensitive: isSigla, label };
-    });
-}
-
-// Une quebra de linha dentro do parágrafo (artefato do wrap do PDF) num
-// texto corrido; \n\n continua separando parágrafo de parágrafo. Descarta
-// fragmento curto (número de página solto, cabeçalho) — não é "parágrafo".
-function splitParagraphs(texto: string): string[] {
-  return texto
-    .split(/\n\s*\n/)
-    .map((p) => p.replace(/\s*\n\s*/g, " ").trim())
-    .filter((p) => p.length > 30);
-}
+// ────────────────────────────────────────────────────────────────────
+// Helpers (lógica pura em src/lib/planos-governo/classificacao.ts)
+// ────────────────────────────────────────────────────────────────────
 
 type Tema = {
   id: string;
@@ -350,9 +304,7 @@ async function main() {
         if (orcamentoEstourado) break;
         paragrafosPlano++;
         const normParagrafo = normalize(paragrafo);
-        const candidatosTema = temas.filter((t) =>
-          t.matchers.some((m) => m.regex.test(m.caseSensitive ? paragrafo : normParagrafo))
-        );
+        const candidatosTema = temas.filter((t) => algumMatcherBate(t.matchers, paragrafo, normParagrafo));
         if (candidatosTema.length === 0) {
           puladosPlano++;
           continue;
