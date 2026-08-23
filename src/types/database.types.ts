@@ -394,6 +394,175 @@ export type Database = {
           },
         ]
       }
+      candidate_expense_contracted: {
+        Row: {
+          candidate_id: string | null
+          cargo: string | null
+          cpf: string | null
+          description: string | null
+          despesa_date: string | null
+          document_number: string | null
+          document_type: string | null
+          election_year: number
+          fetched_at: string | null
+          id: string
+          origem_despesa: string | null
+          party_acronym: string | null
+          raw: Json | null
+          source: string | null
+          sq_candidato: string | null
+          sq_despesa: string
+          sq_prestador_contas: string | null
+          supplier_city: string | null
+          supplier_cnae: string | null
+          supplier_cpf_cnpj: string | null
+          supplier_name: string | null
+          supplier_name_rfb: string | null
+          supplier_state: string | null
+          supplier_type: string | null
+          uf: string | null
+          value_brl: number | null
+        }
+        Insert: {
+          candidate_id?: string | null
+          cargo?: string | null
+          cpf?: string | null
+          description?: string | null
+          despesa_date?: string | null
+          document_number?: string | null
+          document_type?: string | null
+          election_year: number
+          fetched_at?: string | null
+          id?: string
+          origem_despesa?: string | null
+          party_acronym?: string | null
+          raw?: Json | null
+          source?: string | null
+          sq_candidato?: string | null
+          sq_despesa: string
+          sq_prestador_contas?: string | null
+          supplier_city?: string | null
+          supplier_cnae?: string | null
+          supplier_cpf_cnpj?: string | null
+          supplier_name?: string | null
+          supplier_name_rfb?: string | null
+          supplier_state?: string | null
+          supplier_type?: string | null
+          uf?: string | null
+          value_brl?: number | null
+        }
+        Update: {
+          candidate_id?: string | null
+          cargo?: string | null
+          cpf?: string | null
+          description?: string | null
+          despesa_date?: string | null
+          document_number?: string | null
+          document_type?: string | null
+          election_year?: number
+          fetched_at?: string | null
+          id?: string
+          origem_despesa?: string | null
+          party_acronym?: string | null
+          raw?: Json | null
+          source?: string | null
+          sq_candidato?: string | null
+          sq_despesa?: string
+          sq_prestador_contas?: string | null
+          supplier_city?: string | null
+          supplier_cnae?: string | null
+          supplier_cpf_cnpj?: string | null
+          supplier_name?: string | null
+          supplier_name_rfb?: string | null
+          supplier_state?: string | null
+          supplier_type?: string | null
+          uf?: string | null
+          value_brl?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_expense_contracted_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      candidate_expense_paid: {
+        Row: {
+          candidate_id: string | null
+          description: string | null
+          document_number: string | null
+          document_type: string | null
+          election_year: number
+          especie_recurso: string | null
+          fetched_at: string | null
+          fonte_despesa: string | null
+          id: string
+          natureza_despesa: string | null
+          origem_despesa: string | null
+          payment_date: string | null
+          raw: Json | null
+          source: string | null
+          sq_despesa: string
+          sq_parcelamento_despesa: string | null
+          sq_prestador_contas: string
+          uf: string | null
+          value_brl: number | null
+        }
+        Insert: {
+          candidate_id?: string | null
+          description?: string | null
+          document_number?: string | null
+          document_type?: string | null
+          election_year: number
+          especie_recurso?: string | null
+          fetched_at?: string | null
+          fonte_despesa?: string | null
+          id?: string
+          natureza_despesa?: string | null
+          origem_despesa?: string | null
+          payment_date?: string | null
+          raw?: Json | null
+          source?: string | null
+          sq_despesa: string
+          sq_parcelamento_despesa?: string | null
+          sq_prestador_contas: string
+          uf?: string | null
+          value_brl?: number | null
+        }
+        Update: {
+          candidate_id?: string | null
+          description?: string | null
+          document_number?: string | null
+          document_type?: string | null
+          election_year?: number
+          especie_recurso?: string | null
+          fetched_at?: string | null
+          fonte_despesa?: string | null
+          id?: string
+          natureza_despesa?: string | null
+          origem_despesa?: string | null
+          payment_date?: string | null
+          raw?: Json | null
+          source?: string | null
+          sq_despesa?: string
+          sq_parcelamento_despesa?: string | null
+          sq_prestador_contas?: string
+          uf?: string | null
+          value_brl?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_expense_paid_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       candidate_fefc: {
         Row: {
           amount_received: number | null
@@ -440,6 +609,164 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      candidate_revenue: {
+        Row: {
+          candidate_id: string | null
+          cargo: string | null
+          cpf: string | null
+          description: string | null
+          donor_city: string | null
+          donor_cpf_cnpj: string | null
+          donor_name: string | null
+          donor_name_rfb: string | null
+          donor_party: string | null
+          donor_state: string | null
+          election_year: number
+          especie_receita: string | null
+          fetched_at: string | null
+          fonte_receita: string | null
+          id: string
+          natureza_receita: string | null
+          origem_receita: string | null
+          party_acronym: string | null
+          raw: Json | null
+          receipt_number: string | null
+          receita_date: string | null
+          source: string | null
+          source_url: string | null
+          sq_candidato: string | null
+          sq_prestador_contas: string | null
+          sq_receita: string
+          turno: number | null
+          uf: string | null
+          value_brl: number | null
+        }
+        Insert: {
+          candidate_id?: string | null
+          cargo?: string | null
+          cpf?: string | null
+          description?: string | null
+          donor_city?: string | null
+          donor_cpf_cnpj?: string | null
+          donor_name?: string | null
+          donor_name_rfb?: string | null
+          donor_party?: string | null
+          donor_state?: string | null
+          election_year: number
+          especie_receita?: string | null
+          fetched_at?: string | null
+          fonte_receita?: string | null
+          id?: string
+          natureza_receita?: string | null
+          origem_receita?: string | null
+          party_acronym?: string | null
+          raw?: Json | null
+          receipt_number?: string | null
+          receita_date?: string | null
+          source?: string | null
+          source_url?: string | null
+          sq_candidato?: string | null
+          sq_prestador_contas?: string | null
+          sq_receita: string
+          turno?: number | null
+          uf?: string | null
+          value_brl?: number | null
+        }
+        Update: {
+          candidate_id?: string | null
+          cargo?: string | null
+          cpf?: string | null
+          description?: string | null
+          donor_city?: string | null
+          donor_cpf_cnpj?: string | null
+          donor_name?: string | null
+          donor_name_rfb?: string | null
+          donor_party?: string | null
+          donor_state?: string | null
+          election_year?: number
+          especie_receita?: string | null
+          fetched_at?: string | null
+          fonte_receita?: string | null
+          id?: string
+          natureza_receita?: string | null
+          origem_receita?: string | null
+          party_acronym?: string | null
+          raw?: Json | null
+          receipt_number?: string | null
+          receita_date?: string | null
+          source?: string | null
+          source_url?: string | null
+          sq_candidato?: string | null
+          sq_prestador_contas?: string | null
+          sq_receita?: string
+          turno?: number | null
+          uf?: string | null
+          value_brl?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_revenue_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      candidate_revenue_original_donor: {
+        Row: {
+          description: string | null
+          donor_original_cpf_cnpj: string | null
+          donor_original_name: string | null
+          donor_original_name_rfb: string | null
+          donor_original_type: string | null
+          election_year: number
+          fetched_at: string | null
+          id: string
+          raw: Json | null
+          receita_date: string | null
+          source: string | null
+          sq_prestador_contas: string | null
+          sq_receita: string
+          uf: string | null
+          value_brl: number | null
+        }
+        Insert: {
+          description?: string | null
+          donor_original_cpf_cnpj?: string | null
+          donor_original_name?: string | null
+          donor_original_name_rfb?: string | null
+          donor_original_type?: string | null
+          election_year: number
+          fetched_at?: string | null
+          id?: string
+          raw?: Json | null
+          receita_date?: string | null
+          source?: string | null
+          sq_prestador_contas?: string | null
+          sq_receita: string
+          uf?: string | null
+          value_brl?: number | null
+        }
+        Update: {
+          description?: string | null
+          donor_original_cpf_cnpj?: string | null
+          donor_original_name?: string | null
+          donor_original_name_rfb?: string | null
+          donor_original_type?: string | null
+          election_year?: number
+          fetched_at?: string | null
+          id?: string
+          raw?: Json | null
+          receita_date?: string | null
+          source?: string | null
+          sq_prestador_contas?: string | null
+          sq_receita?: string
+          uf?: string | null
+          value_brl?: number | null
+        }
+        Relationships: []
       }
       candidate_social_media: {
         Row: {
@@ -1077,6 +1404,7 @@ export type Database = {
           reliability_score: number | null
           reliability_score_basis: string | null
           slug: string | null
+          tier: number | null
           total_polls: number | null
           website: string | null
         }
@@ -1089,6 +1417,7 @@ export type Database = {
           reliability_score?: number | null
           reliability_score_basis?: string | null
           slug?: string | null
+          tier?: number | null
           total_polls?: number | null
           website?: string | null
         }
@@ -1101,6 +1430,7 @@ export type Database = {
           reliability_score?: number | null
           reliability_score_basis?: string | null
           slug?: string | null
+          tier?: number | null
           total_polls?: number | null
           website?: string | null
         }
@@ -1363,6 +1693,117 @@ export type Database = {
           },
         ]
       }
+      party_expense: {
+        Row: {
+          aidf_number: string | null
+          aidf_year: number | null
+          cnpj_prestador_conta: string | null
+          description: string | null
+          document_number: string | null
+          document_type: string | null
+          document_type_code: number | null
+          election_year: number
+          esfera_partidaria: string | null
+          esfera_partidaria_code: number | null
+          exercicio: number | null
+          expense_type: string | null
+          fetched_at: string | null
+          fonte_despesa: string | null
+          fonte_despesa_code: number | null
+          id: string
+          municipio: string | null
+          municipio_code: string | null
+          party_acronym: string | null
+          party_name: string | null
+          payment_date: string | null
+          raw: Json | null
+          source: string | null
+          source_url: string | null
+          sq_despesa: string
+          supplier_cpf_cnpj: string | null
+          supplier_name: string | null
+          supplier_type: string | null
+          supplier_type_code: number | null
+          uf: string | null
+          value_document: number | null
+          value_expense: number | null
+          value_paid: number | null
+          zona: string | null
+        }
+        Insert: {
+          aidf_number?: string | null
+          aidf_year?: number | null
+          cnpj_prestador_conta?: string | null
+          description?: string | null
+          document_number?: string | null
+          document_type?: string | null
+          document_type_code?: number | null
+          election_year: number
+          esfera_partidaria?: string | null
+          esfera_partidaria_code?: number | null
+          exercicio?: number | null
+          expense_type?: string | null
+          fetched_at?: string | null
+          fonte_despesa?: string | null
+          fonte_despesa_code?: number | null
+          id?: string
+          municipio?: string | null
+          municipio_code?: string | null
+          party_acronym?: string | null
+          party_name?: string | null
+          payment_date?: string | null
+          raw?: Json | null
+          source?: string | null
+          source_url?: string | null
+          sq_despesa: string
+          supplier_cpf_cnpj?: string | null
+          supplier_name?: string | null
+          supplier_type?: string | null
+          supplier_type_code?: number | null
+          uf?: string | null
+          value_document?: number | null
+          value_expense?: number | null
+          value_paid?: number | null
+          zona?: string | null
+        }
+        Update: {
+          aidf_number?: string | null
+          aidf_year?: number | null
+          cnpj_prestador_conta?: string | null
+          description?: string | null
+          document_number?: string | null
+          document_type?: string | null
+          document_type_code?: number | null
+          election_year?: number
+          esfera_partidaria?: string | null
+          esfera_partidaria_code?: number | null
+          exercicio?: number | null
+          expense_type?: string | null
+          fetched_at?: string | null
+          fonte_despesa?: string | null
+          fonte_despesa_code?: number | null
+          id?: string
+          municipio?: string | null
+          municipio_code?: string | null
+          party_acronym?: string | null
+          party_name?: string | null
+          payment_date?: string | null
+          raw?: Json | null
+          source?: string | null
+          source_url?: string | null
+          sq_despesa?: string
+          supplier_cpf_cnpj?: string | null
+          supplier_name?: string | null
+          supplier_type?: string | null
+          supplier_type_code?: number | null
+          uf?: string | null
+          value_document?: number | null
+          value_expense?: number | null
+          value_paid?: number | null
+          zona?: string | null
+        }
+        Relationships: []
+      }
       party_fund_transfers: {
         Row: {
           amount: number
@@ -1402,6 +1843,138 @@ export type Database = {
           reference_year?: number
           source?: string
           source_url?: string | null
+        }
+        Relationships: []
+      }
+      party_revenue: {
+        Row: {
+          cnpj_prestador_conta: string | null
+          description: string | null
+          document_number: string | null
+          donor_candidate_cargo: string | null
+          donor_candidate_cargo_code: number | null
+          donor_candidate_number: string | null
+          donor_candidate_sq: string | null
+          donor_cpf_cnpj: string | null
+          donor_esfera_partidaria: string | null
+          donor_esfera_partidaria_code: number | null
+          donor_municipio: string | null
+          donor_municipio_code: string | null
+          donor_name: string | null
+          donor_uf: string | null
+          donor_zona: string | null
+          election_year: number
+          esfera_partidaria: string | null
+          esfera_partidaria_code: number | null
+          especie_recurso: string | null
+          especie_recurso_code: number | null
+          fetched_at: string | null
+          fonte_recurso: string | null
+          fonte_recurso_code: number | null
+          id: string
+          municipio: string | null
+          municipio_code: string | null
+          natural_key: string
+          natureza_recurso: string | null
+          natureza_recurso_code: number | null
+          origem_doacao: string | null
+          origem_doacao_code: number | null
+          party_acronym: string | null
+          party_name: string | null
+          raw: Json | null
+          receipt_number: string | null
+          receita_date: string | null
+          source: string | null
+          source_url: string | null
+          uf: string | null
+          value_brl: number | null
+          zona: string | null
+        }
+        Insert: {
+          cnpj_prestador_conta?: string | null
+          description?: string | null
+          document_number?: string | null
+          donor_candidate_cargo?: string | null
+          donor_candidate_cargo_code?: number | null
+          donor_candidate_number?: string | null
+          donor_candidate_sq?: string | null
+          donor_cpf_cnpj?: string | null
+          donor_esfera_partidaria?: string | null
+          donor_esfera_partidaria_code?: number | null
+          donor_municipio?: string | null
+          donor_municipio_code?: string | null
+          donor_name?: string | null
+          donor_uf?: string | null
+          donor_zona?: string | null
+          election_year: number
+          esfera_partidaria?: string | null
+          esfera_partidaria_code?: number | null
+          especie_recurso?: string | null
+          especie_recurso_code?: number | null
+          fetched_at?: string | null
+          fonte_recurso?: string | null
+          fonte_recurso_code?: number | null
+          id?: string
+          municipio?: string | null
+          municipio_code?: string | null
+          natural_key: string
+          natureza_recurso?: string | null
+          natureza_recurso_code?: number | null
+          origem_doacao?: string | null
+          origem_doacao_code?: number | null
+          party_acronym?: string | null
+          party_name?: string | null
+          raw?: Json | null
+          receipt_number?: string | null
+          receita_date?: string | null
+          source?: string | null
+          source_url?: string | null
+          uf?: string | null
+          value_brl?: number | null
+          zona?: string | null
+        }
+        Update: {
+          cnpj_prestador_conta?: string | null
+          description?: string | null
+          document_number?: string | null
+          donor_candidate_cargo?: string | null
+          donor_candidate_cargo_code?: number | null
+          donor_candidate_number?: string | null
+          donor_candidate_sq?: string | null
+          donor_cpf_cnpj?: string | null
+          donor_esfera_partidaria?: string | null
+          donor_esfera_partidaria_code?: number | null
+          donor_municipio?: string | null
+          donor_municipio_code?: string | null
+          donor_name?: string | null
+          donor_uf?: string | null
+          donor_zona?: string | null
+          election_year?: number
+          esfera_partidaria?: string | null
+          esfera_partidaria_code?: number | null
+          especie_recurso?: string | null
+          especie_recurso_code?: number | null
+          fetched_at?: string | null
+          fonte_recurso?: string | null
+          fonte_recurso_code?: number | null
+          id?: string
+          municipio?: string | null
+          municipio_code?: string | null
+          natural_key?: string
+          natureza_recurso?: string | null
+          natureza_recurso_code?: number | null
+          origem_doacao?: string | null
+          origem_doacao_code?: number | null
+          party_acronym?: string | null
+          party_name?: string | null
+          raw?: Json | null
+          receipt_number?: string | null
+          receita_date?: string | null
+          source?: string | null
+          source_url?: string | null
+          uf?: string | null
+          value_brl?: number | null
+          zona?: string | null
         }
         Relationships: []
       }
@@ -1476,6 +2049,130 @@ export type Database = {
           vr_pesquisa?: number | null
         }
         Relationships: []
+      }
+      plano_governo: {
+        Row: {
+          ano: number
+          caminho_arquivo: string | null
+          candidato_id: string
+          data_download: string
+          hash: string
+          id: string
+          num_paginas: number | null
+          url_origem: string
+        }
+        Insert: {
+          ano: number
+          caminho_arquivo?: string | null
+          candidato_id: string
+          data_download?: string
+          hash: string
+          id?: string
+          num_paginas?: number | null
+          url_origem: string
+        }
+        Update: {
+          ano?: number
+          caminho_arquivo?: string | null
+          candidato_id?: string
+          data_download?: string
+          hash?: string
+          id?: string
+          num_paginas?: number | null
+          url_origem?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plano_governo_candidato_id_fkey"
+            columns: ["candidato_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plano_pagina: {
+        Row: {
+          id: string
+          metodo: string
+          numero: number
+          plano_id: string
+          texto: string
+        }
+        Insert: {
+          id?: string
+          metodo?: string
+          numero: number
+          plano_id: string
+          texto: string
+        }
+        Update: {
+          id?: string
+          metodo?: string
+          numero?: number
+          plano_id?: string
+          texto?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plano_pagina_plano_id_fkey"
+            columns: ["plano_id"]
+            isOneToOne: false
+            referencedRelation: "plano_governo"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plano_trecho: {
+        Row: {
+          criado_em: string
+          id: string
+          pagina: number
+          plano_id: string
+          revisado_em: string | null
+          revisado_por: string | null
+          status: string
+          tema_id: string
+          texto: string
+        }
+        Insert: {
+          criado_em?: string
+          id?: string
+          pagina: number
+          plano_id: string
+          revisado_em?: string | null
+          revisado_por?: string | null
+          status?: string
+          tema_id: string
+          texto: string
+        }
+        Update: {
+          criado_em?: string
+          id?: string
+          pagina?: number
+          plano_id?: string
+          revisado_em?: string | null
+          revisado_por?: string | null
+          status?: string
+          tema_id?: string
+          texto?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plano_trecho_plano_id_fkey"
+            columns: ["plano_id"]
+            isOneToOne: false
+            referencedRelation: "plano_governo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plano_trecho_tema_id_fkey"
+            columns: ["tema_id"]
+            isOneToOne: false
+            referencedRelation: "tema"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       poll_drafts: {
         Row: {
@@ -2194,6 +2891,30 @@ export type Database = {
         }
         Relationships: []
       }
+      tema: {
+        Row: {
+          descricao_escopo: string
+          id: string
+          nome: string
+          ordem: number
+          slug: string
+        }
+        Insert: {
+          descricao_escopo: string
+          id?: string
+          nome: string
+          ordem: number
+          slug: string
+        }
+        Update: {
+          descricao_escopo?: string
+          id?: string
+          nome?: string
+          ordem?: number
+          slug?: string
+        }
+        Relationships: []
+      }
       tse_apuracao: {
         Row: {
           cargo: string
@@ -2561,6 +3282,7 @@ export type Database = {
       pesqele_coverage: {
         Row: {
           cargo: string | null
+          com_fonte_primaria: number | null
           coverage_pct: number | null
           on_electiolab: number | null
           total_tse: number | null
@@ -2579,6 +3301,28 @@ export type Database = {
           publication_date: string | null
           sample_size: number | null
           uf: string | null
+        }
+        Insert: {
+          ano?: number | null
+          cargos?: string | null
+          days_since_fieldwork?: never
+          fieldwork_end?: string | null
+          instituto?: string | null
+          protocolo?: string | null
+          publication_date?: string | null
+          sample_size?: number | null
+          uf?: string | null
+        }
+        Update: {
+          ano?: number | null
+          cargos?: string | null
+          days_since_fieldwork?: never
+          fieldwork_end?: string | null
+          instituto?: string | null
+          protocolo?: string | null
+          publication_date?: string | null
+          sample_size?: number | null
+          uf?: string | null
         }
         Relationships: []
       }
@@ -2629,6 +3373,12 @@ export type Database = {
         Args: { p_dry_run?: boolean; p_test_recipient?: string }
         Returns: Json
       }
+      get_active_parties: {
+        Args: { p_year: number }
+        Returns: {
+          party: string
+        }[]
+      }
       get_candidate_drift: {
         Args: { p_candidate_id: string; p_days?: number }
         Returns: {
@@ -2636,6 +3386,20 @@ export type Database = {
           polls_included: number
           total_sample_size: number
           weighted_average: number
+        }[]
+      }
+      get_candidate_type_counts: {
+        Args: { p_year: number }
+        Returns: {
+          election_type: string
+          total: number
+        }[]
+      }
+      get_plano_trecho_status_counts: {
+        Args: { p_status?: string }
+        Returns: {
+          tema_id: string
+          total: number
         }[]
       }
       increment_api_key_usage: {
@@ -2651,6 +3415,8 @@ export type Database = {
           user_id: string
         }[]
       }
+      refresh_candidate_fefc: { Args: { p_year: number }; Returns: number }
+      tse_protocolo_base: { Args: { reg: string }; Returns: string }
       unaccent: { Args: { "": string }; Returns: string }
       update_pesqele_missing: { Args: { year?: number }; Returns: Json }
     }
