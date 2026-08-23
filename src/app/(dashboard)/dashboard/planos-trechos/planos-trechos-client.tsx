@@ -2,9 +2,10 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { Check, X, Pencil, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
+import { Check, X, Pencil, ExternalLink, User } from "lucide-react";
 import { aprovarTrecho, rejeitarTrecho, editarTrecho } from "./actions";
-import type { TrechoRow } from "./page";
+import type { Trecho, CandidatoBlock } from "./page";
 
 type Status = "pendente" | "aprovado" | "rejeitado";
 
@@ -16,10 +17,7 @@ type OverviewView = {
 type DetailView = {
   kind: "detail";
   tema: { id: string; slug: string; nome: string; descricao_escopo: string };
-  rows: TrechoRow[];
-  total: number;
-  page: number;
-  pageSize: number;
+  blocks: CandidatoBlock[];
   status: Status;
 };
 
@@ -96,8 +94,8 @@ function Overview({
 }
 
 function Detail({ view, toast, setToast }: { view: DetailView; toast: ToastState; setToast: SetToast }) {
-  const { tema, rows, total, page, pageSize, status } = view;
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const { tema, blocks, status } = view;
+  const totalTrechos = blocks.reduce((n, b) => n + b.trechos.length, 0);
 
   return (
     <div className="space-y-6 p-6">
@@ -123,54 +121,67 @@ function Detail({ view, toast, setToast }: { view: DetailView; toast: ToastState
       </header>
 
       <p className="text-sm text-muted-foreground">
-        {total} trecho(s) {STATUS_LABEL[status].toLowerCase()}
-        {totalPages > 1 ? ` — página ${page} de ${totalPages}` : ""}
+        {totalTrechos} trecho(s) {STATUS_LABEL[status].toLowerCase()} em {blocks.length} candidato(s)
       </p>
 
-      {rows.length === 0 && (
+      {blocks.length === 0 && (
         <p className="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
           Nada aqui.
         </p>
       )}
 
-      <ul className="space-y-3">
-        {rows.map((r) => (
-          <TrechoCard key={r.id} row={r} setToast={setToast} />
+      <div className="space-y-6">
+        {blocks.map((b) => (
+          <CandidatoSection key={b.candidato_id} block={b} setToast={setToast} />
         ))}
-      </ul>
-
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-3">
-          <Link
-            href={`/dashboard/planos-trechos?tema=${tema.slug}&status=${status}&page=${page - 1}`}
-            aria-disabled={page <= 1}
-            className={`inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs ${
-              page <= 1 ? "pointer-events-none opacity-40" : "hover:bg-accent"
-            }`}
-          >
-            <ChevronLeft className="h-3 w-3" /> anterior
-          </Link>
-          <Link
-            href={`/dashboard/planos-trechos?tema=${tema.slug}&status=${status}&page=${page + 1}`}
-            aria-disabled={page >= totalPages}
-            className={`inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs ${
-              page >= totalPages ? "pointer-events-none opacity-40" : "hover:bg-accent"
-            }`}
-          >
-            próxima <ChevronRight className="h-3 w-3" />
-          </Link>
-        </div>
-      )}
+      </div>
 
       <Toast toast={toast} setToast={setToast} />
     </div>
   );
 }
 
-function TrechoCard({ row, setToast }: { row: TrechoRow; setToast: SetToast }) {
+function CandidatoSection({ block, setToast }: { block: CandidatoBlock; setToast: SetToast }) {
+  return (
+    <section className="overflow-hidden rounded-lg border border-border bg-card">
+      <div className="flex items-center gap-3 border-b border-border bg-muted/30 px-4 py-3">
+        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-muted">
+          {block.photo_url ? (
+            <Image src={block.photo_url} alt={block.candidato_nome} fill sizes="40px" className="object-cover" />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+              <User className="h-5 w-5" />
+            </div>
+          )}
+        </div>
+        <div className="min-w-0 flex-1">
+          <h2 className="truncate text-base font-semibold">{block.candidato_nome}</h2>
+        </div>
+        {block.url_origem && (
+          <a
+            href={block.url_origem}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex shrink-0 items-center gap-1 text-xs text-muted-foreground hover:underline"
+          >
+            <ExternalLink className="h-3 w-3" /> fonte (zip)
+          </a>
+        )}
+      </div>
+
+      <ul className="divide-y divide-border">
+        {block.trechos.map((t) => (
+          <TrechoCard key={t.id} trecho={t} setToast={setToast} />
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+function TrechoCard({ trecho, setToast }: { trecho: Trecho; setToast: SetToast }) {
   const [isPending, startTransition] = useTransition();
   const [editing, setEditing] = useState(false);
-  const [texto, setTexto] = useState(row.texto);
+  const [texto, setTexto] = useState(trecho.texto);
 
   function run(fn: () => Promise<void>, okMsg: string) {
     startTransition(async () => {
@@ -184,26 +195,14 @@ function TrechoCard({ row, setToast }: { row: TrechoRow; setToast: SetToast }) {
   }
 
   return (
-    <li className="rounded-lg border border-border bg-card p-4">
+    <li className="p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 flex-1 space-y-1">
           <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-            <strong className="text-foreground">{row.candidato_nome}</strong>
-            <span>·</span>
-            <span>página {row.pagina}</span>
-            {row.url_origem && (
-              <a
-                href={row.url_origem}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 hover:underline"
-              >
-                <ExternalLink className="h-3 w-3" /> fonte (zip)
-              </a>
-            )}
-            {row.revisado_por && (
+            <span>página {trecho.pagina}</span>
+            {trecho.revisado_por && (
               <span className="italic">
-                — revisado por {row.revisado_por} em {new Date(row.revisado_em!).toLocaleString("pt-BR")}
+                — revisado por {trecho.revisado_por} em {new Date(trecho.revisado_em!).toLocaleString("pt-BR")}
               </span>
             )}
           </div>
@@ -216,7 +215,7 @@ function TrechoCard({ row, setToast }: { row: TrechoRow; setToast: SetToast }) {
               className="w-full rounded-md border border-border bg-background p-2 text-sm"
             />
           ) : (
-            <p className="whitespace-pre-wrap text-sm">{row.texto}</p>
+            <p className="whitespace-pre-wrap text-sm">{trecho.texto}</p>
           )}
         </div>
 
@@ -227,7 +226,7 @@ function TrechoCard({ row, setToast }: { row: TrechoRow; setToast: SetToast }) {
                 disabled={isPending}
                 onClick={() =>
                   run(async () => {
-                    await editarTrecho(row.id, texto);
+                    await editarTrecho(trecho.id, texto);
                     setEditing(false);
                   }, "Trecho editado")
                 }
@@ -238,7 +237,7 @@ function TrechoCard({ row, setToast }: { row: TrechoRow; setToast: SetToast }) {
               <button
                 disabled={isPending}
                 onClick={() => {
-                  setTexto(row.texto);
+                  setTexto(trecho.texto);
                   setEditing(false);
                 }}
                 className="rounded-md border border-border px-2 py-1 text-xs hover:bg-accent"
@@ -248,18 +247,18 @@ function TrechoCard({ row, setToast }: { row: TrechoRow; setToast: SetToast }) {
             </>
           ) : (
             <>
-              {row.status === "pendente" && (
+              {trecho.status === "pendente" && (
                 <>
                   <button
                     disabled={isPending}
-                    onClick={() => run(() => aprovarTrecho(row.id), "Aprovado")}
+                    onClick={() => run(() => aprovarTrecho(trecho.id), "Aprovado")}
                     className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-2 py-1 text-xs text-white hover:bg-emerald-700 disabled:opacity-50"
                   >
                     <Check className="h-3 w-3" /> aprovar
                   </button>
                   <button
                     disabled={isPending}
-                    onClick={() => run(() => rejeitarTrecho(row.id), "Rejeitado")}
+                    onClick={() => run(() => rejeitarTrecho(trecho.id), "Rejeitado")}
                     className="inline-flex items-center gap-1 rounded-md border border-red-500/30 px-2 py-1 text-xs text-red-700 hover:bg-red-500/10 disabled:opacity-50 dark:text-red-300"
                   >
                     <X className="h-3 w-3" /> rejeitar

@@ -7,7 +7,6 @@ import type { Database } from "@/types/database.types";
 
 export const dynamic = "force-dynamic";
 
-const PAGE_SIZE = 30;
 type Status = "pendente" | "aprovado" | "rejeitado";
 
 function admin() {
@@ -28,54 +27,83 @@ async function getOverview(): Promise<TemaOverview[]> {
   return (temas ?? []).map((t) => ({ ...t, pendentes: Number(countByTema.get(t.id) ?? 0) }));
 }
 
-export type TrechoRow = {
+export type Trecho = {
   id: string;
   pagina: number;
   texto: string;
   status: Status;
   revisado_por: string | null;
   revisado_em: string | null;
-  candidato_nome: string;
-  url_origem: string;
 };
 
-async function getTemaDetail(temaSlug: string, status: Status, page: number) {
+export type CandidatoBlock = {
+  candidato_id: string;
+  candidato_nome: string;
+  photo_url: string | null;
+  url_origem: string;
+  trechos: Trecho[];
+};
+
+// Sem paginação por trecho — agrupa por candidato (mais parecido com a
+// página pública final: tema → bloco por candidato). Volume por tema hoje é
+// no máximo ~350 trechos (bem abaixo dos 1000 do cap do PostgREST); .range()
+// explícito documenta esse teto em vez de confiar no limite implícito.
+async function getTemaDetail(temaSlug: string, status: Status): Promise<{
+  tema: { id: string; slug: string; nome: string; descricao_escopo: string };
+  blocks: CandidatoBlock[];
+} | null> {
   const sb = admin();
   const { data: tema } = await sb.from("tema").select("id, slug, nome, descricao_escopo").eq("slug", temaSlug).maybeSingle();
   if (!tema) return null;
 
-  const from = (page - 1) * PAGE_SIZE;
-  const { data: trechos, count } = await sb
+  const { data: trechos } = await sb
     .from("plano_trecho")
-    .select("id, plano_id, pagina, texto, status, revisado_por, revisado_em", { count: "exact" })
+    .select("id, plano_id, pagina, texto, status, revisado_por, revisado_em")
     .eq("tema_id", tema.id)
     .eq("status", status)
     .order("pagina", { ascending: true })
-    .range(from, from + PAGE_SIZE - 1);
+    .range(0, 999);
 
   const planoIds = [...new Set((trechos ?? []).map((t) => t.plano_id))];
   const { data: planos } = await sb.from("plano_governo").select("id, candidato_id, url_origem").in("id", planoIds);
   const candidatoIds = [...new Set((planos ?? []).map((p) => p.candidato_id))];
-  const { data: candidatos } = await sb.from("candidates").select("id, name").in("id", candidatoIds);
+  const { data: candidatos } = await sb.from("candidates").select("id, name, photo_url").in("id", candidatoIds);
 
-  const candidatoNomeById = new Map((candidatos ?? []).map((c) => [c.id, c.name]));
+  const candidatoById = new Map((candidatos ?? []).map((c) => [c.id, c]));
   const planoById = new Map((planos ?? []).map((p) => [p.id, p]));
 
-  const rows: TrechoRow[] = (trechos ?? []).map((t) => {
+  const blockByCandidato = new Map<string, CandidatoBlock>();
+  for (const t of trechos ?? []) {
     const plano = planoById.get(t.plano_id);
-    return {
+    if (!plano) continue;
+    const candidato = candidatoById.get(plano.candidato_id);
+    let block = blockByCandidato.get(plano.candidato_id);
+    if (!block) {
+      block = {
+        candidato_id: plano.candidato_id,
+        candidato_nome: candidato?.name ?? "?",
+        photo_url: candidato?.photo_url ?? null,
+        url_origem: plano.url_origem,
+        trechos: [],
+      };
+      blockByCandidato.set(plano.candidato_id, block);
+    }
+    block.trechos.push({
       id: t.id,
       pagina: t.pagina,
       texto: t.texto,
       status: t.status as Status,
       revisado_por: t.revisado_por,
       revisado_em: t.revisado_em,
-      candidato_nome: (plano && candidatoNomeById.get(plano.candidato_id)) ?? "?",
-      url_origem: plano?.url_origem ?? "",
-    };
-  });
+    });
+  }
 
-  return { tema, rows, total: count ?? 0, page, pageSize: PAGE_SIZE };
+  // Alfabético — mesma regra editorial da página pública, nunca por volume/relevância.
+  const blocks = [...blockByCandidato.values()].sort((a, b) =>
+    a.candidato_nome.localeCompare(b.candidato_nome, "pt-BR")
+  );
+
+  return { tema, blocks };
 }
 
 export default async function PlanosTrechosPage({
@@ -94,14 +122,13 @@ export default async function PlanosTrechosPage({
   const sp = await searchParams;
   const temaSlug = typeof sp.tema === "string" ? sp.tema : undefined;
   const status = (typeof sp.status === "string" ? sp.status : "pendente") as Status;
-  const page = Math.max(1, parseInt(typeof sp.page === "string" ? sp.page : "1", 10) || 1);
 
   if (!temaSlug) {
     const overview = await getOverview();
     return <PlanosTrechosClient view={{ kind: "overview", temas: overview }} />;
   }
 
-  const detail = await getTemaDetail(temaSlug, status, page);
+  const detail = await getTemaDetail(temaSlug, status);
   if (!detail) {
     redirect("/dashboard/planos-trechos");
   }
