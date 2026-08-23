@@ -117,6 +117,12 @@ export default async function PlanosPage() {
               </Link>
             ))}
           </div>
+
+          <p className="mt-4 text-xs text-muted-foreground">
+            <Link href="/planos/metodologia" className="hover:underline">
+              Como esses trechos são extraídos e revisados →
+            </Link>
+          </p>
         </article>
       </main>
 
