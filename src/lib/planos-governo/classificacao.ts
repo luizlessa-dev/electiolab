@@ -15,6 +15,17 @@ function escapeRegExp(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+// Conectores que juntam duas ideias dentro de uma cláusula ("X quando Y",
+// "X como Y", "X e Y") — usados só pra truncar keyword longa demais, nunca
+// pra dividir frase que só tem preposição interna (ver terceiro achado).
+const CONECTORES = [" quando ", " como ", " e "];
+
+function buildMatcher(raw: string): KeywordMatcher {
+  const isSigla = /^[A-ZÀ-Ý]+$/.test(raw);
+  const label = isSigla ? raw : normalize(raw);
+  return { regex: new RegExp(`\\b${escapeRegExp(label)}\\b`), caseSensitive: isSigla, label };
+}
+
 // Extrai os termos da cláusula "Entra: ...." de descricao_escopo — ignora
 // "Não entra" de propósito (são exemplos negativos, dariam falso-positivo).
 //
@@ -32,18 +43,35 @@ function escapeRegExp(s: string): string {
 // IA, SUS, BPC, STF, INSS, SUAS, CRAS, BRICS) passa a exigir match sensível
 // a maiúscula/minúscula contra o parágrafo original (não o normalizado):
 // documento oficial escreve sigla em caixa alta, texto corrido normal não.
+//
+// Terceiro achado (2026-08-23), ao escrever teste: cláusula do texto ligada
+// por "e"/"quando"/"como" em vez de vírgula vira UMA keyword de 5-8 palavras
+// que quase nunca bate no texto real — sub-classificação silenciosa (ex.:
+// "Bolsa Família e programas de transferência de renda" nunca casa com um
+// parágrafo que só diz "Bolsa Família"). Em vez de reescrever o texto da
+// taxonomia (que o LLM também lê como critério — mudar ali mudaria o que o
+// modelo enxerga, não só o pré-filtro), a keyword longa agora também gera um
+// candidato truncado no primeiro conector, mais permissivo (mais chamada de
+// LLM, nunca mais chance de perder trecho válido) — o texto completo
+// continua entrando também, então nada foi removido, só adicionado. Não
+// trunca em preposição solta ("população em situação de rua" não tem
+// conector, fica intacta).
 export function extractKeywords(descricaoEscopo: string): KeywordMatcher[] {
   const m = descricaoEscopo.match(/Entra:\s*(.+?)\.\s*N[ãa]o entra:/i);
   if (!m) return [];
-  return m[1]
-    .split(",")
-    .map((raw) => raw.trim())
-    .filter(Boolean)
-    .map((raw) => {
-      const isSigla = /^[A-ZÀ-Ý]+$/.test(raw);
-      const label = isSigla ? raw : normalize(raw);
-      return { regex: new RegExp(`\\b${escapeRegExp(label)}\\b`), caseSensitive: isSigla, label };
-    });
+  const matchers: KeywordMatcher[] = [];
+  for (const raw of m[1].split(",").map((s) => s.trim()).filter(Boolean)) {
+    matchers.push(buildMatcher(raw));
+    for (const conector of CONECTORES) {
+      const idx = raw.indexOf(conector);
+      if (idx > 0) {
+        const truncado = raw.slice(0, idx).trim();
+        if (truncado && truncado.toLowerCase() !== raw.toLowerCase()) matchers.push(buildMatcher(truncado));
+        break; // só o primeiro conector — truncar em todos encadearia demais
+      }
+    }
+  }
+  return matchers;
 }
 
 // true se o parágrafo (já normalizado, exceto pros matchers de sigla — esses

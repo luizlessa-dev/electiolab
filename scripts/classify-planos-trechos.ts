@@ -32,6 +32,7 @@
  *   npx tsx scripts/classify-planos-trechos.ts --tse_id=280002542548 --apply  # classifica de verdade, um candidato
  *   npx tsx scripts/classify-planos-trechos.ts --apply --budget=3.50        # classifica todo mundo, para sozinho ao atingir US$3,50 de gasto real
  *   npx tsx scripts/classify-planos-trechos.ts --apply --force              # reclassifica quem já tem trecho
+ *   npx tsx scripts/classify-planos-trechos.ts --apply --only-temas=assistencia-social,tributacao  # só reclassifica esses temas, pra todo mundo, sem tocar nos outros
  *
  * --budget=<usd> mede gasto real via response.usage de cada chamada (preço
  * Haiku 4.5 hardcoded: $1/MTok entrada, $5/MTok saída — atualizar se mudar).
@@ -97,6 +98,17 @@ const BUDGET_USD = parseFloat(process.argv.find((a) => a.startsWith("--budget=")
 // dentro do orçamento (plano interrompido no meio não grava nada — ver
 // planoInterrompido abaixo), em vez de gastar tudo pela metade num só grande.
 const SORT_PAGES = process.argv.includes("--sort=pages");
+// --only-temas=slug1,slug2 restringe a classificação a temas específicos —
+// usado pra reclassificar só quem mudou (ex.: fix de keyword em 2026-08-23)
+// sem reprocessar (e regastar API em) os outros temas já corretos. Sempre
+// apaga e reclassifica do zero os temas listados pros planos alvo,
+// independente de --force (que continua controlando os OUTROS temas).
+const ONLY_TEMAS = process.argv
+  .find((a) => a.startsWith("--only-temas="))
+  ?.split("=")[1]
+  ?.split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
 // --cargo=presidente|governador filtra por candidates.election_id -> elections.type.
 // Sem --cargo, processa todos os cargos (comportamento anterior).
 const CARGO_FILTER = process.argv.find((a) => a.startsWith("--cargo="))?.split("=")[1];
@@ -175,10 +187,19 @@ async function main() {
     .select("id, slug, nome, descricao_escopo")
     .order("ordem");
   if (temaErr) throw temaErr;
-  const temas: Tema[] = (temasRaw ?? []).map((t) => ({
+  let temas: Tema[] = (temasRaw ?? []).map((t) => ({
     ...t,
     matchers: extractKeywords(t.descricao_escopo),
   }));
+  if (ONLY_TEMAS) {
+    const antes = temas.length;
+    temas = temas.filter((t) => ONLY_TEMAS.includes(t.slug));
+    console.log(`🎯 --only-temas: ${antes} → ${temas.length} tema(s) (${temas.map((t) => t.slug).join(", ")}).`);
+    if (temas.length === 0) {
+      console.error(`❌ Nenhum tema encontrado pra --only-temas=${ONLY_TEMAS.join(",")}`);
+      process.exit(1);
+    }
+  }
   console.log(`📚 ${temas.length} temas carregados.`);
 
   const { data: planos, error: planoErr } = await supabase
@@ -226,7 +247,7 @@ async function main() {
     }
   }
 
-  if (!FORCE) {
+  if (!FORCE && !ONLY_TEMAS) {
     // Paginado: select() sem .range() corta em 1000 linhas (default do
     // PostgREST/Supabase) — mesmo bug já achado e corrigido em
     // ingest-tse-candidaturas.ts (2026-08-22), reintroduzido aqui por
@@ -269,10 +290,22 @@ async function main() {
     const cand = candidatoById.get(plano.candidato_id as string);
     const label = cand ? `${cand.name} (tse_id=${cand.tse_id})` : (plano.candidato_id as string);
 
-    if (FORCE) {
+    if (FORCE && !ONLY_TEMAS) {
       const { error: delErr } = await supabase.from("plano_trecho").delete().eq("plano_id", plano.id);
       if (delErr) {
         console.error(`   ❌ ${label}: erro ao limpar trechos antigos: ${delErr.message}`);
+        continue;
+      }
+    } else if (ONLY_TEMAS) {
+      // Sempre limpa só os temas alvo pra este plano, antes de reclassificar
+      // — os outros 12 (ou mais) temas do plano ficam intocados.
+      const { error: delErr } = await supabase
+        .from("plano_trecho")
+        .delete()
+        .eq("plano_id", plano.id)
+        .in("tema_id", temas.map((t) => t.id));
+      if (delErr) {
+        console.error(`   ❌ ${label}: erro ao limpar trechos antigos (temas alvo): ${delErr.message}`);
         continue;
       }
     }

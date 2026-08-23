@@ -74,19 +74,49 @@ describe("algumMatcherBate — regressão do achado de 2026-08-23 (colisão SUAS
     expect(algumMatcherBate(matchers, p, normalize(p))).toBe(true);
   });
 
-  // Achado ao escrever este teste (2026-08-23), não corrigido ainda: a
-  // cláusula "Bolsa Família e programas de transferência de renda" (ligada
-  // por "e", não por vírgula) vira UMA keyword de 8 palavras que exige
-  // bater no texto quase literalmente — "Bolsa Família" sozinho, do jeito
-  // que aparece na prática, NÃO ativa esse tema por essa keyword (só bate
-  // se também mencionar BPC/combate à fome/SUAS/CRAS/situação de rua no
-  // mesmo parágrafo). Sub-classificação silenciosa: menos grave que os
-  // bugs de falso-positivo acima (não põe conteúdo errado na fila de
-  // revisão), mas real — os 12 presidenciáveis já foram classificados
-  // assim. Ver nota no README/relatório da etapa 6.
-  it("NÃO bate em 'Bolsa Família' sozinho — cobertura incompleta, documentada, não corrigida", () => {
+});
+
+describe("algumMatcherBate — regressão do achado de 2026-08-23 (sub-classificação por cláusula composta)", () => {
+  // "Bolsa Família e programas de transferência de renda" virava UMA keyword
+  // de 8 palavras que quase nunca batia no texto real. Fix: keyword longa
+  // ligada por e/quando/como também gera candidato truncado no conector.
+  const matchersAssistencia = extractKeywords(DESCRICAO_ASSISTENCIA_SOCIAL);
+
+  it("agora bate em 'Bolsa Família' sozinho, sem precisar da cláusula inteira", () => {
     const p = "O programa Bolsa família será reforçado.";
-    expect(algumMatcherBate(matchers, p, normalize(p))).toBe(false);
+    expect(algumMatcherBate(matchersAssistencia, p, normalize(p))).toBe(true);
+  });
+
+  it("a frase completa original continua batendo também (nada foi removido)", () => {
+    const p = "Vamos ampliar a Bolsa Família e programas de transferência de renda para famílias vulneráveis.";
+    expect(algumMatcherBate(matchersAssistencia, p, normalize(p))).toBe(true);
+  });
+
+  const DESCRICAO_MEIO_AMBIENTE =
+    "Entra: desmatamento, Amazônia, clima, licenciamento ambiental, terras indígenas quando tratadas como preservação, biodiversidade. Não entra: matriz energética e transição energética (energia).";
+  const matchersMeioAmbiente = extractKeywords(DESCRICAO_MEIO_AMBIENTE);
+
+  it("bate em 'terras indígenas' sozinho (truncado em 'quando')", () => {
+    const p = "A demarcação de terras indígenas é prioridade do nosso governo.";
+    expect(algumMatcherBate(matchersMeioAmbiente, p, normalize(p))).toBe(true);
+  });
+
+  const DESCRICAO_TRIBUTACAO =
+    "Entra: reforma tributária, alíquotas, renúncia fiscal, imposto de renda, imposto sobre patrimônio e heranças. Não entra: gasto público (economia).";
+  const matchersTributacao = extractKeywords(DESCRICAO_TRIBUTACAO);
+
+  it("bate em 'imposto sobre patrimônio' sozinho (truncado em 'e')", () => {
+    const p = "Vamos taxar mais o imposto sobre patrimônio dos mais ricos.";
+    expect(algumMatcherBate(matchersTributacao, p, normalize(p))).toBe(true);
+  });
+
+  it("não trunca frase sem conector (preposição interna não conta)", () => {
+    // "população em situação de rua" não tem " e "/" quando "/" como " —
+    // truncar em "em" quebraria o termo técnico, então fica intacto.
+    const matchers = extractKeywords(DESCRICAO_ASSISTENCIA_SOCIAL);
+    const labels = matchers.map((m) => m.label);
+    expect(labels).toContain("populacao em situacao de rua");
+    expect(labels).not.toContain("populacao");
   });
 });
 
