@@ -110,31 +110,41 @@ function normalize(s: string): string {
     .toLowerCase();
 }
 
-// Extrai os termos da cláusula "Entra: ...." de descricao_escopo — ignora
-// "Não entra" de propósito (são exemplos negativos, dariam falso-positivo).
-function extractKeywords(descricaoEscopo: string): string[] {
-  const m = descricaoEscopo.match(/Entra:\s*(.+?)\.\s*N[ãa]o entra:/i);
-  if (!m) return [];
-  return m[1]
-    .split(",")
-    .map((k) => normalize(k.trim()))
-    .filter(Boolean);
-}
+type KeywordMatcher = { regex: RegExp; caseSensitive: boolean; label: string };
 
 function escapeRegExp(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+// Extrai os termos da cláusula "Entra: ...." de descricao_escopo — ignora
+// "Não entra" de propósito (são exemplos negativos, dariam falso-positivo).
+//
 // Achado em produção (2026-08-22): match por substring cru (`includes`) fazia
 // a keyword de 2 letras "ia" (de "IA", tema tecnologia) bater em qualquer
 // palavra terminada em "-ia" — "economia", "democracia", "estratégia" — e
 // isso inflou falso-positivo (368 trechos em tecnologia, quase 25% do total,
 // vários claramente errados, ex. financiamento de saúde classificado como
-// tecnologia). Fronteira de palavra (\b) resolve: só bate "ia" isolado, não
-// dentro de outra palavra. texto já passou por normalize() antes (sem
-// acento), então \b padrão (ASCII) funciona.
-function buildKeywordRegex(keyword: string): RegExp {
-  return new RegExp(`\\b${escapeRegExp(keyword)}\\b`);
+// tecnologia). Fronteira de palavra (\b) resolve isso.
+//
+// Segundo achado, no mesmo dia: fronteira de palavra sozinha não resolve
+// sigla que colide com palavra comum — "SUAS" (Sistema Único de Assistência
+// Social) é também o pronome possessivo "suas" ("suas famílias"), então
+// qualquer keyword que no texto original está TODA em maiúscula (sigla —
+// IA, SUS, BPC, STF, INSS, SUAS, CRAS, BRICS) passa a exigir match sensível
+// a maiúscula/minúscula contra o parágrafo original (não o normalizado):
+// documento oficial escreve sigla em caixa alta, texto corrido normal não.
+function extractKeywords(descricaoEscopo: string): KeywordMatcher[] {
+  const m = descricaoEscopo.match(/Entra:\s*(.+?)\.\s*N[ãa]o entra:/i);
+  if (!m) return [];
+  return m[1]
+    .split(",")
+    .map((raw) => raw.trim())
+    .filter(Boolean)
+    .map((raw) => {
+      const isSigla = /^[A-ZÀ-Ý]+$/.test(raw);
+      const label = isSigla ? raw : normalize(raw);
+      return { regex: new RegExp(`\\b${escapeRegExp(label)}\\b`), caseSensitive: isSigla, label };
+    });
 }
 
 // Une quebra de linha dentro do parágrafo (artefato do wrap do PDF) num
@@ -152,8 +162,7 @@ type Tema = {
   slug: string;
   nome: string;
   descricao_escopo: string;
-  keywords: string[];
-  keywordRegexes: RegExp[];
+  matchers: KeywordMatcher[];
 };
 
 async function classificarParagrafo(paragrafo: string, candidatos: Tema[]): Promise<string[]> {
@@ -212,10 +221,10 @@ async function main() {
     .select("id, slug, nome, descricao_escopo")
     .order("ordem");
   if (temaErr) throw temaErr;
-  const temas: Tema[] = (temasRaw ?? []).map((t) => {
-    const keywords = extractKeywords(t.descricao_escopo);
-    return { ...t, keywords, keywordRegexes: keywords.map(buildKeywordRegex) };
-  });
+  const temas: Tema[] = (temasRaw ?? []).map((t) => ({
+    ...t,
+    matchers: extractKeywords(t.descricao_escopo),
+  }));
   console.log(`📚 ${temas.length} temas carregados.`);
 
   const { data: planos, error: planoErr } = await supabase
@@ -326,7 +335,9 @@ async function main() {
         if (orcamentoEstourado) break;
         paragrafosPlano++;
         const normParagrafo = normalize(paragrafo);
-        const candidatosTema = temas.filter((t) => t.keywordRegexes.some((re) => re.test(normParagrafo)));
+        const candidatosTema = temas.filter((t) =>
+          t.matchers.some((m) => m.regex.test(m.caseSensitive ? paragrafo : normParagrafo))
+        );
         if (candidatosTema.length === 0) {
           puladosPlano++;
           continue;
