@@ -25,7 +25,7 @@ function sb() {
   });
 }
 
-type TemaComContagem = { slug: string; nome: string; ordem: number; trechos: number };
+type TemaComContagem = { slug: string; nome: string; ordem: number; sinteses: number };
 
 async function getTemas(): Promise<TemaComContagem[]> {
   const supabase = sb();
@@ -35,11 +35,11 @@ async function getTemas(): Promise<TemaComContagem[]> {
   const comContagem = await Promise.all(
     temas.map(async (t) => {
       const { count } = await supabase
-        .from("plano_trecho")
+        .from("plano_sintese")
         .select("id", { count: "exact", head: true })
         .eq("status", "aprovado")
         .eq("tema_id", t.id);
-      return { slug: t.slug, nome: t.nome, ordem: t.ordem, trechos: count ?? 0 };
+      return { slug: t.slug, nome: t.nome, ordem: t.ordem, sinteses: count ?? 0 };
     })
   );
   return comContagem;
@@ -112,7 +112,7 @@ export default async function PlanosPage() {
               >
                 <span className="font-medium">{t.nome}</span>
                 <span className="font-mono text-xs text-muted-foreground">
-                  {t.trechos > 0 ? `${t.trechos} trecho(s)` : "sem trecho ainda"}
+                  {t.sinteses > 0 ? `${t.sinteses} candidato(s)` : "sem síntese ainda"}
                 </span>
               </Link>
             ))}

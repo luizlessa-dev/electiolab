@@ -2,8 +2,8 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { aprovarTrecho, rejeitarTrecho, editarTrecho } from "./actions";
-import type { Trecho, CandidatoBlock } from "./page";
+import { aprovarSintese, rejeitarSintese, editarSintese } from "./actions";
+import type { CandidatoSintese } from "./page";
 
 type Status = "pendente" | "aprovado" | "rejeitado";
 
@@ -23,13 +23,13 @@ type OverviewView = {
 type DetailView = {
   kind: "detail";
   tema: { id: string; slug: string; nome: string; descricao_escopo: string };
-  blocks: CandidatoBlock[];
+  candidatos: CandidatoSintese[];
   status: Status;
 };
 
 const STATUS_LABEL: Record<Status, string> = { pendente: "Pendente", aprovado: "Aprovado", rejeitado: "Rejeitado" };
 
-export function PlanosTrechosClient({ view }: { view: OverviewView | DetailView }) {
+export function PlanosSintesesClient({ view }: { view: OverviewView | DetailView }) {
   const [toast, setToast] = useState<{ kind: "ok" | "err"; msg: string } | null>(null);
 
   if (view.kind === "overview") {
@@ -41,18 +41,21 @@ export function PlanosTrechosClient({ view }: { view: OverviewView | DetailView 
 type ToastState = { kind: "ok" | "err"; msg: string } | null;
 type SetToast = (t: ToastState) => void;
 
-// Tabela objetiva: um tema por linha, placar completo (pendente/aprovado/
-// rejeitado) pra saber de cara onde falta revisar sem precisar entrar em cada um.
 function Overview({ temas }: { temas: OverviewView["temas"] }) {
   const totalPendente = temas.reduce((n, t) => n + t.pendentes, 0);
 
   return (
     <div className="mx-auto max-w-3xl space-y-4 p-6">
       <header>
-        <h1 className="text-xl font-bold">Planos de governo — revisão de trechos</h1>
+        <h1 className="text-xl font-bold">Planos de governo — revisão de sínteses</h1>
         <p className="text-sm text-muted-foreground">
-          {totalPendente} trecho(s) pendente(s) no total, em {temas.length} temas. Nada aparece no site até ser
-          aprovado.
+          {totalPendente} síntese(s) pendente(s) no total, em {temas.length} temas. Cada síntese é gerada por IA a
+          partir dos trechos literais classificados — nada aparece no site até ser aprovado.
+        </p>
+        <p className="pt-1 text-xs text-muted-foreground">
+          <Link href="/dashboard/planos-trechos" className="hover:underline">
+            ver trechos literais (matéria-prima, revisão opcional) →
+          </Link>
         </p>
       </header>
 
@@ -69,14 +72,14 @@ function Overview({ temas }: { temas: OverviewView["temas"] }) {
           {temas.map((t) => (
             <tr key={t.id} className="border-b border-border/50">
               <td className="py-2 pr-2">
-                <Link href={`/dashboard/planos-trechos?tema=${t.slug}`} className="hover:underline">
+                <Link href={`/dashboard/planos-sinteses?tema=${t.slug}`} className="hover:underline">
                   {t.nome}
                 </Link>
               </td>
               <td className="py-2 px-2 text-right font-mono tabular-nums">
                 {t.pendentes > 0 ? (
                   <Link
-                    href={`/dashboard/planos-trechos?tema=${t.slug}`}
+                    href={`/dashboard/planos-sinteses?tema=${t.slug}`}
                     className="text-amber-700 hover:underline dark:text-amber-400"
                   >
                     {t.pendentes}
@@ -95,16 +98,13 @@ function Overview({ temas }: { temas: OverviewView["temas"] }) {
   );
 }
 
-// Leitura corrida: nome do candidato como subtítulo, texto do trecho como
-// parágrafo logo abaixo — igual ao formato final da página pública, só que
-// com controles de revisão discretos junto da referência de página.
 function Detail({ view, toast, setToast }: { view: DetailView; toast: ToastState; setToast: SetToast }) {
-  const { tema, blocks, status } = view;
+  const { tema, candidatos, status } = view;
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 p-6">
       <header className="space-y-1">
-        <Link href="/dashboard/planos-trechos" className="text-xs text-muted-foreground hover:underline">
+        <Link href="/dashboard/planos-sinteses" className="text-xs text-muted-foreground hover:underline">
           ← temas
         </Link>
         <h1 className="text-xl font-bold">{tema.nome}</h1>
@@ -113,7 +113,7 @@ function Detail({ view, toast, setToast }: { view: DetailView; toast: ToastState
           {(["pendente", "aprovado", "rejeitado"] as Status[]).map((s) => (
             <Link
               key={s}
-              href={`/dashboard/planos-trechos?tema=${tema.slug}&status=${s}`}
+              href={`/dashboard/planos-sinteses?tema=${tema.slug}&status=${s}`}
               className={s === status ? "font-semibold underline" : "text-muted-foreground hover:underline"}
             >
               {STATUS_LABEL[s]}
@@ -122,17 +122,10 @@ function Detail({ view, toast, setToast }: { view: DetailView; toast: ToastState
         </div>
       </header>
 
-      {blocks.length === 0 && <p className="text-sm text-muted-foreground">Nada aqui.</p>}
+      {candidatos.length === 0 && <p className="text-sm text-muted-foreground">Nada aqui.</p>}
 
-      {blocks.map((b) => (
-        <section key={b.candidato_id}>
-          <h2 className="mb-2 text-sm font-semibold">{b.candidato_nome}</h2>
-          <div className="space-y-3 border-l-2 border-border pl-3">
-            {b.trechos.map((t) => (
-              <TrechoParagrafo key={t.id} trecho={t} setToast={setToast} />
-            ))}
-          </div>
-        </section>
+      {candidatos.map((c) => (
+        <SinteseCard key={c.candidato_id} candidato={c} setToast={setToast} />
       ))}
 
       <Toast toast={toast} setToast={setToast} />
@@ -140,10 +133,12 @@ function Detail({ view, toast, setToast }: { view: DetailView; toast: ToastState
   );
 }
 
-function TrechoParagrafo({ trecho, setToast }: { trecho: Trecho; setToast: SetToast }) {
+function SinteseCard({ candidato, setToast }: { candidato: CandidatoSintese; setToast: SetToast }) {
+  const { sintese, trechosFonte } = candidato;
   const [isPending, startTransition] = useTransition();
   const [editing, setEditing] = useState(false);
-  const [texto, setTexto] = useState(trecho.texto);
+  const [texto, setTexto] = useState(sintese.texto);
+  const [verFontes, setVerFontes] = useState(false);
 
   function run(fn: () => Promise<void>, okMsg: string) {
     startTransition(async () => {
@@ -157,7 +152,9 @@ function TrechoParagrafo({ trecho, setToast }: { trecho: Trecho; setToast: SetTo
   }
 
   return (
-    <div>
+    <section>
+      <h2 className="mb-1 text-sm font-semibold">{candidato.candidato_nome}</h2>
+
       {editing ? (
         <textarea
           value={texto}
@@ -170,9 +167,9 @@ function TrechoParagrafo({ trecho, setToast }: { trecho: Trecho; setToast: SetTo
       )}
 
       <p className="mt-1 text-xs text-muted-foreground">
-        p. {trecho.pagina}
-        {trecho.status !== "pendente" && !editing && <> · {STATUS_LABEL[trecho.status]}</>}
-        {trecho.revisado_por && !editing && <> · revisado por {trecho.revisado_por}</>}
+        p. {sintese.paginas_referencia.join(", ")}
+        {sintese.status !== "pendente" && !editing && <> · {STATUS_LABEL[sintese.status]}</>}
+        {sintese.revisado_por && !editing && <> · revisado por {sintese.revisado_por}</>}
         {" · "}
         {editing ? (
           <>
@@ -180,9 +177,9 @@ function TrechoParagrafo({ trecho, setToast }: { trecho: Trecho; setToast: SetTo
               disabled={isPending}
               onClick={() =>
                 run(async () => {
-                  await editarTrecho(trecho.id, texto);
+                  await editarSintese(sintese.id, texto);
                   setEditing(false);
-                }, "Trecho editado")
+                }, "Síntese editada")
               }
               className="text-foreground underline disabled:opacity-50"
             >
@@ -192,7 +189,7 @@ function TrechoParagrafo({ trecho, setToast }: { trecho: Trecho; setToast: SetTo
             <button
               disabled={isPending}
               onClick={() => {
-                setTexto(trecho.texto);
+                setTexto(sintese.texto);
                 setEditing(false);
               }}
               className="underline disabled:opacity-50"
@@ -202,11 +199,11 @@ function TrechoParagrafo({ trecho, setToast }: { trecho: Trecho; setToast: SetTo
           </>
         ) : (
           <>
-            {trecho.status === "pendente" && (
+            {sintese.status === "pendente" && (
               <>
                 <button
                   disabled={isPending}
-                  onClick={() => run(() => aprovarTrecho(trecho.id), "Aprovado")}
+                  onClick={() => run(() => aprovarSintese(sintese.id), "Aprovado")}
                   className="text-emerald-700 underline disabled:opacity-50 dark:text-emerald-400"
                 >
                   aprovar
@@ -214,7 +211,7 @@ function TrechoParagrafo({ trecho, setToast }: { trecho: Trecho; setToast: SetTo
                 ·{" "}
                 <button
                   disabled={isPending}
-                  onClick={() => run(() => rejeitarTrecho(trecho.id), "Rejeitado")}
+                  onClick={() => run(() => rejeitarSintese(sintese.id), "Rejeitado")}
                   className="text-red-700 underline disabled:opacity-50 dark:text-red-400"
                 >
                   rejeitar
@@ -224,11 +221,25 @@ function TrechoParagrafo({ trecho, setToast }: { trecho: Trecho; setToast: SetTo
             )}
             <button disabled={isPending} onClick={() => setEditing(true)} className="underline disabled:opacity-50">
               editar
+            </button>{" "}
+            ·{" "}
+            <button onClick={() => setVerFontes((v) => !v)} className="underline">
+              {verFontes ? "ocultar" : "ver"} trechos originais ({trechosFonte.length})
             </button>
           </>
         )}
       </p>
-    </div>
+
+      {verFontes && !editing && (
+        <div className="mt-2 space-y-2 border-l-2 border-border pl-3">
+          {trechosFonte.map((t, i) => (
+            <p key={i} className="text-xs leading-relaxed text-muted-foreground">
+              <span className="font-mono">p.{t.pagina}</span> — {t.texto}
+            </p>
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
 

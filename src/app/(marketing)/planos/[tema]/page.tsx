@@ -23,20 +23,19 @@ async function getTema(slug: string) {
   return data;
 }
 
-type Trecho = { id: string; pagina: number; texto: string };
 type CandidatoBloco = {
   id: string;
   nome: string;
   photo_url: string | null;
   pdf_url_publico: string | null;
-  trechos: Trecho[];
+  sintese: { texto: string; paginas: number[] } | null;
 };
 
 async function getBlocos(temaId: string): Promise<CandidatoBloco[]> {
   const supabase = sb();
 
   // Todo presidenciável com plano registrado entra na página, mesmo sem
-  // trecho aprovado nesse tema — "não trata do tema" é dado, não omissão.
+  // síntese aprovada nesse tema — "não trata do tema" é dado, não omissão.
   const { data: elections } = await supabase.from("elections").select("id, name").eq("year", 2026).eq("type", "presidente");
   const primeiroTurno = (elections ?? []).find((e) => !String(e.name).includes("2º Turno"));
 
@@ -50,31 +49,29 @@ async function getBlocos(temaId: string): Promise<CandidatoBloco[]> {
     .select("id, candidato_id, pdf_url_publico")
     .in("candidato_id", (candidatos ?? []).map((c) => c.id));
 
-  const { data: trechos } = await supabase
-    .from("plano_trecho")
-    .select("id, plano_id, pagina, texto")
+  // Conteúdo primário da página é a síntese (etapa 2026-08-24) — texto
+  // literal (plano_trecho) virou matéria-prima interna, não aparece mais
+  // solto aqui. Ver metodologia pra explicação da mudança.
+  const { data: sinteses } = await supabase
+    .from("plano_sintese")
+    .select("plano_id, texto, paginas_referencia")
     .eq("tema_id", temaId)
-    .eq("status", "aprovado")
-    .order("pagina", { ascending: true });
+    .eq("status", "aprovado");
 
   const planoByCandidatoId = new Map((planos ?? []).map((p) => [p.candidato_id, p]));
-  const trechosByPlanoId = new Map<string, Trecho[]>();
-  for (const t of trechos ?? []) {
-    const arr = trechosByPlanoId.get(t.plano_id) ?? [];
-    arr.push({ id: t.id, pagina: t.pagina, texto: t.texto });
-    trechosByPlanoId.set(t.plano_id, arr);
-  }
+  const sinteseByPlanoId = new Map((sinteses ?? []).map((s) => [s.plano_id, s]));
 
   const blocos: CandidatoBloco[] = (candidatos ?? [])
     .filter((c) => planoByCandidatoId.has(c.id))
     .map((c) => {
       const plano = planoByCandidatoId.get(c.id)!;
+      const sintese = sinteseByPlanoId.get(plano.id);
       return {
         id: c.id,
         nome: c.name,
         photo_url: c.photo_url,
         pdf_url_publico: plano.pdf_url_publico,
-        trechos: trechosByPlanoId.get(plano.id) ?? [],
+        sintese: sintese ? { texto: sintese.texto, paginas: sintese.paginas_referencia ?? [] } : null,
       };
     })
     // Alfabético — regra editorial: nunca por pesquisa, partido ou relevância.
@@ -88,7 +85,7 @@ export async function generateMetadata({ params }: { params: Promise<{ tema: str
   const tema = await getTema(slug);
   if (!tema) return {};
   const title = `${tema.nome}: o que cada presidenciável propõe (plano de governo 2026)`;
-  const description = `Trecho literal do plano de governo de cada presidenciável 2026 sobre ${tema.nome.toLowerCase()}, direto do documento registrado no TSE.`;
+  const description = `O que o plano de governo de cada presidenciável 2026 propõe sobre ${tema.nome.toLowerCase()}, com página e link pro documento oficial registrado no TSE.`;
   return {
     title,
     description,
@@ -162,31 +159,30 @@ export default async function PlanoTemaPage({ params }: { params: Promise<{ tema
                   <h2 className="text-lg font-semibold">{b.nome}</h2>
                 </div>
 
-                {b.trechos.length === 0 ? (
+                {!b.sintese ? (
                   <p className="text-sm italic text-muted-foreground">O plano não trata deste tema.</p>
                 ) : (
-                  <div className="space-y-4">
-                    {b.trechos.map((t) => (
-                      <blockquote key={t.id} className="border-l-2 border-primary/30 pl-4">
-                        <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">{t.texto}</p>
-                        <footer className="mt-1.5 flex items-center gap-2 text-xs text-muted-foreground">
-                          <span>página {t.pagina}</span>
-                          {b.pdf_url_publico && (
-                            <>
-                              <span>·</span>
-                              <a
-                                href={b.pdf_url_publico}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 hover:underline"
-                              >
-                                <FileText className="h-3 w-3" /> ver PDF original
-                              </a>
-                            </>
-                          )}
-                        </footer>
-                      </blockquote>
-                    ))}
+                  <div>
+                    <p className="text-sm leading-relaxed text-foreground">{b.sintese.texto}</p>
+                    <footer className="mt-1.5 flex items-center gap-2 text-xs text-muted-foreground">
+                      <span>
+                        {b.sintese.paginas.length > 1 ? "páginas" : "página"} {b.sintese.paginas.join(", ")} do plano
+                        oficial
+                      </span>
+                      {b.pdf_url_publico && (
+                        <>
+                          <span>·</span>
+                          <a
+                            href={b.pdf_url_publico}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 hover:underline"
+                          >
+                            <FileText className="h-3 w-3" /> ver PDF original
+                          </a>
+                        </>
+                      )}
+                    </footer>
                   </div>
                 )}
               </section>

@@ -2126,6 +2126,57 @@ export type Database = {
           },
         ]
       }
+      plano_sintese: {
+        Row: {
+          gerado_em: string
+          id: string
+          paginas_referencia: number[]
+          plano_id: string
+          revisado_em: string | null
+          revisado_por: string | null
+          status: string
+          tema_id: string
+          texto: string
+        }
+        Insert: {
+          gerado_em?: string
+          id?: string
+          paginas_referencia?: number[]
+          plano_id: string
+          revisado_em?: string | null
+          revisado_por?: string | null
+          status?: string
+          tema_id: string
+          texto: string
+        }
+        Update: {
+          gerado_em?: string
+          id?: string
+          paginas_referencia?: number[]
+          plano_id?: string
+          revisado_em?: string | null
+          revisado_por?: string | null
+          status?: string
+          tema_id?: string
+          texto?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plano_sintese_plano_id_fkey"
+            columns: ["plano_id"]
+            isOneToOne: false
+            referencedRelation: "plano_governo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plano_sintese_tema_id_fkey"
+            columns: ["tema_id"]
+            isOneToOne: false
+            referencedRelation: "tema"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       plano_trecho: {
         Row: {
           criado_em: string

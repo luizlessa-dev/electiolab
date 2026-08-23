@@ -15,16 +15,34 @@ function admin() {
   });
 }
 
-type TemaOverview = { id: string; slug: string; nome: string; ordem: number; pendentes: number };
+type TemaOverview = {
+  id: string;
+  slug: string;
+  nome: string;
+  ordem: number;
+  pendentes: number;
+  aprovados: number;
+  rejeitados: number;
+};
 
 async function getOverview(): Promise<TemaOverview[]> {
   const sb = admin();
-  const [{ data: temas }, { data: counts }] = await Promise.all([
+  const [{ data: temas }, { data: pendentes }, { data: aprovados }, { data: rejeitados }] = await Promise.all([
     sb.from("tema").select("id, slug, nome, ordem").order("ordem"),
     sb.rpc("get_plano_trecho_status_counts", { p_status: "pendente" }),
+    sb.rpc("get_plano_trecho_status_counts", { p_status: "aprovado" }),
+    sb.rpc("get_plano_trecho_status_counts", { p_status: "rejeitado" }),
   ]);
-  const countByTema = new Map((counts ?? []).map((c) => [c.tema_id, c.total]));
-  return (temas ?? []).map((t) => ({ ...t, pendentes: Number(countByTema.get(t.id) ?? 0) }));
+  const toMap = (rows: typeof pendentes) => new Map((rows ?? []).map((c) => [c.tema_id, Number(c.total)]));
+  const pendentesByTema = toMap(pendentes);
+  const aprovadosByTema = toMap(aprovados);
+  const rejeitadosByTema = toMap(rejeitados);
+  return (temas ?? []).map((t) => ({
+    ...t,
+    pendentes: pendentesByTema.get(t.id) ?? 0,
+    aprovados: aprovadosByTema.get(t.id) ?? 0,
+    rejeitados: rejeitadosByTema.get(t.id) ?? 0,
+  }));
 }
 
 export type Trecho = {

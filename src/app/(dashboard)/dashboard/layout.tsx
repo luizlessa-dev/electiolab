@@ -22,7 +22,7 @@ const navItems = [
   { href: "/dashboard",            label: "Overview",   icon: LayoutDashboard },
   { href: "/dashboard/pesquisas",  label: "Pesquisas",  icon: FileSearch },
   { href: "/dashboard/drafts",     label: "Rascunhos",  icon: FileSearch },
-  { href: "/dashboard/planos-trechos", label: "Planos de Governo", icon: ClipboardCheck },
+  { href: "/dashboard/planos-sinteses", label: "Planos de Governo", icon: ClipboardCheck },
   { href: "/dashboard/institutos", label: "Institutos", icon: Building2 },
   { href: "/dashboard/dinheiro",   label: "Financeiro", icon: DollarSign },
   { href: "/candidatos",           label: "Candidatos", icon: Users },

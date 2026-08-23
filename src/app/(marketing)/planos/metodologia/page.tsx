@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, BookOpen, FileText, ScanText, Tags, UserCheck, ClipboardList } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, FileText, ScanText, Tags, Sparkles, UserCheck, ClipboardList } from "lucide-react";
 
 export const metadata: Metadata = {
   title: {
     absolute: "Método — Planos de governo dos presidenciáveis 2026 | ElectioLab",
   },
   description:
-    "De onde vêm os dados dos planos de governo, como o texto é extraído, como o recorte por tema é decidido e por que tudo passa por revisão humana antes de publicar.",
+    "De onde vêm os dados dos planos de governo, como o texto é extraído, como o recorte por tema é decidido, como a síntese é gerada e por que tudo passa por revisão humana antes de publicar.",
   alternates: { canonical: "https://electiolab.com/planos/metodologia" },
   openGraph: {
     title: "Método — Planos de governo dos presidenciáveis 2026",
-    description: "Fonte, extração, classificação e revisão — como a seção Planos de governo é montada.",
+    description: "Fonte, extração, classificação, síntese e revisão — como a seção Planos de governo é montada.",
     url: "https://electiolab.com/planos/metodologia",
     images: [{ url: "https://electiolab.com/opengraph-image", width: 1200, height: 630 }],
   },
@@ -31,7 +31,11 @@ const FAQ = [
     a: "Em duas etapas. Primeiro um filtro por palavra-chave decide quais temas são candidatos pra cada parágrafo. Depois, só pros temas candidatos, um modelo de linguagem (LLM) decide se o parágrafo trata explicitamente daquele tema, usando a definição de escopo do tema como critério. As duas etapas juntas não são perfeitas — por isso a revisão humana obrigatória antes de publicar.",
   },
   {
-    q: "Por que às vezes um candidato aparece sem nenhum trecho num tema?",
+    q: "O texto que aparece é uma citação literal do plano?",
+    a: "Não mais. Um plano de governo real costuma trazer dezenas de parágrafos longos sobre o mesmo tema, o que tornava a leitura (e a revisão) impraticável. Desde agosto de 2026, o texto publicado é uma síntese: um modelo de linguagem lê só os parágrafos já classificados naquele tema pra aquele candidato e escreve um resumo curto e neutro, sem opinião e sem inventar nada fora do que os parágrafos dizem. Os parágrafos originais continuam existindo e podem ser conferidos pela página e pelo link do PDF, mas não aparecem soltos na página pública.",
+  },
+  {
+    q: "Por que às vezes um candidato aparece sem nenhuma síntese num tema?",
     a: "Porque o plano dele não trata explicitamente daquele tema — isso é mostrado como dado ('O plano não trata deste tema'), não omitido. Não inventamos posição que o candidato não escreveu.",
   },
   {
@@ -52,7 +56,7 @@ const jsonLd = {
       "@id": "https://electiolab.com/planos/metodologia#article",
       headline: "Método — Planos de governo dos presidenciáveis 2026",
       description:
-        "De onde vêm os dados, como o texto é extraído, como o recorte por tema é decidido e por que tudo passa por revisão humana antes de publicar.",
+        "De onde vêm os dados, como o texto é extraído, como o recorte por tema é decidido, como a síntese é gerada e por que tudo passa por revisão humana antes de publicar.",
       url: "https://electiolab.com/planos/metodologia",
       author: { "@id": "https://electiolab.com/sobre#founder" },
       publisher: { "@id": "https://electiolab.com/#organization" },
@@ -96,19 +100,25 @@ const PIPELINE = [
     icon: Tags,
     titulo: "3. Recorte por tema",
     corpo:
-      "Parágrafo completo (nunca frase cortada no meio) passa por um filtro de palavra-chave e depois por um modelo de linguagem, que decide se o parágrafo trata explicitamente do tema. Todo trecho nasce com status pendente.",
+      "Parágrafo completo (nunca frase cortada no meio) passa por um filtro de palavra-chave e depois por um modelo de linguagem, que decide se o parágrafo trata explicitamente do tema. Cada parágrafo classificado vira um trecho literal, guardado internamente como matéria-prima.",
+  },
+  {
+    icon: Sparkles,
+    titulo: "4. Síntese",
+    corpo:
+      "Um modelo de linguagem lê só os trechos já classificados pra aquele candidato e tema (nunca o plano inteiro) e escreve um resumo curto — 2 a 4 frases, neutro, sem opinião, sem comparar com outro candidato, sem nada que não esteja nos trechos-fonte. Nasce com status pendente.",
   },
   {
     icon: UserCheck,
-    titulo: "4. Revisão humana",
+    titulo: "5. Revisão humana",
     corpo:
-      "Nenhum trecho pendente aparece nesta seção do site. Uma pessoa aprova, rejeita ou corrige o recorte antes de qualquer publicação — quem revisou e quando fica registrado.",
+      "Nenhuma síntese pendente aparece nesta seção do site. Uma pessoa aprova, rejeita ou corrige a síntese antes de qualquer publicação, podendo conferir os trechos literais que a embasaram — quem revisou e quando fica registrado.",
   },
   {
     icon: ClipboardList,
-    titulo: "5. Publicação",
+    titulo: "6. Publicação",
     corpo:
-      "Só trecho aprovado aparece, agrupado por tema, com bloco por candidato em ordem alfabética — trecho literal, número da página e link pro PDF original.",
+      "Só síntese aprovada aparece, agrupada por tema, com bloco por candidato em ordem alfabética — resumo, página(s) de referência e link pro PDF original do plano.",
   },
 ];
 
@@ -139,7 +149,7 @@ export default function PlanosMetodologiaPage() {
           </p>
           <p className="max-w-2xl text-base leading-relaxed text-muted-foreground">
             Esta página explica de onde vêm os dados, como o texto sai do PDF, como um trecho é associado a um
-            tema e por que nada é publicado sem revisão humana antes.
+            tema, como a síntese é gerada e por que nada é publicado sem revisão humana antes.
           </p>
         </section>
 
@@ -180,14 +190,22 @@ export default function PlanosMetodologiaPage() {
             <div className="space-y-1 border-l-2 border-primary/30 pl-4">
               <h3 className="text-sm font-semibold">Sem comparação, nota ou ranking</h3>
               <p className="text-sm leading-relaxed text-muted-foreground">
-                Cada bloco de candidato mostra só o trecho literal do próprio plano — nenhum texto nosso liga um
-                candidato a outro, nem qualifica quem propõe mais ou melhor.
+                Cada bloco de candidato mostra só a síntese do próprio plano, presa aos trechos-fonte daquele
+                candidato — nenhum texto nosso liga um candidato a outro, nem qualifica quem propõe mais ou melhor.
+              </p>
+            </div>
+            <div className="space-y-1 border-l-2 border-primary/30 pl-4">
+              <h3 className="text-sm font-semibold">Síntese não é citação livre</h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                O modelo que escreve o resumo só pode usar os trechos literais já classificados naquele tema — não
+                usa conhecimento externo sobre o candidato, o partido ou o assunto. Página e link do PDF acompanham
+                cada síntese pra quem quiser conferir a fonte.
               </p>
             </div>
             <div className="space-y-1 border-l-2 border-primary/30 pl-4">
               <h3 className="text-sm font-semibold">&ldquo;Não trata do tema&rdquo; é dado, não omissão</h3>
               <p className="text-sm leading-relaxed text-muted-foreground">
-                Candidato sem trecho aprovado num tema aparece mesmo assim, com essa mensagem explícita — em vez
+                Candidato sem síntese aprovada num tema aparece mesmo assim, com essa mensagem explícita — em vez
                 de simplesmente sumir da página.
               </p>
             </div>
@@ -210,6 +228,10 @@ export default function PlanosMetodologiaPage() {
               {
                 title: "Cobertura de tema depende de como o candidato escreveu",
                 body: "Um plano pode tratar de um assunto sem usar os termos que o filtro de palavra-chave reconhece — isso pode significar que um trecho relevante nunca chega a ser proposto pra revisão. Estamos cientes dessa limitação e revisando a taxonomia de temas periodicamente.",
+              },
+              {
+                title: "Síntese é texto gerado, não citação literal",
+                body: "Mesmo restrita aos trechos-fonte e revisada por uma pessoa antes de publicar, uma síntese escrita por modelo de linguagem pode simplificar nuance que o texto original tinha. Quem quiser o texto exato do candidato tem a página e o link do PDF oficial em cada síntese.",
               },
               {
                 title: "Plano de governo é promessa, não execução",
