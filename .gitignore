@@ -52,3 +52,6 @@ backups/
 
 # PDFs baixados de planos de governo (hash + metadados já ficam em `plano_governo`)
 data/planos/
+
+# Cache de idioma do Tesseract (tesseract.js baixa pra cwd se não configurado)
+*.traineddata
