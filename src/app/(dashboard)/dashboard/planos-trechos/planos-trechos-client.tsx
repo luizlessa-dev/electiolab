@@ -130,9 +130,10 @@ function Detail({ view, toast, setToast }: { view: DetailView; toast: ToastState
         </p>
       )}
 
-      <div className="space-y-6">
+      {/* Kanban: uma coluna por candidato, trechos como cartão dentro da coluna. */}
+      <div className="flex items-start gap-4 overflow-x-auto pb-4">
         {blocks.map((b) => (
-          <CandidatoSection key={b.candidato_id} block={b} setToast={setToast} />
+          <CandidatoColumn key={b.candidato_id} block={b} setToast={setToast} />
         ))}
       </div>
 
@@ -141,40 +142,42 @@ function Detail({ view, toast, setToast }: { view: DetailView; toast: ToastState
   );
 }
 
-function CandidatoSection({ block, setToast }: { block: CandidatoBlock; setToast: SetToast }) {
+function CandidatoColumn({ block, setToast }: { block: CandidatoBlock; setToast: SetToast }) {
   return (
-    <section className="overflow-hidden rounded-lg border border-border bg-card">
-      <div className="flex items-center gap-3 border-b border-border bg-muted/30 px-4 py-3">
-        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-muted">
+    <div className="flex w-80 shrink-0 flex-col gap-3">
+      <div className="sticky top-0 flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 shadow-sm">
+        <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full bg-muted">
           {block.photo_url ? (
-            <Image src={block.photo_url} alt={block.candidato_nome} fill sizes="40px" className="object-cover" />
+            <Image src={block.photo_url} alt={block.candidato_nome} fill sizes="32px" className="object-cover" />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-              <User className="h-5 w-5" />
+              <User className="h-4 w-4" />
             </div>
           )}
         </div>
-        <div className="min-w-0 flex-1">
-          <h2 className="truncate text-base font-semibold">{block.candidato_nome}</h2>
-        </div>
+        <h2 className="min-w-0 flex-1 truncate text-sm font-semibold">{block.candidato_nome}</h2>
+        <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+          {block.trechos.length}
+        </span>
         {block.url_origem && (
           <a
             href={block.url_origem}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex shrink-0 items-center gap-1 text-xs text-muted-foreground hover:underline"
+            title="Fonte (zip)"
+            className="shrink-0 text-muted-foreground hover:text-foreground"
           >
-            <ExternalLink className="h-3 w-3" /> fonte (zip)
+            <ExternalLink className="h-3.5 w-3.5" />
           </a>
         )}
       </div>
 
-      <ul className="divide-y divide-border">
+      <div className="flex flex-col gap-3">
         {block.trechos.map((t) => (
           <TrechoCard key={t.id} trecho={t} setToast={setToast} />
         ))}
-      </ul>
-    </section>
+      </div>
+    </div>
   );
 }
 
@@ -195,88 +198,101 @@ function TrechoCard({ trecho, setToast }: { trecho: Trecho; setToast: SetToast }
   }
 
   return (
-    <li className="p-4">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0 flex-1 space-y-1">
-          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-            <span>página {trecho.pagina}</span>
-            {trecho.revisado_por && (
-              <span className="italic">
-                — revisado por {trecho.revisado_por} em {new Date(trecho.revisado_em!).toLocaleString("pt-BR")}
-              </span>
-            )}
-          </div>
-
-          {editing ? (
-            <textarea
-              value={texto}
-              onChange={(e) => setTexto(e.target.value)}
-              rows={Math.max(3, Math.ceil(texto.length / 90))}
-              className="w-full rounded-md border border-border bg-background p-2 text-sm"
-            />
-          ) : (
-            <p className="whitespace-pre-wrap text-sm">{trecho.texto}</p>
-          )}
-        </div>
-
-        <div className="flex shrink-0 flex-wrap gap-2">
-          {editing ? (
-            <>
-              <button
-                disabled={isPending}
-                onClick={() =>
-                  run(async () => {
-                    await editarTrecho(trecho.id, texto);
-                    setEditing(false);
-                  }, "Trecho editado")
-                }
-                className="rounded-md bg-primary px-2 py-1 text-xs text-primary-foreground disabled:opacity-50"
-              >
-                salvar
-              </button>
-              <button
-                disabled={isPending}
-                onClick={() => {
-                  setTexto(trecho.texto);
-                  setEditing(false);
-                }}
-                className="rounded-md border border-border px-2 py-1 text-xs hover:bg-accent"
-              >
-                cancelar
-              </button>
-            </>
-          ) : (
-            <>
-              {trecho.status === "pendente" && (
-                <>
-                  <button
-                    disabled={isPending}
-                    onClick={() => run(() => aprovarTrecho(trecho.id), "Aprovado")}
-                    className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-2 py-1 text-xs text-white hover:bg-emerald-700 disabled:opacity-50"
-                  >
-                    <Check className="h-3 w-3" /> aprovar
-                  </button>
-                  <button
-                    disabled={isPending}
-                    onClick={() => run(() => rejeitarTrecho(trecho.id), "Rejeitado")}
-                    className="inline-flex items-center gap-1 rounded-md border border-red-500/30 px-2 py-1 text-xs text-red-700 hover:bg-red-500/10 disabled:opacity-50 dark:text-red-300"
-                  >
-                    <X className="h-3 w-3" /> rejeitar
-                  </button>
-                </>
-              )}
-              <button
-                disabled={isPending}
-                onClick={() => setEditing(true)}
-                className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-accent disabled:opacity-50"
-              >
-                <Pencil className="h-3 w-3" /> editar
-              </button>
-            </>
-          )}
-        </div>
+    <div className="rounded-xl border border-border bg-card p-3 shadow-sm">
+      <div className="mb-2 flex items-center justify-between">
+        <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+          pág. {trecho.pagina}
+        </span>
+        {trecho.status !== "pendente" && (
+          <span
+            className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${
+              trecho.status === "aprovado"
+                ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+                : "bg-red-500/10 text-red-700 dark:text-red-300"
+            }`}
+          >
+            {STATUS_LABEL[trecho.status]}
+          </span>
+        )}
       </div>
-    </li>
+
+      {editing ? (
+        <textarea
+          value={texto}
+          onChange={(e) => setTexto(e.target.value)}
+          rows={Math.max(4, Math.ceil(texto.length / 45))}
+          className="w-full rounded-md border border-border bg-background p-2 text-sm"
+        />
+      ) : (
+        <p className="whitespace-pre-wrap text-sm leading-relaxed">{trecho.texto}</p>
+      )}
+
+      {trecho.revisado_por && (
+        <p className="mt-2 text-[10px] italic text-muted-foreground">
+          revisado por {trecho.revisado_por} em {new Date(trecho.revisado_em!).toLocaleString("pt-BR")}
+        </p>
+      )}
+
+      <div className="mt-3 flex flex-wrap gap-2">
+        {editing ? (
+          <>
+            <button
+              disabled={isPending}
+              onClick={() =>
+                run(async () => {
+                  await editarTrecho(trecho.id, texto);
+                  setEditing(false);
+                }, "Trecho editado")
+              }
+              className="rounded-md bg-primary px-2 py-1 text-xs text-primary-foreground disabled:opacity-50"
+            >
+              salvar
+            </button>
+            <button
+              disabled={isPending}
+              onClick={() => {
+                setTexto(trecho.texto);
+                setEditing(false);
+              }}
+              className="rounded-md border border-border px-2 py-1 text-xs hover:bg-accent"
+            >
+              cancelar
+            </button>
+          </>
+        ) : (
+          <>
+            {trecho.status === "pendente" && (
+              <>
+                <button
+                  disabled={isPending}
+                  onClick={() => run(() => aprovarTrecho(trecho.id), "Aprovado")}
+                  title="Aprovar"
+                  className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-2 py-1 text-xs text-white hover:bg-emerald-700 disabled:opacity-50"
+                >
+                  <Check className="h-3 w-3" /> aprovar
+                </button>
+                <button
+                  disabled={isPending}
+                  onClick={() => run(() => rejeitarTrecho(trecho.id), "Rejeitado")}
+                  title="Rejeitar"
+                  className="inline-flex items-center gap-1 rounded-md border border-red-500/30 px-2 py-1 text-xs text-red-700 hover:bg-red-500/10 disabled:opacity-50 dark:text-red-300"
+                >
+                  <X className="h-3 w-3" /> rejeitar
+                </button>
+              </>
+            )}
+            <button
+              disabled={isPending}
+              onClick={() => setEditing(true)}
+              title="Editar"
+              className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-accent disabled:opacity-50"
+            >
+              <Pencil className="h-3 w-3" /> editar
+            </button>
+          </>
+        )}
+      </div>
+    </div>
   );
 }
 
