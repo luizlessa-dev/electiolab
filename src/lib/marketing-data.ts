@@ -63,7 +63,7 @@ async function getLatestStatePollByType(
       `id, publication_date, sample_size, margin_of_error, methodology, scope,
        scenario_label, source_url,
        institute:institutes(name, slug),
-       results:poll_results(percentage, candidate:candidates(name, party, color))`
+       results:poll_results(percentage, candidate:candidates(name, party, color, is_active))`
     )
     .eq("election_id", election.id)
     .or(PROVENIENCIA_PUBLICA)
@@ -87,12 +87,16 @@ async function getLatestStatePollByType(
       results: Array<{
         percentage: number;
         candidate:
-          | { name: string; party: string | null; color: string | null }[]
-          | { name: string; party: string | null; color: string | null }
+          | { name: string; party: string | null; color: string | null; is_active: boolean }[]
+          | { name: string; party: string | null; color: string | null; is_active: boolean }
           | null;
       }>;
     };
-    return { ...pp, n_results: pp.results?.length ?? 0 };
+    const results = (pp.results ?? []).filter((r) => {
+      const c = Array.isArray(r.candidate) ? r.candidate[0] : r.candidate;
+      return c != null && c.is_active !== false;
+    });
+    return { ...pp, results, n_results: results.length };
   });
 
   // Da pesquisa mais recente, escolhe o cenário com MAIS candidatos testados
@@ -181,7 +185,7 @@ export async function getStateRunoffScenarios(uf: string): Promise<RunoffScenari
     .select(
       `publication_date, scenario_label,
        institute:institutes(name),
-       results:poll_results(percentage, candidate:candidates(name, party, color, slug))`
+       results:poll_results(percentage, candidate:candidates(name, party, color, slug, is_active))`
     )
     .eq("election_id", election.id)
     .or(PROVENIENCIA_PUBLICA)
@@ -205,14 +209,14 @@ export async function getStateRunoffScenarios(uf: string): Promise<RunoffScenari
     results: Array<{
       percentage: number;
       candidate:
-        | { name: string; party: string | null; color: string | null; slug: string }[]
-        | { name: string; party: string | null; color: string | null; slug: string }
+        | { name: string; party: string | null; color: string | null; slug: string; is_active: boolean }[]
+        | { name: string; party: string | null; color: string | null; slug: string; is_active: boolean }
         | null;
     }>;
   }>) {
     const results = (p.results ?? []).map((r) => {
       const c = Array.isArray(r.candidate) ? r.candidate[0] : r.candidate;
-      return c ? { ...c, pct: Number(r.percentage) } : null;
+      return c && c.is_active !== false ? { ...c, pct: Number(r.percentage) } : null;
     }).filter((x): x is NonNullable<typeof x> => x !== null);
 
     // Head-to-head genuíno = exatamente 2 candidatos
@@ -366,7 +370,7 @@ export async function getLatestPresidentialPoll(): Promise<StatePollSnapshot | n
       `id, publication_date, sample_size, margin_of_error, methodology, scope,
        scenario_label, source_url,
        institute:institutes(name, slug),
-       results:poll_results(percentage, candidate:candidates(name, party, color))`
+       results:poll_results(percentage, candidate:candidates(name, party, color, is_active))`
     )
     .eq("election_id", election.id)
     .or(PROVENIENCIA_PUBLICA)
@@ -376,12 +380,29 @@ export async function getLatestPresidentialPoll(): Promise<StatePollSnapshot | n
   if (!polls || polls.length === 0) return null;
 
   const ranked = polls.map((p: unknown) => {
-    const pp = p as Parameters<typeof Object.assign>[1] & {
+    const pp = p as {
       id: string;
       publication_date: string;
-      results: unknown[];
+      sample_size: number | null;
+      margin_of_error: number | null;
+      methodology: string | null;
+      scope: string | null;
+      scenario_label: string | null;
+      source_url: string | null;
+      institute: { name: string; slug: string | null }[] | { name: string; slug: string | null } | null;
+      results: Array<{
+        percentage: number;
+        candidate:
+          | { name: string; party: string | null; color: string | null; is_active: boolean }[]
+          | { name: string; party: string | null; color: string | null; is_active: boolean }
+          | null;
+      }>;
     };
-    return { ...pp, n_results: pp.results?.length ?? 0 };
+    const results = (pp.results ?? []).filter((r) => {
+      const c = Array.isArray(r.candidate) ? r.candidate[0] : r.candidate;
+      return c != null && c.is_active !== false;
+    });
+    return { ...pp, results, n_results: results.length };
   });
 
   const mostRecentDate = ranked[0].publication_date;
