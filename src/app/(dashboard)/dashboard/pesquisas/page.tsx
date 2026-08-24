@@ -38,14 +38,14 @@ export default async function PesquisasPage() {
     methodology: p.methodology ?? "",
     sample_size: p.sample_size,
     margin_of_error: p.margin_of_error,
-    results: (p.results ?? []).map((r) => {
-      const cand = candidates.find((c) => c.id === r.candidate_id);
-      return {
-        candidate_name: cand?.name ?? "—",
+    results: (p.results ?? [])
+      .map((r) => ({ cand: candidates.find((c) => c.id === r.candidate_id), r }))
+      .filter(({ cand }) => cand != null)
+      .map(({ cand, r }) => ({
+        candidate_name: cand!.name,
         percentage: Number(r.percentage),
-        color: cand?.color ?? "#6b7280",
-      };
-    }),
+        color: cand!.color ?? "#6b7280",
+      })),
   }));
 
   return (
