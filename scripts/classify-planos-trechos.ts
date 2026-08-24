@@ -260,6 +260,7 @@ async function main() {
       const { data: page, error: pageErr } = await supabase
         .from("plano_trecho")
         .select("plano_id")
+        .order("id")
         .range(from, from + PAGE_SIZE - 1);
       if (pageErr) throw pageErr;
       for (const r of page ?? []) feitoSet.add(r.plano_id as string);

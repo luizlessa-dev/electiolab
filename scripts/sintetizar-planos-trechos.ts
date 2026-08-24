@@ -85,11 +85,17 @@ const PRECO_OUTPUT_POR_TOKEN = 5.0 / 1_000_000;
 let gastoAcumuladoUsd = 0;
 let orcamentoEstourado = false;
 
-async function sintetizar(temaNome: string, descricaoEscopo: string, trechos: TrechoFonte[]): Promise<string | null> {
+type Sintese = { texto: string; textoEstendido: string };
+
+// Sempre gera os dois tamanhos na mesma chamada — texto curto pra leitura
+// padrão na página, texto_estendido pro "ver mais" (candidato com muito
+// material, ex. Renan/segurança pública com 17 páginas de referência, não
+// cabia em 2-4 frases sem perder ponto relevante; decisão de 2026-08-24).
+async function sintetizar(temaNome: string, descricaoEscopo: string, trechos: TrechoFonte[]): Promise<Sintese | null> {
   try {
     const resp = await anthropic.messages.create({
       model: MODEL,
-      max_tokens: 500,
+      max_tokens: 1500,
       tool_choice: { type: "tool", name: "sintetizar" },
       tools: [
         {
@@ -101,27 +107,36 @@ async function sintetizar(temaNome: string, descricaoEscopo: string, trechos: Tr
               texto: {
                 type: "string",
                 description:
-                  "Síntese em 2 a 4 frases, terceira pessoa, tom neutro e factual. Só o que está literalmente nos trechos — nada inventado, nada de fora deles. Sem adjetivo de avaliação (bom/ruim/vago/ousado), sem comparação com outro candidato.",
+                  "Síntese CURTA: sempre 2 a 4 frases, mesmo que os trechos-fonte sejam muitos ou longos — escolha só os pontos mais centrais e descarte o resto (o texto_estendido cobre o restante). Terceira pessoa, tom neutro e factual. Só o que está literalmente nos trechos — nada inventado, nada de fora deles. Sem adjetivo de avaliação (bom/ruim/vago/ousado), sem comparação com outro candidato.",
+              },
+              texto_estendido: {
+                type: "string",
+                description:
+                  "Versão mais completa da mesma síntese, cobrindo todos os pontos principais que os trechos-fonte trazem (não só os da versão curta) — ainda um resumo neutro em terceira pessoa, nunca cópia literal do trecho, nunca invenção fora dele. Sem limite de frases, mas sem redundância ou enchimento.",
               },
             },
-            required: ["texto"],
+            required: ["texto", "texto_estendido"],
           },
         },
       ],
       messages: [
         {
           role: "user",
-          content: `Tema: ${temaNome}\nCritério do tema: ${descricaoEscopo}\n\nTrechos do plano de governo já classificados nesse tema (fonte ÚNICA e exclusiva — não use conhecimento externo sobre o candidato ou o partido):\n"""\n${montarFonte(trechos)}\n"""\n\nEscreva uma síntese curta e neutra do que esses trechos dizem sobre o tema. Não avalie, não compare, não complete lacunas com suposição.`,
+          content: `Tema: ${temaNome}\nCritério do tema: ${descricaoEscopo}\n\nTrechos do plano de governo já classificados nesse tema (fonte ÚNICA e exclusiva — não use conhecimento externo sobre o candidato ou o partido):\n"""\n${montarFonte(trechos)}\n"""\n\nEscreva duas versões de uma síntese neutra do que esses trechos dizem sobre o tema: uma curta (texto) e uma completa (texto_estendido). Não avalie, não compare, não complete lacunas com suposição.`,
         },
       ],
     });
     gastoAcumuladoUsd +=
       resp.usage.input_tokens * PRECO_INPUT_POR_TOKEN + resp.usage.output_tokens * PRECO_OUTPUT_POR_TOKEN;
 
+    if (resp.stop_reason === "max_tokens") {
+      console.warn(`      ⚠️  resposta cortada por max_tokens (${trechos.length} trecho(s) fonte) — aumentar max_tokens.`);
+    }
     const toolUse = resp.content.find((b) => b.type === "tool_use");
     if (!toolUse || toolUse.type !== "tool_use") return null;
-    const input = toolUse.input as { texto?: string };
-    return input.texto?.trim() || null;
+    const input = toolUse.input as { texto?: string; texto_estendido?: string };
+    if (!input.texto?.trim() || !input.texto_estendido?.trim()) return null;
+    return { texto: input.texto.trim(), textoEstendido: input.texto_estendido.trim() };
   } catch (e) {
     console.warn(`      ⚠️  erro na síntese: ${e instanceof Error ? e.message : e}`);
     return null;
@@ -174,15 +189,21 @@ async function main() {
   }
 
   // Todos os trechos dos planos alvo, paginado (mesmo cuidado dos outros
-  // scripts desta feature — .select() sem .range() corta em 1000 linhas).
+  // scripts desta feature — .select() sem .range() corta em 1000 linhas, e
+  // aqui passa: 2439 trechos no total). .order("id") é obrigatório junto do
+  // .range() — sem ordem explícita o Postgres não garante linha estável
+  // entre páginas, causando corte/duplicata silenciosa (achado em
+  // 2026-08-24: sem isso, a segunda rodada de síntese via só 137 dos 173
+  // pares candidato+tema que realmente têm trecho).
   const PAGE_SIZE = 1000;
   const todosTrechos: { plano_id: string; tema_id: string; pagina: number; texto: string }[] = [];
   for (let from = 0; ; from += PAGE_SIZE) {
     const { data: page, error: pageErr } = await supabase
       .from("plano_trecho")
-      .select("plano_id, tema_id, pagina, texto")
+      .select("id, plano_id, tema_id, pagina, texto")
       .neq("status", "rejeitado")
       .in("plano_id", alvo.map((p) => p.id))
+      .order("id")
       .range(from, from + PAGE_SIZE - 1);
     if (pageErr) throw pageErr;
     todosTrechos.push(...((page ?? []) as typeof todosTrechos));
@@ -204,7 +225,8 @@ async function main() {
     for (let from = 0; ; from += PAGE_SIZE) {
       const { data: page, error: pageErr } = await supabase
         .from("plano_sintese")
-        .select("plano_id, tema_id")
+        .select("id, plano_id, tema_id")
+        .order("id")
         .range(from, from + PAGE_SIZE - 1);
       if (pageErr) throw pageErr;
       for (const r of page ?? []) existentes.add(`${r.plano_id}::${r.tema_id}`);
@@ -241,8 +263,8 @@ async function main() {
       break;
     }
 
-    const texto = await sintetizar(tema.nome, tema.descricao_escopo, trechos);
-    if (!texto) {
+    const resultado = await sintetizar(tema.nome, tema.descricao_escopo, trechos);
+    if (!resultado) {
       console.warn(`   ⚠️  ${label}: síntese vazia, pulando.`);
       continue;
     }
@@ -251,7 +273,8 @@ async function main() {
       {
         plano_id: planoId,
         tema_id: temaId,
-        texto,
+        texto: resultado.texto,
+        texto_estendido: resultado.textoEstendido,
         paginas_referencia: paginasUnicas(trechos),
         status: "pendente",
       },

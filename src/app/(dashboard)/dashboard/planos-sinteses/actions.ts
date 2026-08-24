@@ -48,12 +48,13 @@ export async function rejeitarSintese(id: string) {
   revalidatePath("/dashboard/planos-sinteses");
 }
 
-export async function editarSintese(id: string, novoTexto: string) {
+export async function editarSintese(id: string, novoTexto: string, novoTextoEstendido: string) {
   await requireAdmin();
   const texto = novoTexto.trim();
-  if (!texto) throw new Error("Texto não pode ficar vazio");
+  const texto_estendido = novoTextoEstendido.trim();
+  if (!texto || !texto_estendido) throw new Error("Texto (curto e completo) não pode ficar vazio");
   const sb = adminDb();
-  const { error } = await sb.from("plano_sintese").update({ texto }).eq("id", id);
+  const { error } = await sb.from("plano_sintese").update({ texto, texto_estendido }).eq("id", id);
   if (error) throw new Error(error.message);
   revalidatePath("/dashboard/planos-sinteses");
 }

@@ -170,6 +170,7 @@ async function main() {
       const { data: page, error: pageErr } = await supabase
         .from("plano_pagina")
         .select("plano_id")
+        .order("id")
         .range(from, from + PAGE_SIZE - 1);
       if (pageErr) throw pageErr;
       for (const r of page ?? []) extraidoSet.add(r.plano_id as string);

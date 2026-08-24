@@ -2137,6 +2137,7 @@ export type Database = {
           status: string
           tema_id: string
           texto: string
+          texto_estendido: string | null
         }
         Insert: {
           gerado_em?: string
@@ -2148,6 +2149,7 @@ export type Database = {
           status?: string
           tema_id: string
           texto: string
+          texto_estendido?: string | null
         }
         Update: {
           gerado_em?: string
@@ -2159,6 +2161,7 @@ export type Database = {
           status?: string
           tema_id?: string
           texto?: string
+          texto_estendido?: string | null
         }
         Relationships: [
           {

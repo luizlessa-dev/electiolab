@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, FileText, User } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 import { PlanosGovernoAviso } from "@/components/planos-governo-aviso";
+import { VerMais } from "./ver-mais";
 
 export const revalidate = 3600;
 
@@ -28,7 +29,7 @@ type CandidatoBloco = {
   nome: string;
   photo_url: string | null;
   pdf_url_publico: string | null;
-  sintese: { texto: string; paginas: number[] } | null;
+  sintese: { texto: string; textoEstendido: string; paginas: number[] } | null;
 };
 
 async function getBlocos(temaId: string): Promise<CandidatoBloco[]> {
@@ -54,7 +55,7 @@ async function getBlocos(temaId: string): Promise<CandidatoBloco[]> {
   // solto aqui. Ver metodologia pra explicação da mudança.
   const { data: sinteses } = await supabase
     .from("plano_sintese")
-    .select("plano_id, texto, paginas_referencia")
+    .select("plano_id, texto, texto_estendido, paginas_referencia")
     .eq("tema_id", temaId)
     .eq("status", "aprovado");
 
@@ -71,7 +72,13 @@ async function getBlocos(temaId: string): Promise<CandidatoBloco[]> {
         nome: c.name,
         photo_url: c.photo_url,
         pdf_url_publico: plano.pdf_url_publico,
-        sintese: sintese ? { texto: sintese.texto, paginas: sintese.paginas_referencia ?? [] } : null,
+        sintese: sintese
+          ? {
+              texto: sintese.texto,
+              textoEstendido: sintese.texto_estendido ?? sintese.texto,
+              paginas: sintese.paginas_referencia ?? [],
+            }
+          : null,
       };
     })
     // Alfabético — regra editorial: nunca por pesquisa, partido ou relevância.
@@ -164,6 +171,9 @@ export default async function PlanoTemaPage({ params }: { params: Promise<{ tema
                 ) : (
                   <div>
                     <p className="text-sm leading-relaxed text-foreground">{b.sintese.texto}</p>
+                    {b.sintese.textoEstendido.trim() !== b.sintese.texto.trim() && (
+                      <VerMais textoEstendido={b.sintese.textoEstendido} />
+                    )}
                     <footer className="mt-1.5 flex items-center gap-2 text-xs text-muted-foreground">
                       <span>
                         {b.sintese.paginas.length > 1 ? "páginas" : "página"} {b.sintese.paginas.join(", ")} do plano

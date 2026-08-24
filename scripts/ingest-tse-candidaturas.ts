@@ -426,6 +426,7 @@ async function main() {
       .select(
         "id, tse_id, cpf, name, full_name, birth_date, profession, education, net_worth, photo_url, election_id, slug"
       )
+      .order("id")
       .range(from, from + PAGE_SIZE - 1);
     if (error) throw error;
     existing.push(...(page ?? []));

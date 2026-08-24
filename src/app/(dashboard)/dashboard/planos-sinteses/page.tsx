@@ -52,6 +52,7 @@ async function getOverview(): Promise<TemaOverview[]> {
 export type Sintese = {
   id: string;
   texto: string;
+  texto_estendido: string;
   paginas_referencia: number[];
   status: Status;
   revisado_por: string | null;
@@ -76,7 +77,7 @@ async function getTemaDetail(temaSlug: string, status: Status): Promise<{
 
   const { data: sinteses } = await sb
     .from("plano_sintese")
-    .select("id, plano_id, texto, paginas_referencia, status, revisado_por, revisado_em")
+    .select("id, plano_id, texto, texto_estendido, paginas_referencia, status, revisado_por, revisado_em")
     .eq("tema_id", tema.id)
     .eq("status", status)
     .range(0, 999);
@@ -117,6 +118,7 @@ async function getTemaDetail(temaSlug: string, status: Status): Promise<{
         sintese: {
           id: s.id,
           texto: s.texto,
+          texto_estendido: s.texto_estendido ?? s.texto,
           paginas_referencia: s.paginas_referencia ?? [],
           status: s.status as Status,
           revisado_por: s.revisado_por,

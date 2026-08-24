@@ -138,6 +138,8 @@ function SinteseCard({ candidato, setToast }: { candidato: CandidatoSintese; set
   const [isPending, startTransition] = useTransition();
   const [editing, setEditing] = useState(false);
   const [texto, setTexto] = useState(sintese.texto);
+  const [textoEstendido, setTextoEstendido] = useState(sintese.texto_estendido);
+  const [verEstendido, setVerEstendido] = useState(false);
   const [verFontes, setVerFontes] = useState(false);
 
   function run(fn: () => Promise<void>, okMsg: string) {
@@ -156,14 +158,35 @@ function SinteseCard({ candidato, setToast }: { candidato: CandidatoSintese; set
       <h2 className="mb-1 text-sm font-semibold">{candidato.candidato_nome}</h2>
 
       {editing ? (
-        <textarea
-          value={texto}
-          onChange={(e) => setTexto(e.target.value)}
-          rows={Math.max(3, Math.ceil(texto.length / 70))}
-          className="w-full rounded-md border border-border bg-background p-2 text-sm"
-        />
+        <div className="space-y-2">
+          <div>
+            <p className="mb-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">curto</p>
+            <textarea
+              value={texto}
+              onChange={(e) => setTexto(e.target.value)}
+              rows={Math.max(3, Math.ceil(texto.length / 70))}
+              className="w-full rounded-md border border-border bg-background p-2 text-sm"
+            />
+          </div>
+          <div>
+            <p className="mb-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">completo</p>
+            <textarea
+              value={textoEstendido}
+              onChange={(e) => setTextoEstendido(e.target.value)}
+              rows={Math.max(4, Math.ceil(textoEstendido.length / 70))}
+              className="w-full rounded-md border border-border bg-background p-2 text-sm"
+            />
+          </div>
+        </div>
       ) : (
-        <p className="text-sm leading-relaxed">{texto}</p>
+        <>
+          <p className="text-sm leading-relaxed">{texto}</p>
+          {verEstendido && (
+            <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
+              {textoEstendido}
+            </p>
+          )}
+        </>
       )}
 
       <p className="mt-1 text-xs text-muted-foreground">
@@ -177,7 +200,7 @@ function SinteseCard({ candidato, setToast }: { candidato: CandidatoSintese; set
               disabled={isPending}
               onClick={() =>
                 run(async () => {
-                  await editarSintese(sintese.id, texto);
+                  await editarSintese(sintese.id, texto, textoEstendido);
                   setEditing(false);
                 }, "Síntese editada")
               }
@@ -190,6 +213,7 @@ function SinteseCard({ candidato, setToast }: { candidato: CandidatoSintese; set
               disabled={isPending}
               onClick={() => {
                 setTexto(sintese.texto);
+                setTextoEstendido(sintese.texto_estendido);
                 setEditing(false);
               }}
               className="underline disabled:opacity-50"
@@ -221,6 +245,10 @@ function SinteseCard({ candidato, setToast }: { candidato: CandidatoSintese; set
             )}
             <button disabled={isPending} onClick={() => setEditing(true)} className="underline disabled:opacity-50">
               editar
+            </button>{" "}
+            ·{" "}
+            <button onClick={() => setVerEstendido((v) => !v)} className="underline">
+              {verEstendido ? "ocultar" : "ver"} versão completa
             </button>{" "}
             ·{" "}
             <button onClick={() => setVerFontes((v) => !v)} className="underline">
