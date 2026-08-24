@@ -42,7 +42,7 @@ async function getBlocos(temaId: string): Promise<CandidatoBloco[]> {
 
   const { data: candidatos } = await supabase
     .from("candidates")
-    .select("id, name, photo_url")
+    .select("id, name, photo_url, official_photo_url")
     .eq("election_id", primeiroTurno?.id ?? "");
 
   const { data: planos } = await supabase
@@ -70,7 +70,10 @@ async function getBlocos(temaId: string): Promise<CandidatoBloco[]> {
       return {
         id: c.id,
         nome: c.name,
-        photo_url: c.photo_url,
+        // Wikimedia (2026-08-24) tem preferência — a foto do TSE é um
+        // thumbnail de 40x55px, quase ilegível em tela. Fallback pro TSE só
+        // quando não achamos foto melhor pro candidato.
+        photo_url: c.official_photo_url ?? c.photo_url,
         pdf_url_publico: plano.pdf_url_publico,
         sintese: sintese
           ? {
