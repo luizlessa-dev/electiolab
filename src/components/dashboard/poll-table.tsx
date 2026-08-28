@@ -1,5 +1,7 @@
 "use client";
 
+import { formatShortDateBR } from "@/lib/utils/date-br";
+
 interface PollRow {
   id: string;
   publication_date: string;
@@ -57,10 +59,7 @@ export function PollTable({ polls }: { polls: PollRow[] }) {
           }`}
         >
           <span className="w-16 font-mono tabular-nums text-muted-foreground text-xs">
-            {(() => {
-              const d = new Date(poll.publication_date);
-              return `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getFullYear()).slice(2)}`;
-            })()}
+            {formatShortDateBR(poll.publication_date)}
           </span>
           <span className="w-28 font-medium text-foreground truncate">
             {poll.institute_name}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -98,9 +99,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <span className="animate-pulse-live absolute inline-flex h-full w-full rounded-full bg-positive opacity-60" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-positive" />
               </span>
-              <span className="text-[11px] text-muted-foreground">
-                {new Date().toLocaleDateString("pt-BR")}
-              </span>
+              <TodayLabel />
             </div>
             <ThemeToggle compact />
           </div>
@@ -161,6 +160,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <main className="flex-1 p-4 md:p-6">{children}</main>
       </div>
     </div>
+  );
+}
+
+// A data corrente só existe no cliente: o HTML vem do servidor Vercel (UTC) e,
+// entre 21h e 00h no horário de Brasília, já é o dia seguinte lá — o que dava
+// mismatch de hidratação. Renderiza vazio no SSR e preenche depois do mount.
+const NO_OP_SUBSCRIBE = () => () => {};
+const getTodayClient = () => new Date().toLocaleDateString("pt-BR");
+const getTodayServer = () => "";
+
+function TodayLabel() {
+  const today = useSyncExternalStore(
+    NO_OP_SUBSCRIBE,
+    getTodayClient,
+    getTodayServer
+  );
+
+  return (
+    <span className="text-[11px] text-muted-foreground tabular-nums">
+      {today}
+    </span>
   );
 }
 

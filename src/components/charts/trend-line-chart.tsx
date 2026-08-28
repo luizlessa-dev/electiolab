@@ -9,6 +9,8 @@ import {
   ComposedChart,
 } from "recharts";
 
+import { formatDateBR, formatDayMonthBR } from "@/lib/utils/date-br";
+
 interface TrendPoint {
   [key: string]: number | string;
 }
@@ -39,10 +41,7 @@ export function TrendLineChart({
           axisLine={{ stroke: AXIS_COLOR }}
           tickLine={false}
           tick={{ fontSize: 10, fill: LABEL_COLOR, fontFamily: "var(--font-geist-mono)" }}
-          tickFormatter={(v) => {
-            const d = new Date(v);
-            return `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}`;
-          }}
+          tickFormatter={(v) => formatDayMonthBR(v as string)}
         />
         <YAxis
           domain={[0, "auto"]}
@@ -62,10 +61,7 @@ export function TrendLineChart({
           }}
           itemStyle={{ color: "oklch(0.85 0 0)" }}
           labelStyle={{ color: "oklch(0.55 0 0)", fontSize: "10px" }}
-          labelFormatter={(v) => {
-            const d = new Date(v as string);
-            return d.toLocaleDateString("pt-BR");
-          }}
+          labelFormatter={(v) => formatDateBR(v as string)}
           formatter={(value) => [`${value}%`]}
         />
         {candidates.map((c) => (
