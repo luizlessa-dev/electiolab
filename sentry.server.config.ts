@@ -1,15 +1,19 @@
-// This file configures the initialization of Sentry on the server.
-// The config you add here will be used whenever the server handles a request.
-// https://docs.sentry.io/platforms/javascript/guides/nextjs/
-
+/**
+ * Sentry SERVER config — captura erros em server components, rotas de API e crons.
+ * Ativo apenas se SENTRY_DSN (ou NEXT_PUBLIC_SENTRY_DSN) estiver definido, para
+ * que erros de desenvolvimento local não poluam o projeto de produção.
+ */
 import * as Sentry from "@sentry/nextjs";
 
-Sentry.init({
-  dsn: "https://1f0c130e966e34ca78b1da7803ac6e0a@o4511555623321600.ingest.us.sentry.io/4511815852294144",
+const dsn = process.env.SENTRY_DSN ?? process.env.NEXT_PUBLIC_SENTRY_DSN;
 
-  // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-  tracesSampleRate: 1,
-
-  // Enable logs to be sent to Sentry
-  enableLogs: true,
-});
+if (dsn) {
+  Sentry.init({
+    dsn,
+    environment: process.env.VERCEL_ENV ?? "development",
+    // Mesma taxa do client: os crons de ingestão do TSE rodam todo dia e
+    // amostrar 100% das requisições só queimava cota sem revelar nada novo.
+    tracesSampleRate: 0.05,
+    enableLogs: true,
+  });
+}
