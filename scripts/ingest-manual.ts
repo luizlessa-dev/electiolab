@@ -1518,6 +1518,345 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Cléber Rabelo",  percentage:  1 },
     ],
   },
+
+  // ─── Curadoria 01/09/2026 — lote 8 (Tier 3, Governador) ──
+
+  // Instituto Índice Inteligência (contratante Rádio Nova FM) · 27-29 ago 2026 · TSE AL-05894/2026 · n=1.200
+  // Fonte: https://www.al102.com.br/noticias/31003/jhc-consolida-lideranca-isolada-com-47-6-das-intencoes-de-voto-para-o-governo-de-alagoas-aponta-pesquisa-nova-fm
+  {
+    institute_name: "Instituto Índice Inteligência",
+    election_name: "Governador Alagoas 2026",
+    publication_date: "2026-09-01",
+    fieldwork_start: "2026-08-27",
+    fieldwork_end: "2026-08-29",
+    sample_size: 1200,
+    margin_of_error: 2.83,
+    methodology: "presencial",
+    source_url: "https://www.al102.com.br/noticias/31003/jhc-consolida-lideranca-isolada-com-47-6-das-intencoes-de-voto-para-o-governo-de-alagoas-aponta-pesquisa-nova-fm",
+    tse_protocolo: "AL058942026",
+    results: [
+      { candidate_name: "JHC",           percentage: 47.6 },
+      { candidate_name: "Renan Filho",   percentage: 35.6 },
+      { candidate_name: "Lenilda Luna",  percentage:  0.8 },
+      { candidate_name: "Márcio Jambo",  percentage:  0.4 },
+    ],
+  },
+
+  // Quaest · 25-28 ago 2026 · TSE PA-07718/2026 · n=804
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-para-agosto-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador Para 2026",
+    publication_date: "2026-08-30",
+    fieldwork_start: "2026-08-25",
+    fieldwork_end: "2026-08-28",
+    sample_size: 804,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-para-agosto-2026/",
+    tse_protocolo: "PA077182026",
+    results: [
+      { candidate_name: "Dr Daniel",      percentage: 28 },
+      { candidate_name: "Hana Ghassan",   percentage: 27 },
+      { candidate_name: "Gal Leite",      percentage:  2 },
+      { candidate_name: "Well Macedo",    percentage:  2 },
+      { candidate_name: "Araceli Lemos",  percentage:  2 },
+      { candidate_name: "José Moita",     percentage:  1 },
+    ],
+  },
+
+  // Quaest · 23-26 ago 2026 · TSE RR-04765/2026 · n=804
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-roraima-agosto-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador Roraima 2026",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-23",
+    fieldwork_end: "2026-08-26",
+    sample_size: 804,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-roraima-agosto-2026/",
+    tse_protocolo: "RR047652026",
+    results: [
+      { candidate_name: "Arthur Henrique",  percentage: 60 },
+      { candidate_name: "Soldado Sampaio",  percentage: 27 },
+      { candidate_name: "Rosi Aires",       percentage:  1 },
+    ],
+  },
+
+  // Real Time Big Data · 22-26 ago 2026 · TSE ES-05096/2026 · n=1.600
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/real-time-big-data-ferraco-lidera-1o-e-2o-turnos-para-governo-do-es/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Espirito Santo 2026",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-22",
+    fieldwork_end: "2026-08-26",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/real-time-big-data-ferraco-lidera-1o-e-2o-turnos-para-governo-do-es/",
+    tse_protocolo: "ES050962026",
+    results: [
+      { candidate_name: "Ricardo Ferraco",  percentage: 42 },
+      { candidate_name: "Lorenzo Pazolini", percentage: 33 },
+      { candidate_name: "Helder Salomao",   percentage: 11 },
+      { candidate_name: "Breno Barcelos",   percentage:  2 },
+    ],
+  },
+
+  // Quaest · 23-26 ago 2026 · TSE GO-06186/2026 · n=804
+  // Fonte: https://g1.globo.com/go/goias/eleicoes/2026/noticia/2026/08/27/quaest-go-27-de-agosto.ghtml
+  {
+    institute_name: "Quaest",
+    election_name: "Governador GO 2026 - 1º Turno",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-23",
+    fieldwork_end: "2026-08-26",
+    sample_size: 804,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://g1.globo.com/go/goias/eleicoes/2026/noticia/2026/08/27/quaest-go-27-de-agosto.ghtml",
+    tse_protocolo: "GO061862026",
+    results: [
+      { candidate_name: "Daniel Vilela",    percentage: 37 },
+      { candidate_name: "Marconi Perillo",  percentage: 20 },
+      { candidate_name: "Wilder Morais",    percentage: 12 },
+      { candidate_name: "Luis Cesar Bueno", percentage:  4 },
+    ],
+  },
+
+  // Quaest · 23-26 ago 2026 · TSE SE-03536/2026 · n=804
+  // Fonte: https://g1.globo.com/se/sergipe/eleicoes/2026/noticia/2026/08/27/quaest-em-se-fabio-40percent-valmir-de-francisquinho-28percent.ghtml
+  {
+    institute_name: "Quaest",
+    election_name: "Governador Sergipe 2026",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-23",
+    fieldwork_end: "2026-08-26",
+    sample_size: 804,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://g1.globo.com/se/sergipe/eleicoes/2026/noticia/2026/08/27/quaest-em-se-fabio-40percent-valmir-de-francisquinho-28percent.ghtml",
+    tse_protocolo: "SE035362026",
+    results: [
+      { candidate_name: "Fabio Mitidieri",         percentage: 40 },
+      { candidate_name: "Valmir",                  percentage: 28 },
+      { candidate_name: "Ricardo Marques",         percentage:  5 },
+      { candidate_name: "Taty  Cristina de Jesus", percentage:  1 },
+      { candidate_name: "Dr. Helton",              percentage:  1 },
+      { candidate_name: "Emanuel Cacho",           percentage:  1 },
+    ],
+  },
+
+  // Quaest · 23-26 ago 2026 · TSE ES-04444/2026 · n=804
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-espirito-santo-agosto-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador Espirito Santo 2026",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-23",
+    fieldwork_end: "2026-08-26",
+    sample_size: 804,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-espirito-santo-agosto-2026/",
+    tse_protocolo: "ES044442026",
+    results: [
+      { candidate_name: "Ricardo Ferraco",  percentage: 35 },
+      { candidate_name: "Lorenzo Pazolini", percentage: 28 },
+      { candidate_name: "Helder Salomao",   percentage: 10 },
+      { candidate_name: "Breno Barcelos",   percentage:  2 },
+      { candidate_name: "Rafael Demuner",   percentage:  1 },
+    ],
+  },
+
+  // Quaest · 23-26 ago 2026 · TSE BA-06206/2026 · n=900 · cenário 1 (com Ariel Capistrano)
+  // Fonte: https://g1.globo.com/ba/bahia/eleicoes/2026/noticia/2026/08/27/quaest-ba-governador-27-agosto.ghtml
+  {
+    institute_name: "Quaest",
+    election_name: "Governador BA 2026 - 1º Turno",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-23",
+    fieldwork_end: "2026-08-26",
+    sample_size: 900,
+    methodology: "presencial",
+    source_url: "https://g1.globo.com/ba/bahia/eleicoes/2026/noticia/2026/08/27/quaest-ba-governador-27-agosto.ghtml",
+    tse_protocolo: "BA062062026",
+    results: [
+      { candidate_name: "ACM Neto",           percentage: 39 },
+      { candidate_name: "Jeronimo Rodrigues", percentage: 37 },
+      { candidate_name: "Aroldo Felix",       percentage:  1 },
+      { candidate_name: "Maria Bona",         percentage:  1 },
+      { candidate_name: "Ariel Capistrano",   percentage:  1 },
+      { candidate_name: "Ronaldo Mansur",     percentage:  1 },
+    ],
+  },
+
+  // Quaest · 23-26 ago 2026 · TSE AC-09106/2026 · n=804
+  // Fonte: https://g1.globo.com/ac/acre/eleicoes/2026/noticia/2026/08/27/quaest-no-ac-alan-33percent-mailza-24percent-bocalom-15percent-thor-2percent.ghtml
+  {
+    institute_name: "Quaest",
+    election_name: "Governador Acre 2026",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-23",
+    fieldwork_end: "2026-08-26",
+    sample_size: 804,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://g1.globo.com/ac/acre/eleicoes/2026/noticia/2026/08/27/quaest-no-ac-alan-33percent-mailza-24percent-bocalom-15percent-thor-2percent.ghtml",
+    tse_protocolo: "AC091062026",
+    results: [
+      { candidate_name: "Alan Rick",     percentage: 33 },
+      { candidate_name: "Mailza Assis",  percentage: 24 },
+      { candidate_name: "Tiao Bocalom",  percentage: 15 },
+      { candidate_name: "Thor Dantas",   percentage:  2 },
+      { candidate_name: "Dr.luisinho",   percentage:  1 },
+    ],
+  },
+
+  // Real Time Big Data · 21-25 ago 2026 · TSE TO-09665/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-tocantins-agosto-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Tocantins 2026",
+    publication_date: "2026-08-26",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-25",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-tocantins-agosto-2026/",
+    tse_protocolo: "TO096652026",
+    results: [
+      { candidate_name: "Professora Dorinha", percentage: 33 },
+      { candidate_name: "Vicentinho Junior",  percentage: 30 },
+      { candidate_name: "Laurez Moreira",     percentage: 11 },
+      { candidate_name: "Ataides Oliveira",   percentage:  7 },
+      { candidate_name: "Prof Witer Naves",   percentage:  4 },
+    ],
+  },
+
+  // Real Time Big Data · 21-25 ago 2026 · TSE AM-09965/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-amazonas-agosto-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Amazonas 2026",
+    publication_date: "2026-08-26",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-25",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-amazonas-agosto-2026/",
+    tse_protocolo: "AM099652026",
+    results: [
+      { candidate_name: "Omar Aziz",              percentage: 34 },
+      { candidate_name: "Roberto Cidade",         percentage: 22 },
+      { candidate_name: "Maria do Carmo Seffair", percentage: 21 },
+      { candidate_name: "David Almeida",          percentage: 14 },
+      { candidate_name: "Cabo Daciolo",           percentage:  4 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE AM-04595/2026 · n=804
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-amazonas-agosto-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador Amazonas 2026",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 804,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-amazonas-agosto-2026/",
+    tse_protocolo: "AM045952026",
+    results: [
+      { candidate_name: "Omar Aziz",              percentage: 26 },
+      { candidate_name: "Roberto Cidade",         percentage: 18 },
+      { candidate_name: "Maria do Carmo Seffair", percentage: 16 },
+      { candidate_name: "David Almeida",          percentage: 15 },
+      { candidate_name: "Cabo Daciolo",           percentage:  2 },
+      { candidate_name: "Isael Munduruku",        percentage:  1 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE MS-00793/2026 · n=804
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-mato-grosso-sul-agosto-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador Mato Grosso do Sul 2026",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 804,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-mato-grosso-sul-agosto-2026/",
+    tse_protocolo: "MS007932026",
+    results: [
+      { candidate_name: "Eduardo Riedel",   percentage: 40 },
+      { candidate_name: "Fabio Trad",       percentage: 13 },
+      { candidate_name: "Delcidio Amaral",  percentage:  8 },
+      { candidate_name: "Catan",            percentage:  3 },
+      { candidate_name: "Lucien Rezende",   percentage:  2 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE PB-07850/2026 · n=804
+  // Fonte: https://jornaldaparaiba.com.br/politica/pleno-poder/quaest-na-paraiba-lucas-lidera-com-38-seguido-por-cicero-19-e-efraim-18
+  {
+    institute_name: "Quaest",
+    election_name: "Governador Paraiba 2026",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 804,
+    methodology: "presencial",
+    source_url: "https://jornaldaparaiba.com.br/politica/pleno-poder/quaest-na-paraiba-lucas-lidera-com-38-seguido-por-cicero-19-e-efraim-18",
+    tse_protocolo: "PB078502026",
+    results: [
+      { candidate_name: "Lucas Ribeiro",  percentage: 38 },
+      { candidate_name: "Cicero Lucena",  percentage: 19 },
+      { candidate_name: "Efraim Filho",   percentage: 18 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE MT-04846/2026 · n=804
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governo-senado-mato-grosso-agosto-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador Mato Grosso 2026",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 804,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governo-senado-mato-grosso-agosto-2026/",
+    tse_protocolo: "MT048462026",
+    results: [
+      { candidate_name: "Wellington Fagundes",     percentage: 27 },
+      { candidate_name: "Otaviano Pivetta",        percentage: 23 },
+      { candidate_name: "Natasha Slhessarenko",    percentage:  8 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE AP-09438/2026 · n=804
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governo-senado-amapa-agosto-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador Amapa 2026",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 804,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governo-senado-amapa-agosto-2026/",
+    tse_protocolo: "AP094382026",
+    results: [
+      { candidate_name: "Dr Furlan",     percentage: 55 },
+      { candidate_name: "Clecio Luis",   percentage: 35 },
+      { candidate_name: "Jairo Palheta", percentage:  1 },
+    ],
+  },
 ];
 
 async function main() {
