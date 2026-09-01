@@ -107,6 +107,7 @@ async function getUltimaPesquisaPorCandidato(
     const { data, error } = await supabase
       .from("poll_results")
       .select("candidate_id,poll:polls(publication_date)")
+      .is("excluded_reason", null)
       .order("candidate_id", { ascending: true })
       .range(from, from + PAGE - 1);
     if (error) break;

@@ -114,9 +114,10 @@ async function getData(): Promise<{ blocks: ScenarioBlock[]; updated: string | n
     .select(
       `scenario_label, publication_date,
        institute:institutes(name),
-       results:poll_results(percentage, candidate:candidates(name, color))`
+       results:poll_results!inner(percentage, candidate:candidates(name, color))`
     )
     .eq("round", 2)
+    .is("results.excluded_reason", null)
     .order("publication_date", { ascending: false });
 
   // ─── Agrupa ─────────────────────────────────────────────────────────

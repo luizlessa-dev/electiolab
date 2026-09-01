@@ -2360,6 +2360,8 @@ export type Database = {
           absolute_votes: number | null
           candidate_id: string
           created_at: string | null
+          excluded_at: string | null
+          excluded_reason: string | null
           id: string
           percentage: number
           poll_id: string
@@ -2368,6 +2370,8 @@ export type Database = {
           absolute_votes?: number | null
           candidate_id: string
           created_at?: string | null
+          excluded_at?: string | null
+          excluded_reason?: string | null
           id?: string
           percentage: number
           poll_id: string
@@ -2376,6 +2380,8 @@ export type Database = {
           absolute_votes?: number | null
           candidate_id?: string
           created_at?: string | null
+          excluded_at?: string | null
+          excluded_reason?: string | null
           id?: string
           percentage?: number
           poll_id?: string

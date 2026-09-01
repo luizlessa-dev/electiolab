@@ -34,6 +34,7 @@ export async function GET(request: Request) {
        polls:poll_results(percentage, poll:polls(publication_date, institute:institutes(name)))`
     )
     .in("slug", slugs)
+    .is("polls.excluded_reason", null)
     .eq("is_active", true);
 
   if (error) {

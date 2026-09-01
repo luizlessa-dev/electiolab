@@ -59,9 +59,10 @@ export async function getPolls(electionId: string) {
     .select(`
       *,
       institute:institutes(id, name, reliability_score, methodology_default),
-      results:poll_results(id, candidate_id, percentage)
+      results:poll_results!inner(id, candidate_id, percentage)
     `)
     .eq("election_id", electionId)
+    .is("results.excluded_reason", null)
     .or(PROVENIENCIA_PUBLICA)
     .order("publication_date", { ascending: false });
   return data ?? [];
@@ -184,6 +185,7 @@ export async function getCandidateBySlug(slug: string) {
       prior_election_results(id, year, round, election_type, state, city, party, total_votes, result_status)
     `)
     .eq("id", candidateId)
+    .is("poll_results.excluded_reason", null)
     .order("publication_date", { foreignTable: "poll_results.poll", ascending: false })
     .maybeSingle();
   return data;

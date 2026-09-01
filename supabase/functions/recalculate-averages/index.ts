@@ -19,7 +19,9 @@ interface ResultRow {
 interface CandidateRow {
   id: string;
   name: string;
-  slug: string;
+  // candidates.slug é nullable no banco (cadastro de 2022 veio sem). Declarar
+  // como `string` aqui escondia o null e derrubava o recálculo no localeCompare.
+  slug: string | null;
 }
 
 const METHODOLOGY_WEIGHTS: Record<string, number> = {
@@ -142,8 +144,12 @@ function groupPollsByScenario(
     const c1 = candidatesById.get(r1.candidate_id);
     const c2 = candidatesById.get(r2.candidate_id);
     if (!c1 || !c2) continue;
-    const [a, b] = [c1, c2].sort((x, y) => x.slug.localeCompare(y.slug));
-    const label = `${a.slug}-vs-${b.slug}`;
+    // Candidato de eleição antiga pode não ter slug (a coluna é nullable e o
+    // cadastro de 2022 veio sem). Cai pro id, que sempre existe: o label fica
+    // feio, mas é estável e não derruba o recálculo inteiro.
+    const key = (c: CandidateRow) => c.slug ?? c.id;
+    const [a, b] = [c1, c2].sort((x, y) => key(x).localeCompare(key(y)));
+    const label = `${key(a)}-vs-${key(b)}`;
     const ids: [string, string] = [a.id, b.id];
     if (!groups.has(label)) groups.set(label, { polls: [], candidateIds: ids });
     groups.get(label)!.polls.push(poll);
@@ -208,7 +214,15 @@ async function recalculateForElection(
     .from("candidates")
     .select("id, name, slug")
     .eq("election_id", electionId)
-    .eq("is_active", true)
+    // Sem filtro por is_active de propósito. Quem decide se alguém entra na
+    // média é poll_results.excluded_reason, derivado do arquivo de candidaturas
+    // do TSE. `is_active` era o mecanismo manual antigo pra esconder
+    // não-candidato e ficou desatualizado: escondia 5 candidatos registrados
+    // (Flavio Bolsonaro no 2T, Ciro Gomes em gov/CE, Simone Tebet em sen/SP,
+    // João Azevêdo em sen/PB, Mara Rocha em sen/AC) — no caso do Flávio, sumia
+    // com o cenário de 2º turno com mais pesquisas da base.
+    // Quem não concorre já não tem linha válida aqui, então calculateWeightedAverage
+    // devolve null e o candidato é pulado de qualquer forma.
     .returns<CandidateRow[]>();
 
   if (!candidates?.length) return { error: "No candidates", electionId };
@@ -221,6 +235,11 @@ async function recalculateForElection(
       results:poll_results(candidate_id, percentage)
     `)
     .eq("election_id", electionId)
+    // Só resultados de quem é candidato registrado no cargo/UF. As linhas
+    // marcadas continuam no banco como registro do que o instituto publicou,
+    // mas não entram na média — ver poll_results.excluded_reason e
+    // scripts/flag-non-candidates-in-polls.ts.
+    .is("results.excluded_reason", null)
     .order("publication_date", { ascending: false })
     .returns<PollQueryRow[]>();
 
@@ -336,15 +355,23 @@ Deno.serve(async (req: Request) => {
       const uniqIds = Array.from(
         new Set((pollElections ?? []).map((p) => p.election_id)),
       );
+      // Erro numa eleição não pode abortar as outras: isso roda em cron a cada
+      // 6h e um único registro ruim deixaria a base inteira sem recalcular.
       const out: Awaited<ReturnType<typeof recalculateForElection>>[] = [];
       for (const id of uniqIds) {
-        out.push(await recalculateForElection(supabase, id, keepHistory));
+        try {
+          out.push(await recalculateForElection(supabase, id, keepHistory));
+        } catch (err) {
+          out.push({ error: String(err), electionId: id });
+        }
       }
+      const falhas = out.filter((r) => "error" in r && r.error).length;
       return new Response(
         JSON.stringify({
           success: true,
           mode: "all",
           elections_processed: out.length,
+          elections_failed: falhas,
           results: out,
         }),
         { headers: { "Content-Type": "application/json" } },

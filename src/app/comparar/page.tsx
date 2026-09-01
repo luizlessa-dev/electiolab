@@ -25,6 +25,7 @@ async function fetchCandidates(slugs: string[]): Promise<ComparedCandidate[]> {
        polls:poll_results(percentage, poll:polls(publication_date, institute:institutes(name)))`
     )
     .in("slug", slugs)
+    .is("polls.excluded_reason", null)
     .eq("is_active", true);
 
   // Normaliza + ordena pela ordem dos slugs no input

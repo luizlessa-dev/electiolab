@@ -19,6 +19,7 @@ async function getCandidate(slug: string) {
       "name, party, color, bio, current_position, photo_url, official_photo_url, election:elections(type,state,year), poll_results(percentage)"
     )
     .eq("slug", slug)
+    .is("poll_results.excluded_reason", null)
     .eq("is_active", true)
     .maybeSingle();
   return data as

@@ -102,6 +102,7 @@ export async function GET(
         )
       `)
       .eq('election_id', electionId)
+      .is('poll_results.excluded_reason', null)
       .order('fieldwork_end', { ascending: false })
       .returns<PollForWeight[]>();
 

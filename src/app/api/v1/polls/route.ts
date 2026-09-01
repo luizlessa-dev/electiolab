@@ -84,9 +84,10 @@ export async function GET(request: Request) {
       id, election_id, fieldwork_start, fieldwork_end, publication_date,
       sample_size, margin_of_error, methodology, scope, poll_type,
       institute:institutes(id, name),
-      results:poll_results(candidate_id, percentage, candidate:candidates(name, party))
+      results:poll_results!inner(candidate_id, percentage, candidate:candidates(name, party))
     `
     )
+    .is("results.excluded_reason", null)
     .or(PROVENIENCIA_PUBLICA)
     .order("publication_date", { ascending: false })
     .limit(limit);
