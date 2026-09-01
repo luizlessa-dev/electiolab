@@ -6,9 +6,31 @@ export const alt = "Perfil do candidato — ElectioLab";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-type ElectionInfo = { type?: string; state?: string | null; year?: number | null };
+type ElectionInfo = { type?: string; state?: string | null; year?: number | null; round?: number | null };
 
-async function getCandidate(slug: string) {
+// Mesma prioridade de cargo do desempate em src/lib/queries.ts
+// (resolveCandidateRowsBySlug) — duplicado aqui, não importado, pra manter
+// este gerador de imagem autocontido (roda em edge runtime).
+const TYPE_PRIORITY: Record<string, number> = {
+  presidente: 5, governador: 4, senador: 3,
+  deputado_federal: 2, deputado_estadual: 1, deputado_distrital: 1,
+};
+
+type Candidato = {
+  id: string;
+  name: string;
+  party: string | null;
+  color: string | null;
+  bio: string | null;
+  current_position: string | null;
+  photo_url: string | null;
+  official_photo_url: string | null;
+  tse_id: string | null;
+  election: ElectionInfo | null;
+  poll_results: Array<{ percentage: number }>;
+};
+
+async function getCandidate(slug: string): Promise<Candidato | null> {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -16,29 +38,42 @@ async function getCandidate(slug: string) {
   const { data } = await supabase
     .from("candidates")
     .select(
-      "name, party, color, bio, current_position, photo_url, official_photo_url, election:elections(type,state,year), poll_results(percentage)"
+      "id, name, party, color, bio, current_position, photo_url, official_photo_url, tse_id, election:elections(type,state,year,round), poll_results(percentage)"
     )
     .eq("slug", slug)
+    // Só resultados de quem é candidato registrado no cargo/UF entram na média
+    // exibida na imagem — mesmo critério de src/lib/queries.ts e
+    // poll_results.excluded_reason (ver migration poll_results_excluded_reason).
     .is("poll_results.excluded_reason", null)
-    .eq("is_active", true)
-    .maybeSingle();
-  return data as
-    | {
-        name: string;
-        party: string | null;
-        color: string | null;
-        bio: string | null;
-        current_position: string | null;
-        photo_url: string | null;
-        official_photo_url: string | null;
-        election: ElectionInfo | null;
-        poll_results: Array<{ percentage: number }>;
-      }
-    | null;
+    .eq("is_active", true);
+
+  if (!data?.length) return null;
+
+  // Desempate: year DESC, tem tse_id DESC, round DESC, prioridade de cargo,
+  // id ASC — igual getCandidateBySlug (ver o comentário lá sobre o stub de 2º
+  // turno presidencial), pra a imagem OG bater com o que /candidato/[slug]
+  // (sem segmento de eleição) realmente serve.
+  const vencedor = [...data].sort((a, b) => {
+    const ea = (Array.isArray(a.election) ? a.election[0] : a.election) as ElectionInfo | null;
+    const eb = (Array.isArray(b.election) ? b.election[0] : b.election) as ElectionInfo | null;
+    return (
+      (eb?.year ?? 0) - (ea?.year ?? 0) ||
+      (b.tse_id ? 1 : 0) - (a.tse_id ? 1 : 0) ||
+      (eb?.round ?? 0) - (ea?.round ?? 0) ||
+      (TYPE_PRIORITY[eb?.type ?? ""] ?? 0) - (TYPE_PRIORITY[ea?.type ?? ""] ?? 0) ||
+      a.id.localeCompare(b.id)
+    );
+  })[0];
+
+  return {
+    ...vencedor,
+    election: (Array.isArray(vencedor.election) ? vencedor.election[0] : vencedor.election) ?? null,
+  } as Candidato;
 }
 
-export default async function OG({ params }: { params: { slug: string } }) {
-  const c = await getCandidate(params.slug);
+export default async function OG({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const c = await getCandidate(slug);
   if (!c) {
     return new ImageResponse(
       (
@@ -112,6 +147,10 @@ export default async function OG({ params }: { params: { slug: string } }) {
         <div style={{ display: "flex", flexDirection: "column", flex: 1, gap: 12 }}>
           <div
             style={{
+              // Texto literal + expressão são dois filhos separados em JSX
+              // ("ELECTIOLAB · " e {electionLabel}) — mesmo padrão do bug no
+              // <div> do bio, satori exige display explícito nesse caso.
+              display: "flex",
               fontSize: 22,
               color: "#94a3b8",
               letterSpacing: 1.5,
@@ -136,7 +175,7 @@ export default async function OG({ params }: { params: { slug: string } }) {
           {c.party && (
             <div
               style={{
-                display: "inline-flex",
+                display: "flex",
                 alignSelf: "flex-start",
                 fontSize: 28,
                 fontWeight: 600,
@@ -154,6 +193,7 @@ export default async function OG({ params }: { params: { slug: string } }) {
           {bio && (
             <div
               style={{
+                display: "flex",
                 fontSize: 24,
                 color: "#cbd5e1",
                 marginTop: 16,
