@@ -272,14 +272,20 @@ export async function getCandidateElections(slug: string): Promise<CandidateElec
   const porId = new Map<string, LinhaIrma>();
   for (const r of daPessoa) porId.set(r.id, { id: r.id, election: r.election });
 
+  const IRMAS_SELECT = "id, cpf, is_active, election:elections(id, name, type, state, year, round)";
+
+  // Duas buscas, não uma: `tse_id` NÃO é estável no tempo. Medido ao vivo em
+  // 2026-09-01 — o ingest diário do TSE reatribuiu o tse_id da linha de Lula
+  // 2026 1º turno (de 280001607829 para 280002542548, igualando ao 2º turno)
+  // entre uma sessão e outra, e isso sozinho desconectou as linhas de 2022
+  // (que não têm cpf, só tse_id) de quem passou a servir /candidato/lula.
+  // Buscar também por cpf sobrevive a esse tipo de drift; buscar só por
+  // tse_id, não.
   if (tseIds.length) {
     // Só irmãs ativas quando o slug resolveu por linhas ativas. Sem isso, uma
     // candidatura indeferida (caso Tarcísio: governador ativo, presidente
     // inativo) entraria no seletor como se fosse eleição válida.
-    let q = supabase
-      .from("candidates")
-      .select("id, cpf, is_active, election:elections(id, name, type, state, year, round)")
-      .in("tse_id", tseIds);
+    let q = supabase.from("candidates").select(IRMAS_SELECT).in("tse_id", tseIds);
     if (primary.isActive) q = q.eq("is_active", true);
 
     const { data: irmas } = await q;
@@ -291,6 +297,20 @@ export async function getCandidateElections(slug: string): Promise<CandidateElec
       // repetido entre pessoas diferentes.
       const cpf = (c.cpf as string | null) ?? null;
       if (cpf && cpfs.size && !cpfs.has(cpf)) continue;
+      porId.set(id, { id, election: normalizeElection(c.election) });
+    }
+  }
+
+  if (cpfs.size) {
+    let q = supabase.from("candidates").select(IRMAS_SELECT).in("cpf", [...cpfs]);
+    if (primary.isActive) q = q.eq("is_active", true);
+
+    // Match direto por cpf já É a identidade da pessoa — sem barreira extra,
+    // ao contrário do laço por tse_id acima.
+    const { data: irmas } = await q;
+    for (const c of irmas ?? []) {
+      const id = c.id as string;
+      if (porId.has(id)) continue;
       porId.set(id, { id, election: normalizeElection(c.election) });
     }
   }
