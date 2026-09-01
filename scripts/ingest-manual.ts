@@ -1374,6 +1374,150 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Haddad",   percentage: 32 },
     ],
   },
+
+  // ─── Curadoria 01/09/2026 — lote 7 (Tier 2, Governador) ──
+
+  // Vetor/Arrow · 15-18 ago 2026 · TSE RJ-00630/2026 · n=14.000 · pesquisa ESPONTÂNEA
+  // Fonte: https://agendadopoder.com.br/vetor-arrow-paes-lidera-em-todas-as-regioes-e-douglas-ruas-retoma-o-segundo-lugar/
+  {
+    institute_name: "Vetor/Arrow",
+    election_name: "Governador RJ 2026 - 1º Turno",
+    publication_date: "2026-08-22",
+    fieldwork_start: "2026-08-15",
+    fieldwork_end: "2026-08-18",
+    sample_size: 14000,
+    methodology: "telefonica",
+    poll_type: "espontanea",
+    source_url: "https://agendadopoder.com.br/vetor-arrow-paes-lidera-em-todas-as-regioes-e-douglas-ruas-retoma-o-segundo-lugar/",
+    tse_protocolo: "RJ006302026",
+    results: [
+      { candidate_name: "Eduardo Paes",      percentage: 25.4 },
+      { candidate_name: "Douglas Ruas",      percentage:  7.3 },
+      { candidate_name: "Anthony Garotinho", percentage:  4 },
+    ],
+  },
+
+  // Real Time Big Data · 13-17 ago 2026 · TSE PR-09262/2026 · n=1.600
+  // Fonte: https://exame.com/brasil/real-time-big-data-moro-tem-37-e-sandro-alex-22-no-1o-turno-no-parana/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Parana 2026",
+    publication_date: "2026-08-18",
+    fieldwork_start: "2026-08-13",
+    fieldwork_end: "2026-08-17",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://exame.com/brasil/real-time-big-data-moro-tem-37-e-sandro-alex-22-no-1o-turno-no-parana/",
+    tse_protocolo: "PR092622026",
+    results: [
+      { candidate_name: "Sergio Moro",    percentage: 37 },
+      { candidate_name: "Sandro Alex",    percentage: 22 },
+      { candidate_name: "Requiao Filho",  percentage: 20 },
+      { candidate_name: "Luiz Franca",    percentage:  2 },
+    ],
+  },
+
+  // Real Time Big Data · 12-15 ago 2026 · TSE PE-06056/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-pernambuco-agosto-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador PE 2026 - 1º Turno",
+    publication_date: "2026-08-17",
+    fieldwork_start: "2026-08-12",
+    fieldwork_end: "2026-08-15",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-pernambuco-agosto-2026/",
+    tse_protocolo: "PE060562026",
+    results: [
+      { candidate_name: "Raquel Lyra",  percentage: 43 },
+      { candidate_name: "João Campos",  percentage: 43 },
+      { candidate_name: "Renan",        percentage:  3 },
+      { candidate_name: "Ivan Moraes",  percentage:  2 },
+    ],
+  },
+
+  // Vetor/Arrow · 12-13 ago 2026 · TSE RJ-04533/2026 · n=14.000 · pesquisa ESPONTÂNEA
+  // Fonte: https://agendadopoder.com.br/vetor-arrow-paes-chega-a-289-e-garotinho-assume-segundo-lugar-na-disputa-pelo-governo-do-rio/
+  {
+    institute_name: "Vetor/Arrow",
+    election_name: "Governador RJ 2026 - 1º Turno",
+    publication_date: "2026-08-15",
+    fieldwork_start: "2026-08-12",
+    fieldwork_end: "2026-08-13",
+    sample_size: 14000,
+    methodology: "telefonica",
+    poll_type: "espontanea",
+    source_url: "https://agendadopoder.com.br/vetor-arrow-paes-chega-a-289-e-garotinho-assume-segundo-lugar-na-disputa-pelo-governo-do-rio/",
+    tse_protocolo: "RJ045332026",
+    results: [
+      { candidate_name: "Eduardo Paes",      percentage: 28.9 },
+      { candidate_name: "Anthony Garotinho", percentage:  7.4 },
+      { candidate_name: "Douglas Ruas",      percentage:  6.2 },
+    ],
+  },
+
+  // Meio/Ideia (contratante ACSP) · 5-8 ago 2026 · TSE SP-04956/2026 · n=1.800
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/ideia-tarcisio-tem-51-e-haddad-34-no-1o-turno/
+  {
+    institute_name: "Meio/Ideia",
+    election_name: "Governador SP 2026 - 1º Turno",
+    publication_date: "2026-08-10",
+    fieldwork_start: "2026-08-05",
+    fieldwork_end: "2026-08-08",
+    sample_size: 1800,
+    margin_of_error: 2.3,
+    methodology: "telefonica",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/ideia-tarcisio-tem-51-e-haddad-34-no-1o-turno/",
+    tse_protocolo: "SP049562026",
+    results: [
+      { candidate_name: "Tarcísio",       percentage: 51 },
+      { candidate_name: "Haddad",         percentage: 34 },
+      { candidate_name: "Vera Lúcia",     percentage:  3 },
+      { candidate_name: "Carlos Machado", percentage:  1 },
+      { candidate_name: "Vivian Mendes",  percentage:  1 },
+    ],
+  },
+
+  // Instituto Índice Inteligência · 4-6 ago 2026 · TSE PR-07034/2026 · n=1.200
+  // Fonte: https://gazetadoparana.com.br/artigo/pesquisa-indice-moro-lidera-primeira-pesquisa-apos-convencoes-no-parana
+  {
+    institute_name: "Instituto Índice Inteligência",
+    election_name: "Governador Parana 2026",
+    publication_date: "2026-08-09",
+    fieldwork_start: "2026-08-04",
+    fieldwork_end: "2026-08-06",
+    sample_size: 1200,
+    methodology: "presencial",
+    source_url: "https://gazetadoparana.com.br/artigo/pesquisa-indice-moro-lidera-primeira-pesquisa-apos-convencoes-no-parana",
+    tse_protocolo: "PR070342026",
+    results: [
+      { candidate_name: "Sergio Moro",   percentage: 35.3 },
+      { candidate_name: "Sandro Alex",   percentage: 27.6 },
+      { candidate_name: "Requiao Filho", percentage: 19.5 },
+    ],
+  },
+
+  // Real Time Big Data · 30 jul-3 ago 2026 · TSE PA-08492/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-para-agosto-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Para 2026",
+    publication_date: "2026-08-04",
+    fieldwork_start: "2026-07-30",
+    fieldwork_end: "2026-08-03",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-para-agosto-2026/",
+    tse_protocolo: "PA084922026",
+    results: [
+      { candidate_name: "Hana Ghassan",   percentage: 31 },
+      { candidate_name: "Dr Daniel",      percentage: 29 },
+      { candidate_name: "Mario Couto",    percentage: 12 },
+      { candidate_name: "Araceli Lemos",  percentage:  4 },
+      { candidate_name: "Cléber Rabelo",  percentage:  1 },
+    ],
+  },
 ];
 
 async function main() {
