@@ -65,7 +65,7 @@ type AgendaEntry = { disclosure: string; uf: string; institute: string };
  * UFs de uma vez — omitir `uf` já agrega o Brasil inteiro nesse endpoint).
  * Faz a paginação (a API pagina em 30 itens fixos, ignora per_page).
  */
-async function fetchUpcomingAgenda(office: "presidente" | "governador"): Promise<Map<string, AgendaEntry>> {
+async function fetchUpcomingAgenda(office: "presidente" | "governador" | "senador"): Promise<Map<string, AgendaEntry>> {
   const map = new Map<string, AgendaEntry>();
   for (let page = 1; page <= 20; page++) {
     const url = `https://agenciasertao.com/eleicoes/pesquisas.php?data=lista&office=${office}&mode=upcoming&page=${page}`;
@@ -83,13 +83,15 @@ async function fetchUpcomingAgenda(office: "presidente" | "governador"): Promise
 /** Une os mapas de Presidente + Governador; falha em silêncio (rede fora do ar não deve travar a fila). */
 async function fetchDisclosureAgenda(): Promise<Map<string, AgendaEntry>> {
   try {
-    const [presidente, governador] = await Promise.all([
+    const [presidente, governador, senador] = await Promise.all([
       fetchUpcomingAgenda("presidente"),
       fetchUpcomingAgenda("governador"),
+      fetchUpcomingAgenda("senador"),
     ]);
     const merged = new Map<string, AgendaEntry>();
     presidente.forEach((v, k) => merged.set(k, v));
     governador.forEach((v, k) => merged.set(k, v));
+    senador.forEach((v, k) => merged.set(k, v));
     return merged;
   } catch (e) {
     console.error(`⚠️  agenciasertao.com indisponível (${(e as Error).message}) — seguindo sem cruzamento de agenda.`);
@@ -145,31 +147,43 @@ function isGovernador(cargos: string): boolean {
   return /governador/i.test(cargos);
 }
 
+function isSenador(cargos: string): boolean {
+  return /senador/i.test(cargos);
+}
+
 /** URL de busca sugerida para achar os resultados em fonte primária */
 function suggestSource(row: MissingRow): string {
   const inst = normalizeInstituteName(row.instituto);
-  const cargo = isPresidente(row.cargos) ? "presidente" : isGovernador(row.cargos) ? `governador ${row.uf}` : row.uf;
+  const cargo = isPresidente(row.cargos)
+    ? "presidente"
+    : isGovernador(row.cargos)
+    ? `governador ${row.uf}`
+    : isSenador(row.cargos)
+    ? `senador ${row.uf}`
+    : row.uf;
   const q = encodeURIComponent(`${inst} pesquisa ${cargo} ${row.fieldwork_end?.slice(0, 7)} 2026 resultado`);
   return `https://www.google.com/search?q=${q}`;
 }
 
 // ── Main ───────────────────────────────────────────────────────────────────────
 
-async function main() {
-  // Paginação explícita: PostgREST corta em 1000 linhas por padrão e a view tem
-  // ~1,7k pendências. Sem isso a fila truncava em silêncio e reportava "1000
-  // totais" como se fosse o universo completo.
+/**
+ * Paginação explícita: PostgREST corta em 1000 linhas por padrão e as views
+ * têm mais que isso. Sem isso a fila truncava em silêncio e reportava "1000
+ * totais" como se fosse o universo completo.
+ */
+async function fetchAllRows(view: string): Promise<MissingRow[]> {
   const PAGE = 1000;
   const rows: MissingRow[] = [];
   for (let from = 0; ; from += PAGE) {
     const { data, error } = await sb
-      .from("pesqele_missing")
+      .from(view)
       .select("protocolo, uf, cargos, instituto, fieldwork_end, publication_date, sample_size, days_since_fieldwork")
       .order("fieldwork_end", { ascending: false })
       .range(from, from + PAGE - 1);
 
     if (error) {
-      console.error("❌ erro ao ler pesqele_missing:", error.message);
+      console.error(`❌ erro ao ler ${view}:`, error.message);
       process.exit(1);
     }
 
@@ -177,17 +191,31 @@ async function main() {
     rows.push(...page);
     if (page.length < PAGE) break;
   }
+  return rows;
+}
+
+async function main() {
+  const rows = await fetchAllRows("pesqele_missing");
+  // Pendência de Senador é rastreada numa view separada: pesqele_missing exclui
+  // um protocolo assim que QUALQUER poll o referencia (mesmo só de Governador),
+  // então o gap de Senador em registros "Governador, Senador" combinados fica
+  // invisível ali — ver migration 20260901220000_pesqele_missing_senador.sql.
+  const senadorRows = await fetchAllRows("pesqele_missing_senador");
 
   // Filtra: recência (campo terminou nos últimos DAYS dias e não no futuro)
-  const recent = rows.filter((r) => {
-    const d = r.days_since_fieldwork;
-    return d !== null && d >= 0 && d <= DAYS;
-  });
+  const filterRecent = (list: MissingRow[]) =>
+    list.filter((r) => {
+      const d = r.days_since_fieldwork;
+      return d !== null && d >= 0 && d <= DAYS;
+    });
+  const recent = filterRecent(rows);
+  const recentSenador = filterRecent(senadorRows);
 
   // Classifica em tiers
   const tier1: MissingRow[] = []; // Presidente, n>=1500
   const tier2: MissingRow[] = []; // Governador major-state reputável, n>=1000
   const tier3: MissingRow[] = []; // Demais governadores reputáveis recentes
+  const tier4: MissingRow[] = []; // Senador reputável, n>=800 (view separada)
 
   for (const r of recent) {
     const n = r.sample_size ?? 0;
@@ -197,6 +225,12 @@ async function main() {
       tier2.push(r);
     } else if (isGovernador(r.cargos) && isReputable(r.instituto) && n >= 800) {
       tier3.push(r);
+    }
+  }
+  for (const r of recentSenador) {
+    const n = r.sample_size ?? 0;
+    if (isReputable(r.instituto) && n >= 800) {
+      tier4.push(r);
     }
   }
 
@@ -209,10 +243,11 @@ async function main() {
   const tier1Sorted = sortByAgenda(tier1);
   const tier2Sorted = sortByAgenda(tier2);
   const tier3Sorted = sortByAgenda(tier3);
+  const tier4Sorted = sortByAgenda(tier4);
 
-  const fmtRow = (r: MissingRow) => {
+  const fmtRow = (r: MissingRow, cargoLabel?: string) => {
     const inst = normalizeInstituteName(r.instituto);
-    const cargo = isPresidente(r.cargos) ? "Presidente" : `Gov. ${r.uf}`;
+    const cargo = cargoLabel ?? (isPresidente(r.cargos) ? "Presidente" : `Gov. ${r.uf}`);
     const flag = isSuspect(r.instituto) ? " ⚠️ qualidade contestada" : "";
     const pending = agenda.get(r.protocolo);
     const pendingTag = pending ? ` ⏳ previsão ${pending.disclosure}` : "";
@@ -223,12 +258,13 @@ async function main() {
   console.log(`\n🗳️  Fila de Curadoria — ElectioLab`);
   console.log(`   Fonte: view pesqele_missing (registros TSE sem resultado no banco)`);
   console.log(`   Janela: últimos ${DAYS} dias · ${recent.length} pendências recentes de ${rows.length} totais`);
+  console.log(`   Senador (view separada, ver migration pesqele_missing_senador): ${recentSenador.length} pendências recentes de ${senadorRows.length} totais`);
   if (!SKIP_AGENDA) {
     console.log(`   Agenda de divulgação (agenciasertao.com): ${agenda.size} pesquisas registradas mas ainda não divulgadas`);
   }
   console.log();
 
-  const dueCounts = [tier1Sorted, tier2Sorted, tier3Sorted].map((t) => t.filter((r) => !isPending(r)).length);
+  const dueCounts = [tier1Sorted, tier2Sorted, tier3Sorted, tier4Sorted].map((t) => t.filter((r) => !isPending(r)).length);
 
   console.log(`━━━ TIER 1 · PRESIDENCIAL (${tier1Sorted.length}, ${dueCounts[0]} prontas pra buscar) — máxima prioridade ━━━`);
   if (tier1Sorted.length === 0) console.log(`  ✅ Nenhuma pendência presidencial recente de instituto reputado.`);
@@ -242,7 +278,12 @@ async function main() {
   for (const r of tier3Sorted.slice(0, 20)) console.log(fmtRow(r));
   if (tier3Sorted.length > 20) console.log(`  … +${tier3Sorted.length - 20} outras`);
 
-  console.log(`\n📋 Total priorizado: ${tier1Sorted.length + tier2Sorted.length + tier3Sorted.length} pesquisas (${dueCounts[0] + dueCounts[1] + dueCounts[2]} já prontas pra buscar, resto aguardando divulgação)`);
+  console.log(`\n━━━ TIER 4 · SENADOR (${tier4Sorted.length}, ${dueCounts[3]} prontas pra buscar) — cargo antes invisível na fila ━━━`);
+  if (tier4Sorted.length === 0) console.log(`  ✅ Nenhuma pendência de Senador recente de instituto reputado.`);
+  for (const r of tier4Sorted.slice(0, 20)) console.log(fmtRow(r, `Sen. ${r.uf}`));
+  if (tier4Sorted.length > 20) console.log(`  … +${tier4Sorted.length - 20} outras`);
+
+  console.log(`\n📋 Total priorizado: ${tier1Sorted.length + tier2Sorted.length + tier3Sorted.length + tier4Sorted.length} pesquisas (${dueCounts[0] + dueCounts[1] + dueCounts[2] + dueCounts[3]} já prontas pra buscar, resto aguardando divulgação)`);
   console.log(`   Curar via: edite PENDING_POLLS em scripts/ingest-manual.ts e rode npx tsx scripts/ingest-manual.ts`);
 
   // ── Markdown (opcional) ──
@@ -259,7 +300,7 @@ async function main() {
     lines.push(`⏳ = registrada no TSE mas ainda não divulgada, segundo agenciasertao.com (data prevista na coluna Status) — não vale buscar ainda.`);
     lines.push(``);
 
-    const section = (title: string, list: MissingRow[]) => {
+    const section = (title: string, list: MissingRow[], cargoLabelFn?: (r: MissingRow) => string) => {
       lines.push(`## ${title} (${list.length})`);
       lines.push(``);
       if (list.length === 0) {
@@ -271,7 +312,7 @@ async function main() {
       lines.push(`|---|---|---|---|---|---|---|`);
       for (const r of list) {
         const inst = normalizeInstituteName(r.instituto) + (isSuspect(r.instituto) ? " ⚠️" : "");
-        const cargo = isPresidente(r.cargos) ? "Presidente" : `Gov. ${r.uf}`;
+        const cargo = cargoLabelFn ? cargoLabelFn(r) : isPresidente(r.cargos) ? "Presidente" : `Gov. ${r.uf}`;
         const pending = agenda.get(r.protocolo);
         const status = pending ? `⏳ previsão ${pending.disclosure}` : "pronta pra buscar";
         lines.push(
@@ -284,6 +325,7 @@ async function main() {
     section("TIER 1 · Presidencial — máxima prioridade", tier1Sorted);
     section("TIER 2 · Governador (estados-chave)", tier2Sorted);
     section("TIER 3 · Governador (demais estados)", tier3Sorted);
+    section("TIER 4 · Senador — cargo antes invisível na fila", tier4Sorted, (r) => `Sen. ${r.uf}`);
 
     const outPath = path.join(os.homedir(), "Desktop", "ELECTIOLAB-FILA-CURADORIA.md");
     fs.writeFileSync(outPath, lines.join("\n"));
