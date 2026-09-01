@@ -1857,6 +1857,204 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Jairo Palheta", percentage:  1 },
     ],
   },
+
+  // ─── Curadoria 01/09/2026 — lote 9 (Tier 3, Governador) ──
+  // Nota: uma 10ª pesquisa confirmada (Veritas Planejamento e Assessoria, MA-01632/2026,
+  // Orleans Brandão 47,5% x Eduardo Braide 39,1%) ficou de fora — instituto ainda não
+  // cadastrado em public.institutes, e criar instituto novo está fora do escopo deste script.
+
+  // Instituto Veritá · 24-28 ago 2026 · TSE RO-03403/2026 · n=1.220
+  // Fonte: https://www.rondoniadinamica.com/noticias/2026/08/marcos-rogerio-chega-a-407-e-tem-quase-o-dobro-do-2-colocado-em-pesquisa-verita-para-o-governo-de-rondonia,252975.shtml
+  {
+    institute_name: "Instituto Veritá",
+    election_name: "Governador Rondonia 2026",
+    publication_date: "2026-08-31",
+    fieldwork_start: "2026-08-24",
+    fieldwork_end: "2026-08-28",
+    sample_size: 1220,
+    margin_of_error: 3.0,
+    methodology: "telefonica",
+    source_url: "https://www.rondoniadinamica.com/noticias/2026/08/marcos-rogerio-chega-a-407-e-tem-quase-o-dobro-do-2-colocado-em-pesquisa-verita-para-o-governo-de-rondonia,252975.shtml",
+    tse_protocolo: "RO034032026",
+    results: [
+      { candidate_name: "Marcos Rogerio",  percentage: 40.7 },
+      { candidate_name: "Adailton Furia",  percentage: 22.4 },
+      { candidate_name: "Expedito Netto",  percentage: 10.3 },
+    ],
+  },
+
+  // Instituto Veritá · 24-28 ago 2026 · TSE AM-02151/2026 · n=1.220
+  // Fonte: https://diariodopoder.com.br/brasil-e-regioes/csa-brasil/amazonas-aziz-e-maria-do-carmo-empatam-para-o-governo-do-estado
+  {
+    institute_name: "Instituto Veritá",
+    election_name: "Governador Amazonas 2026",
+    publication_date: "2026-08-29",
+    fieldwork_start: "2026-08-24",
+    fieldwork_end: "2026-08-28",
+    sample_size: 1220,
+    margin_of_error: 3.0,
+    methodology: "telefonica",
+    source_url: "https://diariodopoder.com.br/brasil-e-regioes/csa-brasil/amazonas-aziz-e-maria-do-carmo-empatam-para-o-governo-do-estado",
+    tse_protocolo: "AM021512026",
+    results: [
+      { candidate_name: "Omar Aziz",              percentage: 31.0 },
+      { candidate_name: "Maria do Carmo Seffair", percentage: 29.2 },
+      { candidate_name: "Roberto Cidade",         percentage: 22.4 },
+      { candidate_name: "David Almeida",          percentage: 10.8 },
+      { candidate_name: "Cabo Daciolo",           percentage:  4.1 },
+      { candidate_name: "Gilberto Vasconcelos",   percentage:  1.4 },
+      { candidate_name: "Isael Munduruku",        percentage:  1.2 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE TO-02161/2026 · n=804
+  // Fonte: https://g1.globo.com/to/tocantins/eleicoes/2026/noticia/2026/08/25/quaest-to-governador-25-de-agosto.ghtml
+  {
+    institute_name: "Quaest",
+    election_name: "Governador Tocantins 2026",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 804,
+    methodology: "presencial",
+    source_url: "https://g1.globo.com/to/tocantins/eleicoes/2026/noticia/2026/08/25/quaest-to-governador-25-de-agosto.ghtml",
+    tse_protocolo: "TO021612026",
+    results: [
+      { candidate_name: "Professora Dorinha", percentage: 37 },
+      { candidate_name: "Vicentinho Junior",  percentage: 28 },
+      { candidate_name: "Laurez Moreira",     percentage:  7 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE RO-05711/2026 · n=804
+  // Fonte: https://g1.globo.com/ro/rondonia/eleicoes/2026/noticia/2026/08/25/quaest-ro-governador-25-de-agosto.ghtml
+  {
+    institute_name: "Quaest",
+    election_name: "Governador Rondonia 2026",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 804,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://g1.globo.com/ro/rondonia/eleicoes/2026/noticia/2026/08/25/quaest-ro-governador-25-de-agosto.ghtml",
+    tse_protocolo: "RO057112026",
+    results: [
+      { candidate_name: "Marcos Rogerio", percentage: 24 },
+      { candidate_name: "Adailton Furia", percentage: 21 },
+      { candidate_name: "Expedito Netto", percentage: 10 },
+      { candidate_name: "Hildon Chaves",  percentage: 10 },
+      { candidate_name: "Samuel Costa",   percentage:  2 },
+      { candidate_name: "Pedro Abib",     percentage:  1 },
+    ],
+  },
+
+  // Real Time Big Data · 19-22 ago 2026 · TSE PB-07790/2026 · n=1.600
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/ribeiro-tem-42-contra-35-de-lucena-no-2o-turno-na-pb-diz-pesquisa/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Paraiba 2026",
+    publication_date: "2026-08-24",
+    fieldwork_start: "2026-08-19",
+    fieldwork_end: "2026-08-22",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/ribeiro-tem-42-contra-35-de-lucena-no-2o-turno-na-pb-diz-pesquisa/",
+    tse_protocolo: "PB077902026",
+    results: [
+      { candidate_name: "Lucas Ribeiro",   percentage: 35 },
+      { candidate_name: "Cicero Lucena",   percentage: 25 },
+      { candidate_name: "Efraim Filho",    percentage: 21 },
+      { candidate_name: "Camilo Duarte",   percentage:  1 },
+      { candidate_name: "Pedro Coutinho",  percentage:  1 },
+      { candidate_name: "Yuri Ezequiel",   percentage:  1 },
+    ],
+  },
+
+  // Instituto Índice Inteligência (parceria Blog do Márcio Rangel/MRTV) · 20-22 ago 2026 · TSE PB-04351/2026 · n=2.000
+  // Fonte: https://blogdomarciorangel.com.br/2026/08/27/lucas-ribeiro-lidera-com-336-cicero-tem-322-e-efraim-aparece-com-185-aponta-pesquisa-indice-blog-do-marcio-rangel/
+  {
+    institute_name: "Instituto Índice Inteligência",
+    election_name: "Governador Paraiba 2026",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-20",
+    fieldwork_end: "2026-08-22",
+    sample_size: 2000,
+    methodology: "presencial",
+    source_url: "https://blogdomarciorangel.com.br/2026/08/27/lucas-ribeiro-lidera-com-336-cicero-tem-322-e-efraim-aparece-com-185-aponta-pesquisa-indice-blog-do-marcio-rangel/",
+    tse_protocolo: "PB043512026",
+    results: [
+      { candidate_name: "Lucas Ribeiro", percentage: 33.6 },
+      { candidate_name: "Cicero Lucena", percentage: 32.2 },
+      { candidate_name: "Efraim Filho",  percentage: 18.5 },
+    ],
+  },
+
+  // Instituto Veritá · 13-17 ago 2026 · TSE SE-08978/2026 · n=1.220 · % de votos válidos
+  // Fonte: https://rsnoticia.com.br/pesquisa-verita-fabio-mitidieri-chega-a-51-dos-votos-validos-e-venceria-no-1o-turno/
+  {
+    institute_name: "Instituto Veritá",
+    election_name: "Governador Sergipe 2026",
+    publication_date: "2026-08-24",
+    fieldwork_start: "2026-08-13",
+    fieldwork_end: "2026-08-17",
+    sample_size: 1220,
+    margin_of_error: 3.0,
+    methodology: "telefonica",
+    source_url: "https://rsnoticia.com.br/pesquisa-verita-fabio-mitidieri-chega-a-51-dos-votos-validos-e-venceria-no-1o-turno/",
+    tse_protocolo: "SE089782026",
+    results: [
+      { candidate_name: "Fabio Mitidieri",         percentage: 51 },
+      { candidate_name: "Valmir",                  percentage: 33.7 },
+      { candidate_name: "Ricardo Marques",         percentage: 11.6 },
+      { candidate_name: "Dr. Helton",              percentage:  3.1 },
+      { candidate_name: "Emanuel Cacho",           percentage:  0.4 },
+      { candidate_name: "Taty  Cristina de Jesus", percentage:  0.2 },
+    ],
+  },
+
+  // Real Time Big Data · 7-11 ago 2026 · TSE MT-04560/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-mato-grosso-agosto-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Mato Grosso 2026",
+    publication_date: "2026-08-12",
+    fieldwork_start: "2026-08-07",
+    fieldwork_end: "2026-08-11",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-mato-grosso-agosto-2026/",
+    tse_protocolo: "MT045602026",
+    results: [
+      { candidate_name: "Wellington Fagundes",  percentage: 34 },
+      { candidate_name: "Otaviano Pivetta",     percentage: 26 },
+      { candidate_name: "Natasha Slhessarenko", percentage: 13 },
+      { candidate_name: "Rafaell Milas",        percentage:  3 },
+      { candidate_name: "Sargento Laudicério",  percentage:  1 },
+    ],
+  },
+
+  // Real Time Big Data · 1-5 ago 2026 · TSE MS-07706/2026 · n=1.600
+  // Fonte: https://veja.abril.com.br/brasil/governador-e-favorito-a-reeleicao-no-mato-grosso-do-sul-diz-pesquisa-real-time-big-data/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Mato Grosso do Sul 2026",
+    publication_date: "2026-08-06",
+    fieldwork_start: "2026-08-01",
+    fieldwork_end: "2026-08-05",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://veja.abril.com.br/brasil/governador-e-favorito-a-reeleicao-no-mato-grosso-do-sul-diz-pesquisa-real-time-big-data/",
+    tse_protocolo: "MS077062026",
+    results: [
+      { candidate_name: "Eduardo Riedel",             percentage: 44 },
+      { candidate_name: "Fabio Trad",                 percentage: 25 },
+      { candidate_name: "Catan",                      percentage: 12 },
+      { candidate_name: "Lucien Rezende",              percentage:  3 },
+      { candidate_name: "Economista Renato Gomes",    percentage:  3 },
+      { candidate_name: "Jeferson Bezerra",           percentage:  1 },
+    ],
+  },
 ];
 
 async function main() {
