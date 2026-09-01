@@ -777,6 +777,77 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Hertz Dias",   percentage:  2 },
     ],
   },
+
+  // ─── Curadoria 01/09/2026 — lote 2 (Tier 1, achados nacionais confirmados) ──
+
+  // Real Time Big Data · 27-31 ago 2026 · TSE BR-03490/2026 · n=2.000
+  // Fonte: https://jovempan.com.br/politica/realtime-big-data-lula-tem-38-dos-votos-totais-no-1o-turno-e-flavio-marca-30/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-01",
+    fieldwork_start: "2026-08-27",
+    fieldwork_end: "2026-08-31",
+    sample_size: 2000,
+    methodology: "telefonica",
+    source_url: "https://jovempan.com.br/politica/realtime-big-data-lula-tem-38-dos-votos-totais-no-1o-turno-e-flavio-marca-30/",
+    tse_protocolo: "BR034902026",
+    scope: "nacional",
+    results: [
+      { candidate_name: "Lula",         percentage: 38 },
+      { candidate_name: "Flávio",       percentage: 30 },
+      { candidate_name: "Augusto Cury", percentage: 11 },
+      { candidate_name: "Renan",        percentage:  7 },
+      { candidate_name: "Caiado",       percentage:  4 },
+      { candidate_name: "Zema",         percentage:  2 },
+    ],
+  },
+
+  // GERP Mercadologia · 21-25 ago 2026 (protocolo confere; campo pedido "23/08" era só a data central) · TSE BR-03547/2026 · n=2.400 · contratante AESP
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/gerp-presidente-agosto-2026-2/
+  {
+    institute_name: "GERP",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-26",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-25",
+    sample_size: 2400,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/gerp-presidente-agosto-2026-2/",
+    tse_protocolo: "BR035472026",
+    scope: "nacional",
+    results: [
+      { candidate_name: "Flávio",       percentage: 38 },
+      { candidate_name: "Lula",         percentage: 37 },
+      { candidate_name: "Pablo Marçal", percentage:  4 },
+      { candidate_name: "Renan",        percentage:  3 },
+      { candidate_name: "Caiado",       percentage:  3 },
+      { candidate_name: "Augusto Cury", percentage:  1 },
+      { candidate_name: "Zema",         percentage:  1 },
+    ],
+  },
+
+  // Nexus/BTG · 21-23 ago 2026 · TSE BR-09028/2026 · n=2.006 · 11ª rodada BTG/Nexus
+  // Fonte: https://www.nexus.fsb.com.br/estudos-divulgados/pesquisa-btg-nexus-de-intencao-de-votos-para-presidente-do-brasil-24-de-agosto-de-2026/
+  {
+    institute_name: "Nexus",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-24",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-23",
+    sample_size: 2006,
+    methodology: "telefonica",
+    source_url: "https://www.nexus.fsb.com.br/estudos-divulgados/pesquisa-btg-nexus-de-intencao-de-votos-para-presidente-do-brasil-24-de-agosto-de-2026/",
+    tse_protocolo: "BR090282026",
+    scope: "nacional",
+    results: [
+      { candidate_name: "Lula",   percentage: 41 },
+      { candidate_name: "Flávio", percentage: 37 },
+      { candidate_name: "Caiado", percentage:  5 },
+      { candidate_name: "Renan",  percentage:  3 },
+      { candidate_name: "Zema",   percentage:  3 },
+    ],
+  },
 ];
 
 async function main() {
