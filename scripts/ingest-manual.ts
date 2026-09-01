@@ -1015,6 +1015,41 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Lula",   percentage: 39 },
     ],
   },
+
+  // ─── Curadoria 01/09/2026 — lote 4 (Instituto Veritá, qualidade contestada) ──
+  // Veritá teve pesquisas suspensas pela Justiça Eleitoral em 2026 por vício
+  // metodológico — instituto já existe no catálogo com reliability_score baixo
+  // (0.65). Curamos mesmo assim; o flag de reputação já filtra a exibição.
+  // Nota de cautela do pesquisador: um resumo alternativo (não citado, sem
+  // protocolo) circulou com 1º turno "Lula 41,0% x Flávio 40,9%" — divergente do
+  // usado abaixo. Usamos os números da fonte que cita o protocolo TSE explicitamente
+  // (CNN Brasil). Revisar se aparecer uma segunda fonte que contradiga.
+
+  // Instituto Veritá · 16-20 ago 2026 · TSE BR-04006/2026 · n=3.840 · ME: ±2pp
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/verita-lula-perde-para-flavio-no-2o-turno-com-marcal-no-pleito-ha-empate/
+  {
+    institute_name: "Instituto Veritá",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-21",
+    fieldwork_start: "2026-08-16",
+    fieldwork_end: "2026-08-20",
+    sample_size: 3840,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    scope: "nacional",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/verita-lula-perde-para-flavio-no-2o-turno-com-marcal-no-pleito-ha-empate/",
+    tse_protocolo: "BR040062026",
+    results: [
+      { candidate_name: "Lula",           percentage: 39.3 },
+      { candidate_name: "Flávio",         percentage: 39.1 },
+      { candidate_name: "Pablo Marçal",   percentage:  5.2 },
+      { candidate_name: "Renan",          percentage:  3.8 },
+      { candidate_name: "Caiado",         percentage:  3.3 },
+      { candidate_name: "Augusto Cury",   percentage:  2.2 },
+      { candidate_name: "Zema",           percentage:  1.3 },
+      { candidate_name: "Clariana Barao", percentage:  0.8 },
+    ],
+  },
 ];
 
 async function main() {
