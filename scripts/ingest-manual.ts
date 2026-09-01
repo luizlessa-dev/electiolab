@@ -2097,6 +2097,289 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Lula",   percentage: 44.2 },
     ],
   },
+
+  // ─── Curadoria 01/09/2026 — lote 11 (Tier 4, Senador — cargo antes invisível na fila) ──
+  // Mesmas pesquisas "Governador e Senado" já curadas hoje pro Governador — reaproveitando
+  // a mesma matéria/fonte pra extrair a parte de Senado que ainda não tinha sido inserida.
+
+  // Quaest · 23-26 ago 2026 · TSE RR-04765/2026 · n=804
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-roraima-agosto-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Senador Roraima 2026",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-23",
+    fieldwork_end: "2026-08-26",
+    sample_size: 804,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-roraima-agosto-2026/",
+    tse_protocolo: "RR047652026",
+    results: [
+      { candidate_name: "Teresa Surita",   percentage: 19 },
+      { candidate_name: "Nicoletti",       percentage: 17 },
+      { candidate_name: "Helena da Asatur", percentage: 16 },
+      { candidate_name: "Chico Rodrigues", percentage: 11 },
+      { candidate_name: "Helio Bolsonaro", percentage:  5 },
+      { candidate_name: "Pastor Isamar",   percentage:  3 },
+      { candidate_name: "Márcio Junqueira", percentage:  1 },
+      { candidate_name: "Bartô Macuxi",    percentage:  1 },
+      { candidate_name: "Hilton Xavier",   percentage:  1 },
+    ],
+  },
+
+  // Quaest · 23-26 ago 2026 · TSE ES-04444/2026 · n=804
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-espirito-santo-agosto-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Senador Espirito Santo 2026",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-23",
+    fieldwork_end: "2026-08-26",
+    sample_size: 804,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-espirito-santo-agosto-2026/",
+    tse_protocolo: "ES044442026",
+    results: [
+      { candidate_name: "Renato Casagrande",   percentage: 28 },
+      { candidate_name: "Sergio Meneguelli",   percentage: 10 },
+      { candidate_name: "Fabiano Contarato",   percentage:  9 },
+      { candidate_name: "Rose de Freitas",     percentage:  9 },
+      { candidate_name: "Maguinha Malta",      percentage:  6 },
+      { candidate_name: "Evair de Melo",       percentage:  5 },
+      { candidate_name: "Marcos do Val",       percentage:  4 },
+      { candidate_name: "Rodney Miranda",      percentage:  2 },
+      { candidate_name: "Professor Fabian",    percentage:  2 },
+      { candidate_name: "Wellington Callegari", percentage:  1 },
+      { candidate_name: "Leonardo Monjardim",  percentage:  1 },
+    ],
+  },
+
+  // Real Time Big Data · 21-25 ago 2026 · TSE TO-09665/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-tocantins-agosto-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Tocantins 2026",
+    publication_date: "2026-08-26",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-25",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-tocantins-agosto-2026/",
+    tse_protocolo: "TO096652026",
+    results: [
+      { candidate_name: "Eduardo Gomes",       percentage: 26 },
+      { candidate_name: "Alexandre Guimarães", percentage: 18 },
+      { candidate_name: "Carlos Gaguim",       percentage: 10 },
+      { candidate_name: "Vanderlei Luxemburgo", percentage:  9 },
+      { candidate_name: "Ronaldo Dimas",       percentage:  8 },
+      { candidate_name: "Eli Borges",          percentage:  7 },
+      { candidate_name: "Paulo Mourão",        percentage:  6 },
+      { candidate_name: "Professor Osvaldo",   percentage:  3 },
+      { candidate_name: "Fábio Ribeiro",       percentage:  1 },
+      { candidate_name: "Helio Rodrigues Bolsonaro", percentage: 1 },
+      { candidate_name: "Nilton Santos",       percentage:  1 },
+    ],
+  },
+
+  // Real Time Big Data · 21-25 ago 2026 · TSE AM-09965/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-amazonas-agosto-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Amazonas 2026",
+    publication_date: "2026-08-26",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-25",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-amazonas-agosto-2026/",
+    tse_protocolo: "AM099652026",
+    results: [
+      { candidate_name: "Capitao Alberto Neto", percentage: 24 },
+      { candidate_name: "Wilson Lima",          percentage: 19 },
+      { candidate_name: "Eduardo Braga",        percentage: 18 },
+      { candidate_name: "Plinio Valerio",       percentage: 14 },
+      { candidate_name: "Ismael Munduruku",     percentage:  5 },
+      { candidate_name: "Professora Evany",     percentage:  3 },
+      { candidate_name: "Xuxa do Amazonas",     percentage:  2 },
+      { candidate_name: "Evandro de Oliveira",  percentage:  1 },
+      { candidate_name: "Dailson Corrêa",       percentage:  1 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE AM-04595/2026 · n=804
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-amazonas-agosto-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Senador Amazonas 2026",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 804,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-amazonas-agosto-2026/",
+    tse_protocolo: "AM045952026",
+    results: [
+      { candidate_name: "Eduardo Braga",        percentage: 25 },
+      { candidate_name: "Capitao Alberto Neto", percentage: 16 },
+      { candidate_name: "Plinio Valerio",       percentage: 13 },
+      { candidate_name: "Wilson Lima",          percentage: 12 },
+      { candidate_name: "Professora Evany",     percentage:  3 },
+      { candidate_name: "Xuxa do Amazonas",     percentage:  1 },
+      { candidate_name: "Ismael Munduruku",     percentage:  1 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE MS-00793/2026 · n=804
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-mato-grosso-sul-agosto-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Senador Mato Grosso do Sul 2026",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 804,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-mato-grosso-sul-agosto-2026/",
+    tse_protocolo: "MS007932026",
+    results: [
+      { candidate_name: "Reinaldo Azambuja",   percentage: 22 },
+      { candidate_name: "Capitão Contar",      percentage: 15 },
+      { candidate_name: "Soraya Thronicke",    percentage: 11 },
+      { candidate_name: "Vander Loubet",       percentage:  9 },
+      { candidate_name: "Roberto Oshiro",      percentage:  3 },
+      { candidate_name: "Beto do Movimento",   percentage:  3 },
+      { candidate_name: "Daniel Junior",       percentage:  2 },
+      { candidate_name: "Valter da Comagran",  percentage:  1 },
+      { candidate_name: "Luiz Lemes",          percentage:  1 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE MT-04846/2026 · n=804
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governo-senado-mato-grosso-agosto-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Senador Mato Grosso 2026",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 804,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governo-senado-mato-grosso-agosto-2026/",
+    tse_protocolo: "MT048462026",
+    results: [
+      { candidate_name: "Mauro Mendes",              percentage: 24 },
+      { candidate_name: "Janaina Riva",               percentage: 18 },
+      { candidate_name: "Pedro Taques",               percentage:  8 },
+      { candidate_name: "Jose Medeiros",              percentage:  6 },
+      { candidate_name: "Carlos Favaro",              percentage:  5 },
+      { candidate_name: "Coronel Darwin",             percentage:  2 },
+      { candidate_name: "Galvan",                     percentage:  2 },
+      { candidate_name: "Professor Nelson Ferreira",  percentage:  2 },
+      { candidate_name: "Margareth Buzetti",          percentage:  1 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE AP-09438/2026 · n=804
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governo-senado-amapa-agosto-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Senador Amapa 2026",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 804,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governo-senado-amapa-agosto-2026/",
+    tse_protocolo: "AP094382026",
+    results: [
+      { candidate_name: "Rayssa Furlan",       percentage: 27 },
+      { candidate_name: "Randolfe Rodrigues",  percentage: 19 },
+      { candidate_name: "Lucas Barreto",       percentage: 18 },
+      { candidate_name: "Alliny Serrão",       percentage:  9 },
+      { candidate_name: "Acácio Favacho",      percentage:  7 },
+      { candidate_name: "Capi",                percentage:  4 },
+    ],
+  },
+
+  // Real Time Big Data · 20-24 ago 2026 · TSE RS-09640/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-rio-grande-do-sul-agosto-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Rio Grande do Sul 2026",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-20",
+    fieldwork_end: "2026-08-24",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-rio-grande-do-sul-agosto-2026/",
+    tse_protocolo: "RS096402026",
+    results: [
+      { candidate_name: "Marcel Van Hattem",  percentage: 20 },
+      { candidate_name: "Manuela d'Ávila",    percentage: 19 },
+      { candidate_name: "Sanderson",          percentage: 17 },
+      { candidate_name: "Germano Rigotto",    percentage: 15 },
+      { candidate_name: "Paulo Pimenta",      percentage: 15 },
+      { candidate_name: "Frederico Antunes",  percentage:  5 },
+      { candidate_name: "Milton Cardoso",     percentage:  1 },
+      { candidate_name: "Luciano do Mlb",     percentage:  1 },
+    ],
+  },
+
+  // Quaest · 25-28 ago 2026 · TSE PA-07718/2026 · n=804
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-para-agosto-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Senador Para 2026",
+    publication_date: "2026-08-30",
+    fieldwork_start: "2026-08-25",
+    fieldwork_end: "2026-08-28",
+    sample_size: 804,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-para-agosto-2026/",
+    tse_protocolo: "PA077182026",
+    results: [
+      { candidate_name: "Helder Barbalho",  percentage: 23 },
+      { candidate_name: "Eder Mauro",       percentage: 14 },
+      { candidate_name: "Zequinha Marinho", percentage: 11 },
+      { candidate_name: "Celso Sabino",     percentage:  7 },
+      { candidate_name: "Chicão",           percentage:  5 },
+      { candidate_name: "Gizelle Freitas",  percentage:  2 },
+      { candidate_name: "Fernanda Lopes",   percentage:  1 },
+      { candidate_name: "Livia Noronha",    percentage:  1 },
+      { candidate_name: "Conti",            percentage:  1 },
+    ],
+  },
+
+  // Real Time Big Data · 22-26 ago 2026 · TSE MG-07972/2026 · n=2.000
+  // Fonte: https://noticias.uol.com.br/eleicoes/2026/08/27/realtime-bigdata-mg-governo-e-senado-agosto.ghtm
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Minas Gerais 2026",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-22",
+    fieldwork_end: "2026-08-26",
+    sample_size: 2000,
+    methodology: "telefonica",
+    source_url: "https://noticias.uol.com.br/eleicoes/2026/08/27/realtime-bigdata-mg-governo-e-senado-agosto.ghtm",
+    tse_protocolo: "MG079722026",
+    results: [
+      { candidate_name: "Marilia Campos",           percentage: 24 },
+      { candidate_name: "Carlos Viana",             percentage: 13 },
+      { candidate_name: "Domingos Savio",           percentage: 13 },
+      { candidate_name: "Marcelo Aro",              percentage: 12 },
+      { candidate_name: "Aurea Carolina",           percentage:  9 },
+      { candidate_name: "Marco Antônio Superman",   percentage:  4 },
+      { candidate_name: "Carlin Moura",             percentage:  1 },
+      { candidate_name: "Gustavo Galassi",          percentage:  1 },
+      { candidate_name: "Marcelo Heringer",         percentage:  1 },
+      { candidate_name: "Ana Luiza do Mlb",         percentage:  1 },
+      { candidate_name: "Manoel Carvalho",          percentage:  1 },
+      { candidate_name: "Arcanjo Pimenta",          percentage:  1 },
+    ],
+  },
 ];
 
 async function main() {
