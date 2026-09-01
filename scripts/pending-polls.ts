@@ -11,10 +11,17 @@
  *   os percentuais. Os resultados saem em fonte primária (release do instituto)
  *   e são curados com source_url para manter a proveniência auditável.
  *
+ * Cruza com o calendário de divulgação do agenciasertao.com (espelho do
+ * registro do TSE que expõe a data prevista de divulgação de cada pesquisa —
+ * o TSE exige só um prazo mínimo entre registro e divulgação, então dá pra
+ * saber de antemão se ainda não é hora de procurar a matéria de imprensa).
+ * Isso evita gastar busca em pesquisa que sabidamente ainda não saiu.
+ *
  * Uso:
  *   npx tsx scripts/pending-polls.ts                 # imprime worklist no terminal
  *   npx tsx scripts/pending-polls.ts --md            # + grava worklist em Markdown no Desktop
  *   npx tsx scripts/pending-polls.ts --days 45       # janela de recência (default 30)
+ *   npx tsx scripts/pending-polls.ts --skip-agenda   # pula o cruzamento com agenciasertao.com
  */
 
 import { createClient } from "@supabase/supabase-js";
@@ -43,10 +50,52 @@ const sb = createClient(
 
 // ── Args ───────────────────────────────────────────────────────────────────────
 const WRITE_MD = process.argv.includes("--md");
+const SKIP_AGENDA = process.argv.includes("--skip-agenda");
 const DAYS = (() => {
   const i = process.argv.indexOf("--days");
   return i >= 0 ? parseInt(process.argv[i + 1], 10) : 30;
 })();
+
+// ── Agenda de divulgação (agenciasertao.com) ────────────────────────────────────
+
+type AgendaEntry = { disclosure: string; uf: string; institute: string };
+
+/**
+ * Busca pesquisas "registradas, ainda não divulgadas" pro cargo dado (todas as
+ * UFs de uma vez — omitir `uf` já agrega o Brasil inteiro nesse endpoint).
+ * Faz a paginação (a API pagina em 30 itens fixos, ignora per_page).
+ */
+async function fetchUpcomingAgenda(office: "presidente" | "governador"): Promise<Map<string, AgendaEntry>> {
+  const map = new Map<string, AgendaEntry>();
+  for (let page = 1; page <= 20; page++) {
+    const url = `https://agenciasertao.com/eleicoes/pesquisas.php?data=lista&office=${office}&mode=upcoming&page=${page}`;
+    const res = await fetch(url, { signal: AbortSignal.timeout(10_000) });
+    if (!res.ok) break;
+    const json = (await res.json()) as { rows?: Array<{ protocol: string; disclosure: string; uf: string; institute: string }>; pages?: number };
+    for (const row of json.rows ?? []) {
+      map.set(row.protocol, { disclosure: row.disclosure, uf: row.uf, institute: row.institute });
+    }
+    if (!json.pages || page >= json.pages) break;
+  }
+  return map;
+}
+
+/** Une os mapas de Presidente + Governador; falha em silêncio (rede fora do ar não deve travar a fila). */
+async function fetchDisclosureAgenda(): Promise<Map<string, AgendaEntry>> {
+  try {
+    const [presidente, governador] = await Promise.all([
+      fetchUpcomingAgenda("presidente"),
+      fetchUpcomingAgenda("governador"),
+    ]);
+    const merged = new Map<string, AgendaEntry>();
+    presidente.forEach((v, k) => merged.set(k, v));
+    governador.forEach((v, k) => merged.set(k, v));
+    return merged;
+  } catch (e) {
+    console.error(`⚠️  agenciasertao.com indisponível (${(e as Error).message}) — seguindo sem cruzamento de agenda.`);
+    return new Map();
+  }
+}
 
 // ── Config de priorização ──────────────────────────────────────────────────────
 
@@ -151,31 +200,49 @@ async function main() {
     }
   }
 
+  // Cruza com a agenda de divulgação (agenciasertao.com) e põe pesquisas ainda
+  // não divulgadas por último dentro de cada tier — não vale gastar busca nelas.
+  const agenda = SKIP_AGENDA ? new Map<string, AgendaEntry>() : await fetchDisclosureAgenda();
+  const isPending = (r: MissingRow) => agenda.has(r.protocolo);
+  const sortByAgenda = (list: MissingRow[]) =>
+    [...list].sort((a, b) => Number(isPending(a)) - Number(isPending(b)));
+  const tier1Sorted = sortByAgenda(tier1);
+  const tier2Sorted = sortByAgenda(tier2);
+  const tier3Sorted = sortByAgenda(tier3);
+
   const fmtRow = (r: MissingRow) => {
     const inst = normalizeInstituteName(r.instituto);
     const cargo = isPresidente(r.cargos) ? "Presidente" : `Gov. ${r.uf}`;
     const flag = isSuspect(r.instituto) ? " ⚠️ qualidade contestada" : "";
-    return `  ${r.fieldwork_end}  n=${String(r.sample_size ?? "?").padStart(5)}  ${inst.slice(0, 28).padEnd(28)}  ${cargo}${flag}`;
+    const pending = agenda.get(r.protocolo);
+    const pendingTag = pending ? ` ⏳ previsão ${pending.disclosure}` : "";
+    return `  ${r.fieldwork_end}  n=${String(r.sample_size ?? "?").padStart(5)}  ${inst.slice(0, 28).padEnd(28)}  ${cargo}${flag}${pendingTag}`;
   };
 
   // ── Terminal ──
   console.log(`\n🗳️  Fila de Curadoria — ElectioLab`);
   console.log(`   Fonte: view pesqele_missing (registros TSE sem resultado no banco)`);
-  console.log(`   Janela: últimos ${DAYS} dias · ${recent.length} pendências recentes de ${rows.length} totais\n`);
+  console.log(`   Janela: últimos ${DAYS} dias · ${recent.length} pendências recentes de ${rows.length} totais`);
+  if (!SKIP_AGENDA) {
+    console.log(`   Agenda de divulgação (agenciasertao.com): ${agenda.size} pesquisas registradas mas ainda não divulgadas`);
+  }
+  console.log();
 
-  console.log(`━━━ TIER 1 · PRESIDENCIAL (${tier1.length}) — máxima prioridade ━━━`);
-  if (tier1.length === 0) console.log(`  ✅ Nenhuma pendência presidencial recente de instituto reputado.`);
-  for (const r of tier1) console.log(fmtRow(r));
+  const dueCounts = [tier1Sorted, tier2Sorted, tier3Sorted].map((t) => t.filter((r) => !isPending(r)).length);
 
-  console.log(`\n━━━ TIER 2 · GOVERNADOR (estados-chave) (${tier2.length}) ━━━`);
-  if (tier2.length === 0) console.log(`  ✅ Nenhuma pendência de governador em estado-chave.`);
-  for (const r of tier2) console.log(fmtRow(r));
+  console.log(`━━━ TIER 1 · PRESIDENCIAL (${tier1Sorted.length}, ${dueCounts[0]} prontas pra buscar) — máxima prioridade ━━━`);
+  if (tier1Sorted.length === 0) console.log(`  ✅ Nenhuma pendência presidencial recente de instituto reputado.`);
+  for (const r of tier1Sorted) console.log(fmtRow(r));
 
-  console.log(`\n━━━ TIER 3 · GOVERNADOR (demais estados) (${tier3.length}) ━━━`);
-  for (const r of tier3.slice(0, 20)) console.log(fmtRow(r));
-  if (tier3.length > 20) console.log(`  … +${tier3.length - 20} outras`);
+  console.log(`\n━━━ TIER 2 · GOVERNADOR (estados-chave) (${tier2Sorted.length}, ${dueCounts[1]} prontas pra buscar) ━━━`);
+  if (tier2Sorted.length === 0) console.log(`  ✅ Nenhuma pendência de governador em estado-chave.`);
+  for (const r of tier2Sorted) console.log(fmtRow(r));
 
-  console.log(`\n📋 Total priorizado: ${tier1.length + tier2.length + tier3.length} pesquisas`);
+  console.log(`\n━━━ TIER 3 · GOVERNADOR (demais estados) (${tier3Sorted.length}, ${dueCounts[2]} prontas pra buscar) ━━━`);
+  for (const r of tier3Sorted.slice(0, 20)) console.log(fmtRow(r));
+  if (tier3Sorted.length > 20) console.log(`  … +${tier3Sorted.length - 20} outras`);
+
+  console.log(`\n📋 Total priorizado: ${tier1Sorted.length + tier2Sorted.length + tier3Sorted.length} pesquisas (${dueCounts[0] + dueCounts[1] + dueCounts[2]} já prontas pra buscar, resto aguardando divulgação)`);
   console.log(`   Curar via: edite PENDING_POLLS em scripts/ingest-manual.ts e rode npx tsx scripts/ingest-manual.ts`);
 
   // ── Markdown (opcional) ──
@@ -189,6 +256,7 @@ async function main() {
     lines.push(`Janela: últimos ${DAYS} dias · ${recent.length} pendências recentes.`);
     lines.push(``);
     lines.push(`⚠️ = instituto com pesquisas suspensas pela Justiça Eleitoral em 2026 (qualidade contestada) — avaliar antes de curar.`);
+    lines.push(`⏳ = registrada no TSE mas ainda não divulgada, segundo agenciasertao.com (data prevista na coluna Status) — não vale buscar ainda.`);
     lines.push(``);
 
     const section = (title: string, list: MissingRow[]) => {
@@ -199,21 +267,23 @@ async function main() {
         lines.push(``);
         return;
       }
-      lines.push(`| Campo (fim) | Instituto | Cargo | n | Protocolo TSE | Buscar resultado |`);
-      lines.push(`|---|---|---|---|---|---|`);
+      lines.push(`| Campo (fim) | Instituto | Cargo | n | Protocolo TSE | Status | Buscar resultado |`);
+      lines.push(`|---|---|---|---|---|---|---|`);
       for (const r of list) {
         const inst = normalizeInstituteName(r.instituto) + (isSuspect(r.instituto) ? " ⚠️" : "");
         const cargo = isPresidente(r.cargos) ? "Presidente" : `Gov. ${r.uf}`;
+        const pending = agenda.get(r.protocolo);
+        const status = pending ? `⏳ previsão ${pending.disclosure}` : "pronta pra buscar";
         lines.push(
-          `| ${r.fieldwork_end} | ${inst} | ${cargo} | ${r.sample_size ?? "?"} | \`${r.protocolo}\` | [buscar](${suggestSource(r)}) |`
+          `| ${r.fieldwork_end} | ${inst} | ${cargo} | ${r.sample_size ?? "?"} | \`${r.protocolo}\` | ${status} | [buscar](${suggestSource(r)}) |`
         );
       }
       lines.push(``);
     };
 
-    section("TIER 1 · Presidencial — máxima prioridade", tier1);
-    section("TIER 2 · Governador (estados-chave)", tier2);
-    section("TIER 3 · Governador (demais estados)", tier3);
+    section("TIER 1 · Presidencial — máxima prioridade", tier1Sorted);
+    section("TIER 2 · Governador (estados-chave)", tier2Sorted);
+    section("TIER 3 · Governador (demais estados)", tier3Sorted);
 
     const outPath = path.join(os.homedir(), "Desktop", "ELECTIOLAB-FILA-CURADORIA.md");
     fs.writeFileSync(outPath, lines.join("\n"));
