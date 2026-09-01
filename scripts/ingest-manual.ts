@@ -848,6 +848,173 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Zema",   percentage:  3 },
     ],
   },
+
+  // ─── Curadoria 01/09/2026 — lote 3 (Tier 1 "Presidencial" com recorte estadual) ──
+  // Instituto pergunta "presidente", mas a amostra é só do eleitorado de uma UF —
+  // por isso scope=UF em vez de 'nacional' (não entram na média presidencial nacional).
+
+  // Datafolha · 18-19 ago 2026 (campo real; TSE registrou "encerrado 21/08") · TSE BR-07185/2026 · n=1.610 · recorte SP
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-presidente-agosto-26-sp-mg-rj-pe-df/
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-22",
+    fieldwork_start: "2026-08-18",
+    fieldwork_end: "2026-08-19",
+    sample_size: 1610,
+    methodology: "presencial",
+    scope: "SP",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-presidente-agosto-26-sp-mg-rj-pe-df/",
+    tse_protocolo: "BR071852026",
+    results: [
+      { candidate_name: "Flávio",                    percentage: 35 },
+      { candidate_name: "Lula",                       percentage: 34 },
+      { candidate_name: "Renan",                       percentage:  5 },
+      { candidate_name: "Pablo Marçal",                percentage:  4 },
+      { candidate_name: "Zema",                        percentage:  3 },
+      { candidate_name: "Caiado",                      percentage:  3 },
+      { candidate_name: "Augusto Cury",                percentage:  3 },
+      { candidate_name: "Samara Martins",               percentage:  2 },
+      { candidate_name: "Edmilson Costa",               percentage:  1 },
+      { candidate_name: "Veterinário Wilson Grassi",    percentage:  1 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE BR-09818/2026 · n=1.506 · recorte MG
+  // Fonte: https://www.otempo.com.br/eleicoes/2026/pesquisas/2026/8/25/lula-e-flavio-tem-empate-tecnico-em-sao-paulo-minas-e-rio-os-tres-maiores-colegios-do-brasil
+  // Nota: a matéria só dá % exato pros 2 primeiros — 3º/4º lugar aparecem só como ordem, sem número.
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 1506,
+    methodology: "presencial",
+    scope: "MG",
+    source_url: "https://www.otempo.com.br/eleicoes/2026/pesquisas/2026/8/25/lula-e-flavio-tem-empate-tecnico-em-sao-paulo-minas-e-rio-os-tres-maiores-colegios-do-brasil",
+    tse_protocolo: "BR098182026",
+    results: [
+      { candidate_name: "Flávio", percentage: 31 },
+      { candidate_name: "Lula",   percentage: 30 },
+    ],
+  },
+
+  // Real Time Big Data · 24-27 ago 2026 · TSE BR-07171/2026 · n=1.600 · recorte PR
+  // Fonte: https://exame.com/eleicoes/pesquisa-real-time-big-data-flavio-bolsonaro-tem-44-e-lula-30-no-1o-turno-no-parana/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-28",
+    fieldwork_start: "2026-08-24",
+    fieldwork_end: "2026-08-27",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "PR",
+    source_url: "https://exame.com/eleicoes/pesquisa-real-time-big-data-flavio-bolsonaro-tem-44-e-lula-30-no-1o-turno-no-parana/",
+    tse_protocolo: "BR071712026",
+    results: [
+      { candidate_name: "Flávio",       percentage: 44 },
+      { candidate_name: "Lula",         percentage: 30 },
+      { candidate_name: "Renan",        percentage:  4 },
+      { candidate_name: "Pablo Marçal", percentage:  4 },
+      { candidate_name: "Caiado",       percentage:  4 },
+      { candidate_name: "Zema",         percentage:  2 },
+      { candidate_name: "Augusto Cury", percentage:  1 },
+    ],
+  },
+
+  // Real Time Big Data · 22-26 ago 2026 · TSE BR-03147/2026 · n=2.000 · recorte MG
+  // Fonte: https://exame.com/brasil/real-time-big-data-lula-tem-39-e-flavio-bolsonaro-34-no-1o-turno-em-minas-gerais/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-22",
+    fieldwork_end: "2026-08-26",
+    sample_size: 2000,
+    methodology: "telefonica",
+    scope: "MG",
+    source_url: "https://exame.com/brasil/real-time-big-data-lula-tem-39-e-flavio-bolsonaro-34-no-1o-turno-em-minas-gerais/",
+    tse_protocolo: "BR031472026",
+    results: [
+      { candidate_name: "Lula",         percentage: 39 },
+      { candidate_name: "Flávio",       percentage: 34 },
+      { candidate_name: "Zema",         percentage:  9 },
+      { candidate_name: "Renan",        percentage:  5 },
+      { candidate_name: "Pablo Marçal", percentage:  4 },
+      { candidate_name: "Caiado",       percentage:  2 },
+      { candidate_name: "Augusto Cury", percentage:  2 },
+    ],
+  },
+
+  // Real Time Big Data · 22-26 ago 2026 · TSE BR-03706/2026 · n=1.600 · recorte ES
+  // Fonte: https://exame.com/brasil/real-time-big-data-flavio-bolsonaro-e-lula-empatam-no-1o-turno-no-espirito-santo/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-22",
+    fieldwork_end: "2026-08-26",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "ES",
+    source_url: "https://exame.com/brasil/real-time-big-data-flavio-bolsonaro-e-lula-empatam-no-1o-turno-no-espirito-santo/",
+    tse_protocolo: "BR037062026",
+    results: [
+      { candidate_name: "Flávio",       percentage: 35 },
+      { candidate_name: "Lula",         percentage: 34 },
+      { candidate_name: "Renan",        percentage:  5 },
+      { candidate_name: "Pablo Marçal", percentage:  4 },
+      { candidate_name: "Zema",         percentage:  4 },
+      { candidate_name: "Caiado",       percentage:  2 },
+      { candidate_name: "Augusto Cury", percentage:  2 },
+    ],
+  },
+
+  // Real Time Big Data · 21-25 ago 2026 · TSE BR-09140/2026 · n=1.600 · recorte AM
+  // Fonte: https://www.bra1.com.br/politica/id-684602/lula_tem_40__e_bolsonaro_39__no_amazonas__aponta_pesquisa_real_time
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-26",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-25",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "AM",
+    source_url: "https://www.bra1.com.br/politica/id-684602/lula_tem_40__e_bolsonaro_39__no_amazonas__aponta_pesquisa_real_time",
+    tse_protocolo: "BR091402026",
+    results: [
+      { candidate_name: "Lula",         percentage: 40 },
+      { candidate_name: "Flávio",       percentage: 39 },
+      { candidate_name: "Renan",        percentage:  5 },
+      { candidate_name: "Pablo Marçal", percentage:  5 },
+      { candidate_name: "Caiado",       percentage:  3 },
+      { candidate_name: "Zema",         percentage:  1 },
+      { candidate_name: "Augusto Cury", percentage:  1 },
+    ],
+  },
+
+  // Real Time Big Data · 20-24 ago 2026 · TSE BR-02823/2026 · n=1.600 · recorte RS
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/real-time-big-data-flavio-tem-42-e-lula-39-no-1o-turno-no-rs/
+  // Nota: matéria também cita 2º turno (Flávio "51-52%" x Lula 42%) mas só em faixa, sem número exato — não inserido pra não estimar.
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-20",
+    fieldwork_end: "2026-08-24",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "RS",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/real-time-big-data-flavio-tem-42-e-lula-39-no-1o-turno-no-rs/",
+    tse_protocolo: "BR028232026",
+    results: [
+      { candidate_name: "Flávio", percentage: 42 },
+      { candidate_name: "Lula",   percentage: 39 },
+    ],
+  },
 ];
 
 async function main() {
@@ -882,12 +1049,16 @@ async function main() {
     if (!institute) { console.log("❌ instituto não encontrado"); errors++; continue; }
 
     // Deduplicar
+    // Inclui scope: duas pesquisas do mesmo instituto/eleição/data podem ser
+    // recortes de UFs diferentes (ex.: Real Time Big Data roda a mesma pergunta
+    // presidencial em vários estados na mesma semana, campo terminando no mesmo dia).
     const { data: existing } = await supabase
       .from("polls")
       .select("id")
       .eq("election_id", election.id)
       .eq("institute_id", institute.id)
       .eq("fieldwork_end", poll.fieldwork_end)
+      .eq("scope", poll.scope ?? "nacional")
       .maybeSingle();
     if (existing) { console.log("⏭️  já existe"); skipped++; continue; }
 
