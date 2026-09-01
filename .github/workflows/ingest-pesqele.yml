@@ -45,6 +45,29 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: npx tsx scripts/match-drafts-to-pesqele.ts --apply
 
+      # A ingestão acontece aqui, no Actions — não na rota /api/cron/ingest-pesqele
+      # (que nem está no vercel.json). Sem este passo, o conteúdo novo só
+      # apareceria no site quando o TTL do ISR expirasse, e é justamente esse
+      # acoplamento que obrigava a manter TTLs curtos em ~19,4k páginas.
+      - name: Revalidar páginas do site
+        env:
+          REVALIDATE_TOKEN: ${{ secrets.REVALIDATE_TOKEN }}
+        run: |
+          if [ -z "$REVALIDATE_TOKEN" ]; then
+            echo "::warning::REVALIDATE_TOKEN não configurado — site não revalidado"
+            exit 0
+          fi
+          # Não falha o workflow: a ingestão já foi aplicada com sucesso, e o ISR
+          # ainda cobre o frescor pelo TTL. Um 5xx aqui é degradação, não erro.
+          codigo=$(curl -sS -o /tmp/revalidate.json -w "%{http_code}" -X POST \
+            "https://electiolab.com/api/revalidate?path=ALL" \
+            -H "Authorization: Bearer $REVALIDATE_TOKEN" || echo "000")
+          echo "HTTP $codigo"
+          cat /tmp/revalidate.json 2>/dev/null || true
+          if [ "$codigo" != "200" ]; then
+            echo "::warning::Revalidação falhou (HTTP $codigo)"
+          fi
+
       - name: Summary
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}

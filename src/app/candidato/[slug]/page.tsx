@@ -31,7 +31,16 @@ import { DriftChartLazy as DriftChart } from "./drift-chart-lazy";
 import { CandidateEditorialBio } from "@/components/candidate-editorial-bio";
 import { CandidateSchema } from "./candidate-schema";
 
-export const revalidate = 3600; // 1h ISR — gera sob demanda na primeira request
+/**
+ * 7 dias. O conteúdo destas páginas é cadastro TSE: 19,5k das ~19,9k não têm
+ * nenhuma pesquisa vinculada e não mudam de um mês para o outro. Com TTL de 1h,
+ * cada passagem de crawler pelas 19,4k URLs do sitemap disparava uma
+ * regeneração por página — foi o que produziu o pico de invocações de 31/08.
+ *
+ * Frescor não depende mais do TTL: POST /api/revalidate?path=/candidato/<slug>
+ * regenera na hora quando entra pesquisa ou dado novo.
+ */
+export const revalidate = 604800; // 7d ISR — gera sob demanda na primeira request
 
 // Sem isso, `revalidate` sozinho não registra a rota no pipeline de ISR da
 // Vercel — o Next.js renderiza como dinâmico completo em toda request

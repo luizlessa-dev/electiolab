@@ -21,28 +21,7 @@
  */
 import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
-
-// Lista de paths que beneficiam de revalidação em batch
-const ALL_PATHS = [
-  "/",
-  "/sobre",
-  "/imprensa",
-  "/pesquisas-presidenciais-2026",
-  "/quem-vence-no-segundo-turno-presidencia-2026",
-  "/instituto-mais-acurado-eleicoes-brasil",
-  "/quanto-custa-campanha-eleitoral-google-ads-meta",
-  "/relatorio/semana-17-2026",
-  "/patrimonio",
-  "/fefc",
-  "/redes-sociais",
-  "/institutos",
-  "/candidatos",
-  "/eleicao-2018",
-  "/eleicao-2022",
-  // Pages dinâmicas governador (27 UFs)
-  ...["ac","al","am","ap","ba","ce","df","es","go","ma","mg","ms","mt","pa","pb","pe","pi","pr","rj","rn","ro","rr","rs","sc","se","sp","to"]
-    .map((uf) => `/eleicoes-governador-${uf}-2026`),
-];
+import { revalidarAgregadoras } from "@/lib/revalidate-paths";
 
 function unauthorized(reason: string) {
   return NextResponse.json({ ok: false, error: "unauthorized", reason }, { status: 401 });
@@ -78,10 +57,10 @@ async function handle(req: NextRequest) {
   const revalidated: string[] = [];
 
   if (path === "ALL") {
-    for (const p of ALL_PATHS) {
-      revalidatePath(p);
-      revalidated.push(p);
-    }
+    // Mesma função que o cron usa, para os dois caminhos não divergirem.
+    // Inclui /sitemap.xml, que é prerenderizado no build: sem revalidação
+    // explícita, o lastModified das ~19,4k URLs só mudava a cada deploy.
+    revalidated.push(...revalidarAgregadoras());
   } else {
     revalidatePath(path);
     revalidated.push(path);

@@ -16,6 +16,7 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { ingestPesqele } from "@/lib/ingest/pesqele";
+import { revalidarAgregadoras } from "@/lib/revalidate-paths";
 
 export const maxDuration = 300;
 
@@ -34,13 +35,23 @@ export async function GET(req: NextRequest) {
     const result = await ingestPesqele(2026);
     const ok = result.errors.length === 0;
 
+    // Só revalida quando algo entrou de fato. Sem isso, o frescor das
+    // agregadoras dependia do TTL do ISR — e era esse acoplamento que forçava
+    // TTLs curtos em todo o site.
+    const revalidated = result.upserted > 0 ? revalidarAgregadoras() : [];
+
     console.log(
       ok
-        ? `[cron/ingest-pesqele] ✅ ${result.upserted}/${result.unique_protocols} upserted, fila missing: ${result.missing_count}`
+        ? `[cron/ingest-pesqele] ✅ ${result.upserted}/${result.unique_protocols} upserted, fila missing: ${result.missing_count}, revalidadas: ${revalidated.length}`
         : `[cron/ingest-pesqele] ⚠️  erros: ${result.errors.join("; ")}`
     );
 
-    return NextResponse.json({ started_at: startedAt, ...result, ok });
+    return NextResponse.json({
+      started_at: startedAt,
+      ...result,
+      revalidated_count: revalidated.length,
+      ok,
+    });
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : String(e);
     console.error("[cron/ingest-pesqele] ❌", msg);
