@@ -2055,6 +2055,48 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Jeferson Bezerra",           percentage:  1 },
     ],
   },
+
+  // ─── Curadoria 01/09/2026 — lote 10 (Tier 1, Veritá, recortes estaduais) ──
+
+  // Instituto Veritá · 19-23 ago 2026 · TSE BR-04605/2026 · n=1.525 · recorte GO
+  // Fonte: https://todotemponoticias.com.br/pesquisa-verita-mostra-eleicao-em-aberto-para-governador-em-goias-75-dos-eleitores-ainda-nao-definiram-candidato/
+  {
+    institute_name: "Instituto Veritá",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-28",
+    fieldwork_start: "2026-08-19",
+    fieldwork_end: "2026-08-23",
+    sample_size: 1525,
+    margin_of_error: 2.5,
+    methodology: "telefonica",
+    scope: "GO",
+    source_url: "https://todotemponoticias.com.br/pesquisa-verita-mostra-eleicao-em-aberto-para-governador-em-goias-75-dos-eleitores-ainda-nao-definiram-candidato/",
+    tse_protocolo: "BR046052026",
+    results: [
+      { candidate_name: "Flávio", percentage: 26.8 },
+      { candidate_name: "Lula",   percentage: 18.1 },
+    ],
+  },
+
+  // Instituto Veritá · 19-23 ago 2026 · TSE BR-07588/2026 · n=1.525 · recorte PA
+  // Fonte: https://opiniaoempauta.com.br/no-para-pesquisa-mostra-dr-daniel-perto-de-vencer-eleicao-no-primeiro-turno-49-x-41/
+  {
+    institute_name: "Instituto Veritá",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-19",
+    fieldwork_end: "2026-08-23",
+    sample_size: 1525,
+    margin_of_error: 2.5,
+    methodology: "telefonica",
+    scope: "PA",
+    source_url: "https://opiniaoempauta.com.br/no-para-pesquisa-mostra-dr-daniel-perto-de-vencer-eleicao-no-primeiro-turno-49-x-41/",
+    tse_protocolo: "BR075882026",
+    results: [
+      { candidate_name: "Flávio", percentage: 44.6 },
+      { candidate_name: "Lula",   percentage: 44.2 },
+    ],
+  },
 ];
 
 async function main() {
