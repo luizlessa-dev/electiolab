@@ -42,6 +42,17 @@ jobs:
           YEAR_ARG="--year=${{ inputs.year || '2026' }}"
           npx tsx scripts/ingest-tse-candidaturas.ts --apply $YEAR_ARG
 
+      # Guarda contra a regressão que gerou 386 slugs cobrindo mais de uma
+      # pessoa (ver scripts/lib/candidate-slug.ts): o gerador de slug do ingest
+      # acima já foi corrigido, mas nada no schema impede a volta do bug — não
+      # dá pra expressar "slug → uma pessoa só" como unique index simples,
+      # porque slug repetido É legítimo pra mesma pessoa em eleições diferentes.
+      - name: Checar slugs sem colisão entre pessoas
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npx tsx scripts/check-slug-collisions.ts
+
       - name: Open issue on failure
         if: failure()
         uses: actions/github-script@v7
