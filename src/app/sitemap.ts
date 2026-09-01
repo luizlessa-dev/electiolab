@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { createClient } from "@supabase/supabase-js";
+import { electionSegment } from "@/lib/queries";
 
 const SITE_URL = "https://electiolab.com";
 
@@ -84,6 +85,32 @@ function dateParaIso(d: string): string {
   return `${d}T12:00:00.000Z`;
 }
 
+/**
+ * Sub-rota /candidato/<slug>/<segmento>: uma eleição da pessoa que não tem
+ * página própria porque a linha dela em `candidates` está sem slug. Hoje são as
+ * 3 linhas de 2022 de Lula e Bolsonaro — turnos são eleições separadas nesta
+ * base, então esse dado existe e não tinha URL nenhuma.
+ */
+type SubRotaSitemap = {
+  slug: string;
+  segmento: string;
+  lastModified: string;
+  volatil: boolean;
+};
+
+/** Linha de `candidates` como o sitemap a lê. */
+type LinhaCandidato = {
+  id: string | null;
+  slug: string | null;
+  bio: string | null;
+  birth_date: string | null;
+  profession: string | null;
+  tse_id: string | null;
+  election_id: string | null;
+  created_at: string | null;
+  editorial_published_at: string | null;
+};
+
 type CandidatoSitemap = {
   slug: string;
   lastModified: string;
@@ -141,25 +168,19 @@ async function getUltimaPesquisaPorCandidato(
  * site ficava inalcançável para crawler — a paginação de /candidatos usa
  * <button onClick>, que o Googlebot não segue. Ver ELECTIOLAB-AUDIT-2026-08 C2.
  */
-async function getCandidatesForSitemap(): Promise<CandidatoSitemap[]> {
+async function getCandidatesForSitemap(): Promise<{
+  paginas: CandidatoSitemap[];
+  subrotas: SubRotaSitemap[];
+}> {
   try {
     const supabase = criarClient();
     const PAGE = 1000;
-    const rows: Array<{
-      id: string | null;
-      slug: string | null;
-      bio: string | null;
-      birth_date: string | null;
-      profession: string | null;
-      tse_id: string | null;
-      created_at: string | null;
-      editorial_published_at: string | null;
-    }> = [];
+    const rows: LinhaCandidato[] = [];
 
     for (let from = 0; ; from += PAGE) {
       const { data, error } = await supabase
         .from("candidates")
-        .select("id,slug,bio,birth_date,profession,tse_id,created_at,editorial_published_at")
+        .select("id,slug,bio,birth_date,profession,tse_id,election_id,created_at,editorial_published_at")
         .eq("is_active", true)
         .order("slug", { ascending: true })
         .range(from, from + PAGE - 1);
@@ -177,24 +198,96 @@ async function getCandidatesForSitemap(): Promise<CandidatoSitemap[]> {
       return Boolean(c.birth_date && c.profession && c.tse_id);
     });
 
-    return filtered.map((c) => {
+    const ultimaMod = (c: LinhaCandidato) => {
       const pesquisa = c.id ? ultimaPesquisa.get(c.id) : undefined;
       const candidatas = [c.created_at, c.editorial_published_at, pesquisa].filter(
         (d): d is string => Boolean(d)
       );
-      const lastModified = candidatas.length
-        ? candidatas.reduce((a, b) => (a > b ? a : b))
-        : FALLBACK_DATE;
-
       return {
-        slug: c.slug as string,
-        lastModified,
+        lastModified: candidatas.length
+          ? candidatas.reduce((a, b) => (a > b ? a : b))
+          : FALLBACK_DATE,
         volatil: Boolean(pesquisa),
       };
-    });
+    };
+
+    const paginas = filtered.map((c) => ({
+      slug: c.slug as string,
+      ...ultimaMod(c),
+    }));
+
+    return { paginas, subrotas: await montarSubRotas(supabase, rows, ultimaMod) };
   } catch {
-    return [];
+    return { paginas: [], subrotas: [] };
   }
+}
+
+/**
+ * URLs das eleições que só existem em linhas sem slug — sem isto elas não têm
+ * nenhuma URL no sitemap, mesmo tendo pesquisas e resultado.
+ *
+ * Agrupa por `tse_id` (a pessoa) e, nos grupos com mais de uma linha ativa,
+ * emite /candidato/<slug-da-linha-primária>/<segmento> para as irmãs sem slug.
+ * As irmãs QUE TÊM slug já ganham /candidato/<slug> na lista principal e ficam
+ * de fora daqui, para não publicar duas URLs com o mesmo conteúdo.
+ *
+ * Hoje são 3 URLs (Lula 2022 1º e 2º turno, Bolsonaro 2022 2º turno) de 11
+ * grupos com mais de uma linha; o resto já tem slug em todas as linhas.
+ */
+async function montarSubRotas(
+  supabase: ReturnType<typeof criarClient>,
+  rows: LinhaCandidato[],
+  ultimaMod: (c: LinhaCandidato) => { lastModified: string; volatil: boolean },
+): Promise<SubRotaSitemap[]> {
+  const grupos = new Map<string, LinhaCandidato[]>();
+  for (const r of rows) {
+    if (!r.tse_id) continue;
+    const g = grupos.get(r.tse_id);
+    if (g) g.push(r);
+    else grupos.set(r.tse_id, [r]);
+  }
+  const multi = [...grupos.values()].filter(
+    (g) => g.length > 1 && g.some((r) => r.slug) && g.some((r) => !r.slug)
+  );
+  if (!multi.length) return [];
+
+  const { data: elections } = await supabase
+    .from("elections")
+    .select("id,type,year,round");
+  const porEleicao = new Map(
+    (elections ?? []).map((e) => [e.id as string, e])
+  );
+
+  const saida: SubRotaSitemap[] = [];
+  for (const grupo of multi) {
+    // Mesmo desempate de getCandidateBySlug (year DESC, round DESC): a linha que
+    // /candidato/<slug> serve é a que dá o slug para as irmãs.
+    const comSlug = grupo
+      .filter((r) => r.slug)
+      .sort((a, b) => {
+        const ea = porEleicao.get(a.election_id ?? "");
+        const eb = porEleicao.get(b.election_id ?? "");
+        return (
+          ((eb?.year ?? 0) - (ea?.year ?? 0)) ||
+          ((eb?.round ?? 0) - (ea?.round ?? 0)) ||
+          (a.id ?? "").localeCompare(b.id ?? "")
+        );
+      });
+    const slug = comSlug[0]?.slug;
+    if (!slug) continue;
+
+    for (const r of grupo) {
+      if (r.slug) continue;
+      const e = porEleicao.get(r.election_id ?? "");
+      if (!e) continue;
+      saida.push({
+        slug,
+        segmento: electionSegment(e),
+        ...ultimaMod(r),
+      });
+    }
+  }
+  return saida;
 }
 
 async function getInstitutesForSitemap(): Promise<{ slug: string }[]> {
@@ -213,7 +306,7 @@ async function getInstitutesForSitemap(): Promise<{ slug: string }[]> {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const candidates = await getCandidatesForSitemap();
+  const { paginas: candidates, subrotas } = await getCandidatesForSitemap();
 
   /**
    * Data real da última movimentação de dados, usada nas páginas agregadoras.
@@ -233,6 +326,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // crawler a revisitar tudo e disparava o pico de invocações.
     changeFrequency: c.volatil ? ("weekly" as const) : ("yearly" as const),
     priority: c.volatil ? 0.7 : 0.4,
+  }));
+
+  /**
+   * Prioridade abaixo da página principal do candidato: são eleições passadas,
+   * e a linha por trás delas tem só nome, partido, pesquisas e resultado — sem
+   * bio nem foto.
+   */
+  const subRotaPages: MetadataRoute.Sitemap = subrotas.map((s) => ({
+    url: `${SITE_URL}/candidato/${s.slug}/${s.segmento}`,
+    lastModified: s.lastModified,
+    changeFrequency: s.volatil ? ("weekly" as const) : ("yearly" as const),
+    priority: 0.3,
   }));
 
   const institutes = await getInstitutesForSitemap();
@@ -299,6 +404,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return dedupe([
     ...candidatePages,
+    ...subRotaPages,
     ...institutePages,
     ...partyPages,
     ...ufPages,

@@ -41,6 +41,7 @@ import iconv from "iconv-lite";
 import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
+import { escolherSlugUnico, slugify } from "./lib/candidate-slug";
 
 // ─────────────────────────────────────────────────────────────────
 // Env loader
@@ -121,15 +122,6 @@ function titleCase(s: string): string {
         : w.charAt(0).toUpperCase() + w.slice(1)
     )
     .join(" ");
-}
-
-function slugify(s: string): string {
-  return s
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
 }
 
 function normalize(s: string): string {
@@ -467,11 +459,17 @@ async function main() {
   let matchedByName = 0;
   const claimed = new Set<string>();
 
-  // Slug é único por (slug, election_id) — não globalmente. Semeia com o que já
-  // existe no banco pra não colidir com a constraint real na hora do insert.
+  // Slug é global — a URL é /candidato/[slug], sem o cargo/UF na rota. A versão
+  // anterior deste bloco garantia unicidade só DENTRO da mesma eleição
+  // (`${election.id}:${slug}`), e por isso dois homônimos em eleições
+  // diferentes (ex.: dois "Serginho", um dep. estadual SC outro dep. federal
+  // SP) recebiam o mesmo slug — só um ficava alcançável por URL. Medido em
+  // 2026-09-01: 386 slugs cobrindo 446 pessoas escondidas. Ver
+  // scripts/lib/candidate-slug.ts e scripts/fix-slugs-homonimos.ts (correção
+  // one-off do histórico já gravado com o bug).
   const usedSlugs = new Set<string>();
   for (const c of existing ?? []) {
-    if (c.slug && c.election_id) usedSlugs.add(`${c.election_id}:${c.slug}`);
+    if (c.slug) usedSlugs.add(c.slug as string);
   }
 
   for (const row of rows) {
@@ -521,10 +519,13 @@ async function main() {
       }
       toUpdate.push({ id: current.id as string, patch });
     } else {
-      let slug = slugify(row.nome_urna);
-      let n = 2;
-      while (usedSlugs.has(`${election.id}:${slug}`)) slug = `${slugify(row.nome_urna)}-${n++}`;
-      usedSlugs.add(`${election.id}:${slug}`);
+      const baseSlug = slugify(row.nome_urna);
+      const slug = escolherSlugUnico(
+        baseSlug,
+        { type: election.type, state: election.state, year: null, round: null },
+        usedSlugs
+      );
+      usedSlugs.add(slug);
 
       toInsert.push({
         ...tseFields,

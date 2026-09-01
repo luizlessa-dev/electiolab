@@ -115,32 +115,93 @@ export async function getCampaignFinances(electionId: string) {
   return data ?? [];
 }
 
-export async function getCandidateBySlug(slug: string) {
+/**
+ * Prioridade de cargo no desempate quando o mesmo slug aparece em várias
+ * eleições (Roberto Claudio, Rogério Marinho — governador E senador no mesmo
+ * ciclo). Módulo-level porque agora é usado por getCandidateBySlug e por
+ * getCandidateElections.
+ */
+const TYPE_PRIORITY: Record<string, number> = {
+  presidente: 5, governador: 4, senador: 3,
+  deputado_federal: 2, deputado_estadual: 1, deputado_distrital: 1,
+};
 
-  // Resolver primeiro o registro mais recente (eleição mais nova) para o slug.
-  // Slugs podem ser duplicados em múltiplas eleições (ex.: Lula 2022 1T, 2022 2T,
-  // 2026 1T, 2026 2T). Sem ordenação aqui, .limit(1) pegava registro aleatório
-  // e a rota /candidato/lula servia dados de 2022 em vez de 2026.
-  // Filtra primeiro is_active=true (caso Tarcísio: governador active vs presidente inactive)
-  // Se nenhum active, faz fallback pegando o mais recente histórico.
-  let { data: latest } = await supabase
+type ElectionRef = {
+  id?: string | null;
+  name?: string | null;
+  type: string | null;
+  year: number | null;
+  round: number | null;
+  state?: string | null;
+};
+
+/**
+ * Segmento de URL que identifica UMA eleição dentro da página de um candidato:
+ * /candidato/<slug>/<segmento>. Ex.: "presidente-2022-2t", "governador-2026-1t".
+ *
+ * Inclui o `type` de propósito, e não só ano+turno. Uma pessoa pode disputar
+ * dois cargos no mesmo ciclo (governador E senador, mesmo year e round) — são
+ * ~29 slugs repetidos na base hoje — e "2026-1t" apontaria para as duas linhas.
+ * type+year+round é único por pessoa: ninguém concorre duas vezes ao mesmo
+ * cargo no mesmo turno. Ancorar o segmento só nos campos da própria eleição
+ * também mantém a URL estável: ela não muda se aparecer uma linha irmã depois.
+ */
+export function electionSegment(e: ElectionRef): string {
+  const type = (e.type ?? "eleicao").replace(/_/g, "-");
+  return `${type}-${e.year ?? 0}-${e.round ?? 1}t`;
+}
+
+function normalizeElection(raw: unknown): ElectionRef | null {
+  const e = Array.isArray(raw) ? raw[0] : raw;
+  return (e as ElectionRef) ?? null;
+}
+
+type IdentidadePessoa = { cpf: string | null; tseId: string | null };
+
+/**
+ * Duas linhas são a mesma pessoa? CPF manda quando as duas têm; se falta em
+ * alguma, cai para o tse_id.
+ *
+ * Precisa existir porque slug NÃO identifica pessoa nesta base: 384 slugs ativos
+ * cobrem mais de um CPF (o pior, "serginho", cobre 5 pessoas). Sem este filtro o
+ * seletor de eleições listaria a candidatura de um homônimo como se fosse desta
+ * pessoa — /candidato/carlos-brandao chegou a mostrar "Deputado Federal Goias
+ * 2026", que é de outro Carlos Brandão, de outro CPF.
+ *
+ * Nenhum dos dois campos sozinho resolve: as linhas de 2022 de Lula e Bolsonaro
+ * estão sem CPF (só tse_id), e o tse_id de Lula muda entre 2026 1º e 2º turno
+ * (só o CPF liga esses dois).
+ */
+function mesmaPessoa(a: IdentidadePessoa, b: IdentidadePessoa): boolean {
+  if (a.cpf && b.cpf) return a.cpf === b.cpf;
+  return Boolean(a.tseId && b.tseId && a.tseId === b.tseId);
+}
+
+/**
+ * Linhas de `candidates` que respondem por um slug, já ordenadas pelo desempate
+ * canônico. A primeira é a que /candidato/<slug> serve.
+ *
+ * Filtra is_active=true primeiro (caso Tarcísio: governador ativo vs presidente
+ * inativo). Se nenhuma ativa, faz fallback para o histórico (caso Bolsonaro:
+ * sem linha de 2026, mas as de 2022 existem).
+ */
+async function resolveCandidateRowsBySlug(slug: string) {
+  const SELECT = "id, tse_id, cpf, is_active, election:elections(id, name, type, state, year, round)";
+
+  let { data: rows } = await supabase
     .from("candidates")
-    .select("id, tse_id, election:elections(year, round, type)")
+    .select(SELECT)
     .eq("slug", slug)
     .eq("is_active", true);
 
-  if (!latest?.length) {
+  if (!rows?.length) {
     // fallback: histórico (ex.: Bolsonaro pai inativo em 2026 mas registros 2022 ativos)
-    const fb = await supabase
-      .from("candidates")
-      .select("id, tse_id, election:elections(year, round, type)")
-      .eq("slug", slug);
-    latest = fb.data;
-    if (!latest?.length) return null;
+    const fb = await supabase.from("candidates").select(SELECT).eq("slug", slug);
+    rows = fb.data;
+    if (!rows?.length) return [];
   }
 
-  // Tiebreaker quando slug aparece em múltiplas eleições (caso Roberto Claudio,
-  // Rogério Marinho — concorrendo a governador E senador no mesmo ciclo):
+  // Desempate quando slug aparece em múltiplas eleições:
   //   1) year DESC (mais recente)
   //   2) tem tse_id DESC (registro com candidatura confirmada > registro sem)
   //   3) round DESC (2T > 1T pra mesma eleição)
@@ -151,18 +212,27 @@ export async function getCandidateBySlug(slug: string) {
   // no registro de 1º turno (ver migration fix_tse_stamp_matching), então o
   // registro de 2T é sempre um stub sem tse_id/foto/bio. Sem esse critério,
   // "round DESC" sozinho preferia o stub ao perfil completo — foi o caso
-  // descoberto com Flávio Bolsonaro: /candidato/flavio-bolsonaro passou a
-  // resolver pro registro de 2T (12 pesquisas, sem foto) em vez do de 1T
-  // (76 pesquisas, perfil completo) assim que ambos ficaram is_active.
+  // descoberto com Flávio Bolsonaro (2026-09-01): /candidato/flavio-bolsonaro
+  // passou a resolver pro registro de 2T (12 pesquisas, sem foto) em vez do
+  // de 1T (76 pesquisas, perfil completo) assim que ambos ficaram is_active,
+  // e chegou a ir pro ar assim em produção antes desse critério existir.
+  //
+  // #3-4 seguem valendo pro caso Roberto Claudio/Rogério Marinho — mesma
+  // pessoa concorrendo a governador E senador no mesmo ciclo, ambos com
+  // tse_id (empate em #2), desempatados por round e depois por cargo.
   const TYPE_PRIORITY: Record<string, number> = {
     presidente: 5, governador: 4, senador: 3,
     deputado_federal: 2, deputado_estadual: 1, deputado_distrital: 1,
   };
-  const byRecency = latest
+  return rows
     .map((c) => {
-      const e = Array.isArray(c.election) ? c.election[0] : c.election;
+      const e = normalizeElection(c.election);
       return {
         id: c.id as string,
+        tseId: (c.tse_id as string | null) ?? null,
+        cpf: (c.cpf as string | null) ?? null,
+        isActive: Boolean(c.is_active),
+        election: e,
         year: e?.year ?? 0,
         hasTse: c.tse_id ? 1 : 0,
         round: e?.round ?? 0,
@@ -176,9 +246,129 @@ export async function getCandidateBySlug(slug: string) {
       (b.prio - a.prio) ||
       a.id.localeCompare(b.id)
     );
+}
 
-  const candidateId = byRecency[0].id;
+export type CandidateElectionOption = {
+  candidateId: string;
+  segment: string;
+  election: ElectionRef;
+  /** true na eleição que /candidato/<slug> (sem segmento) serve. */
+  isPrimary: boolean;
+};
 
+/**
+ * Todas as eleições da MESMA pessoa por trás de um slug, para o seletor de
+ * eleição e para o sitemap.
+ *
+ * Junta as linhas por dois sinais, porque nenhum dos dois sozinho fecha a
+ * conta na base de hoje:
+ *
+ *  - `slug`: as linhas de 2022 de Lula e Bolsonaro estão com slug NULL e não
+ *    apareceriam numa busca por slug. (Preencher slug nelas também não seria
+ *    solução: o desempate abaixo é round DESC, então dar "bolsonaro" à linha de
+ *    2º turno só trocaria qual turno /candidato/bolsonaro serve.)
+ *
+ *  - `tse_id`: não é estável por pessoa. Lula tem 280001607829 em 2022 1º, 2022
+ *    2º e 2026 1º, mas 280002542548 em 2026 2º — e é justamente essa última que
+ *    vence o desempate do slug "lula". Agrupar só por tse_id perderia os turnos
+ *    de 2022 inteiros.
+ *
+ * Então: parte das linhas do slug, coleta os tse_id delas e traz as irmãs desses
+ * tse_id. Um salto só. Encadear mais correria o risco de juntar pessoas
+ * diferentes através de um tse_id errado.
+ *
+ * Turnos distintos são eleições distintas nesta base e continuam em linhas
+ * separadas de propósito (ver migration 20260819120000): campos de candidatos,
+ * pesquisas e election_results diferentes por turno.
+ */
+export async function getCandidateElections(slug: string): Promise<CandidateElectionOption[]> {
+  const seeds = await resolveCandidateRowsBySlug(slug);
+  if (!seeds.length) return [];
+
+  const primary = seeds[0];
+
+  // Só as linhas do slug que são a MESMA pessoa da primária. As de homônimo
+  // ficam de fora — /candidato/<slug> já serve só uma delas hoje, e o seletor
+  // não pode sugerir que as outras são desta pessoa.
+  const daPessoa = seeds.filter((r) => r.id === primary.id || mesmaPessoa(primary, r));
+  const tseIds = [...new Set(daPessoa.map((r) => r.tseId).filter((t): t is string => Boolean(t)))];
+  const cpfs = new Set(daPessoa.map((r) => r.cpf).filter((c): c is string => Boolean(c)));
+
+  type LinhaIrma = { id: string; election: ElectionRef | null };
+  const porId = new Map<string, LinhaIrma>();
+  for (const r of daPessoa) porId.set(r.id, { id: r.id, election: r.election });
+
+  const IRMAS_SELECT = "id, cpf, is_active, election:elections(id, name, type, state, year, round)";
+
+  // Duas buscas, não uma: `tse_id` NÃO é estável no tempo. Medido ao vivo em
+  // 2026-09-01 — o ingest diário do TSE reatribuiu o tse_id da linha de Lula
+  // 2026 1º turno (de 280001607829 para 280002542548, igualando ao 2º turno)
+  // entre uma sessão e outra, e isso sozinho desconectou as linhas de 2022
+  // (que não têm cpf, só tse_id) de quem passou a servir /candidato/lula.
+  // Buscar também por cpf sobrevive a esse tipo de drift; buscar só por
+  // tse_id, não.
+  if (tseIds.length) {
+    // Só irmãs ativas quando o slug resolveu por linhas ativas. Sem isso, uma
+    // candidatura indeferida (caso Tarcísio: governador ativo, presidente
+    // inativo) entraria no seletor como se fosse eleição válida.
+    let q = supabase.from("candidates").select(IRMAS_SELECT).in("tse_id", tseIds);
+    if (primary.isActive) q = q.eq("is_active", true);
+
+    const { data: irmas } = await q;
+    for (const c of irmas ?? []) {
+      const id = c.id as string;
+      if (porId.has(id)) continue;
+      // As irmãs já compartilham tse_id com alguma linha da pessoa por
+      // construção. O CPF é a segunda barreira, para o caso de um tse_id
+      // repetido entre pessoas diferentes.
+      const cpf = (c.cpf as string | null) ?? null;
+      if (cpf && cpfs.size && !cpfs.has(cpf)) continue;
+      porId.set(id, { id, election: normalizeElection(c.election) });
+    }
+  }
+
+  if (cpfs.size) {
+    let q = supabase.from("candidates").select(IRMAS_SELECT).in("cpf", [...cpfs]);
+    if (primary.isActive) q = q.eq("is_active", true);
+
+    // Match direto por cpf já É a identidade da pessoa — sem barreira extra,
+    // ao contrário do laço por tse_id acima.
+    const { data: irmas } = await q;
+    for (const c of irmas ?? []) {
+      const id = c.id as string;
+      if (porId.has(id)) continue;
+      porId.set(id, { id, election: normalizeElection(c.election) });
+    }
+  }
+
+  const opcoes = [...porId.values()]
+    .map((r) =>
+      r.election
+        ? {
+            candidateId: r.id,
+            segment: electionSegment(r.election),
+            election: r.election,
+            isPrimary: r.id === primary.id,
+          }
+        : null
+    )
+    .filter((o): o is CandidateElectionOption => o !== null);
+
+  // Mais recente primeiro, mesma ordem do desempate.
+  return opcoes.sort((a, b) =>
+    ((b.election.year ?? 0) - (a.election.year ?? 0)) ||
+    ((b.election.round ?? 0) - (a.election.round ?? 0)) ||
+    ((TYPE_PRIORITY[b.election.type ?? ""] ?? 0) - (TYPE_PRIORITY[a.election.type ?? ""] ?? 0)) ||
+    a.candidateId.localeCompare(b.candidateId)
+  );
+}
+
+/**
+ * O SELECT completo da página de candidato. Compartilhado por
+ * getCandidateBySlug e getCandidateBySlugAndSegment para que as duas rotas
+ * rendam exatamente o mesmo shape.
+ */
+async function fetchCandidateDetail(candidateId: string) {
   const { data } = await supabase
     .from("candidates")
     .select(`
@@ -200,6 +390,24 @@ export async function getCandidateBySlug(slug: string) {
     .order("publication_date", { foreignTable: "poll_results.poll", ascending: false })
     .maybeSingle();
   return data;
+}
+
+export async function getCandidateBySlug(slug: string) {
+  const rows = await resolveCandidateRowsBySlug(slug);
+  if (!rows.length) return null;
+  return fetchCandidateDetail(rows[0].id);
+}
+
+/**
+ * /candidato/<slug>/<segmento> — a eleição específica daquela pessoa.
+ * Retorna null se o segmento não corresponder a nenhuma eleição dela, para a
+ * rota chamar notFound() em vez de servir a eleição errada silenciosamente.
+ */
+export async function getCandidateBySlugAndSegment(slug: string, segment: string) {
+  const opcoes = await getCandidateElections(slug);
+  const alvo = opcoes.find((o) => o.segment === segment);
+  if (!alvo) return null;
+  return fetchCandidateDetail(alvo.candidateId);
 }
 
 export async function getCandidatesWithBio() {

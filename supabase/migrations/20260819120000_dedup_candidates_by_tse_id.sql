@@ -2,9 +2,56 @@
 -- Data: 2026-08-19
 -- Contexto: 9 grupos de candidatos duplicados por tse_id (11 linhas excedentes).
 --
--- Diagnóstico:
+-- Diagnóstico ORIGINAL (2026-08-19) — ver CORREÇÃO 2026-08-31 abaixo:
 -- - Grupos 1-3 (Ratinho, Lula, Bolsonaro): mesma pessoa em 1º+2º turno da MESMA eleição.
 --   São genuinamente duplicatas — deveriam ser 1 registro por eleição.
+--
+-- ════════════════════════════════════════════════════════════════════════════
+-- CORREÇÃO 2026-08-31 — o diagnóstico dos grupos 1-3 estava ERRADO.
+-- ════════════════════════════════════════════════════════════════════════════
+-- Esta migration NUNCA foi aplicada no banco remoto (xoxztzologqeqbajlhya):
+-- em 2026-08-31 `candidates_duplicates_audit` não existe e `candidates` não tem
+-- a coluna `is_duplicate_of`. Corrigindo o texto antes que alguém a aplique ou
+-- execute o "próximo passo" descrito no fim do arquivo — que corromperia dados.
+--
+-- 1º turno e 2º turno são eleições DIFERENTES nesta base, não duplicatas:
+--
+--   elections '2a8761ab-9dc0-4436-8682-4095c0b7f014'  Presidencial 2022 - 1º Turno
+--             year=2022 round=1 election_date=2022-10-02  → 18 polls, 5 candidatos
+--   elections '7bacada6-f9ea-4665-b0a4-0ee08d9d35fc'  Presidencial 2022 - 2º Turno
+--             year=2022 round=2 election_date=2022-10-30  → 11 polls, 2 candidatos
+--
+-- São disputas distintas, com campos de candidatos distintos e números que não
+-- se misturam (medido em 2026-08-31, poll_results):
+--
+--   Lula       1º turno n=18  42,2–50,0  média 45,3   |  2º turno n=11  47,0–54,0  média 51,9
+--   Bolsonaro  1º turno n=18  31,0–39,4  média 34,1   |  2º turno n=11  42,0–49,6  média 47,1
+--
+-- Ciro, Simone Tebet e Soraya só existem no 1º turno — o campo do 2º turno tem
+-- só dois nomes. Somar as 18 + 11 pesquisas numa linha só produziria uma média
+-- ponderada que não descreve eleição nenhuma. As janelas de campo nem se tocam
+-- (1º: 2022-08-17 a 2022-10-01; 2º: 2022-10-13 a 2022-10-29).
+--
+-- election_results confirma que cada linha guarda o resultado do SEU turno:
+--   1º turno: Lula 48,43% / Bolsonaro 43,2% (ambos "2º turno" como desfecho)
+--   2º turno: Lula 50,9% "Eleito" / Bolsonaro 49,1% "Não eleito"
+-- Fundir as linhas obrigaria a jogar fora metade desses resultados.
+--
+-- weighted_averages já está correto: é chaveado por (election_id, candidate_id),
+-- então cada turno tem sua própria média (46,7/34,5 no 1º; 51,8/47,3 no 2º).
+-- Nada a recalcular.
+--
+-- CRITÉRIO: duplicata de candidato é mesma pessoa (tse_id) na MESMA eleição —
+-- comparar year + round + type + state da election, nunca só tse_id+type.
+--
+-- O que sobra de problema real NÃO é deduplicação, é rota: as linhas de 2º turno
+-- de 2022 estão com slug NULL e portanto não têm página; /candidato/bolsonaro
+-- resolve para a linha de 1º turno de 2022 (única com slug) e mostra as 18
+-- pesquisas daquele turno. Preencher slug nessas linhas não resolve sozinho —
+-- getCandidateBySlug (src/lib/queries.ts) desempata por year DESC, round DESC,
+-- então dar "bolsonaro" à linha de 2º turno só trocaria qual turno aparece.
+-- Expor os dois turnos exige decisão de rota (ex.: /candidato/<slug>/<ano>-<turno>),
+-- fora do escopo desta migration.
 --
 -- - Grupos 4-9 (Governadores/Senadores 2026): mesma pessoa, CARGOS DIFERENTES.
 --   Exemplo: Carlos Brandão é candidato a governador E senador do Maranhão 2026.
@@ -40,7 +87,12 @@ create index if not exists idx_dup_audit_primary_id on candidates_duplicates_aud
 -- Passo 2: Registrar os 9 grupos detectados
 -- ────────────────────────────────────────────────────────────────────────────
 
--- Grupo 1: Ratinho com tse_id em 3 eleições diferentes (pres 1º, pres 2º, gov PR)
+-- Grupo 1: Ratinho — REGISTRO OBSOLETO (ver CORREÇÃO no topo).
+-- Em 2026-08-31 sobraram 2 linhas, ambas de 2026 e ambas com slug:
+--   11427a3a (Ratinho, slug 'ratinho-jr', Presidencial 2026 - 1º Turno)
+--   16f31ff1 (Ratinho Junior, slug 'ratinho-junior', Governador Paraná 2026)
+-- A terceira (1804c6ba) não existe mais. Cargos distintos no mesmo ciclo =
+-- LEGÍTIMO, igual aos grupos 4-9. Nada a fazer.
 insert into candidates_duplicates_audit (
   tse_id, group_count, duplicate_ids, primary_id,
   is_valid_different_elections, is_valid_different_rounds, notes
@@ -68,10 +120,12 @@ insert into candidates_duplicates_audit (
     'b6a110df-3f31-4103-a8af-526082d5ca54'::uuid   -- Lula (pres 2022 2º turno)
   ],
   '0d24e554-2da5-4806-831f-73a4f5e7b464'::uuid,   -- Lula (pres 2026 1º turno, ativo)
-  true,  -- diferentes eleições
+  true,  -- diferentes eleições — 1º e 2º turno são elections separadas
   true,  -- diferentes turnos (2022 1º, 2022 2º)
-  'Candidato presidencial em 2022 (1º+2º turno) e 2026. Investigar: 2º turno de 2022 ' ||
-  'deve referenciar 1º turno, não criar record novo.'
+  'CORRIGIDO 2026-08-31: NÃO são duplicatas. Três eleições distintas ' ||
+  '(2022 1º turno, 2022 2º turno, 2026 1º turno), cada uma com seu campo de ' ||
+  'candidatos, suas pesquisas e seu election_results. Manter as três linhas ' ||
+  'separadas. O que falta é rota para os turnos de 2022, não merge.'
 );
 
 -- Grupo 3: Bolsonaro com tse_id em 2 eleições diferentes (ambas 2022, 1º e 2º turno)
@@ -84,10 +138,12 @@ insert into candidates_duplicates_audit (
     '415fbb48-1ddd-464f-9b3c-0c76446d2873'::uuid  -- Bolsonaro (pres 2022 1º turno)
   ],
   '2e9fe256-caf1-41fd-82cf-5266e12637e8'::uuid,   -- Bolsonaro (pres 2022 2º turno)
-  false,  -- mesma eleição (2022), diferentes turnos apenas
+  true,   -- CORRIGIDO: 1º e 2º turno são elections separadas, não "mesma eleição"
   true,   -- diferentes turnos (1º e 2º)
-  'Candidato presidencial 2022 em 2º turno. Há record duplicate do 1º turno. ' ||
-  '2º turno deve referenciar o 1º turno, não ser record separado.'
+  'CORRIGIDO 2026-08-31: NÃO são duplicatas. 415fbb48 é o 1º turno de 2022 ' ||
+  '(18 pesquisas, média 34,1%, resultado 43,2%) e 2e9fe256 é o 2º turno ' ||
+  '(11 pesquisas, média 47,1%, resultado 49,1%). Disputas diferentes. ' ||
+  'Manter as duas linhas separadas.'
 );
 
 -- Grupos 4-9: Governador + Senador mesma eleição (LEGÍTIMO — cargos distintos)
@@ -219,16 +275,20 @@ $$ language plpgsql immutable;
 -- ────────────────────────────────────────────────────────────────────────────
 -- 1. NÃO fazer DELETE imediato. Esta migration só marca e documenta.
 --
--- 2. Próximas ações (manual, fora desta migration):
---    a) Validar grupos 1-3 (turnos duplicados) — decidir qual record manter
---    b) Merge de dados de candidates_assets, candidate_social_media, etc
---       do duplicate para o canonical
---    c) Redirecionar poll_results.candidate_id do duplicate para canonical
---    d) Depois de confirmado, marcar: UPDATE candidates SET is_duplicate_of = ...
---       onde é_candidato duplicado; NÃO deletar.
+-- 2. Próximas ações — CANCELADAS em 2026-08-31 para os grupos 1-3.
+--    O plano abaixo (merge + redirecionar poll_results) foi escrito sob o
+--    diagnóstico errado de que 1º e 2º turno eram a mesma eleição. NÃO executar:
+--      x) Validar grupos 1-3 — feito: não são duplicatas, ver CORREÇÃO no topo
+--      x) Merge de candidates_assets/social_media do "duplicate" p/ canonical
+--      x) Redirecionar poll_results.candidate_id do "duplicate" p/ canonical
+--      x) UPDATE candidates SET is_duplicate_of = ... nos grupos 1-3
+--    Não há grupo de duplicata real conhecido hoje: 1-3 são turnos/cargos
+--    distintos e 4-9 já estavam marcados como legítimos.
 --
 -- 3. Grupos 4-9 (Governador+Senador 2026) são legítimos — deixar como está.
 --    (Não marcados como duplicatas nesta migration.)
+--    Grupos 1-3 também são legítimos, pelo mesmo motivo estendido a turnos:
+--    eleição diferente = linha diferente.
 --
 -- 4. A coluna is_duplicate_of permite queries como:
 --    SELECT * FROM candidates WHERE is_duplicate_of IS NULL
