@@ -1142,6 +1142,238 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Anthony Garotinho",  percentage:  6.1 },
     ],
   },
+
+  // Real Time Big Data · 6-10 ago 2026 · TSE BA-00277/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-bahia-agosto-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador BA 2026 - 1º Turno",
+    publication_date: "2026-08-11",
+    fieldwork_start: "2026-08-06",
+    fieldwork_end: "2026-08-10",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-bahia-agosto-2026/",
+    tse_protocolo: "BA002772026",
+    results: [
+      { candidate_name: "ACM Neto",          percentage: 44 },
+      { candidate_name: "Jeronimo Rodrigues", percentage: 42 },
+      { candidate_name: "Ronaldo Mansur",    percentage:  2 },
+      { candidate_name: "José Estevão",      percentage:  1 },
+    ],
+  },
+
+  // ─── Curadoria 01/09/2026 — lote 6 (Tier 2, Governador) ──
+
+  // Quaest · 21-24 ago 2026 · TSE DF-06256/2026 · n=1.104
+  // Fonte: https://g1.globo.com/df/distrito-federal/eleicoes/2026/noticia/2026/08/25/quaest-df-governador-25-agosto.ghtml
+  {
+    institute_name: "Quaest",
+    election_name: "Governador Distrito Federal 2026",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 1104,
+    methodology: "presencial",
+    source_url: "https://g1.globo.com/df/distrito-federal/eleicoes/2026/noticia/2026/08/25/quaest-df-governador-25-agosto.ghtml",
+    tse_protocolo: "DF062562026",
+    results: [
+      { candidate_name: "Celina Leao",     percentage: 34 },
+      { candidate_name: "Arruda",          percentage: 20 },
+      { candidate_name: "Leandro Grass",   percentage: 13 },
+      { candidate_name: "Ricardo Cappelli", percentage:  3 },
+      { candidate_name: "Paula Belmonte",  percentage:  3 },
+      { candidate_name: "Kiko Caputo",     percentage:  2 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE MG-04060/2026 · n=1.506
+  // Fonte: https://www.cartacapital.com.br/politica/cleitinho-lidera-disputa-pelo-governo-de-minas-gerais-diz-pesquisa-quaest/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador MG 2026 - 1º Turno",
+    publication_date: "2026-08-24",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 1506,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.cartacapital.com.br/politica/cleitinho-lidera-disputa-pelo-governo-de-minas-gerais-diz-pesquisa-quaest/",
+    tse_protocolo: "MG040602026",
+    results: [
+      { candidate_name: "Cleitinho",        percentage: 29 },
+      { candidate_name: "Patrus Ananias",    percentage: 11 },
+      { candidate_name: "Alexandre Kalil",   percentage: 10 },
+      { candidate_name: "Mateus Simões",     percentage:  7 },
+      { candidate_name: "Gabriel Azevedo",   percentage:  5 },
+      { candidate_name: "Flávio Roscoe",     percentage:  3 },
+      { candidate_name: "Ben Mendes",        percentage:  2 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE RJ-08748/2026 · n=1.302
+  // Fonte: https://g1.globo.com/rj/rio-de-janeiro/eleicoes/2026/noticia/2026/08/25/quaest-rj-governador-25-08.ghtml
+  {
+    institute_name: "Quaest",
+    election_name: "Governador RJ 2026 - 1º Turno",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 1302,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://g1.globo.com/rj/rio-de-janeiro/eleicoes/2026/noticia/2026/08/25/quaest-rj-governador-25-08.ghtml",
+    tse_protocolo: "RJ087482026",
+    results: [
+      { candidate_name: "Eduardo Paes",      percentage: 37 },
+      { candidate_name: "Douglas Ruas",      percentage: 14 },
+      { candidate_name: "Anthony Garotinho", percentage:  7 },
+      { candidate_name: "William Siri",      percentage:  3 },
+      { candidate_name: "Coronel Busnello",  percentage:  1 },
+      { candidate_name: "Cyro Garcia",       percentage:  1 },
+      { candidate_name: "Juliete Pantoja",   percentage:  1 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE SP-06946/2026 · n=1.800
+  // Fonte: https://g1.globo.com/sp/sao-paulo/eleicoes/2026/noticia/2026/08/25/quaest-em-sp-tarcisio-40percent-haddad-27percent.ghtml
+  {
+    institute_name: "Quaest",
+    election_name: "Governador SP 2026 - 1º Turno",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 1800,
+    methodology: "presencial",
+    source_url: "https://g1.globo.com/sp/sao-paulo/eleicoes/2026/noticia/2026/08/25/quaest-em-sp-tarcisio-40percent-haddad-27percent.ghtml",
+    tse_protocolo: "SP069462026",
+    results: [
+      { candidate_name: "Tarcísio",        percentage: 40 },
+      { candidate_name: "Haddad",          percentage: 27 },
+      { candidate_name: "Policial Edjane", percentage:  2 },
+      { candidate_name: "Vera Lúcia",      percentage:  1 },
+      { candidate_name: "Carlos Machado",  percentage:  1 },
+      { candidate_name: "Izadora Dias",    percentage:  1 },
+      { candidate_name: "Vivian Mendes",   percentage:  1 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE PE-07828/2026 · n=1.302
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/quaest-raquel-lyra-tem-44-e-joao-campos-36-em-pe/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador PE 2026 - 1º Turno",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 1302,
+    methodology: "presencial",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/quaest-raquel-lyra-tem-44-e-joao-campos-36-em-pe/",
+    tse_protocolo: "PE078282026",
+    results: [
+      { candidate_name: "Raquel Lyra",  percentage: 44 },
+      { candidate_name: "João Campos",  percentage: 36 },
+      { candidate_name: "Ivan Moraes",  percentage:  1 },
+    ],
+  },
+
+  // Real Time Big Data · 20-24 ago 2026 · TSE RS-09640/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-rio-grande-do-sul-agosto-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador RS 2026 - 1º Turno",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-20",
+    fieldwork_end: "2026-08-24",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-rio-grande-do-sul-agosto-2026/",
+    tse_protocolo: "RS096402026",
+    results: [
+      { candidate_name: "Juliana Brizola",  percentage: 38 },
+      { candidate_name: "Luciano Zucco",    percentage: 32 },
+      { candidate_name: "Gabriel Souza",    percentage: 19 },
+      { candidate_name: "Marcelo Maranata", percentage:  4 },
+    ],
+  },
+
+  // Instituto Veritá · 19-23 ago 2026 · TSE GO-01320/2026 · n=1.525
+  // Fonte: https://todotemponoticias.com.br/pesquisa-verita-mostra-eleicao-em-aberto-para-governador-em-goias-75-dos-eleitores-ainda-nao-definiram-candidato/
+  {
+    institute_name: "Instituto Veritá",
+    election_name: "Governador GO 2026 - 1º Turno",
+    publication_date: "2026-08-28",
+    fieldwork_start: "2026-08-19",
+    fieldwork_end: "2026-08-23",
+    sample_size: 1525,
+    methodology: "telefonica",
+    source_url: "https://todotemponoticias.com.br/pesquisa-verita-mostra-eleicao-em-aberto-para-governador-em-goias-75-dos-eleitores-ainda-nao-definiram-candidato/",
+    tse_protocolo: "GO013202026",
+    results: [
+      { candidate_name: "Daniel Vilela",    percentage: 34.5 },
+      { candidate_name: "Wilder Morais",    percentage: 23.3 },
+      { candidate_name: "Marconi Perillo",  percentage: 18.6 },
+      { candidate_name: "Luis Cesar Bueno", percentage:  8.4 },
+    ],
+  },
+
+  // Instituto Veritá · 19-23 ago 2026 · TSE PA-04167/2026 · n=1.525
+  // Fonte: https://diariodopoder.com.br/brasil-e-regioes/amazonia/ttc-amazonia/dr-daniel-lidera-disputa-pelo-governo-do-para-flavio-e-lula-empatam/amp
+  {
+    institute_name: "Instituto Veritá",
+    election_name: "Governador Para 2026",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-19",
+    fieldwork_end: "2026-08-23",
+    sample_size: 1525,
+    margin_of_error: 2.5,
+    methodology: "telefonica",
+    source_url: "https://diariodopoder.com.br/brasil-e-regioes/amazonia/ttc-amazonia/dr-daniel-lidera-disputa-pelo-governo-do-para-flavio-e-lula-empatam/amp",
+    tse_protocolo: "PA041672026",
+    results: [
+      { candidate_name: "Dr Daniel",     percentage: 49.7 },
+      { candidate_name: "Hana Ghassan",  percentage: 41.4 },
+      { candidate_name: "Araceli Lemos", percentage:  5.2 },
+    ],
+  },
+
+  // Real Time Big Data · 19-22 ago 2026 · TSE SP-01347/2026 · n=2.000
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/tarcisio-vence-no-1o-turno-em-sp-diz-real-time-big-data/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador SP 2026 - 1º Turno",
+    publication_date: "2026-08-24",
+    fieldwork_start: "2026-08-19",
+    fieldwork_end: "2026-08-22",
+    sample_size: 2000,
+    methodology: "telefonica",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/tarcisio-vence-no-1o-turno-em-sp-diz-real-time-big-data/",
+    tse_protocolo: "SP013472026",
+    results: [
+      { candidate_name: "Tarcísio",      percentage: 52 },
+      { candidate_name: "Haddad",        percentage: 35 },
+      { candidate_name: "Vivian Mendes", percentage:  1 },
+    ],
+  },
+
+  // GERP Mercadologia · 19-24 ago 2026 (protocolo confere; campo pedido "21/08" era só uma data intermediária) · TSE SP-01477/2026 · n=1.800
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/tarcisio-de-freitas-lidera-disputa-pelo-governo-de-sp-diz-gerp/
+  {
+    institute_name: "GERP",
+    election_name: "Governador SP 2026 - 1º Turno",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-19",
+    fieldwork_end: "2026-08-24",
+    sample_size: 1800,
+    margin_of_error: 2.3,
+    methodology: "telefonica",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/tarcisio-de-freitas-lidera-disputa-pelo-governo-de-sp-diz-gerp/",
+    tse_protocolo: "SP014772026",
+    results: [
+      { candidate_name: "Tarcísio", percentage: 50 },
+      { candidate_name: "Haddad",   percentage: 32 },
+    ],
+  },
 ];
 
 async function main() {
