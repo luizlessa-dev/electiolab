@@ -60,6 +60,8 @@ const PENDING_POLLS: Array<{
   tse_protocolo?: string;
   /** 'nacional' (default) ou sigla de UF, quando a pesquisa presidencial tem amostra regional. */
   scope?: string;
+  /** 'estimulada' (default, nomes apresentados ao entrevistado) ou 'espontanea' (sem lista de nomes). */
+  poll_type?: "estimulada" | "espontanea";
   results: { candidate_name: string; percentage: number }[];
 }> = [
   // ─── Meio/Ideia · 23-27 mai 2026 · TSE BR-02918/2026 · n=1.500 · telefônica ──
@@ -1050,6 +1052,96 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Clariana Barao", percentage:  0.8 },
     ],
   },
+
+  // ─── Curadoria 01/09/2026 — lote 5 (Tier 2, Governador) ──
+
+  // Real Time Big Data · 24-27 ago 2026 · TSE GO-00954/2026 · n=1.600
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/vilela-lidera-todos-os-cenarios-de-1o-e-2o-turno-em-goias/
+  // Nota: o texto corrido do Poder360 cita "GO-08492/2026" (provável erro de digitação);
+  // o agregador depoisdas17.com.br cataloga a mesma pesquisa (mesmo instituto/campo/%) com
+  // protocolo GO-00954/2026, que é o que bate com o registro pedido — usado abaixo.
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador GO 2026 - 1º Turno",
+    publication_date: "2026-08-28",
+    fieldwork_start: "2026-08-24",
+    fieldwork_end: "2026-08-27",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/vilela-lidera-todos-os-cenarios-de-1o-e-2o-turno-em-goias/",
+    tse_protocolo: "GO009542026",
+    results: [
+      { candidate_name: "Daniel Vilela",   percentage: 45 },
+      { candidate_name: "Marconi Perillo", percentage: 22 },
+      { candidate_name: "Wilder Morais",   percentage: 17 },
+      { candidate_name: "Luis Cesar Bueno", percentage: 6 },
+    ],
+  },
+
+  // Real Time Big Data · 24-27 ago 2026 · TSE PR-07845/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-parana-agosto-2026-2/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Parana 2026",
+    publication_date: "2026-08-28",
+    fieldwork_start: "2026-08-24",
+    fieldwork_end: "2026-08-27",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-parana-agosto-2026-2/",
+    tse_protocolo: "PR078452026",
+    results: [
+      { candidate_name: "Sergio Moro",     percentage: 35 },
+      { candidate_name: "Sandro Alex",     percentage: 23 },
+      { candidate_name: "Requiao Filho",   percentage: 20 },
+      { candidate_name: "Luiz Franca",     percentage:  2 },
+    ],
+  },
+
+  // Real Time Big Data · 22-26 ago 2026 · TSE MG-07972/2026 · n=2.000
+  // Fonte: https://noticias.uol.com.br/eleicoes/2026/08/27/realtime-bigdata-mg-governo-e-senado-agosto.ghtm
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador MG 2026 - 1º Turno",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-22",
+    fieldwork_end: "2026-08-26",
+    sample_size: 2000,
+    methodology: "telefonica",
+    source_url: "https://noticias.uol.com.br/eleicoes/2026/08/27/realtime-bigdata-mg-governo-e-senado-agosto.ghtm",
+    tse_protocolo: "MG079722026",
+    results: [
+      { candidate_name: "Cleitinho",        percentage: 33 },
+      { candidate_name: "Patrus Ananias",    percentage: 15 },
+      { candidate_name: "Alexandre Kalil",   percentage: 13 },
+      { candidate_name: "Mateus Simões",     percentage: 11 },
+      { candidate_name: "Gabriel Azevedo",   percentage:  7 },
+      { candidate_name: "Flávio Roscoe",     percentage:  5 },
+      { candidate_name: "Ben Mendes",        percentage:  3 },
+      { candidate_name: "Indira Xavier",     percentage:  1 },
+    ],
+  },
+
+  // Vetor/Arrow · 24-25 ago 2026 · TSE RJ-06400/2026 · n=14.277 · pesquisa ESPONTÂNEA (sem lista de nomes)
+  // Fonte: Instagram @agendadopoder (rodada divulgada ~28/08/2026) — fonte menos formal que o
+  // habitual (não é matéria de imprensa tradicional), mas cita o protocolo TSE explicitamente.
+  {
+    institute_name: "Vetor/Arrow",
+    election_name: "Governador RJ 2026 - 1º Turno",
+    publication_date: "2026-08-28",
+    fieldwork_start: "2026-08-24",
+    fieldwork_end: "2026-08-25",
+    sample_size: 14277,
+    methodology: "telefonica",
+    poll_type: "espontanea",
+    source_url: "https://www.instagram.com/p/DcmNrGLJPBd/",
+    tse_protocolo: "RJ064002026",
+    results: [
+      { candidate_name: "Eduardo Paes",       percentage: 25.2 },
+      { candidate_name: "Douglas Ruas",       percentage:  8.4 },
+      { candidate_name: "Anthony Garotinho",  percentage:  6.1 },
+    ],
+  },
 ];
 
 async function main() {
@@ -1111,7 +1203,7 @@ async function main() {
         confidence_level: 95,
         methodology: poll.methodology,
         scope: poll.scope ?? "nacional",
-        poll_type: "estimulada",
+        poll_type: poll.poll_type ?? "estimulada",
         source_url: poll.source_url ?? null,
         tse_registration: toTseRegistrationFormat(poll.tse_protocolo),
         is_verified: true,
