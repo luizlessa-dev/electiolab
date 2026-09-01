@@ -1,7 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
+import { debugBloqueado } from '@/lib/debug-guard';
 
 export async function GET(request: NextRequest) {
+  const bloqueio = debugBloqueado(request);
+  if (bloqueio) return bloqueio;
+
   const { searchParams } = new URL(request.url);
   const electionId = searchParams.get('election_id') || '2a8761ab-9dc0-4436-8682-4095c0b7f014';
 

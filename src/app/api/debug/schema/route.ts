@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { debugBloqueado } from '@/lib/debug-guard';
 
 interface TableCheckResult {
   exists: boolean;
@@ -7,7 +8,10 @@ interface TableCheckResult {
   row_count?: number;
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const bloqueio = debugBloqueado(request);
+  if (bloqueio) return bloqueio;
+
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!

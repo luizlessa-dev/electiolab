@@ -29,9 +29,21 @@ function basicAuthGate(request: NextRequest): NextResponse | null {
   });
 }
 
+/**
+ * O refresh de sessão só tem o que fazer se existe cookie do Supabase. Visitante
+ * anônimo e crawler nunca têm — e são a maioria esmagadora do tráfego: o
+ * sitemap expõe ~19,4k URLs de candidato, todas públicas. Sem esse atalho, cada
+ * uma dessas requests montava um client e entrava no fluxo de auth à toa.
+ */
+function temSessaoSupabase(request: NextRequest): boolean {
+  return request.cookies.getAll().some((c) => c.name.startsWith("sb-"));
+}
+
 export async function proxy(request: NextRequest) {
   const authResp = basicAuthGate(request);
   if (authResp) return authResp;
+
+  if (!temSessaoSupabase(request)) return NextResponse.next({ request });
 
   let supabaseResponse = NextResponse.next({ request });
 
