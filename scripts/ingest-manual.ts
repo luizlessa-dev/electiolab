@@ -27,6 +27,14 @@ if (fs.existsSync(envFile)) {
   }
 }
 
+/** Mesmo formato canônico UF-NNNNN/AAAA usado por promote-approved-polls.ts (constraint polls_tse_registration_formato). */
+function toTseRegistrationFormat(protocolo: string | undefined): string | null {
+  if (!protocolo) return null;
+  const digits = protocolo.replace(/[^A-Z0-9]/gi, "");
+  const m = digits.match(/^([A-Z]{2})(\d{4,5})(\d{4})$/);
+  return m ? `${m[1]}-${m[2]}/${m[3]}` : protocolo;
+}
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   // Service role bypassa RLS para inserções administrativas
@@ -47,6 +55,11 @@ const PENDING_POLLS: Array<{
   margin_of_error?: number;
   methodology: "presencial" | "telefonica" | "online" | "mista";
   source_url?: string;
+  /** Protocolo TSE cru (ex.: "BR07185/2026" ou "BR-07185/2026") — vira polls.tse_registration
+   *  no formato canônico UF-NNNNN/AAAA. Sem isso, a pesquisa nunca some de pesqele_missing. */
+  tse_protocolo?: string;
+  /** 'nacional' (default) ou sigla de UF, quando a pesquisa presidencial tem amostra regional. */
+  scope?: string;
   results: { candidate_name: string; percentage: number }[];
 }> = [
   // ─── Meio/Ideia · 23-27 mai 2026 · TSE BR-02918/2026 · n=1.500 · telefônica ──
@@ -655,6 +668,115 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Bolsonaro", percentage: 49.6 },
     ],
   },
+
+  // ─── Curadoria 01/09/2026 — via fila pesqele_missing (Tier 1 Presidencial) ──
+  // Achado por busca real na web, protocolo TSE confirmado por fetch da fonte primária.
+  // Metodologia (presencial/telefônica/online) inferida por precedente do instituto
+  // quando a fonte não confirmava explicitamente — revisar se o instituto divulgar retratação.
+
+  // Nexus/BTG · 28-30 ago 2026 · TSE BR-08900/2026 · n=2.005
+  // Fonte: https://www.nexus.fsb.com.br/estudos-divulgados/pesquisa-btg-nexus-de-intencao-de-votos-para-presidente-do-brasil-31-de-agosto-de-2026/
+  {
+    institute_name: "Nexus",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-31",
+    fieldwork_start: "2026-08-28",
+    fieldwork_end: "2026-08-30",
+    sample_size: 2005,
+    methodology: "telefonica",
+    source_url: "https://www.nexus.fsb.com.br/estudos-divulgados/pesquisa-btg-nexus-de-intencao-de-votos-para-presidente-do-brasil-31-de-agosto-de-2026/",
+    tse_protocolo: "BR089002026",
+    scope: "nacional",
+    results: [
+      { candidate_name: "Lula",         percentage: 39 },
+      { candidate_name: "Flávio",       percentage: 33 },
+      { candidate_name: "Augusto Cury", percentage: 11 },
+      { candidate_name: "Caiado",       percentage:  5 },
+      { candidate_name: "Renan",        percentage:  3 },
+      { candidate_name: "Zema",         percentage:  1 },
+    ],
+  },
+
+  // Atlas Intel · 25-30 ago 2026 · TSE BR-07972/2026 · n=5.014 (amostra grande)
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-presidente-agosto-2026/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-31",
+    fieldwork_start: "2026-08-25",
+    fieldwork_end: "2026-08-30",
+    sample_size: 5014,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-presidente-agosto-2026/",
+    tse_protocolo: "BR079722026",
+    scope: "nacional",
+    results: [
+      { candidate_name: "Lula",                       percentage: 43.4 },
+      { candidate_name: "Flávio",                      percentage: 33.7 },
+      { candidate_name: "Augusto Cury",                percentage:  7.8 },
+      { candidate_name: "Renan",                       percentage:  7.6 },
+      { candidate_name: "Caiado",                      percentage:  3.3 },
+      { candidate_name: "Pablo Marçal",                percentage:  1.9 },
+      { candidate_name: "Zema",                        percentage:  1.0 },
+      { candidate_name: "Samara Martins",               percentage:  0.9 },
+      { candidate_name: "Rui Costa Pimenta",            percentage:  0.1 },
+      { candidate_name: "Veterinário Wilson Grassi",    percentage:  0.1 },
+    ],
+  },
+
+  // Vox Brasil · 25-27 ago 2026 · TSE BR-05519/2026 · n=2.100 · ME: ±2,15pp
+  // Fonte (release oficial em PDF): https://static.poder360.com.br/uploads/2026/08/RELATORIO-VOX-BRASIL-NACIONAL-6-29-08-2026-1.pdf
+  // Metodologia não confirmada na fonte — revisar antes de publicar se precisar do dado exato.
+  {
+    institute_name: "Vox Brasil Pesquisas",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-29",
+    fieldwork_start: "2026-08-25",
+    fieldwork_end: "2026-08-27",
+    sample_size: 2100,
+    margin_of_error: 2.15,
+    methodology: "presencial",
+    source_url: "https://static.poder360.com.br/uploads/2026/08/RELATORIO-VOX-BRASIL-NACIONAL-6-29-08-2026-1.pdf",
+    tse_protocolo: "BR055192026",
+    scope: "nacional",
+    results: [
+      { candidate_name: "Lula",         percentage: 37.1 },
+      { candidate_name: "Flávio",       percentage: 34.8 },
+      { candidate_name: "Caiado",       percentage:  5.0 },
+      { candidate_name: "Renan",        percentage:  3.3 },
+      { candidate_name: "Zema",         percentage:  2.8 },
+      { candidate_name: "Augusto Cury", percentage:  2.6 },
+      { candidate_name: "Pablo Marçal", percentage:  2.0 },
+      { candidate_name: "Clariana Barao", percentage: 0.8 },
+      { candidate_name: "Edmilson Costa", percentage: 0.5 },
+    ],
+  },
+
+  // PoderData/Aya · 23-26 ago 2026 · TSE BR-04974/2026 · n=2.400 · ME: ±2pp
+  // Fonte: https://www.poder360.com.br/poderdata/poderdata-aya-lula-tem-38-contra-35-de-flavio-no-1o-turno/
+  {
+    institute_name: "PoderData",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-23",
+    fieldwork_end: "2026-08-26",
+    sample_size: 2400,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.poder360.com.br/poderdata/poderdata-aya-lula-tem-38-contra-35-de-flavio-no-1o-turno/",
+    tse_protocolo: "BR049742026",
+    scope: "nacional",
+    results: [
+      { candidate_name: "Lula",         percentage: 38 },
+      { candidate_name: "Flávio",       percentage: 35 },
+      { candidate_name: "Caiado",       percentage:  4 },
+      { candidate_name: "Renan",        percentage:  4 },
+      { candidate_name: "Augusto Cury", percentage:  4 },
+      { candidate_name: "Pablo Marçal", percentage:  3 },
+      { candidate_name: "Zema",         percentage:  2 },
+      { candidate_name: "Hertz Dias",   percentage:  2 },
+    ],
+  },
 ];
 
 async function main() {
@@ -711,9 +833,10 @@ async function main() {
         margin_of_error: poll.margin_of_error ?? null,
         confidence_level: 95,
         methodology: poll.methodology,
-        scope: "nacional",
+        scope: poll.scope ?? "nacional",
         poll_type: "estimulada",
         source_url: poll.source_url ?? null,
+        tse_registration: toTseRegistrationFormat(poll.tse_protocolo),
         is_verified: true,
       })
       .select("id")
