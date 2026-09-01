@@ -125,7 +125,7 @@ export async function getCandidateBySlug(slug: string) {
   // Se nenhum active, faz fallback pegando o mais recente histórico.
   let { data: latest } = await supabase
     .from("candidates")
-    .select("id, election:elections(year, round, type)")
+    .select("id, tse_id, election:elections(year, round, type)")
     .eq("slug", slug)
     .eq("is_active", true);
 
@@ -133,7 +133,7 @@ export async function getCandidateBySlug(slug: string) {
     // fallback: histórico (ex.: Bolsonaro pai inativo em 2026 mas registros 2022 ativos)
     const fb = await supabase
       .from("candidates")
-      .select("id, election:elections(year, round, type)")
+      .select("id, tse_id, election:elections(year, round, type)")
       .eq("slug", slug);
     latest = fb.data;
     if (!latest?.length) return null;
@@ -142,9 +142,18 @@ export async function getCandidateBySlug(slug: string) {
   // Tiebreaker quando slug aparece em múltiplas eleições (caso Roberto Claudio,
   // Rogério Marinho — concorrendo a governador E senador no mesmo ciclo):
   //   1) year DESC (mais recente)
-  //   2) round DESC (2T > 1T pra mesma eleição)
-  //   3) type priority: presidente > governador > senador > deputado_federal > ...
-  //   4) id ASC (estável)
+  //   2) tem tse_id DESC (registro com candidatura confirmada > registro sem)
+  //   3) round DESC (2T > 1T pra mesma eleição)
+  //   4) type priority: presidente > governador > senador > deputado_federal > ...
+  //   5) id ASC (estável)
+  //
+  // #2 existe por causa do 2º turno presidencial: a candidatura só é gravada
+  // no registro de 1º turno (ver migration fix_tse_stamp_matching), então o
+  // registro de 2T é sempre um stub sem tse_id/foto/bio. Sem esse critério,
+  // "round DESC" sozinho preferia o stub ao perfil completo — foi o caso
+  // descoberto com Flávio Bolsonaro: /candidato/flavio-bolsonaro passou a
+  // resolver pro registro de 2T (12 pesquisas, sem foto) em vez do de 1T
+  // (76 pesquisas, perfil completo) assim que ambos ficaram is_active.
   const TYPE_PRIORITY: Record<string, number> = {
     presidente: 5, governador: 4, senador: 3,
     deputado_federal: 2, deputado_estadual: 1, deputado_distrital: 1,
@@ -155,12 +164,14 @@ export async function getCandidateBySlug(slug: string) {
       return {
         id: c.id as string,
         year: e?.year ?? 0,
+        hasTse: c.tse_id ? 1 : 0,
         round: e?.round ?? 0,
         prio: TYPE_PRIORITY[e?.type ?? ""] ?? 0,
       };
     })
     .sort((a, b) =>
       (b.year - a.year) ||
+      (b.hasTse - a.hasTse) ||
       (b.round - a.round) ||
       (b.prio - a.prio) ||
       a.id.localeCompare(b.id)

@@ -154,6 +154,17 @@ export default async function CandidatoPage({
   const tseSit = c.tse_last_situation;
   const tseSitYear = c.tse_last_situation_year;
 
+  // Confirmação de candidatura 2026 pra ESTE cargo/UF. Não usa is_active
+  // (mecanismo manual desatualizado — ver poll_results.excluded_reason, que é
+  // quem hoje decide o que aparece nas médias e pesquisas) nem tse_last_situation
+  // (isso é situação Ficha Limpa, outra pergunta). O 2º turno presidencial nunca
+  // recebe carimbo — a candidatura só é gravada no registro de 1º turno da
+  // mesma pessoa — por isso fica de fora do teste.
+  const isPresidentialRound2 = election?.type === "presidente" && election?.round === 2;
+  const confirmedCandidate2026 =
+    isPresidentialRound2 ||
+    (election?.year != null && c.tse_last_situation_year === election.year);
+
   // Aggregations totais (soma cross-platform)
   const spendMin = digitalAds.reduce((s, a) => s + (Number(a.spend_lower) || 0), 0);
   const spendMax = digitalAds.reduce((s, a) => s + (Number(a.spend_upper) || 0), 0);
@@ -284,7 +295,7 @@ export default async function CandidatoPage({
             )}
             <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground font-medium mb-2">
-              <span>Candidato</span>
+              <span>{confirmedCandidate2026 ? "Candidato" : "Pré-candidato"}</span>
               {election && (
                 <>
                   <ChevronRight className="h-3 w-3" />
@@ -306,6 +317,18 @@ export default async function CandidatoPage({
               {c.current_position && (
                 <span className="flex items-center gap-1">
                   <Briefcase className="h-3.5 w-3.5" /> {c.current_position}
+                </span>
+              )}
+              {!confirmedCandidate2026 && (
+                <span
+                  className="flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-medium bg-warning/15 text-warning border border-warning/30"
+                  title={`Não consta no arquivo de candidaturas do TSE ${election?.year ?? ""} para ${
+                    election?.type === "presidente"
+                      ? "presidente"
+                      : `${election?.type ?? "esse cargo"}${election?.state ? ` de ${election.state}` : ""}`
+                  }. Pode ter registrado candidatura em outra disputa, ou ainda não ter registrado nenhuma.`}
+                >
+                  <AlertTriangle className="h-3 w-3" /> Não confirmado no TSE {election?.year ?? ""}
                 </span>
               )}
               {tseSit === "APTO" && (
