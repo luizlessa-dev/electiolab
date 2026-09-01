@@ -25,6 +25,7 @@ type Candidato = {
   current_position: string | null;
   photo_url: string | null;
   official_photo_url: string | null;
+  tse_id: string | null;
   election: ElectionInfo | null;
   poll_results: Array<{ percentage: number }>;
 };
@@ -37,21 +38,27 @@ async function getCandidate(slug: string): Promise<Candidato | null> {
   const { data } = await supabase
     .from("candidates")
     .select(
-      "id, name, party, color, bio, current_position, photo_url, official_photo_url, election:elections(type,state,year,round), poll_results(percentage)"
+      "id, name, party, color, bio, current_position, photo_url, official_photo_url, tse_id, election:elections(type,state,year,round), poll_results(percentage)"
     )
     .eq("slug", slug)
+    // Só resultados de quem é candidato registrado no cargo/UF entram na média
+    // exibida na imagem — mesmo critério de src/lib/queries.ts e
+    // poll_results.excluded_reason (ver migration poll_results_excluded_reason).
+    .is("poll_results.excluded_reason", null)
     .eq("is_active", true);
 
   if (!data?.length) return null;
 
-  // Desempate: year DESC, round DESC, prioridade de cargo, id ASC — igual
-  // getCandidateBySlug, pra a imagem OG bater com o que /candidato/[slug]
+  // Desempate: year DESC, tem tse_id DESC, round DESC, prioridade de cargo,
+  // id ASC — igual getCandidateBySlug (ver o comentário lá sobre o stub de 2º
+  // turno presidencial), pra a imagem OG bater com o que /candidato/[slug]
   // (sem segmento de eleição) realmente serve.
   const vencedor = [...data].sort((a, b) => {
     const ea = (Array.isArray(a.election) ? a.election[0] : a.election) as ElectionInfo | null;
     const eb = (Array.isArray(b.election) ? b.election[0] : b.election) as ElectionInfo | null;
     return (
       (eb?.year ?? 0) - (ea?.year ?? 0) ||
+      (b.tse_id ? 1 : 0) - (a.tse_id ? 1 : 0) ||
       (eb?.round ?? 0) - (ea?.round ?? 0) ||
       (TYPE_PRIORITY[eb?.type ?? ""] ?? 0) - (TYPE_PRIORITY[ea?.type ?? ""] ?? 0) ||
       a.id.localeCompare(b.id)

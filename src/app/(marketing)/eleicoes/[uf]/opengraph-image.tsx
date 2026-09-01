@@ -42,8 +42,9 @@ async function getGovLeader(uf: string): Promise<{ name: string; pct: number; co
 
     const { data: polls } = await sb
       .from("polls")
-      .select("publication_date, results:poll_results(percentage, candidate:candidates(name, color))")
+      .select("publication_date, results:poll_results!inner(percentage, candidate:candidates(name, color))")
       .eq("election_id", election.id)
+      .is("results.excluded_reason", null)
       .order("publication_date", { ascending: false })
       .limit(10);
     if (!polls || polls.length === 0) return null;

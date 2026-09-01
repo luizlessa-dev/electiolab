@@ -427,16 +427,29 @@ async function main() {
 
   console.log(`👥 Candidatos já cadastrados: ${existing.length}`);
 
+  // Índices ESCOPADOS por eleição. Um mapa global de tse_id/cpf faz a
+  // candidatura pular de corrida: a linha do TSE de "governador AL" acha o
+  // registro do mesmo CPF em "senador AL" e carimba lá (achado em 2026-08-31 —
+  // 42 candidaturas no cargo errado, incluindo a de Renan Filho carimbada no
+  // registro do Renan Calheiros, que compartilhava CPF por erro de cadastro).
+  // Uma candidatura pertence a exatamente uma eleição; o match tem que respeitar isso.
   const byTseId = new Map<string, Record<string, unknown>>();
   const byCpf = new Map<string, Record<string, unknown>>();
+  // Registros sem election_id ainda podem ser adotados por qualquer eleição —
+  // é o caminho que preenche election_id de cadastro antigo.
+  const orphanByTseId = new Map<string, Record<string, unknown>>();
+  const orphanByCpf = new Map<string, Record<string, unknown>>();
   const byElection = new Map<string, Record<string, unknown>[]>();
   for (const c of existing ?? []) {
-    if (c.tse_id) byTseId.set(c.tse_id as string, c);
-    if (c.cpf) byCpf.set(c.cpf as string, c);
     if (c.election_id) {
+      if (c.tse_id) byTseId.set(`${c.election_id}:${c.tse_id}`, c);
+      if (c.cpf) byCpf.set(`${c.election_id}:${c.cpf}`, c);
       const arr = byElection.get(c.election_id as string) ?? [];
       arr.push(c);
       byElection.set(c.election_id as string, arr);
+    } else {
+      if (c.tse_id) orphanByTseId.set(c.tse_id as string, c);
+      if (c.cpf) orphanByCpf.set(c.cpf as string, c);
     }
   }
 
@@ -468,12 +481,21 @@ async function main() {
     }
 
     let current =
-      byTseId.get(row.sq_candidato) ?? (row.cpf ? byCpf.get(row.cpf) : undefined);
+      byTseId.get(`${election.id}:${row.sq_candidato}`) ??
+      (row.cpf ? byCpf.get(`${election.id}:${row.cpf}`) : undefined) ??
+      orphanByTseId.get(row.sq_candidato) ??
+      (row.cpf ? orphanByCpf.get(row.cpf) : undefined);
     if (!current) {
       current = findByName(byElection.get(election.id) ?? [], row, claimed);
       if (current) matchedByName++;
     }
-    if (current) claimed.add(current.id as string);
+    if (current) {
+      claimed.add(current.id as string);
+      // Órfão adotado sai do pool — senão a próxima candidatura com o mesmo
+      // CPF (outra corrida) reivindicaria o mesmo registro.
+      if (current.tse_id) orphanByTseId.delete(current.tse_id as string);
+      if (current.cpf) orphanByCpf.delete(current.cpf as string);
+    }
     const netWorth = bensBySq.get(row.sq_candidato);
 
     const tseFields: Record<string, unknown> = {

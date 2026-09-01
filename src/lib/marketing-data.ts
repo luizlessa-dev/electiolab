@@ -63,9 +63,10 @@ async function getLatestStatePollByType(
       `id, publication_date, sample_size, margin_of_error, methodology, scope,
        scenario_label, source_url,
        institute:institutes(name, slug),
-       results:poll_results(percentage, candidate:candidates(name, party, color, is_active))`
+       results:poll_results!inner(percentage, candidate:candidates(name, party, color))`
     )
     .eq("election_id", election.id)
+    .is("results.excluded_reason", null)
     .or(PROVENIENCIA_PUBLICA)
     .order("publication_date", { ascending: false })
     .limit(10);
@@ -87,14 +88,20 @@ async function getLatestStatePollByType(
       results: Array<{
         percentage: number;
         candidate:
-          | { name: string; party: string | null; color: string | null; is_active: boolean }[]
-          | { name: string; party: string | null; color: string | null; is_active: boolean }
+          | { name: string; party: string | null; color: string | null }[]
+          | { name: string; party: string | null; color: string | null }
           | null;
       }>;
     };
+    // Quem entra aqui já passou pelo filtro de excluded_reason na query — esse é
+    // o critério de "está concorrendo", derivado do arquivo de candidaturas do
+    // TSE. `is_active` é o mecanismo manual antigo e está desatualizado:
+    // escondia Ciro Gomes (46,1% de média em gov/CE), João Azevêdo, Simone
+    // Tebet, Mara Rocha e Flavio Bolsonaro, todos registrados. Filtrar por ele
+    // aqui deixaria o card da pesquisa em desacordo com a média ponderada.
     const results = (pp.results ?? []).filter((r) => {
       const c = Array.isArray(r.candidate) ? r.candidate[0] : r.candidate;
-      return c != null && c.is_active !== false;
+      return c != null;
     });
     return { ...pp, results, n_results: results.length };
   });
@@ -185,9 +192,10 @@ export async function getStateRunoffScenarios(uf: string): Promise<RunoffScenari
     .select(
       `publication_date, scenario_label,
        institute:institutes(name),
-       results:poll_results(percentage, candidate:candidates(name, party, color, slug, is_active))`
+       results:poll_results!inner(percentage, candidate:candidates(name, party, color, slug))`
     )
     .eq("election_id", election.id)
+    .is("results.excluded_reason", null)
     .or(PROVENIENCIA_PUBLICA)
     .not("scenario_label", "is", null)
     .order("publication_date", { ascending: false });
@@ -209,14 +217,15 @@ export async function getStateRunoffScenarios(uf: string): Promise<RunoffScenari
     results: Array<{
       percentage: number;
       candidate:
-        | { name: string; party: string | null; color: string | null; slug: string; is_active: boolean }[]
-        | { name: string; party: string | null; color: string | null; slug: string; is_active: boolean }
+        | { name: string; party: string | null; color: string | null; slug: string }[]
+        | { name: string; party: string | null; color: string | null; slug: string }
         | null;
     }>;
   }>) {
     const results = (p.results ?? []).map((r) => {
       const c = Array.isArray(r.candidate) ? r.candidate[0] : r.candidate;
-      return c && c.is_active !== false ? { ...c, pct: Number(r.percentage) } : null;
+      // Ver nota acima: quem manda é excluded_reason, não is_active.
+      return c ? { ...c, pct: Number(r.percentage) } : null;
     }).filter((x): x is NonNullable<typeof x> => x !== null);
 
     // Head-to-head genuíno = exatamente 2 candidatos
@@ -370,9 +379,10 @@ export async function getLatestPresidentialPoll(): Promise<StatePollSnapshot | n
       `id, publication_date, sample_size, margin_of_error, methodology, scope,
        scenario_label, source_url,
        institute:institutes(name, slug),
-       results:poll_results(percentage, candidate:candidates(name, party, color, is_active))`
+       results:poll_results!inner(percentage, candidate:candidates(name, party, color))`
     )
     .eq("election_id", election.id)
+    .is("results.excluded_reason", null)
     .or(PROVENIENCIA_PUBLICA)
     .order("publication_date", { ascending: false })
     .limit(5);
@@ -393,14 +403,20 @@ export async function getLatestPresidentialPoll(): Promise<StatePollSnapshot | n
       results: Array<{
         percentage: number;
         candidate:
-          | { name: string; party: string | null; color: string | null; is_active: boolean }[]
-          | { name: string; party: string | null; color: string | null; is_active: boolean }
+          | { name: string; party: string | null; color: string | null }[]
+          | { name: string; party: string | null; color: string | null }
           | null;
       }>;
     };
+    // Quem entra aqui já passou pelo filtro de excluded_reason na query — esse é
+    // o critério de "está concorrendo", derivado do arquivo de candidaturas do
+    // TSE. `is_active` é o mecanismo manual antigo e está desatualizado:
+    // escondia Ciro Gomes (46,1% de média em gov/CE), João Azevêdo, Simone
+    // Tebet, Mara Rocha e Flavio Bolsonaro, todos registrados. Filtrar por ele
+    // aqui deixaria o card da pesquisa em desacordo com a média ponderada.
     const results = (pp.results ?? []).filter((r) => {
       const c = Array.isArray(r.candidate) ? r.candidate[0] : r.candidate;
-      return c != null && c.is_active !== false;
+      return c != null;
     });
     return { ...pp, results, n_results: results.length };
   });

@@ -8,14 +8,14 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "Quem vence no 2º turno da Presidência 2026?",
   description:
-    "Cenários simulados de 2º turno 2026: Lula vs Flávio, Caiado, Zema e Tarcísio. Datafolha, Quaest, Atlas e Paraná Pesquisas comparados.",
+    "Cenários simulados de 2º turno 2026: Lula vs Flávio, Caiado, Zema e Renan Santos. Datafolha, Quaest, Atlas e Paraná Pesquisas comparados.",
   alternates: {
     canonical: "https://electiolab.com/quem-vence-no-segundo-turno-presidencia-2026",
   },
   openGraph: {
     title: "Quem vence no 2º turno da Presidência 2026?",
     description:
-      "Cenários simulados Lula vs Bolsonaro/Caiado/Zema/Tarcísio com base nas últimas pesquisas Datafolha e Quaest.",
+      "Cenários simulados Lula vs Bolsonaro/Caiado/Zema com base nas últimas pesquisas Datafolha e Quaest.",
     url: "https://electiolab.com/quem-vence-no-segundo-turno-presidencia-2026",
     images: [{ url: "https://electiolab.com/opengraph-image", width: 1200, height: 630 }],
   },
@@ -45,6 +45,12 @@ type ScenarioBlock = {
   pollsCount: number;
   status: "empate" | "vantagem" | "folga" | "raso";
   history: PollLine[];
+};
+
+type Row = {
+  block: ScenarioBlock;
+  common: Avg;
+  adversary: Avg;
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────
@@ -114,9 +120,10 @@ async function getData(): Promise<{ blocks: ScenarioBlock[]; updated: string | n
     .select(
       `scenario_label, publication_date,
        institute:institutes(name),
-       results:poll_results(percentage, candidate:candidates(name, color))`
+       results:poll_results!inner(percentage, candidate:candidates(name, color))`
     )
     .eq("round", 2)
+    .is("results.excluded_reason", null)
     .order("publication_date", { ascending: false });
 
   // ─── Agrupa ─────────────────────────────────────────────────────────
@@ -198,33 +205,77 @@ async function getData(): Promise<{ blocks: ScenarioBlock[]; updated: string | n
 }
 
 // ─── FAQ ──────────────────────────────────────────────────────────────
+// Gerado a partir dos cenários já calculados (`rows`), não hardcoded: um
+// texto com números fixos fica errado a cada novo recálculo de médias —
+// foi o que aconteceu aqui (achado em 2026-08-31, ver PR da limpeza de
+// não-candidatos: o FAQ dizia "43,7% contra Flávio" e "Flávio levemente à
+// frente" quando a média já tinha virado a favor do candidato comum).
 
-const FAQS = [
-  {
+type Faq = { q: string; a: string };
+
+function pp(n: number): string {
+  return n.toFixed(1).replace(".", ",");
+}
+
+function buildFaqs(rows: Row[], commonName: string): Faq[] {
+  const faqs: Faq[] = [];
+
+  // Ilustra a variação do candidato comum com os dois extremos reais da
+  // tabela — não fica preso a nomes específicos que podem sair do 2º turno.
+  const byCommonPct = [...rows].sort(
+    (a, b) => b.common.weighted_average - a.common.weighted_average
+  );
+  const high = byCommonPct[0];
+  const low = byCommonPct[byCommonPct.length - 1];
+  faqs.push({
     q: "Por que cada cenário aparece em uma linha separada?",
-    a: "Porque cada cenário é uma pergunta independente da pesquisa. Os institutos perguntam 'se for Lula × Flávio, em quem você vota?' e 'se for Lula × Zema, em quem você vota?' — duas perguntas diferentes, com respostas diferentes. Misturar tudo num único gráfico de 6 candidatos é matematicamente errado: Lula varia conforme o adversário (43,7% contra Flávio vs 45,6% contra Renan), e os adversários nunca foram testados entre si.",
-  },
-  {
+    a:
+      high && low && high !== low
+        ? `Porque cada cenário é uma pergunta independente da pesquisa. Os institutos perguntam 'se for ${commonName} × ${high.adversary.candidate.name}, em quem você vota?' e 'se for ${commonName} × ${low.adversary.candidate.name}, em quem você vota?' — duas perguntas diferentes, com respostas diferentes. Misturar tudo num único gráfico de vários candidatos é matematicamente errado: ${commonName} varia conforme o adversário (${pp(low.common.weighted_average)}% contra ${low.adversary.candidate.name} vs ${pp(high.common.weighted_average)}% contra ${high.adversary.candidate.name}), e os adversários nunca foram testados entre si.`
+        : `Porque cada cenário é uma pergunta independente da pesquisa — os institutos perguntam 'se for ${commonName} × adversário X, em quem você vota?' pra cada adversário separadamente, nunca testando os adversários entre si. Misturar tudo num único gráfico seria matematicamente errado.`,
+  });
+
+  faqs.push({
     q: "Por que as porcentagens dos 2 candidatos não somam 100%?",
     a: "Cada pesquisa tem ~8-15% de eleitores indecisos, brancos, nulos ou que não souberam responder. Não mostramos essa parcela na tabela pra manter o foco no cenário; ela aparece implícita na diferença entre a soma das % exibidas e 100.",
-  },
-  {
-    q: "Lula vai vencer Flávio Bolsonaro no 2º turno?",
-    a: "Pelas pesquisas mais recentes de abril/2026, Lula e Flávio Bolsonaro aparecem dentro da margem de erro — em média ponderada o cenário é tecnicamente empatado, com Flávio levemente à frente (≈1.3pp).",
-  },
-  {
-    q: "Lula bate Caiado no 2º turno?",
-    a: "Sim, com vantagem de aproximadamente 6 pontos pela média ponderada de 7 pesquisas. Caiado tem força em Goiás e Centro-Oeste, mas pouco capital nacional.",
-  },
-  {
-    q: "Tarcísio entra no 2º turno presidencial?",
-    a: "Pelas pesquisas atuais Tarcísio aparece com 4-7% no 1º turno, abaixo de Caiado e Zema na disputa pelo segundo lugar do bloco da direita. Tarcísio ainda não está oficialmente lançado, podendo subir caso lance candidatura formal.",
-  },
-  {
+  });
+
+  // Confronto com mais pesquisas — normalmente o mais lido/mais buscado.
+  const main = [...rows].sort((a, b) => b.block.pollsCount - a.block.pollsCount)[0];
+  if (main) {
+    const gap = main.common.weighted_average - main.adversary.weighted_average; // >0: comum à frente
+    const leader = gap >= 0 ? commonName : main.adversary.candidate.name;
+    const isClose = main.block.status === "empate" || main.block.status === "raso";
+    faqs.push({
+      q: `${commonName} vai vencer ${main.adversary.candidate.name} no 2º turno?`,
+      a: `Pela média ponderada de ${main.block.pollsCount} pesquisas, ${commonName} e ${main.adversary.candidate.name} aparecem ${
+        isClose ? "dentro da margem de erro — tecnicamente empatados" : "com diferença clara"
+      }, com ${leader} à frente (≈${pp(Math.abs(gap))}pp).`,
+    });
+  }
+
+  // Segundo confronto com mais pesquisas, se houver — evita repetir o mesmo do acima.
+  const second = [...rows]
+    .filter((r) => r !== main)
+    .sort((a, b) => b.block.pollsCount - a.block.pollsCount)[0];
+  if (second) {
+    const gap = second.common.weighted_average - second.adversary.weighted_average;
+    faqs.push({
+      q: `${commonName} bate ${second.adversary.candidate.name} no 2º turno?`,
+      a:
+        gap > 0
+          ? `Sim, com vantagem de aproximadamente ${pp(gap)} pontos pela média ponderada de ${second.block.pollsCount} pesquisas.`
+          : `Não pela média atual: ${second.adversary.candidate.name} aparece à frente por ${pp(Math.abs(gap))} pontos na média ponderada de ${second.block.pollsCount} pesquisas.`,
+    });
+  }
+
+  faqs.push({
     q: "Qual instituto é mais confiável para o 2º turno presidencial?",
     a: "Pelo histórico de erro absoluto vs resultado oficial: Datafolha (92% acurácia), Ipec (88%), Quaest (85%), Genial/Quaest (84%). Em comparativos de 2º turno, Datafolha tem maior consistência histórica.",
-  },
-];
+  });
+
+  return faqs;
+}
 
 // ─── Identifica o candidato comum (presente em todos os cenários) ──────
 // Em 2026 esse é Lula (presidente em exercício, oponente em todos os
@@ -249,11 +300,6 @@ export default async function Quem2TurnoPage() {
 
   // Linhas da tabela: 1 por adversário (não-comum), ordenadas pela % do adversário desc
   // = "do mais difícil pro mais fácil pro candidato comum"
-  type Row = {
-    block: ScenarioBlock;
-    common: Avg;
-    adversary: Avg;
-  };
   const rows: Row[] = [];
   for (const b of blocks) {
     if (b.candidates.length !== 2) continue;
@@ -265,6 +311,7 @@ export default async function Quem2TurnoPage() {
   rows.sort((a, b) => b.adversary.weighted_average - a.adversary.weighted_average);
 
   const commonName = rows[0]?.common.candidate.name ?? "—";
+  const faqs = buildFaqs(rows, commonName);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -284,7 +331,7 @@ export default async function Quem2TurnoPage() {
       },
       {
         "@type": "FAQPage",
-        mainEntity: FAQS.map((f) => ({
+        mainEntity: faqs.map((f) => ({
           "@type": "Question",
           name: f.q,
           acceptedAnswer: { "@type": "Answer", text: f.a },
@@ -477,7 +524,7 @@ export default async function Quem2TurnoPage() {
           <section className="mt-10">
             <h2 className="text-xl font-bold mb-4">Perguntas frequentes</h2>
             <div className="space-y-5">
-              {FAQS.map((f, i) => (
+              {faqs.map((f, i) => (
                 <div key={i}>
                   <h3 className="text-base font-semibold mb-2">{f.q}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">{f.a}</p>

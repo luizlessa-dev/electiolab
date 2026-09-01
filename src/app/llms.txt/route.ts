@@ -68,6 +68,7 @@ async function campoPresidencial(): Promise<Presidencial[]> {
         "percentage, candidate:candidates(name, party, slug), poll:polls!inner(fieldwork_end, election_id)"
       )
       .eq("poll.election_id", eleicao.id)
+      .is("excluded_reason", null)
       .limit(5000);
 
     const acc = new Map<string, { nome: string; partido: string | null; soma: number; n: number; ultima: string }>();

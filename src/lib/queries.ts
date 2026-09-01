@@ -59,9 +59,10 @@ export async function getPolls(electionId: string) {
     .select(`
       *,
       institute:institutes(id, name, reliability_score, methodology_default),
-      results:poll_results(id, candidate_id, percentage)
+      results:poll_results!inner(id, candidate_id, percentage)
     `)
     .eq("election_id", electionId)
+    .is("results.excluded_reason", null)
     .or(PROVENIENCIA_PUBLICA)
     .order("publication_date", { ascending: false });
   return data ?? [];
@@ -194,12 +195,35 @@ async function resolveCandidateRowsBySlug(slug: string) {
     .eq("is_active", true);
 
   if (!rows?.length) {
+    // fallback: histórico (ex.: Bolsonaro pai inativo em 2026 mas registros 2022 ativos)
     const fb = await supabase.from("candidates").select(SELECT).eq("slug", slug);
     rows = fb.data;
     if (!rows?.length) return [];
   }
 
-  // Desempate: 1) year DESC  2) round DESC  3) prioridade de cargo  4) id ASC
+  // Desempate quando slug aparece em múltiplas eleições:
+  //   1) year DESC (mais recente)
+  //   2) tem tse_id DESC (registro com candidatura confirmada > registro sem)
+  //   3) round DESC (2T > 1T pra mesma eleição)
+  //   4) type priority: presidente > governador > senador > deputado_federal > ...
+  //   5) id ASC (estável)
+  //
+  // #2 existe por causa do 2º turno presidencial: a candidatura só é gravada
+  // no registro de 1º turno (ver migration fix_tse_stamp_matching), então o
+  // registro de 2T é sempre um stub sem tse_id/foto/bio. Sem esse critério,
+  // "round DESC" sozinho preferia o stub ao perfil completo — foi o caso
+  // descoberto com Flávio Bolsonaro (2026-09-01): /candidato/flavio-bolsonaro
+  // passou a resolver pro registro de 2T (12 pesquisas, sem foto) em vez do
+  // de 1T (76 pesquisas, perfil completo) assim que ambos ficaram is_active,
+  // e chegou a ir pro ar assim em produção antes desse critério existir.
+  //
+  // #3-4 seguem valendo pro caso Roberto Claudio/Rogério Marinho — mesma
+  // pessoa concorrendo a governador E senador no mesmo ciclo, ambos com
+  // tse_id (empate em #2), desempatados por round e depois por cargo.
+  const TYPE_PRIORITY: Record<string, number> = {
+    presidente: 5, governador: 4, senador: 3,
+    deputado_federal: 2, deputado_estadual: 1, deputado_distrital: 1,
+  };
   return rows
     .map((c) => {
       const e = normalizeElection(c.election);
@@ -210,12 +234,14 @@ async function resolveCandidateRowsBySlug(slug: string) {
         isActive: Boolean(c.is_active),
         election: e,
         year: e?.year ?? 0,
+        hasTse: c.tse_id ? 1 : 0,
         round: e?.round ?? 0,
         prio: TYPE_PRIORITY[e?.type ?? ""] ?? 0,
       };
     })
     .sort((a, b) =>
       (b.year - a.year) ||
+      (b.hasTse - a.hasTse) ||
       (b.round - a.round) ||
       (b.prio - a.prio) ||
       a.id.localeCompare(b.id)
@@ -360,6 +386,7 @@ async function fetchCandidateDetail(candidateId: string) {
       prior_election_results(id, year, round, election_type, state, city, party, total_votes, result_status)
     `)
     .eq("id", candidateId)
+    .is("poll_results.excluded_reason", null)
     .order("publication_date", { foreignTable: "poll_results.poll", ascending: false })
     .maybeSingle();
   return data;
