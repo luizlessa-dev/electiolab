@@ -18,6 +18,21 @@ source_kind='wikipedia':        0 residual
 
 **Gap real que continua aberto, não é bug de código:** 1.714 pesquisas registradas no TSE pra 2026 vs. 185 curadas (10,8%), das quais só 59 verificadas (3,4%). Isso é trabalho editorial de curadoria contínuo — ver `scripts/pending-polls.ts` pra fila priorizada (tier 1 presidencial, tier 2 governador estado-chave, tier 3 demais), curar via `scripts/ingest-manual.ts`.
 
+**Remedição em 2026-09-01** (consulta direta, projeto `xoxztzologqeqbajlhya`):
+```
+pesqele_registry (2026):  2.114 registros   (+400 desde 17/08 — cron diário rodando normalmente)
+polls (2026):                377 linhas     (+192)
+  - verificadas:              190           (50%, subiu de 32% — trabalho de curadoria contínuo)
+pesqele_missing:            1.946 pendentes
+
+Por cargo (total TSE → curado → %):
+  governador:  1.264 → 118  (9,3%)
+  senador:     1.225 → 114  (9,3%)
+  presidente:    809 →  50  (6,2%)
+  deputado:      570 →   6  (1,1%)
+```
+Cobertura geral segue baixa (~18% curado, ~9% verificado) e a proporção não avançou muito frente a 17/08 apesar do volume dobrado de `polls` — o registro TSE também cresceu no mesmo ritmo (campanha entrando em fase mais intensa). Cargos proporcionais (deputado) confirmam a hipótese do item 3 do prompt original: cobertura residual, não é foco do produto. Gap segue sendo trabalho editorial, não técnico.
+
 O prompt original fica abaixo como registro do raciocínio (a restrição sobre Wikipedia, em particular, segue valendo pra qualquer curadoria futura — só que agora é regra de produto confirmada, não mais uma checagem a fazer).
 
 ---

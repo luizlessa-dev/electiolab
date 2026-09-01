@@ -1,5 +1,7 @@
 # TSE Integration Roadmap
 
+> **⚠️ Documento histórico, parcialmente superado.** Descreve o desenho original (ago/2026) de conectores TSE para candidaturas/apuração. A frente de **pesquisas de intenção de voto** seguiu um caminho diferente do planejado abaixo — ver nota em "Phase 3" e a fonte de verdade atual em [`docs/prompt-verificacao-cobertura-pesqele-tse.md`](./prompt-verificacao-cobertura-pesqele-tse.md).
+
 **Status:** Phase 2 (Parallel Implementation) - IN PROGRESS  
 **Credibility Principle:** `credibilidade sempre` — Replace all Wikipedia sources with official TSE data
 
@@ -19,13 +21,37 @@ Phase 2: Integrate TSE APIs 🚀 IN PROGRESS
      ├─ POST /api/tse/sync/candidatos
      └─ GET|POST /api/tse/sync/resultados
   
-Phase 3: Connect Real Polling Institutes
-  ├─ Datafolha, Quaest, AtlasIntel, etc.
-  └─ Requires: HTTP proxies, rate limiting, caching
+Phase 3: Connect Real Polling Institutes ❌ TENTADO E DESLIGADO (17/08/2026)
+  ├─ "Agente 2" (scraper de institutos: Datafolha, Quaest, AtlasIntel, etc.)
+  │  confirmado inoperante contra os sites reais (0/4 institutos funcionando)
+  ├─ Aposentado da cascata automática (commit ef5838d) — run-agent-2 responde 410
+  └─ Substituído por: registro oficial do TSE (dump PesqEle, só metadados)
+     + curadoria manual auditável. Ver pipeline real abaixo.
   
 Phase 4: Document All Data Sources
   └─ Credibility scores, attribution links, refresh schedules
 ```
+
+### O que de fato está em produção para pesquisas (pós Phase 3)
+
+O TSE (sistema PesqEle / Lei das Pesquisas) só disponibiliza **metadados** de cada pesquisa registrada (instituto, UF, cargo, datas, protocolo, contratante) — nunca os percentuais de intenção de voto. O pipeline real ficou assim:
+
+```
+TSE (cdn.tse.jus.br, dump diário)
+  → scripts/ingest-pesqele.ts --apply (cron diário 08h BRT)
+      upsert em public.pesqele_registry (metadados, sem %)
+  → scripts/match-drafts-to-pesqele.ts --apply
+      casa poll_drafts órfãos com o registro TSE
+  → scripts/pending-polls.ts
+      fila priorizada de pendências (pesqele_missing)
+  → scripts/ingest-manual.ts
+      curadoria humana insere % em polls/poll_results com source_url auditável
+  → scripts/flag-non-candidates-in-polls.ts
+      valida contra candidaturas reais do TSE
+  → supabase/functions/recalculate-averages (a cada 6h) → weighted_averages → site
+```
+
+Detalhes e números de cobertura atuais em [`docs/prompt-verificacao-cobertura-pesqele-tse.md`](./prompt-verificacao-cobertura-pesqele-tse.md).
 
 ## Implemented Components
 
@@ -295,11 +321,12 @@ After 3 retries: Return last known state or error
 - [ ] Add event-based sync (TSE Resultados: during elections)
 - [ ] Add backfill script for historical data
 
-### Step 3: Polling Institute Integration
-- [ ] Implement Datafolha connector
-- [ ] Implement Quaest connector
-- [ ] Implement AtlasIntel connector
-- [ ] Add rate-limiting middleware
+### Step 3: Polling Institute Integration — ❌ Cancelado (17/08/2026)
+- [x] ~~Implement Datafolha connector~~ — tentado, site bloqueia scraping
+- [x] ~~Implement Quaest connector~~ — tentado, site bloqueia scraping
+- [x] ~~Implement AtlasIntel connector~~ — tentado, site bloqueia scraping
+- [x] ~~Add rate-limiting middleware~~ — sem objeto, scraping abandonado
+- Substituído por curadoria manual (`scripts/ingest-manual.ts`) a partir da fila `pesqele_missing`
 
 ### Step 4: Audit & Attribution
 - [ ] Generate data source audit report
