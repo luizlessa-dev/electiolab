@@ -2943,6 +2943,56 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Renan",       percentage:  1 },
     ],
   },
+
+  // ─── Curadoria 02/09/2026 — Presidencial "recorte estadual" (mesma janela de campo
+  // das pesquisas de Governador já curadas acima, protocolo TSE separado por cargo) ──
+
+  // Real Time Big Data · 24-27 ago 2026 · TSE BR-08492/2026 · n=1.600 · recorte GO
+  // Fonte: https://exame.com/brasil/real-time-big-data-caiado-tem-37-lula-27-e-flavio-25-no-1o-turno-em-goias/
+  // Mesma rodada da pesquisa de Governador GO já curada (TSE GO-00954/2026, lote 5) —
+  // aqui é o cross-tab presidencial da mesma coleta, registrado sob protocolo BR distinto.
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-28",
+    fieldwork_start: "2026-08-24",
+    fieldwork_end: "2026-08-27",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    scope: "GO",
+    source_url: "https://exame.com/brasil/real-time-big-data-caiado-tem-37-lula-27-e-flavio-25-no-1o-turno-em-goias/",
+    tse_protocolo: "BR084922026",
+    results: [
+      { candidate_name: "Caiado", percentage: 37 },
+      { candidate_name: "Lula",   percentage: 27 },
+      { candidate_name: "Flávio", percentage: 25 },
+    ],
+  },
+
+  // Real Time Big Data · 6-10 ago 2026 · TSE BR-05205/2026 · n=1.600 · recorte BA
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/real-time-lula-tem-56-contra-23-de-flavio-no-1o-turno-na-bahia/
+  // Mesma rodada da pesquisa de Governador BA já curada (TSE BA-00277/2026) — cross-tab
+  // presidencial da mesma coleta, registrado sob protocolo BR distinto.
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-11",
+    fieldwork_start: "2026-08-06",
+    fieldwork_end: "2026-08-10",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    scope: "BA",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/real-time-lula-tem-56-contra-23-de-flavio-no-1o-turno-na-bahia/",
+    tse_protocolo: "BR052052026",
+    results: [
+      { candidate_name: "Lula",   percentage: 56 },
+      { candidate_name: "Flávio", percentage: 23 },
+      { candidate_name: "Renan",  percentage:  5 },
+      { candidate_name: "Caiado", percentage:  3 },
+    ],
+  },
 ];
 
 async function main() {
