@@ -3754,6 +3754,58 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Acácio Favacho",      percentage:  3 },
     ],
   },
+
+  // ─── Curadoria 02/09/2026 — lote 17 (Quaest, Presidencial, checagem G1/CNN) ──
+
+  // Quaest · 30 ago-1 set 2026 · TSE BR-07065/2026 · n=2.004 · presencial · ME: ±2pp
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/quaest-lula-tem-37-no-1o-turno-flavio-30-e-cury-10/
+  // Cenário com Pablo Marçal na lista (cenário principal da matéria).
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-02",
+    fieldwork_start: "2026-08-30",
+    fieldwork_end: "2026-09-01",
+    sample_size: 2004,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/quaest-lula-tem-37-no-1o-turno-flavio-30-e-cury-10/",
+    tse_protocolo: "BR070652026",
+    results: [
+      { candidate_name: "Lula",             percentage: 37 },
+      { candidate_name: "Flavio Bolsonaro",  percentage: 30 },
+      { candidate_name: "Augusto Cury",      percentage: 10 },
+      { candidate_name: "Renan Santos",      percentage:  3 },
+      { candidate_name: "Caiado",            percentage:  1 },
+      { candidate_name: "Zema",              percentage:  1 },
+      { candidate_name: "Pablo Marçal",      percentage:  1 },
+      { candidate_name: "Samara Martins",    percentage:  1 },
+    ],
+  },
+
+  // Quaest · 30 ago-1 set 2026 · TSE BR-07065/2026 · n=2.004 · presencial · ME: ±2pp
+  // Mesma pesquisa, cenário de 2º turno Lula x Flávio (único cenário inserido, seguindo o
+  // padrão já usado no arquivo — a tabela não modela múltiplos adversários hipotéticos
+  // simultâneos por pesquisa; os outros cenários testados pela Quaest nesta rodada
+  // (Lula x Renan Santos 43x36, Lula x Zema 44x33, Lula x Caiado 42x37, Lula x Cury 40x34)
+  // não foram inseridos por esse motivo.
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/quaest-lula-tem-42-das-intencoes-de-voto-no-2o-turno-flavio-41-2/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-02",
+    fieldwork_start: "2026-08-30",
+    fieldwork_end: "2026-09-01",
+    sample_size: 2004,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/quaest-lula-tem-42-das-intencoes-de-voto-no-2o-turno-flavio-41-2/",
+    tse_protocolo: "BR070652026",
+    results: [
+      { candidate_name: "Lula",            percentage: 42 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 41 },
+    ],
+  },
 ];
 
 async function main() {
