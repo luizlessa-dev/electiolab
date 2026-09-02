@@ -62,6 +62,13 @@ const PENDING_POLLS: Array<{
   scope?: string;
   /** 'estimulada' (default, nomes apresentados ao entrevistado) ou 'espontanea' (sem lista de nomes). */
   poll_type?: "estimulada" | "espontanea";
+  /** Só pra eleições de 2º turno (round=2) com mais de um adversário hipotético testado na
+   *  mesma rodada (ex.: "Lula vs Zema" além de "Lula vs Flavio Bolsonaro"). Sem isso, duas
+   *  linhas do mesmo instituto/data/eleição são tratadas como duplicata uma da outra —
+   *  cada cenário precisa do próprio scenario_label pra coexistir. recalculate-averages
+   *  na verdade deriva o agrupamento do PAR de candidatos em poll_results, não lê esse
+   *  campo — mas ele é gravado em polls.scenario_label pra consistência com o resto da base. */
+  scenario_label?: string;
   results: { candidate_name: string; percentage: number }[];
 }> = [
   // ─── Meio/Ideia · 23-27 mai 2026 · TSE BR-02918/2026 · n=1.500 · telefônica ──
@@ -3784,11 +3791,7 @@ const PENDING_POLLS: Array<{
   },
 
   // Quaest · 30 ago-1 set 2026 · TSE BR-07065/2026 · n=2.004 · presencial · ME: ±2pp
-  // Mesma pesquisa, cenário de 2º turno Lula x Flávio (único cenário inserido, seguindo o
-  // padrão já usado no arquivo — a tabela não modela múltiplos adversários hipotéticos
-  // simultâneos por pesquisa; os outros cenários testados pela Quaest nesta rodada
-  // (Lula x Renan Santos 43x36, Lula x Zema 44x33, Lula x Caiado 42x37, Lula x Cury 40x34)
-  // não foram inseridos por esse motivo.
+  // Mesma pesquisa, cenário de 2º turno Lula x Flávio.
   // Fonte: https://www.cnnbrasil.com.br/eleicoes/quaest-lula-tem-42-das-intencoes-de-voto-no-2o-turno-flavio-41-2/
   {
     institute_name: "Quaest",
@@ -3804,6 +3807,77 @@ const PENDING_POLLS: Array<{
     results: [
       { candidate_name: "Lula",            percentage: 42 },
       { candidate_name: "Flavio Bolsonaro", percentage: 41 },
+    ],
+  },
+
+  // Mesma pesquisa/protocolo — os outros 4 cenários de 2º turno testados na mesma rodada.
+  // scenario_label distingue cada um pro dedup do script (mesmo instituto/data/eleição).
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-02",
+    fieldwork_start: "2026-08-30",
+    fieldwork_end: "2026-09-01",
+    sample_size: 2004,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/quaest-lula-tem-42-das-intencoes-de-voto-no-2o-turno-flavio-41-2/",
+    tse_protocolo: "BR070652026",
+    scenario_label: "Lula vs Renan Santos",
+    results: [
+      { candidate_name: "Lula",        percentage: 43 },
+      { candidate_name: "Renan Santos", percentage: 36 },
+    ],
+  },
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-02",
+    fieldwork_start: "2026-08-30",
+    fieldwork_end: "2026-09-01",
+    sample_size: 2004,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/quaest-lula-tem-42-das-intencoes-de-voto-no-2o-turno-flavio-41-2/",
+    tse_protocolo: "BR070652026",
+    scenario_label: "Lula vs Zema",
+    results: [
+      { candidate_name: "Lula", percentage: 44 },
+      { candidate_name: "Zema", percentage: 33 },
+    ],
+  },
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-02",
+    fieldwork_start: "2026-08-30",
+    fieldwork_end: "2026-09-01",
+    sample_size: 2004,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/quaest-lula-tem-42-das-intencoes-de-voto-no-2o-turno-flavio-41-2/",
+    tse_protocolo: "BR070652026",
+    scenario_label: "Lula vs Caiado",
+    results: [
+      { candidate_name: "Lula",   percentage: 42 },
+      { candidate_name: "Caiado", percentage: 37 },
+    ],
+  },
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-02",
+    fieldwork_start: "2026-08-30",
+    fieldwork_end: "2026-09-01",
+    sample_size: 2004,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/quaest-lula-tem-42-das-intencoes-de-voto-no-2o-turno-flavio-41-2/",
+    tse_protocolo: "BR070652026",
+    scenario_label: "Lula vs Augusto Cury",
+    results: [
+      { candidate_name: "Lula",        percentage: 40 },
+      { candidate_name: "Augusto Cury", percentage: 34 },
     ],
   },
 ];
@@ -3843,14 +3917,20 @@ async function main() {
     // Inclui scope: duas pesquisas do mesmo instituto/eleição/data podem ser
     // recortes de UFs diferentes (ex.: Real Time Big Data roda a mesma pergunta
     // presidencial em vários estados na mesma semana, campo terminando no mesmo dia).
-    const { data: existing } = await supabase
+    // Inclui scenario_label: numa eleição de 2º turno, o mesmo instituto/data pode
+    // testar vários adversários hipotéticos na mesma rodada — sem isso, o 2º cenário
+    // em diante seria descartado como duplicata do 1º.
+    let dedupQuery = supabase
       .from("polls")
       .select("id")
       .eq("election_id", election.id)
       .eq("institute_id", institute.id)
       .eq("fieldwork_end", poll.fieldwork_end)
-      .eq("scope", poll.scope ?? "nacional")
-      .maybeSingle();
+      .eq("scope", poll.scope ?? "nacional");
+    dedupQuery = poll.scenario_label
+      ? dedupQuery.eq("scenario_label", poll.scenario_label)
+      : dedupQuery.is("scenario_label", null);
+    const { data: existing } = await dedupQuery.maybeSingle();
     if (existing) { console.log("⏭️  já existe"); skipped++; continue; }
 
     // Inserir poll
@@ -3870,6 +3950,7 @@ async function main() {
         poll_type: poll.poll_type ?? "estimulada",
         source_url: poll.source_url ?? null,
         tse_registration: toTseRegistrationFormat(poll.tse_protocolo),
+        scenario_label: poll.scenario_label ?? null,
         is_verified: true,
       })
       .select("id")
