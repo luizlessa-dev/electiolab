@@ -2993,6 +2993,196 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Caiado", percentage:  3 },
     ],
   },
+
+  // ─── Curadoria 02/09/2026 — lote 15 (Tier 4, Senador, reaproveitando fontes já curadas) ──
+
+  // Instituto Índice Inteligência · 27-29 ago 2026 · TSE AL-05894/2026 · n=1.200
+  // Fonte: https://www.al102.com.br/noticias/31003/jhc-consolida-lideranca-isolada-com-47-6-das-intencoes-de-voto-para-o-governo-de-alagoas-aponta-pesquisa-nova-fm
+  // Nota: soma >100% porque são 2 vagas em disputa (cada eleitor pode votar em até 2 nomes) — citação verbatim da matéria.
+  {
+    institute_name: "Instituto Índice Inteligência",
+    election_name: "Senador Alagoas 2026",
+    publication_date: "2026-09-01",
+    fieldwork_start: "2026-08-27",
+    fieldwork_end: "2026-08-29",
+    sample_size: 1200,
+    margin_of_error: 2.83,
+    methodology: "presencial",
+    source_url: "https://www.al102.com.br/noticias/31003/jhc-consolida-lideranca-isolada-com-47-6-das-intencoes-de-voto-para-o-governo-de-alagoas-aponta-pesquisa-nova-fm",
+    tse_protocolo: "AL058942026",
+    results: [
+      { candidate_name: "Arthur Lira",        percentage: 36.28 },
+      { candidate_name: "Marina Jhc",         percentage: 31.42 },
+      { candidate_name: "Renan Calheiros",    percentage: 28.65 },
+      { candidate_name: "Davi Davino Filho",  percentage: 20.45 },
+      { candidate_name: "Dr. Wanderley",      percentage: 12.20 },
+      { candidate_name: "Mariedson",          percentage:  2.25 },
+      { candidate_name: "Alexandre Fleming",  percentage:  0.85 },
+    ],
+  },
+
+  // Instituto Veritá · 19-23 ago 2026 · TSE PA-04167/2026 · n=1.525 · consolidado dos 2 votos (2 vagas em disputa)
+  // Fonte: https://diariodopoder.com.br/brasil-e-regioes/amazonia/ttc-amazonia/dr-daniel-lidera-disputa-pelo-governo-do-para-flavio-e-lula-empatam/amp
+  {
+    institute_name: "Instituto Veritá",
+    election_name: "Senador Para 2026",
+    publication_date: "2026-08-24",
+    fieldwork_start: "2026-08-19",
+    fieldwork_end: "2026-08-23",
+    sample_size: 1525,
+    margin_of_error: 2.5,
+    methodology: "telefonica",
+    source_url: "https://diariodopoder.com.br/brasil-e-regioes/amazonia/ttc-amazonia/dr-daniel-lidera-disputa-pelo-governo-do-para-flavio-e-lula-empatam/amp",
+    tse_protocolo: "PA041672026",
+    results: [
+      { candidate_name: "Eder Mauro",        percentage: 36.3 },
+      { candidate_name: "Helder Barbalho",   percentage: 25.0 },
+      { candidate_name: "Celso Sabino",      percentage: 15.7 },
+      { candidate_name: "Zequinha Marinho",  percentage: 14.7 },
+      { candidate_name: "Chicão",            percentage: 12.5 },
+    ],
+  },
+
+  // Real Time Big Data · 30 jul-3 ago 2026 · TSE PA-08492/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-para-agosto-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Para 2026",
+    publication_date: "2026-08-04",
+    fieldwork_start: "2026-07-30",
+    fieldwork_end: "2026-08-03",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-para-agosto-2026/",
+    tse_protocolo: "PA084922026",
+    results: [
+      { candidate_name: "Helder Barbalho",  percentage: 40 },
+      { candidate_name: "Eder Mauro",       percentage: 16 },
+      { candidate_name: "Celso Sabino",     percentage: 12 },
+      { candidate_name: "Zequinha Marinho", percentage: 11 },
+      { candidate_name: "Chicão",           percentage: 10 },
+      { candidate_name: "Breno Guimarães",  percentage:  1 },
+      { candidate_name: "Gizelle Freitas",  percentage:  1 },
+      { candidate_name: "Livia Noronha",    percentage:  1 },
+    ],
+  },
+
+  // Real Time Big Data · 12-15 ago 2026 · TSE PE-06056/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-pernambuco-agosto-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Pernambuco 2026",
+    publication_date: "2026-08-17",
+    fieldwork_start: "2026-08-12",
+    fieldwork_end: "2026-08-15",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-pernambuco-agosto-2026/",
+    tse_protocolo: "PE060562026",
+    results: [
+      { candidate_name: "Marilia Arraes",       percentage: 29 },
+      { candidate_name: "Humberto Costa",       percentage: 20 },
+      { candidate_name: "Mendonça Filho",       percentage: 18 },
+      { candidate_name: "Eduardo da Fonte",     percentage: 12 },
+      { candidate_name: "Tulio Gadelha",        percentage: 11 },
+      { candidate_name: "Carlos Sant Anna",     percentage:  2 },
+      { candidate_name: "Paulo Rubem Santiago", percentage:  1 },
+    ],
+  },
+
+  // Real Time Big Data · 7-11 ago 2026 · TSE MT-04560/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-mato-grosso-agosto-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Mato Grosso 2026",
+    publication_date: "2026-08-12",
+    fieldwork_start: "2026-08-07",
+    fieldwork_end: "2026-08-11",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-mato-grosso-agosto-2026/",
+    tse_protocolo: "MT045602026",
+    results: [
+      { candidate_name: "Mauro Mendes",         percentage: 27 },
+      { candidate_name: "Janaina Riva",         percentage: 25 },
+      { candidate_name: "Carlos Favaro",        percentage: 13 },
+      { candidate_name: "Jose Medeiros",        percentage: 12 },
+      { candidate_name: "Pedro Taques",         percentage: 11 },
+      { candidate_name: "Galvan",               percentage:  4 },
+      { candidate_name: "Margareth Buzetti",    percentage:  4 },
+    ],
+  },
+
+  // Real Time Big Data · 6-10 ago 2026 · TSE BA-00277/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-bahia-agosto-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Bahia 2026",
+    publication_date: "2026-08-11",
+    fieldwork_start: "2026-08-06",
+    fieldwork_end: "2026-08-10",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-bahia-agosto-2026/",
+    tse_protocolo: "BA002772026",
+    results: [
+      { candidate_name: "Rui Costa",             percentage: 25 },
+      { candidate_name: "Jaques Wagner",         percentage: 20 },
+      { candidate_name: "Joao Roma",             percentage: 15 },
+      { candidate_name: "Professora Delliana",   percentage:  5 },
+      { candidate_name: "Carlos Sodré",          percentage:  1 },
+      { candidate_name: "Marcelo Carvalho",      percentage:  1 },
+      { candidate_name: "Marcelo Santtana",      percentage:  1 },
+    ],
+  },
+
+  // Quaest (Genial) · 21-25 jul 2026 · TSE RJ-02671/2026 · n=1.200 · cenário estimulado 2
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/genial-quaest-governador-senador-rio-de-janeiro-julho-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Senador Rio de Janeiro 2026",
+    publication_date: "2026-07-27",
+    fieldwork_start: "2026-07-21",
+    fieldwork_end: "2026-07-25",
+    sample_size: 1200,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/genial-quaest-governador-senador-rio-de-janeiro-julho-2026/",
+    tse_protocolo: "RJ026712026",
+    results: [
+      { candidate_name: "Benedita da Silva", percentage: 12 },
+      { candidate_name: "Marcelo Crivella",  percentage:  9 },
+      { candidate_name: "Carlos Portinho",   percentage:  4 },
+      { candidate_name: "Mônica Benício",    percentage:  4 },
+      { candidate_name: "Pedro Paulo",       percentage:  4 },
+      { candidate_name: "Waguinho",          percentage:  4 },
+      { candidate_name: "Marcos Dias",       percentage:  1 },
+    ],
+  },
+
+  // Quaest (Genial) · 24-28 jul 2026 · TSE GO-01701/2026 · n=1.104
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/genial-quaest-governador-senador-goias-julho-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Senador Goias 2026",
+    publication_date: "2026-07-30",
+    fieldwork_start: "2026-07-24",
+    fieldwork_end: "2026-07-28",
+    sample_size: 1104,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/genial-quaest-governador-senador-goias-julho-2026/",
+    tse_protocolo: "GO017012026",
+    results: [
+      { candidate_name: "Gracinha Caiado",    percentage: 20 },
+      { candidate_name: "Vanderlan Cardoso",  percentage: 10 },
+      { candidate_name: "Zacarias Calil",     percentage:  9 },
+      { candidate_name: "Gustavo Gayer",      percentage:  9 },
+      { candidate_name: "Gustavo Mendanha",   percentage:  6 },
+    ],
+  },
 ];
 
 async function main() {
