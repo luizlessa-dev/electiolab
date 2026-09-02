@@ -2798,6 +2798,151 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Maria da Consolação",   percentage:  3 },
     ],
   },
+
+  // ─── Curadoria 02/09/2026 — lote 14 (Tier 2/3, Governador, mais achados de julho/agosto) ──
+
+  // Real Time Big Data · 14-18 ago 2026 · TSE DF-07849/2026 · n=1.600
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/real-time-celina-lidera-todos-os-cenarios-1o-e-2o-turnos-ao-governo-do-df/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Distrito Federal 2026",
+    publication_date: "2026-08-19",
+    fieldwork_start: "2026-08-14",
+    fieldwork_end: "2026-08-18",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/real-time-celina-lidera-todos-os-cenarios-1o-e-2o-turnos-ao-governo-do-df/",
+    tse_protocolo: "DF078492026",
+    results: [
+      { candidate_name: "Celina Leao",      percentage: 34 },
+      { candidate_name: "Arruda",           percentage: 22 },
+      { candidate_name: "Leandro Grass",    percentage: 18 },
+      { candidate_name: "Paula Belmonte",   percentage:  6 },
+      { candidate_name: "Ricardo Cappelli", percentage:  5 },
+    ],
+  },
+
+  // Real Time Big Data · 22-25 jul 2026 · TSE AC-01069/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/eal-time-big-data-governador-senador-acre-julho-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Acre 2026",
+    publication_date: "2026-07-27",
+    fieldwork_start: "2026-07-22",
+    fieldwork_end: "2026-07-25",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/eal-time-big-data-governador-senador-acre-julho-2026/",
+    tse_protocolo: "AC010692026",
+    results: [
+      { candidate_name: "Alan Rick",     percentage: 38 },
+      { candidate_name: "Mailza Assis",  percentage: 28 },
+      { candidate_name: "Tiao Bocalom",  percentage: 17 },
+      { candidate_name: "Thor Dantas",   percentage:  7 },
+    ],
+  },
+
+  // Real Time Big Data · 19-23 jul 2026 · TSE AP-02970/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-amapa-julho-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Amapa 2026",
+    publication_date: "2026-07-24",
+    fieldwork_start: "2026-07-19",
+    fieldwork_end: "2026-07-23",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-amapa-julho-2026/",
+    tse_protocolo: "AP029702026",
+    results: [
+      { candidate_name: "Dr Furlan",   percentage: 66 },
+      { candidate_name: "Clecio Luis", percentage: 30 },
+    ],
+  },
+
+  // Real Time Big Data · 23-27 jul 2026 · TSE RJ-03487/2026 · n=2.000
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-rio-de-janeiro-julho-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador RJ 2026 - 1º Turno",
+    publication_date: "2026-07-28",
+    fieldwork_start: "2026-07-23",
+    fieldwork_end: "2026-07-27",
+    sample_size: 2000,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-rio-de-janeiro-julho-2026/",
+    tse_protocolo: "RJ034872026",
+    results: [
+      { candidate_name: "Eduardo Paes",      percentage: 37 },
+      { candidate_name: "Douglas Ruas",      percentage: 16 },
+      { candidate_name: "Anthony Garotinho", percentage: 12 },
+      { candidate_name: "William Siri",      percentage:  3 },
+      { candidate_name: "André Marinho",     percentage:  2 },
+      { candidate_name: "Coronel Busnello",  percentage:  2 },
+      { candidate_name: "Cyro Garcia",       percentage:  1 },
+      { candidate_name: "Juliete Pantoja",   percentage:  1 },
+    ],
+  },
+
+  // Real Time Big Data · 18-22 jul 2026 · TSE RJ-06039/2026 · n=1.600 (pesquisa distinta da rodada acima, testou "Rafael Luz" em vez de outros nomes)
+  // Fonte: https://francesnews.com.br/post/2026/07/26/32936-pesquisa-real-time-big-data-aponta-eduardo-paes-como-favorito-na-disputa-pelo-governo-do-rio
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador RJ 2026 - 1º Turno",
+    publication_date: "2026-07-28",
+    fieldwork_start: "2026-07-18",
+    fieldwork_end: "2026-07-22",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://francesnews.com.br/post/2026/07/26/32936-pesquisa-real-time-big-data-aponta-eduardo-paes-como-favorito-na-disputa-pelo-governo-do-rio",
+    tse_protocolo: "RJ060392026",
+    results: [
+      { candidate_name: "Eduardo Paes",      percentage: 38 },
+      { candidate_name: "Douglas Ruas",      percentage: 10 },
+      { candidate_name: "Anthony Garotinho", percentage: 10 },
+      { candidate_name: "William Siri",      percentage:  2 },
+    ],
+  },
+
+  // Real Time Big Data · 20-21 jul 2026 · TSE ES-04482/2026 · n=1.600
+  // Fonte: https://exame.com/brasil/real-time-big-data-ferraco-tem-41-e-pazolini-30-no-1o-turno-no-espirito-santo/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Espirito Santo 2026",
+    publication_date: "2026-07-22",
+    fieldwork_start: "2026-07-20",
+    fieldwork_end: "2026-07-21",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://exame.com/brasil/real-time-big-data-ferraco-tem-41-e-pazolini-30-no-1o-turno-no-espirito-santo/",
+    tse_protocolo: "ES044822026",
+    results: [
+      { candidate_name: "Ricardo Ferraco",  percentage: 41 },
+      { candidate_name: "Lorenzo Pazolini", percentage: 30 },
+      { candidate_name: "Helder Salomao",   percentage: 10 },
+    ],
+  },
+
+  // Real Time Big Data · 27-30 jul 2026 · TSE PE-08413/2026 · n=1.600
+  // Fonte: https://exame.com/brasil/real-time-big-data-lyra-tem-44-e-campos-42-no-1o-turno-em-pernambuco/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador PE 2026 - 1º Turno",
+    publication_date: "2026-07-31",
+    fieldwork_start: "2026-07-27",
+    fieldwork_end: "2026-07-30",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://exame.com/brasil/real-time-big-data-lyra-tem-44-e-campos-42-no-1o-turno-em-pernambuco/",
+    tse_protocolo: "PE084132026",
+    results: [
+      { candidate_name: "Raquel Lyra",  percentage: 44 },
+      { candidate_name: "João Campos", percentage: 42 },
+      { candidate_name: "Ivan Moraes", percentage:  3 },
+      { candidate_name: "Renan",       percentage:  1 },
+    ],
+  },
 ];
 
 async function main() {
