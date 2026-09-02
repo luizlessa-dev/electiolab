@@ -2380,6 +2380,424 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Arcanjo Pimenta",          percentage:  1 },
     ],
   },
+
+  // ─── Curadoria 01/09/2026 — lote 12 (Tier 1, rodada Quaest "10 estados" de julho + outros recortes estaduais) ──
+
+  // Quaest · 24-28 jul 2026 · TSE BR-08063/2026 · n=1.104 · recorte GO
+  // Fonte: https://www.correiobraziliense.com.br/politica/2026/07/7470832-quaest-mostra-cenario-presidencial-em-10-estados-veja.html
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-07-30",
+    fieldwork_start: "2026-07-24",
+    fieldwork_end: "2026-07-28",
+    sample_size: 1104,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    scope: "GO",
+    source_url: "https://www.correiobraziliense.com.br/politica/2026/07/7470832-quaest-mostra-cenario-presidencial-em-10-estados-veja.html",
+    tse_protocolo: "BR080632026",
+    results: [
+      { candidate_name: "Caiado", percentage: 33 },
+      { candidate_name: "Flávio", percentage: 27 },
+      { candidate_name: "Lula",   percentage: 23 },
+    ],
+  },
+
+  // Instituto Vox Brasil · 26-28 jul 2026 · TSE BR-01084/2026 · n=2.100
+  // Fonte: https://exame.com/brasil/pesquisa-vox-brasil-lula-tem-405-e-flavio-bolsonaro-312-no-1o-turno/
+  {
+    institute_name: "Vox Brasil Pesquisas",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-07-31",
+    fieldwork_start: "2026-07-26",
+    fieldwork_end: "2026-07-28",
+    sample_size: 2100,
+    margin_of_error: 2.15,
+    methodology: "presencial",
+    source_url: "https://exame.com/brasil/pesquisa-vox-brasil-lula-tem-405-e-flavio-bolsonaro-312-no-1o-turno/",
+    tse_protocolo: "BR010842026",
+    results: [
+      { candidate_name: "Lula",         percentage: 40.5 },
+      { candidate_name: "Flávio",       percentage: 31.2 },
+      { candidate_name: "Caiado",       percentage:  5.5 },
+      { candidate_name: "Zema",         percentage:  3.2 },
+      { candidate_name: "Renan",        percentage:  3.0 },
+      { candidate_name: "Augusto Cury", percentage:  1.1 },
+    ],
+  },
+
+  // Quaest · 24-28 jul 2026 · TSE BR-01871/2026 · n=1.104 · recorte RS
+  // Fonte: https://www.correiobraziliense.com.br/politica/2026/07/7470832-quaest-mostra-cenario-presidencial-em-10-estados-veja.html
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-07-30",
+    fieldwork_start: "2026-07-24",
+    fieldwork_end: "2026-07-28",
+    sample_size: 1104,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    scope: "RS",
+    source_url: "https://www.correiobraziliense.com.br/politica/2026/07/7470832-quaest-mostra-cenario-presidencial-em-10-estados-veja.html",
+    tse_protocolo: "BR018712026",
+    results: [
+      { candidate_name: "Flávio", percentage: 32 },
+      { candidate_name: "Lula",   percentage: 30 },
+      { candidate_name: "Caiado", percentage:  3 },
+      { candidate_name: "Renan",  percentage:  2 },
+      { candidate_name: "Zema",   percentage:  1 },
+    ],
+  },
+
+  // Quaest · 24-28 jul 2026 · TSE BR-03238/2026 · n=1.002 · recorte CE
+  // Fonte: https://g1.globo.com/politica/eleicoes/2026/noticia/2026/07/30/eleicoes-2026-presidencial-10-estados-quaest.ghtml
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-07-30",
+    fieldwork_start: "2026-07-24",
+    fieldwork_end: "2026-07-28",
+    sample_size: 1002,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    scope: "CE",
+    source_url: "https://g1.globo.com/politica/eleicoes/2026/noticia/2026/07/30/eleicoes-2026-presidencial-10-estados-quaest.ghtml",
+    tse_protocolo: "BR032382026",
+    results: [
+      { candidate_name: "Lula",           percentage: 55 },
+      { candidate_name: "Flávio",         percentage: 22 },
+      { candidate_name: "Renan",          percentage:  2 },
+      { candidate_name: "Caiado",         percentage:  1 },
+      { candidate_name: "Zema",           percentage:  1 },
+      { candidate_name: "Augusto Cury",   percentage:  1 },
+      { candidate_name: "Cabo Daciolo",   percentage:  1 },
+      { candidate_name: "Samara Martins", percentage:  1 },
+    ],
+  },
+
+  // Quaest · 23-27 jul 2026 · TSE BR-05856/2026 · n=1.200 · recorte BA
+  // Fonte: https://g1.globo.com/politica/eleicoes/2026/noticia/2026/07/30/eleicoes-2026-presidencial-10-estados-quaest.ghtml
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-07-27",
+    fieldwork_start: "2026-07-23",
+    fieldwork_end: "2026-07-27",
+    sample_size: 1200,
+    methodology: "presencial",
+    scope: "BA",
+    source_url: "https://g1.globo.com/politica/eleicoes/2026/noticia/2026/07/30/eleicoes-2026-presidencial-10-estados-quaest.ghtml",
+    tse_protocolo: "BR058562026",
+    results: [
+      { candidate_name: "Lula",           percentage: 52 },
+      { candidate_name: "Flávio",         percentage: 18 },
+      { candidate_name: "Caiado",         percentage:  3 },
+      { candidate_name: "Renan",          percentage:  1 },
+      { candidate_name: "Zema",           percentage:  1 },
+      { candidate_name: "Augusto Cury",   percentage:  1 },
+      { candidate_name: "Cabo Daciolo",   percentage:  1 },
+      { candidate_name: "Samara Martins", percentage:  1 },
+    ],
+  },
+
+  // Quaest · 23-27 jul 2026 · TSE BR-09998/2026 · n=1.650 · recorte SP
+  // Fonte: https://g1.globo.com/politica/eleicoes/2026/noticia/2026/07/30/eleicoes-2026-presidencial-10-estados-quaest.ghtml
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-07-27",
+    fieldwork_start: "2026-07-23",
+    fieldwork_end: "2026-07-27",
+    sample_size: 1650,
+    methodology: "presencial",
+    scope: "SP",
+    source_url: "https://g1.globo.com/politica/eleicoes/2026/noticia/2026/07/30/eleicoes-2026-presidencial-10-estados-quaest.ghtml",
+    tse_protocolo: "BR099982026",
+    results: [
+      { candidate_name: "Flávio",         percentage: 34 },
+      { candidate_name: "Lula",           percentage: 30 },
+      { candidate_name: "Renan",          percentage:  3 },
+      { candidate_name: "Zema",           percentage:  3 },
+      { candidate_name: "Caiado",         percentage:  3 },
+      { candidate_name: "Augusto Cury",   percentage:  2 },
+      { candidate_name: "Cabo Daciolo",   percentage:  1 },
+      { candidate_name: "Samara Martins", percentage:  1 },
+    ],
+  },
+
+  // Quaest · 22-26 jul 2026 · TSE BR-03810/2026 · n=900 · recorte PE
+  // Fonte: https://g1.globo.com/politica/eleicoes/2026/noticia/2026/07/30/eleicoes-2026-presidencial-10-estados-quaest.ghtml
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-07-26",
+    fieldwork_start: "2026-07-22",
+    fieldwork_end: "2026-07-26",
+    sample_size: 900,
+    methodology: "presencial",
+    scope: "PE",
+    source_url: "https://g1.globo.com/politica/eleicoes/2026/noticia/2026/07/30/eleicoes-2026-presidencial-10-estados-quaest.ghtml",
+    tse_protocolo: "BR038102026",
+    results: [
+      { candidate_name: "Lula",         percentage: 55 },
+      { candidate_name: "Flávio",       percentage: 21 },
+      { candidate_name: "Augusto Cury", percentage:  2 },
+      { candidate_name: "Renan",        percentage:  2 },
+      { candidate_name: "Zema",         percentage:  1 },
+      { candidate_name: "Caiado",       percentage:  1 },
+    ],
+  },
+
+  // Real Time Big Data · 23-27 jul 2026 · TSE BR-06074/2026 · n=2.000 · recorte RJ
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/real-time-big-data-flavio-e-lula-tem-empate-tecnico-no-1o-turno-no-rj/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-07-28",
+    fieldwork_start: "2026-07-23",
+    fieldwork_end: "2026-07-27",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    scope: "RJ",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/real-time-big-data-flavio-e-lula-tem-empate-tecnico-no-1o-turno-no-rj/",
+    tse_protocolo: "BR060742026",
+    results: [
+      { candidate_name: "Flávio",       percentage: 39 },
+      { candidate_name: "Lula",         percentage: 37 },
+      { candidate_name: "Renan",        percentage:  7 },
+      { candidate_name: "Caiado",       percentage:  4 },
+      { candidate_name: "Zema",         percentage:  3 },
+      { candidate_name: "Cabo Daciolo", percentage:  1 },
+      { candidate_name: "Augusto Cury", percentage:  1 },
+    ],
+  },
+
+  // Quaest · 22-26 jul 2026 · TSE BR-09333/2026 · n=1.482 · recorte MG
+  // Fonte: https://g1.globo.com/mg/minas-gerais/eleicoes/2026/noticia/2026/07/28/quaest-mg-presidente-julho.ghtml
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-07-28",
+    fieldwork_start: "2026-07-22",
+    fieldwork_end: "2026-07-26",
+    sample_size: 1482,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    scope: "MG",
+    source_url: "https://g1.globo.com/mg/minas-gerais/eleicoes/2026/noticia/2026/07/28/quaest-mg-presidente-julho.ghtml",
+    tse_protocolo: "BR093332026",
+    results: [
+      { candidate_name: "Lula",   percentage: 30 },
+      { candidate_name: "Flávio", percentage: 29 },
+      { candidate_name: "Zema",   percentage: 12 },
+      { candidate_name: "Caiado", percentage:  4 },
+      { candidate_name: "Renan",  percentage:  2 },
+    ],
+  },
+
+  // Quaest · 21-25 jul 2026 · TSE BR-03445/2026 · n=1.104 · recorte PR
+  // Fonte: https://g1.globo.com/pr/parana/noticia/2026/07/27/quaest-parana-presidente-julho.ghtml
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-07-27",
+    fieldwork_start: "2026-07-21",
+    fieldwork_end: "2026-07-25",
+    sample_size: 1104,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    scope: "PR",
+    source_url: "https://g1.globo.com/pr/parana/noticia/2026/07/27/quaest-parana-presidente-julho.ghtml",
+    tse_protocolo: "BR034452026",
+    results: [
+      { candidate_name: "Flávio",         percentage: 42 },
+      { candidate_name: "Lula",           percentage: 24 },
+      { candidate_name: "Augusto Cury",   percentage:  2 },
+      { candidate_name: "Renan",          percentage:  2 },
+      { candidate_name: "Zema",           percentage:  2 },
+      { candidate_name: "Caiado",         percentage:  2 },
+      { candidate_name: "Samara Martins", percentage:  2 },
+    ],
+  },
+
+  // Quaest · 21-25 jul 2026 · TSE BR-06752/2026 · n=900 · recorte PA
+  // Fonte: https://g1.globo.com/pa/para/eleicoes/2026/noticia/2026/07/27/quaest-para-presidente-julho.ghtml
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-07-27",
+    fieldwork_start: "2026-07-21",
+    fieldwork_end: "2026-07-25",
+    sample_size: 900,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    scope: "PA",
+    source_url: "https://g1.globo.com/pa/para/eleicoes/2026/noticia/2026/07/27/quaest-para-presidente-julho.ghtml",
+    tse_protocolo: "BR067522026",
+    results: [
+      { candidate_name: "Lula",           percentage: 38 },
+      { candidate_name: "Flávio",         percentage: 31 },
+      { candidate_name: "Caiado",         percentage:  3 },
+      { candidate_name: "Renan",          percentage:  3 },
+      { candidate_name: "Augusto Cury",   percentage:  2 },
+      { candidate_name: "Samara Martins", percentage:  2 },
+    ],
+  },
+
+  // Real Time Big Data · 22-25 jul 2026 · TSE BR-08086/2026 · n=1.600 · recorte AC
+  // Fonte: https://www.cartacapital.com.br/politica/a-disputa-de-lula-e-flavio-bolsonaro-entre-eleitores-do-acre-segundo-nova-pesquisa/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-07-27",
+    fieldwork_start: "2026-07-22",
+    fieldwork_end: "2026-07-25",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "AC",
+    source_url: "https://www.cartacapital.com.br/politica/a-disputa-de-lula-e-flavio-bolsonaro-entre-eleitores-do-acre-segundo-nova-pesquisa/",
+    tse_protocolo: "BR080862026",
+    results: [
+      { candidate_name: "Flávio", percentage: 50 },
+      { candidate_name: "Lula",   percentage: 30 },
+      { candidate_name: "Renan",  percentage:  5 },
+      { candidate_name: "Caiado", percentage:  3 },
+      { candidate_name: "Zema",   percentage:  2 },
+    ],
+  },
+
+  // Ipespe · 22-25 jul 2026 · TSE BR-08707/2026 · n=1.000 · recorte PE (contratante Folha de Pernambuco)
+  // Fonte: https://jamildo.com/politica/lula-tem-mais-que-o-dobro-de-votos-de-flavio-bolsonaro-em-pernambuco-aponta-ipespe.html
+  {
+    institute_name: "Ipespe",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-07-28",
+    fieldwork_start: "2026-07-22",
+    fieldwork_end: "2026-07-25",
+    sample_size: 1000,
+    methodology: "presencial",
+    scope: "PE",
+    source_url: "https://jamildo.com/politica/lula-tem-mais-que-o-dobro-de-votos-de-flavio-bolsonaro-em-pernambuco-aponta-ipespe.html",
+    tse_protocolo: "BR087072026",
+    results: [
+      { candidate_name: "Lula",         percentage: 58 },
+      { candidate_name: "Flávio",       percentage: 20 },
+      { candidate_name: "Caiado",       percentage:  3 },
+      { candidate_name: "Renan",        percentage:  2 },
+      { candidate_name: "Augusto Cury", percentage:  1 },
+      { candidate_name: "Cabo Daciolo", percentage:  1 },
+    ],
+  },
+
+  // Quaest · 21-25 jul 2026 · TSE BR-07670/2026 · n=1.200 · recorte RJ (contratante Banco Genial)
+  // Fonte: https://www.cartacapital.com.br/politica/a-disputa-pela-presidencia-entre-os-eleitores-do-rj-segundo-nova-pesquisa/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-07-27",
+    fieldwork_start: "2026-07-21",
+    fieldwork_end: "2026-07-25",
+    sample_size: 1200,
+    methodology: "presencial",
+    scope: "RJ",
+    source_url: "https://www.cartacapital.com.br/politica/a-disputa-pela-presidencia-entre-os-eleitores-do-rj-segundo-nova-pesquisa/",
+    tse_protocolo: "BR076702026",
+    results: [
+      { candidate_name: "Flávio", percentage: 32 },
+      { candidate_name: "Lula",   percentage: 30 },
+      { candidate_name: "Caiado", percentage:  3 },
+      { candidate_name: "Renan",  percentage:  2 },
+      { candidate_name: "Zema",   percentage:  2 },
+    ],
+  },
+
+  // Real Time Big Data · 19-23 jul 2026 · TSE BR-05542/2026 · n=1.600 · recorte AP
+  // Fonte: https://www.cartacapital.com.br/politica/a-disputa-entre-lula-e-flavio-bolsonaro-no-amapa-segundo-o-real-time-big-data/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-07-24",
+    fieldwork_start: "2026-07-19",
+    fieldwork_end: "2026-07-23",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "AP",
+    source_url: "https://www.cartacapital.com.br/politica/a-disputa-entre-lula-e-flavio-bolsonaro-no-amapa-segundo-o-real-time-big-data/",
+    tse_protocolo: "BR055422026",
+    results: [
+      { candidate_name: "Lula",   percentage: 36 },
+      { candidate_name: "Flávio", percentage: 31 },
+      { candidate_name: "Caiado", percentage:  8 },
+      { candidate_name: "Renan",  percentage:  7 },
+    ],
+  },
+
+  // Atlas Intel · 16-21 jul 2026 · TSE BR-07335/2026 · n=1.245 · recorte RN (contratante 94 FM)
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/lula-venceria-eleicao-no-1o-turno-no-rn-diz-pesquisa/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-07-22",
+    fieldwork_start: "2026-07-16",
+    fieldwork_end: "2026-07-21",
+    sample_size: 1245,
+    methodology: "online",
+    scope: "RN",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/lula-venceria-eleicao-no-1o-turno-no-rn-diz-pesquisa/",
+    tse_protocolo: "BR073352026",
+    results: [
+      { candidate_name: "Lula",   percentage: 56.9 },
+      { candidate_name: "Flávio", percentage: 28.5 },
+    ],
+  },
+
+  // ─── Curadoria 01/09/2026 — lote 13 (Tier 2/3, Governador, achados de julho) ──
+
+  // Real Time Big Data · 28 jul-1 ago 2026 · TSE SE-07327/2026 · n=1.600
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/mitidieri-e-francisquinho-empatam-em-pesquisa-para-governo-de-sergipe/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Sergipe 2026",
+    publication_date: "2026-08-03",
+    fieldwork_start: "2026-07-28",
+    fieldwork_end: "2026-08-01",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/mitidieri-e-francisquinho-empatam-em-pesquisa-para-governo-de-sergipe/",
+    tse_protocolo: "SE073272026",
+    results: [
+      { candidate_name: "Fabio Mitidieri", percentage: 43 },
+      { candidate_name: "Valmir",          percentage: 40 },
+      { candidate_name: "Ricardo Marques", percentage:  6 },
+      { candidate_name: "Emanuel Cacho",   percentage:  2 },
+      { candidate_name: "Dr. Helton",      percentage:  1 },
+    ],
+  },
+
+  // Real Time Big Data · 25-29 jul 2026 · TSE MG-06475/2026 · n=2.000
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-minas-gerais-julho-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador MG 2026 - 1º Turno",
+    publication_date: "2026-07-30",
+    fieldwork_start: "2026-07-25",
+    fieldwork_end: "2026-07-29",
+    sample_size: 2000,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-minas-gerais-julho-2026/",
+    tse_protocolo: "MG064752026",
+    results: [
+      { candidate_name: "Cleitinho",             percentage: 36 },
+      { candidate_name: "Alexandre Kalil",       percentage: 15 },
+      { candidate_name: "Patrus Ananias",        percentage: 14 },
+      { candidate_name: "Mateus Simões",         percentage: 10 },
+      { candidate_name: "Gabriel Azevedo",       percentage:  7 },
+      { candidate_name: "Vittorio Medioli",      percentage:  3 },
+      { candidate_name: "Maria da Consolação",   percentage:  3 },
+    ],
+  },
 ];
 
 async function main() {
