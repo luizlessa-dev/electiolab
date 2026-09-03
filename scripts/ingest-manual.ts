@@ -4841,6 +4841,28 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Tania Peres",       percentage:  1 },
     ],
   },
+
+  // lote 20 — Senado, rodada 03/09
+  // Real Time Big Data · 28 ago-01 set 2026 · TSE RJ-08350/2026 · n=2.000
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/benedita-e-crivella-lideram-disputa-pelo-senado-no-rio-diz-pesquisa/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Rio de Janeiro 2026",
+    publication_date: "2026-09-02",
+    fieldwork_start: "2026-08-28",
+    fieldwork_end: "2026-09-01",
+    sample_size: 2000,
+    margin_of_error: 2,
+    methodology: "telefonica",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/benedita-e-crivella-lideram-disputa-pelo-senado-no-rio-diz-pesquisa/",
+    tse_protocolo: "RJ083502026",
+    results: [
+      { candidate_name: "Benedita da Silva", percentage: 14 },
+      { candidate_name: "Marcelo Crivella",  percentage: 14 },
+      { candidate_name: "Pedro Paulo",       percentage: 13 },
+      { candidate_name: "Carlos Jordy",      percentage: 11 },
+    ],
+  },
 ];
 
 async function main() {
