@@ -4937,7 +4937,7 @@ const PENDING_POLLS: Array<{
   // Índice Inteligência · 17-19 ago 2026 · TSE PR-01754/2026 · n=1.200 · presencial
   // Fonte: https://hojepr.com/pesquisa-indice-traz-moro-com-36-sandro-alex-com-28-e-requiao-filho-com-21/
   {
-    institute_name: "Índice Inteligência",
+    institute_name: "Instituto Índice Inteligência",
     election_name: "Governador Parana 2026",
     publication_date: "2026-08-20",
     fieldwork_start: "2026-08-17",
