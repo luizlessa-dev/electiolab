@@ -5325,6 +5325,402 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Paulo Rubem Santiago", percentage:  1 },
     ],
   },
+
+  // lote 25 — Senado, mineração de julho-agosto (Paraná Pesquisas / Real Time Big Data / Quaest)
+
+  // Instituto Paraná Pesquisas · 26-29 ago 2026 · TSE AL-03316/2026 · n=1.400
+  // Fonte: https://www.metropoles.com/brasil/senado-em-al-lira-tem-404-renan-calheiros-368-diz-parana-pesquisas
+  {
+    institute_name: "Paraná Pesquisas",
+    election_name: "Senador Alagoas 2026",
+    publication_date: "2026-08-31",
+    fieldwork_start: "2026-08-26",
+    fieldwork_end: "2026-08-29",
+    sample_size: 1400,
+    methodology: "presencial",
+    source_url: "https://www.metropoles.com/brasil/senado-em-al-lira-tem-404-renan-calheiros-368-diz-parana-pesquisas",
+    tse_protocolo: "AL033162026",
+    results: [
+      { candidate_name: "Arthur Lira",         percentage: 40.4 },
+      { candidate_name: "Renan Calheiros",     percentage: 36.8 },
+      { candidate_name: "Marina Jhc",          percentage: 28.4 },
+      { candidate_name: "Davi Davino Filho",   percentage: 24.4 },
+      { candidate_name: "Dr. Wanderley",       percentage: 10.8 },
+      { candidate_name: "Alexandre Fleming",   percentage:  2.5 },
+      { candidate_name: "Mariedson",           percentage:  0.3 },
+    ],
+  },
+
+  // Instituto Paraná Pesquisas · 26-28 ago 2026 · TSE AP-00062/2026 · n=1.080
+  // Fonte: https://www.metropoles.com/brasil/parana-pesquisas-rayssa-lidera-senado-no-ap-barreto-e-randolfe-empatam
+  {
+    institute_name: "Paraná Pesquisas",
+    election_name: "Senador Amapa 2026",
+    publication_date: "2026-08-29",
+    fieldwork_start: "2026-08-26",
+    fieldwork_end: "2026-08-28",
+    sample_size: 1080,
+    methodology: "presencial",
+    source_url: "https://www.metropoles.com/brasil/parana-pesquisas-rayssa-lidera-senado-no-ap-barreto-e-randolfe-empatam",
+    tse_protocolo: "AP000622026",
+    results: [
+      { candidate_name: "Rayssa Furlan",          percentage: 56.0 },
+      { candidate_name: "Lucas Barreto",          percentage: 38.1 },
+      { candidate_name: "Randolfe Rodrigues",     percentage: 36.6 },
+      { candidate_name: "Alliny Serrão",          percentage: 18.4 },
+      { candidate_name: "Acácio Favacho",         percentage: 16.2 },
+      { candidate_name: "Capi",                   percentage:  6.3 },
+      { candidate_name: "Juíza Jô",               percentage:  1.4 },
+      { candidate_name: "Professor Uzian Pinto",  percentage:  0.8 },
+      { candidate_name: "Helio Silva",            percentage:  0.6 },
+    ],
+  },
+
+  // Real Time Big Data · 24-27 ago 2026 · TSE GO-00954/2026 · n=1.600
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/real-time-gracinha-e-gayer-lideram-corrida-ao-senado-em-goias/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Goias 2026",
+    publication_date: "2026-08-28",
+    fieldwork_start: "2026-08-24",
+    fieldwork_end: "2026-08-27",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/real-time-gracinha-e-gayer-lideram-corrida-ao-senado-em-goias/",
+    tse_protocolo: "GO009542026",
+    results: [
+      { candidate_name: "Gracinha Caiado",   percentage: 27 },
+      { candidate_name: "Gustavo Gayer",     percentage: 17 },
+      { candidate_name: "Gustavo Mendanha",  percentage: 12 },
+      { candidate_name: "Zacarias Calil",    percentage: 12 },
+      { candidate_name: "Vanderlan Cardoso", percentage: 10 },
+      { candidate_name: "Isaura Lemos",      percentage:  5 },
+      { candidate_name: "Oséias Varão",      percentage:  4 },
+      { candidate_name: "Cintia Dias",       percentage:  3 },
+      { candidate_name: "Iure Castro",       percentage:  2 },
+      { candidate_name: "Ernesto Roller",    percentage:  1 },
+    ],
+  },
+
+  // Instituto Paraná Pesquisas · 25-27 ago 2026 · TSE TO-02900/2026 · n=1.504
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/parana-pesquisas-governador-senador-tocantins-agosto-2026/
+  {
+    institute_name: "Paraná Pesquisas",
+    election_name: "Senador Tocantins 2026",
+    publication_date: "2026-08-28",
+    fieldwork_start: "2026-08-25",
+    fieldwork_end: "2026-08-27",
+    sample_size: 1504,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/parana-pesquisas-governador-senador-tocantins-agosto-2026/",
+    tse_protocolo: "TO029002026",
+    results: [
+      { candidate_name: "Eduardo Gomes",              percentage: 35.1 },
+      { candidate_name: "Alexandre Guimarães",        percentage: 21.6 },
+      { candidate_name: "Carlos Gaguim",              percentage: 20.8 },
+      { candidate_name: "Ronaldo Dimas",              percentage: 16.0 },
+      { candidate_name: "Vanderlei Luxemburgo",       percentage: 15.0 },
+      { candidate_name: "Eli Borges",                 percentage: 14.2 },
+      { candidate_name: "Paulo Mourão",                percentage: 14.0 },
+      { candidate_name: "Helio Rodrigues Bolsonaro",  percentage:  3.3 },
+      { candidate_name: "Nilton Santos",              percentage:  3.3 },
+      { candidate_name: "Fábio Ribeiro",              percentage:  2.8 },
+      { candidate_name: "Professor Osvaldo",          percentage:  2.0 },
+      { candidate_name: "Apóstolo Flavio Braga",      percentage:  1.3 },
+      { candidate_name: "Osvany Luz",                 percentage:  0.4 },
+    ],
+  },
+
+  // Real Time Big Data · 24-27 ago 2026 · TSE PR-07845/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-senado-parana-agosto-2026-2/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Parana 2026",
+    publication_date: "2026-08-28",
+    fieldwork_start: "2026-08-24",
+    fieldwork_end: "2026-08-27",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-senado-parana-agosto-2026-2/",
+    tse_protocolo: "PR078452026",
+    results: [
+      { candidate_name: "Deltan Dallagnol",  percentage: 20 },
+      { candidate_name: "Alexandre Curi",    percentage: 18 },
+      { candidate_name: "Filipe Barros",     percentage: 17 },
+      { candidate_name: "Gleisi Hoffmann",   percentage: 15 },
+      { candidate_name: "Cristina Graeml",   percentage: 14 },
+      { candidate_name: "Dr Rosinha",        percentage:  5 },
+      { candidate_name: "Karen Guerreiro",   percentage:  1 },
+    ],
+  },
+
+  // Instituto Paraná Pesquisas · 22-26 ago 2026 · TSE ES-02530/2026 · n=1.504
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/parana-pesquisas-governador-senador-espirito-santo-agosto-2026/
+  {
+    institute_name: "Paraná Pesquisas",
+    election_name: "Senador Espirito Santo 2026",
+    publication_date: "2026-08-28",
+    fieldwork_start: "2026-08-22",
+    fieldwork_end: "2026-08-26",
+    sample_size: 1504,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/parana-pesquisas-governador-senador-espirito-santo-agosto-2026/",
+    tse_protocolo: "ES025302026",
+    results: [
+      { candidate_name: "Renato Casagrande",   percentage: 52.3 },
+      { candidate_name: "Fabiano Contarato",   percentage: 25.4 },
+      { candidate_name: "Sergio Meneguelli",   percentage: 17.9 },
+      { candidate_name: "Maguinha Malta",      percentage: 14.1 },
+      { candidate_name: "Rose de Freitas",     percentage: 12.9 },
+      { candidate_name: "Evair de Melo",       percentage: 12.0 },
+      { candidate_name: "Marcos do Val",       percentage: 10.2 },
+      { candidate_name: "Rodney Miranda",      percentage:  2.8 },
+      { candidate_name: "Wellington Callegari", percentage: 2.7 },
+      { candidate_name: "Professor Fabian",    percentage:  2.5 },
+      { candidate_name: "Leonardo Monjardim",  percentage:  1.5 },
+    ],
+  },
+
+  // Real Time Big Data · 22-26 ago 2026 · TSE ES-05096/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-espirito-santo-agosto-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Espirito Santo 2026",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-22",
+    fieldwork_end: "2026-08-26",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-espirito-santo-agosto-2026/",
+    tse_protocolo: "ES050962026",
+    results: [
+      { candidate_name: "Renato Casagrande",    percentage: 30 },
+      { candidate_name: "Sergio Meneguelli",    percentage: 14 },
+      { candidate_name: "Rose de Freitas",      percentage: 10 },
+      { candidate_name: "Fabiano Contarato",    percentage:  9 },
+      { candidate_name: "Maguinha Malta",       percentage:  9 },
+      { candidate_name: "Evair de Melo",        percentage:  6 },
+      { candidate_name: "Leonardo Monjardim",   percentage:  3 },
+      { candidate_name: "Marcos do Val",        percentage:  3 },
+      { candidate_name: "Professor Fabian",     percentage:  3 },
+      { candidate_name: "Rodney Miranda",       percentage:  3 },
+      { candidate_name: "Wellington Callegari", percentage:  1 },
+    ],
+  },
+
+  // Instituto Paraná Pesquisas · 23-25 ago 2026 · TSE BA-07628/2026 · n=1.400
+  // Fonte: https://www.metropoles.com/brasil/senado-na-bahia-rui-costa-tem-435-e-jaques-322-diz-parana-pesquisas
+  {
+    institute_name: "Paraná Pesquisas",
+    election_name: "Senador Bahia 2026",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-23",
+    fieldwork_end: "2026-08-25",
+    sample_size: 1400,
+    methodology: "presencial",
+    source_url: "https://www.metropoles.com/brasil/senado-na-bahia-rui-costa-tem-435-e-jaques-322-diz-parana-pesquisas",
+    tse_protocolo: "BA076282026",
+    results: [
+      { candidate_name: "Rui Costa",      percentage: 43.5 },
+      { candidate_name: "Jaques Wagner",  percentage: 32.2 },
+      { candidate_name: "Joao Roma",      percentage: 26.6 },
+      { candidate_name: "Angelo Coronel", percentage: 25.1 },
+    ],
+  },
+
+  // Instituto Paraná Pesquisas · 22-24 ago 2026 · TSE RJ-02422/2026 · n=1.600
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/parana-pesquisas-benedita-e-crivella-lideram-disputa-ao-senado-pelo-rj-2/
+  {
+    institute_name: "Paraná Pesquisas",
+    election_name: "Senador Rio de Janeiro 2026",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-22",
+    fieldwork_end: "2026-08-24",
+    sample_size: 1600,
+    methodology: "presencial",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/parana-pesquisas-benedita-e-crivella-lideram-disputa-ao-senado-pelo-rj-2/",
+    tse_protocolo: "RJ024222026",
+    results: [
+      { candidate_name: "Benedita da Silva", percentage: 29.6 },
+      { candidate_name: "Marcelo Crivella",  percentage: 21.0 },
+      { candidate_name: "Pedro Paulo",       percentage: 16.4 },
+      { candidate_name: "Carlos Jordy",      percentage: 11.9 },
+      { candidate_name: "Carlos Portinho",   percentage: 10.6 },
+      { candidate_name: "Waguinho",          percentage:  9.2 },
+      { candidate_name: "Mônica Benício",    percentage:  5.9 },
+      { candidate_name: "André Monteiro",    percentage:  5.3 },
+      { candidate_name: "Marcos Dias",       percentage:  3.9 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE PB-07850/2026 · n=804
+  // Fonte: https://www.metropoles.com/brasil/quaest-joao-azevedo-tem-27-veneziano-vital-17-ao-senado-na-pb
+  {
+    institute_name: "Quaest",
+    election_name: "Senador Paraiba 2026",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 804,
+    methodology: "presencial",
+    source_url: "https://www.metropoles.com/brasil/quaest-joao-azevedo-tem-27-veneziano-vital-17-ao-senado-na-pb",
+    tse_protocolo: "PB078502026",
+    results: [
+      { candidate_name: "Joao Azevedo",         percentage: 27 },
+      { candidate_name: "Veneziano Vital",      percentage: 17 },
+      { candidate_name: "Nabor",                percentage:  9 },
+      { candidate_name: "Dr. Marcelo Queiroga", percentage:  6 },
+      { candidate_name: "Major Fábio",          percentage:  5 },
+      { candidate_name: "André Gadelha",        percentage:  2 },
+      { candidate_name: "João Batista",         percentage:  1 },
+      { candidate_name: "Adriano Trajano",      percentage:  1 },
+    ],
+  },
+
+  // Instituto Paraná Pesquisas · 21-23 ago 2026 · TSE MT-02157/2026 · n=1.504
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/pesquisas-mauro-mendes-tem-523-para-o-senado-de-mt-riva-tem-337/
+  {
+    institute_name: "Paraná Pesquisas",
+    election_name: "Senador Mato Grosso 2026",
+    publication_date: "2026-08-24",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-23",
+    sample_size: 1504,
+    methodology: "presencial",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/pesquisas-mauro-mendes-tem-523-para-o-senado-de-mt-riva-tem-337/",
+    tse_protocolo: "MT021572026",
+    results: [
+      { candidate_name: "Mauro Mendes",              percentage: 52.3 },
+      { candidate_name: "Janaina Riva",              percentage: 33.7 },
+      { candidate_name: "Jose Medeiros",             percentage: 18.8 },
+      { candidate_name: "Pedro Taques",              percentage: 16.5 },
+      { candidate_name: "Carlos Favaro",             percentage: 14.6 },
+      { candidate_name: "Coronel Darwin",            percentage:  4.7 },
+      { candidate_name: "Professor Nelson Ferreira", percentage:  4.1 },
+      { candidate_name: "Galvan",                    percentage:  4.0 },
+      { candidate_name: "Margareth Buzetti",         percentage:  1.8 },
+      { candidate_name: "Beny Godoy",                percentage:  1.1 },
+    ],
+  },
+
+  // Quaest · 20-23 ago 2026 · TSE RN-00876/2026 · n=804
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-rio-grande-do-norte-agosto-2026/
+  // Nota: fonte também cita "Samanda de Lula" 8% — nome não bate com nenhum candidato
+  // já cadastrado (temos "Samanda Alves"); não inserido por falta de confirmação segura.
+  {
+    institute_name: "Quaest",
+    election_name: "Senador Rio Grande do Norte 2026",
+    publication_date: "2026-08-24",
+    fieldwork_start: "2026-08-20",
+    fieldwork_end: "2026-08-23",
+    sample_size: 804,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-rio-grande-do-norte-agosto-2026/",
+    tse_protocolo: "RN008762026",
+    results: [
+      { candidate_name: "Styvenson Valentim",       percentage: 16 },
+      { candidate_name: "Zenaide Maia",             percentage: 10 },
+      { candidate_name: "Rafael Motta",             percentage:  8 },
+      { candidate_name: "Coronel Hélio Oliveira",   percentage:  5 },
+      { candidate_name: "Professor Guilherme",      percentage:  1 },
+      { candidate_name: "Sandro Pimentel",          percentage:  1 },
+      { candidate_name: "Gari Wendell Batista",     percentage:  1 },
+      { candidate_name: "Sonia Godeiro",            percentage:  1 },
+      { candidate_name: "Rosália Fernandes",        percentage:  1 },
+      { candidate_name: "Tércio Tinôco",            percentage:  1 },
+    ],
+  },
+
+  // Real Time Big Data · 19-22 ago 2026 · TSE PB-07790/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-paraiba-agosto-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Paraiba 2026",
+    publication_date: "2026-08-24",
+    fieldwork_start: "2026-08-19",
+    fieldwork_end: "2026-08-22",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-paraiba-agosto-2026/",
+    tse_protocolo: "PB077902026",
+    results: [
+      { candidate_name: "Joao Azevedo",         percentage: 29 },
+      { candidate_name: "Veneziano Vital",      percentage: 23 },
+      { candidate_name: "Dr. Marcelo Queiroga", percentage: 15 },
+      { candidate_name: "Nabor",                percentage: 15 },
+      { candidate_name: "Major Fábio",          percentage:  4 },
+      { candidate_name: "André Gadelha",        percentage:  4 },
+    ],
+  },
+
+  // Real Time Big Data · 19-22 ago 2026 · TSE SP-01347/2026 · n=2.000
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-senador-sao-paulo-agosto-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Sao Paulo 2026",
+    publication_date: "2026-08-24",
+    fieldwork_start: "2026-08-19",
+    fieldwork_end: "2026-08-22",
+    sample_size: 2000,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-senador-sao-paulo-agosto-2026/",
+    tse_protocolo: "SP013472026",
+    results: [
+      { candidate_name: "Guilherme Derrite",  percentage: 18 },
+      { candidate_name: "Simone Tebet",       percentage: 17 },
+      { candidate_name: "Andre do Prado",     percentage: 15 },
+      { candidate_name: "Marina Silva",       percentage: 14 },
+      { candidate_name: "Ricardo Salles",     percentage: 10 },
+      { candidate_name: "Soninha Francine",   percentage:  3 },
+      { candidate_name: "Guto Schiavetto",    percentage:  2 },
+      { candidate_name: "Geraldo Rufino",     percentage:  2 },
+    ],
+  },
+
+  // Real Time Big Data · 15-19 ago 2026 · TSE CE-08223/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-ceara-agosto-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Ceara 2026",
+    publication_date: "2026-08-20",
+    fieldwork_start: "2026-08-15",
+    fieldwork_end: "2026-08-19",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-ceara-agosto-2026/",
+    tse_protocolo: "CE082232026",
+    results: [
+      { candidate_name: "Cid Gomes",             percentage: 27 },
+      { candidate_name: "Capitão Wagner",        percentage: 21 },
+      { candidate_name: "Luizianne Lins",        percentage: 21 },
+      { candidate_name: "Alcides Fernandes",     percentage: 14 },
+      { candidate_name: "Guilherme Theophilo",   percentage:  5 },
+    ],
+  },
+
+  // Real Time Big Data · 14-18 ago 2026 · TSE DF-07849/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-senador-distrito-federal-agosto-2026/
+  // Nota: fonte também cita "Cristian Viana" 2% — nome não bate com nenhum candidato
+  // já cadastrado; não inserido por falta de confirmação segura.
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Distrito Federal 2026",
+    publication_date: "2026-08-19",
+    fieldwork_start: "2026-08-14",
+    fieldwork_end: "2026-08-18",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-senador-distrito-federal-agosto-2026/",
+    tse_protocolo: "DF078492026",
+    results: [
+      { candidate_name: "Michelle Bolsonaro",  percentage: 25 },
+      { candidate_name: "Leila Barros",        percentage: 17 },
+      { candidate_name: "Bia Kicis",           percentage: 15 },
+      { candidate_name: "Érika Kokay",         percentage: 15 },
+      { candidate_name: "Sebastião Coelho",    percentage:  8 },
+      { candidate_name: "Tiago",               percentage:  1 },
+    ],
+  },
 ];
 
 async function main() {
