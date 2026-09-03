@@ -204,7 +204,7 @@ async function recalculateForElection(
 ) {
   const { data: election } = await supabase
     .from("elections")
-    .select("id, name, election_date, round")
+    .select("id, name, election_date, round, state")
     .eq("id", electionId)
     .single();
 
@@ -227,7 +227,7 @@ async function recalculateForElection(
 
   if (!candidates?.length) return { error: "No candidates", electionId };
 
-  const { data: polls } = await supabase
+  let pollsQuery = supabase
     .from("polls")
     .select(`
       id, fieldwork_end, sample_size, methodology,
@@ -239,7 +239,19 @@ async function recalculateForElection(
     // marcadas continuam no banco como registro do que o instituto publicou,
     // mas não entram na média — ver poll_results.excluded_reason e
     // scripts/flag-non-candidates-in-polls.ts.
-    .is("results.excluded_reason", null)
+    .is("results.excluded_reason", null);
+
+  // scope só é ambíguo pra eleição SEM estado próprio (Presidente): o TSE registra pesquisa
+  // presidencial sob UE=BR mesmo quando a amostra é de um único estado (ver ingest-manual.ts),
+  // então sem esse filtro um corte de Rondônia ou Amazonas entraria na mesma média "nacional"
+  // que uma pesquisa de fato nacional. Pra eleições com estado próprio (Governador/Senador),
+  // scope não filtra nada — o valor em si já varia entre convenções antigas ("estadual",
+  // "uf:XX", sigla nua) sem que isso mude o que a pesquisa mede: é sempre daquele estado.
+  if (!election.state) {
+    pollsQuery = pollsQuery.eq("scope", "nacional");
+  }
+
+  const { data: polls } = await pollsQuery
     .order("publication_date", { ascending: false })
     .returns<PollQueryRow[]>();
 

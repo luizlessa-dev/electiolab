@@ -3880,6 +3880,688 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Augusto Cury", percentage: 34 },
     ],
   },
+
+  // ─── Curadoria 02/09/2026 — lote 18 (Presidencial, cortes estaduais Quaest/RTBD/Veritá) ──
+  // TSE registra pesquisa presidencial sempre sob UE=BR mesmo quando a amostra é de um único
+  // estado (cross-tab embutido na mesma pesquisa de Governador/Senador) — mesmo padrão já
+  // usado nas entradas anteriores de Presidente com scope=UF. Protocolo omitido quando o
+  // instituto/imprensa não deu o número BR- específico (ambiguidade entre vários protocolos
+  // do mesmo tamanho de amostra/data) — não afeta a inserção, só a marcação de "resolvido"
+  // daquele protocolo específico na fila do TSE.
+
+  // Quaest · 21-24 ago 2026 · TSE BR-02403/2026 · n=1.104 · corte Distrito Federal
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/lula-e-flavio-empatam-em-1o-turno-no-df-diz-quaest/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 1104,
+    methodology: "presencial",
+    scope: "DF",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/lula-e-flavio-empatam-em-1o-turno-no-df-diz-quaest/",
+    tse_protocolo: "BR024032026",
+    results: [
+      { candidate_name: "Lula",            percentage: 28 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 26 },
+    ],
+  },
+
+  // Quaest · ~21-24 ago 2026 · n=1.506 · corte Minas Gerais (protocolo BR- não identificado)
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/ (Quaest MG presidencial, empate técnico)
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 1506,
+    methodology: "presencial",
+    scope: "MG",
+    source_url: "https://www.cartacapital.com.br/politica/",
+    results: [
+      { candidate_name: "Flavio Bolsonaro", percentage: 31 },
+      { candidate_name: "Lula",            percentage: 30 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · n=1.302 · corte Rio de Janeiro (protocolo BR- ambíguo entre 2 candidatos)
+  // Fonte: https://agendadopoder.com.br/pesquisa-quaest-no-rio-aponta-flavio-a-frente-de-lula-por-31-a-29/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 1302,
+    methodology: "presencial",
+    scope: "RJ",
+    source_url: "https://agendadopoder.com.br/pesquisa-quaest-no-rio-aponta-flavio-a-frente-de-lula-por-31-a-29/",
+    results: [
+      { candidate_name: "Flavio Bolsonaro", percentage: 31 },
+      { candidate_name: "Lula",            percentage: 29 },
+    ],
+  },
+
+  // Quaest · ~21-25 ago 2026 · TSE BR-02096/2026 · n=1.800 · corte São Paulo
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/quaest-flavio-tem-30-e-lula-29-em-sp-no-1o-turno/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-26",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-25",
+    sample_size: 1800,
+    methodology: "presencial",
+    scope: "SP",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/quaest-flavio-tem-30-e-lula-29-em-sp-no-1o-turno/",
+    tse_protocolo: "BR020962026",
+    results: [
+      { candidate_name: "Flavio Bolsonaro", percentage: 30 },
+      { candidate_name: "Lula",            percentage: 29 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · n=1.302 · corte Pernambuco (protocolo BR- ambíguo, par do RJ acima)
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 1302,
+    methodology: "presencial",
+    scope: "PE",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/",
+    results: [
+      { candidate_name: "Lula",            percentage: 54 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 19 },
+      { candidate_name: "Caiado",          percentage:  3 },
+    ],
+  },
+
+  // Quaest · 23-26 ago 2026 · TSE BR-08870/2026 · n=900 · corte Bahia
+  // Fonte: https://www.band.uol.com.br/ (Quaest: Lula lidera com 50% dos votos na Bahia)
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-23",
+    fieldwork_end: "2026-08-26",
+    sample_size: 900,
+    methodology: "presencial",
+    scope: "BA",
+    source_url: "https://www.band.uol.com.br/",
+    tse_protocolo: "BR088702026",
+    results: [
+      { candidate_name: "Lula",            percentage: 50 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 17 },
+      { candidate_name: "Caiado",          percentage:  4 },
+      { candidate_name: "Augusto Cury",     percentage:  4 },
+    ],
+  },
+
+  // Quaest · 23-26 ago 2026 · n=804 · corte Goiás (protocolo BR- ambíguo entre 5 candidatos)
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/ (Caiado lidera disputa presidencial em Goiás)
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-23",
+    fieldwork_end: "2026-08-26",
+    sample_size: 804,
+    methodology: "presencial",
+    scope: "GO",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/",
+    results: [
+      { candidate_name: "Caiado",          percentage: 32 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 27 },
+      { candidate_name: "Lula",            percentage: 20 },
+    ],
+  },
+
+  // Quaest · 23-26 ago 2026 · n=804 · corte Sergipe (protocolo BR- ambíguo)
+  // Fonte: https://jornalsete.com.br/ (Quaest: Lula 53%, Flávio 19% em Sergipe)
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-23",
+    fieldwork_end: "2026-08-26",
+    sample_size: 804,
+    methodology: "presencial",
+    scope: "SE",
+    source_url: "https://jornalsete.com.br/",
+    results: [
+      { candidate_name: "Lula",            percentage: 53 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 19 },
+      { candidate_name: "Caiado",          percentage:  3 },
+      { candidate_name: "Augusto Cury",     percentage:  2 },
+    ],
+  },
+
+  // Quaest · 23-26 ago 2026 · TSE BR-07015/2026 · n=804 · corte Acre
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/no-acre-flavio-tem-42-e-lula-25-no-1o-turno-diz-quaest/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-23",
+    fieldwork_end: "2026-08-26",
+    sample_size: 804,
+    methodology: "presencial",
+    scope: "AC",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/no-acre-flavio-tem-42-e-lula-25-no-1o-turno-diz-quaest/",
+    tse_protocolo: "BR070152026",
+    results: [
+      { candidate_name: "Flavio Bolsonaro", percentage: 42 },
+      { candidate_name: "Lula",            percentage: 25 },
+      { candidate_name: "Caiado",          percentage:  5 },
+    ],
+  },
+
+  // Quaest · 23-26 ago 2026 · n=804 · corte Rondônia (protocolo BR- ambíguo)
+  // Fonte: Agência Rondônia
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-23",
+    fieldwork_end: "2026-08-26",
+    sample_size: 804,
+    methodology: "presencial",
+    scope: "RO",
+    source_url: "https://agenciarondonia.com.br/",
+    results: [
+      { candidate_name: "Flavio Bolsonaro", percentage: 45 },
+      { candidate_name: "Lula",            percentage: 25 },
+      { candidate_name: "Caiado",          percentage:  3 },
+    ],
+  },
+
+  // Quaest · 20-23 ago 2026 · TSE BR-08612/2026 · n=900 · corte Rio Grande do Sul
+  // Fonte: https://www.cartacapital.com.br/politica/como-esta-a-disputa-pela-presidencia-em-6-estados-segundo-a-quaest/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-24",
+    fieldwork_start: "2026-08-20",
+    fieldwork_end: "2026-08-23",
+    sample_size: 900,
+    methodology: "presencial",
+    scope: "RS",
+    source_url: "https://www.cartacapital.com.br/politica/como-esta-a-disputa-pela-presidencia-em-6-estados-segundo-a-quaest/",
+    tse_protocolo: "BR086122026",
+    results: [
+      { candidate_name: "Flavio Bolsonaro", percentage: 34 },
+      { candidate_name: "Lula",            percentage: 28 },
+      { candidate_name: "Caiado",          percentage:  3 },
+    ],
+  },
+
+  // Quaest · 20-23 ago 2026 · n=900 · corte Paraná (protocolo estadual PR-05388/2026, sem par BR- confirmado)
+  // Fonte: https://www.cartacapital.com.br/politica/como-esta-a-disputa-pela-presidencia-em-6-estados-segundo-a-quaest/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-24",
+    fieldwork_start: "2026-08-20",
+    fieldwork_end: "2026-08-23",
+    sample_size: 900,
+    methodology: "presencial",
+    scope: "PR",
+    source_url: "https://www.cartacapital.com.br/politica/como-esta-a-disputa-pela-presidencia-em-6-estados-segundo-a-quaest/",
+    results: [
+      { candidate_name: "Flavio Bolsonaro", percentage: 41 },
+      { candidate_name: "Lula",            percentage: 23 },
+    ],
+  },
+
+  // Real Time Big Data · 30 jul-3 ago 2026 · TSE BR-09650/2026 · n=1.600 · corte Pará
+  // Fonte: https://ocapixaba.com.br/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-04",
+    fieldwork_start: "2026-07-30",
+    fieldwork_end: "2026-08-03",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "PA",
+    source_url: "https://ocapixaba.com.br/",
+    tse_protocolo: "BR096502026",
+    results: [
+      { candidate_name: "Lula",            percentage: 43 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 33 },
+    ],
+  },
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-08-04",
+    fieldwork_start: "2026-07-30",
+    fieldwork_end: "2026-08-03",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "PA",
+    source_url: "https://ocapixaba.com.br/",
+    tse_protocolo: "BR096502026",
+    results: [
+      { candidate_name: "Lula",            percentage: 45 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 36 },
+    ],
+  },
+
+  // Real Time Big Data · 1-5 ago 2026 · TSE BR-01784/2026 · n=1.600 · corte Mato Grosso do Sul
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-06",
+    fieldwork_start: "2026-08-01",
+    fieldwork_end: "2026-08-05",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "MS",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/",
+    tse_protocolo: "BR017842026",
+    results: [
+      { candidate_name: "Flavio Bolsonaro", percentage: 42 },
+      { candidate_name: "Lula",            percentage: 34 },
+    ],
+  },
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-08-06",
+    fieldwork_start: "2026-08-01",
+    fieldwork_end: "2026-08-05",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "MS",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/",
+    tse_protocolo: "BR017842026",
+    results: [
+      { candidate_name: "Flavio Bolsonaro", percentage: 50 },
+      { candidate_name: "Lula",            percentage: 38 },
+    ],
+  },
+
+  // Real Time Big Data · 7-11 ago 2026 · TSE BR-06833/2026 · n=1.600 · corte Mato Grosso
+  // Fonte: https://exame.com/brasil/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-12",
+    fieldwork_start: "2026-08-07",
+    fieldwork_end: "2026-08-11",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "MT",
+    source_url: "https://exame.com/brasil/",
+    tse_protocolo: "BR068332026",
+    results: [
+      { candidate_name: "Flavio Bolsonaro", percentage: 43 },
+      { candidate_name: "Lula",            percentage: 33 },
+    ],
+  },
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-08-12",
+    fieldwork_start: "2026-08-07",
+    fieldwork_end: "2026-08-11",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "MT",
+    source_url: "https://exame.com/brasil/",
+    tse_protocolo: "BR068332026",
+    results: [
+      { candidate_name: "Flavio Bolsonaro", percentage: 51 },
+      { candidate_name: "Lula",            percentage: 37 },
+    ],
+  },
+
+  // Real Time Big Data · 12-15 ago 2026 · TSE BR-08592/2026 · n=1.600 · corte Pernambuco
+  // Fonte: https://exame.com/brasil/ (Lula abre 34 pontos sobre Flávio em Pernambuco)
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-17",
+    fieldwork_start: "2026-08-12",
+    fieldwork_end: "2026-08-15",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "PE",
+    source_url: "https://exame.com/brasil/",
+    tse_protocolo: "BR085922026",
+    results: [
+      { candidate_name: "Lula",            percentage: 58 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 24 },
+    ],
+  },
+
+  // Real Time Big Data · 13-17 ago 2026 · TSE BR-09275/2026 · n=1.600 · corte Paraná
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-18",
+    fieldwork_start: "2026-08-13",
+    fieldwork_end: "2026-08-17",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "PR",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/",
+    tse_protocolo: "BR092752026",
+    results: [
+      { candidate_name: "Flavio Bolsonaro", percentage: 44 },
+      { candidate_name: "Lula",            percentage: 31 },
+    ],
+  },
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-08-18",
+    fieldwork_start: "2026-08-13",
+    fieldwork_end: "2026-08-17",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "PR",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/",
+    tse_protocolo: "BR092752026",
+    results: [
+      { candidate_name: "Flavio Bolsonaro", percentage: 52 },
+      { candidate_name: "Lula",            percentage: 35 },
+    ],
+  },
+
+  // Real Time Big Data · 14-18 ago 2026 · TSE BR-05423/2026 · n=1.600 · corte Distrito Federal
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-19",
+    fieldwork_start: "2026-08-14",
+    fieldwork_end: "2026-08-18",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "DF",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/",
+    tse_protocolo: "BR054232026",
+    results: [
+      { candidate_name: "Lula",            percentage: 36 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 35 },
+    ],
+  },
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-08-19",
+    fieldwork_start: "2026-08-14",
+    fieldwork_end: "2026-08-18",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "DF",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/",
+    tse_protocolo: "BR054232026",
+    results: [
+      { candidate_name: "Flavio Bolsonaro", percentage: 44 },
+      { candidate_name: "Lula",            percentage: 39 },
+    ],
+  },
+
+  // Real Time Big Data · 15-19 ago 2026 · TSE BR-08791/2026 · n=1.600 · corte Ceará
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-20",
+    fieldwork_start: "2026-08-15",
+    fieldwork_end: "2026-08-19",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "CE",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/",
+    tse_protocolo: "BR087912026",
+    results: [
+      { candidate_name: "Lula",            percentage: 65 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 21 },
+    ],
+  },
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-08-20",
+    fieldwork_start: "2026-08-15",
+    fieldwork_end: "2026-08-19",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "CE",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/",
+    tse_protocolo: "BR087912026",
+    results: [
+      { candidate_name: "Lula",            percentage: 66 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 27 },
+    ],
+  },
+
+  // Real Time Big Data · 19-22 ago 2026 · TSE BR-06537/2026 · n=2.000 · corte São Paulo
+  // Fonte: https://www.metropoles.com/ (Flávio lidera disputa em SP com 38%)
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-24",
+    fieldwork_start: "2026-08-19",
+    fieldwork_end: "2026-08-22",
+    sample_size: 2000,
+    methodology: "telefonica",
+    scope: "SP",
+    source_url: "https://www.metropoles.com/",
+    tse_protocolo: "BR065372026",
+    results: [
+      { candidate_name: "Flavio Bolsonaro", percentage: 38 },
+      { candidate_name: "Lula",            percentage: 33 },
+    ],
+  },
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-08-24",
+    fieldwork_start: "2026-08-19",
+    fieldwork_end: "2026-08-22",
+    sample_size: 2000,
+    methodology: "telefonica",
+    scope: "SP",
+    source_url: "https://www.metropoles.com/",
+    tse_protocolo: "BR065372026",
+    results: [
+      { candidate_name: "Lula",            percentage: 49 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 44 },
+    ],
+  },
+
+  // Real Time Big Data · 19-22 ago 2026 · TSE BR-08776/2026 · n=1.600 · corte Paraíba
+  // Fonte: https://blogdobgpb.com.br/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-24",
+    fieldwork_start: "2026-08-19",
+    fieldwork_end: "2026-08-22",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "PB",
+    source_url: "https://blogdobgpb.com.br/",
+    tse_protocolo: "BR087762026",
+    results: [
+      { candidate_name: "Lula",            percentage: 55 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 26 },
+    ],
+  },
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-08-24",
+    fieldwork_start: "2026-08-19",
+    fieldwork_end: "2026-08-22",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "PB",
+    source_url: "https://blogdobgpb.com.br/",
+    tse_protocolo: "BR087762026",
+    results: [
+      { candidate_name: "Lula",            percentage: 59 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 32 },
+    ],
+  },
+
+  // Real Time Big Data · 21-25 ago 2026 · TSE BR-06708/2026 · n=1.600 · corte Tocantins
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-26",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-25",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "TO",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/",
+    tse_protocolo: "BR067082026",
+    results: [
+      { candidate_name: "Lula",            percentage: 36 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 36 },
+    ],
+  },
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-08-26",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-25",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "TO",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/",
+    tse_protocolo: "BR067082026",
+    results: [
+      { candidate_name: "Flavio Bolsonaro", percentage: 45 },
+      { candidate_name: "Lula",            percentage: 39 },
+    ],
+  },
+
+  // Real Time Big Data · 28 ago-1 set 2026 · TSE BR-08333/2026 · n=1.600 (registro oficial; matérias de
+  // imprensa citam 2.000 — divergência não resolvida, mantendo o valor do registro) · corte Rio de Janeiro
+  // Fonte: https://www.brasildefato.com.br/2026/09/02/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-02",
+    fieldwork_start: "2026-08-28",
+    fieldwork_end: "2026-09-01",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "RJ",
+    source_url: "https://www.brasildefato.com.br/2026/09/02/",
+    tse_protocolo: "BR083332026",
+    results: [
+      { candidate_name: "Flavio Bolsonaro", percentage: 36 },
+      { candidate_name: "Lula",            percentage: 34 },
+    ],
+  },
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-02",
+    fieldwork_start: "2026-08-28",
+    fieldwork_end: "2026-09-01",
+    sample_size: 1600,
+    methodology: "telefonica",
+    scope: "RJ",
+    source_url: "https://www.brasildefato.com.br/2026/09/02/",
+    tse_protocolo: "BR083332026",
+    results: [
+      { candidate_name: "Flavio Bolsonaro", percentage: 45 },
+      { candidate_name: "Lula",            percentage: 41 },
+    ],
+  },
+
+  // Instituto Veritá · 24-28 ago 2026 · TSE BR-08653/2026 · n=1.220 · corte Rondônia
+  // Fonte: https://eleicoes26.institutoverita.com.br/pesquisa/4c688ea9-6806-4e1e-bc62-fb50adb26edc
+  {
+    institute_name: "Instituto Veritá",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-01",
+    fieldwork_start: "2026-08-24",
+    fieldwork_end: "2026-08-28",
+    sample_size: 1220,
+    methodology: "telefonica",
+    scope: "RO",
+    source_url: "https://eleicoes26.institutoverita.com.br/pesquisa/4c688ea9-6806-4e1e-bc62-fb50adb26edc",
+    tse_protocolo: "BR086532026",
+    results: [
+      { candidate_name: "Flavio Bolsonaro", percentage: 51.9 },
+      { candidate_name: "Lula",            percentage: 28.3 },
+      { candidate_name: "Augusto Cury",     percentage:  9.2 },
+      { candidate_name: "Renan Santos",     percentage:  3.7 },
+      { candidate_name: "Pablo Marçal",     percentage:  3.0 },
+      { candidate_name: "Caiado",          percentage:  2.1 },
+    ],
+  },
+  {
+    institute_name: "Instituto Veritá",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-01",
+    fieldwork_start: "2026-08-24",
+    fieldwork_end: "2026-08-28",
+    sample_size: 1220,
+    methodology: "telefonica",
+    scope: "RO",
+    source_url: "https://eleicoes26.institutoverita.com.br/pesquisa/4c688ea9-6806-4e1e-bc62-fb50adb26edc",
+    tse_protocolo: "BR086532026",
+    results: [
+      { candidate_name: "Flavio Bolsonaro", percentage: 65.5 },
+      { candidate_name: "Lula",            percentage: 34.5 },
+    ],
+  },
+
+  // Instituto Veritá · 24-28 ago 2026 · TSE BR-09524/2026 · n=1.220 · corte Amazonas
+  // Fonte: https://diariodopoder.com.br/brasil-e-regioes/csa-brasil/flavio-supera-lula-nos-dois-turnos-entre-eleitores-do-amazonas
+  {
+    institute_name: "Instituto Veritá",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-29",
+    fieldwork_start: "2026-08-24",
+    fieldwork_end: "2026-08-28",
+    sample_size: 1220,
+    methodology: "telefonica",
+    scope: "AM",
+    source_url: "https://diariodopoder.com.br/brasil-e-regioes/csa-brasil/flavio-supera-lula-nos-dois-turnos-entre-eleitores-do-amazonas",
+    tse_protocolo: "BR095242026",
+    results: [
+      { candidate_name: "Flavio Bolsonaro", percentage: 44.8 },
+      { candidate_name: "Lula",            percentage: 38.5 },
+    ],
+  },
+  {
+    institute_name: "Instituto Veritá",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-08-29",
+    fieldwork_start: "2026-08-24",
+    fieldwork_end: "2026-08-28",
+    sample_size: 1220,
+    methodology: "telefonica",
+    scope: "AM",
+    source_url: "https://diariodopoder.com.br/brasil-e-regioes/csa-brasil/flavio-supera-lula-nos-dois-turnos-entre-eleitores-do-amazonas",
+    tse_protocolo: "BR095242026",
+    results: [
+      { candidate_name: "Flavio Bolsonaro", percentage: 55.9 },
+      { candidate_name: "Lula",            percentage: 44.1 },
+    ],
+  },
 ];
 
 async function main() {
