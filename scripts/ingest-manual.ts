@@ -4562,6 +4562,285 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Lula",            percentage: 44.1 },
     ],
   },
+
+  // ─── Curadoria 02/09/2026 — lote 19 (Tier 4, Senador, 2ª leva de reaproveitamento abr-mai) ──
+  // Nomes conferidos contra `candidates` e contra o arquivo do TSE antes de inserir. Vários
+  // nomes descartados por não constarem no arquivo do TSE pra Senador naquele estado: Miguel
+  // Coelho/Anderson Ferreira/Fernando Dueire/Silvio Nascimento/Pastor Wellington Carneiro (PE),
+  // Marcelo Ramos/Marcos Rotta/Cabo Daciolo (AM — Daciolo é candidato a governador, não senador),
+  // Nelsinho Trad (MS), Roberto Claudio/Eunicio Oliveira/Priscila Costa/Chiquinho Feitosa/General
+  // Theophilo (CE), Vanessa Portugal/Jarbas Soares (MG — sem candidato correspondente no banco),
+  // Claudio Castro/Felipe Curi/Marcio Canella/Alessandro Molon/Luciana Boiteux (RJ), Paulo
+  // Rocha/Joaquim Passarinho/Fernando Carneiro (PA — sem candidato correspondente no banco).
+
+  // Datafolha · 24-27 mai 2026 · TSE PE-07888/2026 · n=1.022
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-governador-senador-pernambuco-maio-2026/
+  {
+    institute_name: "Datafolha",
+    election_name: "Senador Pernambuco 2026",
+    publication_date: "2026-05-29",
+    fieldwork_start: "2026-05-24",
+    fieldwork_end: "2026-05-27",
+    sample_size: 1022,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-governador-senador-pernambuco-maio-2026/",
+    tse_protocolo: "PE078882026",
+    results: [
+      { candidate_name: "Marilia Arraes",       percentage: 39 },
+      { candidate_name: "Humberto Costa",       percentage: 32 },
+      { candidate_name: "Eduardo da Fonte",     percentage: 22 },
+      { candidate_name: "Carlos Sant Anna",     percentage:  6 },
+      { candidate_name: "Paulo Rubem Santiago", percentage:  4 },
+    ],
+  },
+
+  // AtlasIntel · 9-13 mai 2026 · TSE AM-09404/2026 · n=1.200 · consolidado dos 2 votos (2 vagas)
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governador-senador-amazonas-maio-2026/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Senador Amazonas 2026",
+    publication_date: "2026-05-15",
+    fieldwork_start: "2026-05-09",
+    fieldwork_end: "2026-05-13",
+    sample_size: 1200,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governador-senador-amazonas-maio-2026/",
+    tse_protocolo: "AM094042026",
+    results: [
+      { candidate_name: "Capitao Alberto Neto", percentage: 20.5 },
+      { candidate_name: "Eduardo Braga",        percentage: 18.5 },
+      { candidate_name: "Plinio Valerio",       percentage: 17.1 },
+      { candidate_name: "Wilson Lima",          percentage: 10.6 },
+      { candidate_name: "Ismael Munduruku",     percentage:  1.0 },
+      { candidate_name: "Xuxa do Amazonas",     percentage:  0.1 },
+    ],
+  },
+
+  // Real Time Big Data · 7-11 mai 2026 · TSE MS-06412/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-mato-grosso-do-sul-maio-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Mato Grosso do Sul 2026",
+    publication_date: "2026-05-13",
+    fieldwork_start: "2026-05-07",
+    fieldwork_end: "2026-05-11",
+    sample_size: 1600,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-mato-grosso-do-sul-maio-2026/",
+    tse_protocolo: "MS064122026",
+    results: [
+      { candidate_name: "Reinaldo Azambuja", percentage: 29 },
+      { candidate_name: "Capitão Contar",     percentage: 18 },
+      { candidate_name: "Soraya Thronicke",   percentage: 10 },
+      { candidate_name: "Vander Loubet",      percentage:  9 },
+      { candidate_name: "Beto do Movimento",  percentage:  2 },
+      { candidate_name: "Daniel Junior",      percentage:  2 },
+    ],
+  },
+
+  // Quaest · 24-28 abr 2026 · TSE CE-01725/2026 · n=1.002
+  // Fonte: https://diariodonordeste.verdesmares.com.br/pontopoder/pesquisa-quaest-para-o-senado-ce-cid-e-capitao-wagner-lideram-roberto-e-luizianne-vem-em-seguida-1.3760831
+  {
+    institute_name: "Quaest",
+    election_name: "Senador Ceara 2026",
+    publication_date: "2026-04-30",
+    fieldwork_start: "2026-04-24",
+    fieldwork_end: "2026-04-28",
+    sample_size: 1002,
+    methodology: "presencial",
+    source_url: "https://diariodonordeste.verdesmares.com.br/pontopoder/pesquisa-quaest-para-o-senado-ce-cid-e-capitao-wagner-lideram-roberto-e-luizianne-vem-em-seguida-1.3760831",
+    tse_protocolo: "CE017252026",
+    results: [
+      { candidate_name: "Cid Gomes",        percentage: 17 },
+      { candidate_name: "Capitão Wagner",    percentage: 16 },
+      { candidate_name: "Luizianne Lins",    percentage:  8 },
+      { candidate_name: "Alcides Fernandes", percentage:  3 },
+    ],
+  },
+
+  // Quaest · 23-27 abr 2026 · TSE BA-03657/2026 · n=1.200
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/genial-quaest-governador-senador-bahia-abril-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Senador Bahia 2026",
+    publication_date: "2026-04-29",
+    fieldwork_start: "2026-04-23",
+    fieldwork_end: "2026-04-27",
+    sample_size: 1200,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/genial-quaest-governador-senador-bahia-abril-2026/",
+    tse_protocolo: "BA036572026",
+    results: [
+      { candidate_name: "Rui Costa",           percentage: 24 },
+      { candidate_name: "Jaques Wagner",       percentage: 22 },
+      { candidate_name: "Joao Roma",           percentage:  9 },
+      { candidate_name: "Angelo Coronel",      percentage:  6 },
+      { candidate_name: "Professora Delliana", percentage:  1 },
+    ],
+  },
+
+  // Quaest · 22-26 abr 2026 · TSE MG-08646/2026 · n=1.482
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/genial-quaest-governador-senador-minas-gerais-abril-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Senador Minas Gerais 2026",
+    publication_date: "2026-04-28",
+    fieldwork_start: "2026-04-22",
+    fieldwork_end: "2026-04-26",
+    sample_size: 1482,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/genial-quaest-governador-senador-minas-gerais-abril-2026/",
+    tse_protocolo: "MG086462026",
+    results: [
+      { candidate_name: "Marilia Campos",  percentage: 19 },
+      { candidate_name: "Aecio Neves",     percentage: 11 },
+      { candidate_name: "Carlos Viana",    percentage: 10 },
+      { candidate_name: "Marcelo Aro",     percentage:  9 },
+      { candidate_name: "Domingos Savio",  percentage:  8 },
+      { candidate_name: "Aurea Carolina",  percentage:  6 },
+    ],
+  },
+
+  // Quaest · 21-25 abr 2026 · TSE RJ-00613/2026 · n=1.200
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/genial-quaest-governador-senador-rio-de-janeiro-abril-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Senador Rio de Janeiro 2026",
+    publication_date: "2026-04-27",
+    fieldwork_start: "2026-04-21",
+    fieldwork_end: "2026-04-25",
+    sample_size: 1200,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/genial-quaest-governador-senador-rio-de-janeiro-abril-2026/",
+    tse_protocolo: "RJ006132026",
+    results: [
+      { candidate_name: "Benedita da Silva", percentage: 10 },
+      { candidate_name: "Marcelo Crivella",  percentage:  6 },
+      { candidate_name: "Waguinho",          percentage:  3 },
+      { candidate_name: "Mônica Benício",    percentage:  2 },
+      { candidate_name: "Pedro Paulo",       percentage:  1 },
+    ],
+  },
+
+  // Quaest · 21-25 abr 2026 · TSE PA-09305/2026 · n=900
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/genial-quaest-governador-para-abril-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Senador Para 2026",
+    publication_date: "2026-04-27",
+    fieldwork_start: "2026-04-21",
+    fieldwork_end: "2026-04-25",
+    sample_size: 900,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/genial-quaest-governador-para-abril-2026/",
+    tse_protocolo: "PA093052026",
+    results: [
+      { candidate_name: "Helder Barbalho",  percentage: 24 },
+      { candidate_name: "Eder Mauro",       percentage: 13 },
+      { candidate_name: "Celso Sabino",     percentage:  6 },
+      { candidate_name: "Zequinha Marinho", percentage:  6 },
+      { candidate_name: "Chicão",           percentage:  4 },
+    ],
+  },
+
+  // Futura Inteligência (100% Cidades) · 2-6 abr 2026 · TSE RS-05216/2026 · n=800 · consolidado
+  // dos 2 votos (2 vagas em disputa)
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/futura-inteligencia-governador-senador-rio-grande-do-sul-abril-2026/
+  {
+    institute_name: "Futura Inteligência",
+    election_name: "Senador Rio Grande do Sul 2026",
+    publication_date: "2026-04-08",
+    fieldwork_start: "2026-04-02",
+    fieldwork_end: "2026-04-06",
+    sample_size: 800,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/futura-inteligencia-governador-senador-rio-grande-do-sul-abril-2026/",
+    tse_protocolo: "RS052162026",
+    results: [
+      { candidate_name: "Manuela d'Ávila",  percentage: 36.0 },
+      { candidate_name: "Germano Rigotto",  percentage: 31.3 },
+      { candidate_name: "Marcel Van Hattem", percentage: 27.6 },
+      { candidate_name: "Paulo Pimenta",     percentage: 24.7 },
+      { candidate_name: "Sanderson",         percentage: 10.3 },
+      { candidate_name: "Frederico Antunes", percentage:  9.1 },
+    ],
+  },
+
+  // ─── Correção — os 3 protocolos abaixo tinham dado incompleto/divergente numa rodada
+  // anterior; re-checados direto na fonte primária (HTML bruto, protocolo TSE confirmado
+  // verbatim no texto) e agora confirmados com números completos. GO013202026 continua sem
+  // confirmação (só 1 candidato com percentual na única fonte encontrada) — não inserido.
+
+  // Índice Inteligência · 4-6 ago 2026 · TSE PR-07034/2026 · n=1.200
+  // Fonte: https://dcmais.com.br/eleicoes-2026/corrida-ao-senado-pesquisa-aponta-intencao-de-voto-de-eleitores-do-parana-1/
+  {
+    institute_name: "Instituto Índice Inteligência",
+    election_name: "Senador Parana 2026",
+    publication_date: "2026-08-08",
+    fieldwork_start: "2026-08-04",
+    fieldwork_end: "2026-08-06",
+    sample_size: 1200,
+    margin_of_error: 2.83,
+    methodology: "presencial",
+    source_url: "https://dcmais.com.br/eleicoes-2026/corrida-ao-senado-pesquisa-aponta-intencao-de-voto-de-eleitores-do-parana-1/",
+    tse_protocolo: "PR070342026",
+    results: [
+      { candidate_name: "Deltan Dallagnol", percentage: 19.2 },
+      { candidate_name: "Alexandre Curi",   percentage: 17.7 },
+      { candidate_name: "Gleisi Hoffmann",  percentage: 17.3 },
+      { candidate_name: "Filipe Barros",    percentage: 16.8 },
+      { candidate_name: "Cristina Graeml",  percentage:  5.2 },
+      { candidate_name: "Dr Rosinha",       percentage:  4.7 },
+      { candidate_name: "Karen Guerreiro",  percentage:  0.7 },
+      { candidate_name: "Joaquim do Mlb",   percentage:  0.2 },
+    ],
+  },
+
+  // Datafolha · 28-30 jul 2026 · TSE PE-04519/2026 · n=1.022
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-governador-senador-pernambuco-julho-2026/
+  {
+    institute_name: "Datafolha",
+    election_name: "Senador Pernambuco 2026",
+    publication_date: "2026-08-01",
+    fieldwork_start: "2026-07-28",
+    fieldwork_end: "2026-07-30",
+    sample_size: 1022,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-governador-senador-pernambuco-julho-2026/",
+    tse_protocolo: "PE045192026",
+    results: [
+      { candidate_name: "Marilia Arraes",       percentage: 18 },
+      { candidate_name: "Humberto Costa",       percentage: 15 },
+      { candidate_name: "Mendonça Filho",       percentage: 10 },
+      { candidate_name: "Eduardo da Fonte",     percentage:  7 },
+      { candidate_name: "Carlos Sant Anna",     percentage:  2 },
+      { candidate_name: "Paulo Rubem Santiago", percentage:  1 },
+    ],
+  },
+
+  // Quaest · 24-28 jul 2026 · TSE RS-04790/2026 · n=1.104 · consolidado dos 2 votos (2 vagas)
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/genial-quaest-governador-senador-rio-grande-do-sul-julho-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Senador Rio Grande do Sul 2026",
+    publication_date: "2026-07-30",
+    fieldwork_start: "2026-07-24",
+    fieldwork_end: "2026-07-28",
+    sample_size: 1104,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/genial-quaest-governador-senador-rio-grande-do-sul-julho-2026/",
+    tse_protocolo: "RS047902026",
+    results: [
+      { candidate_name: "Manuela d'Ávila",   percentage: 12 },
+      { candidate_name: "Germano Rigotto",   percentage:  9 },
+      { candidate_name: "Paulo Pimenta",     percentage:  9 },
+      { candidate_name: "Marcel Van Hattem", percentage:  7 },
+      { candidate_name: "Sanderson",         percentage:  6 },
+      { candidate_name: "Frederico Antunes", percentage:  1 },
+      { candidate_name: "Luciano do Mlb",    percentage:  1 },
+      { candidate_name: "Tania Peres",       percentage:  1 },
+    ],
+  },
 ];
 
 async function main() {
