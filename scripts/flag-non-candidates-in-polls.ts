@@ -92,10 +92,17 @@ function tokens(s: string | null | undefined): string[] {
   return normalize(s).split(" ").filter((t) => t.length > 2);
 }
 
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+
 async function loadTse(ano: number): Promise<TseCand[]> {
   const cachePath = path.join(CACHE_DIR, `consulta_cand_${ano}.zip`);
-  if (!fs.existsSync(cachePath)) {
-    console.log(`⬇️  baixando ${TSE_ZIP_URL(ano)}`);
+  const idadeMs = fs.existsSync(cachePath) ? Date.now() - fs.statSync(cachePath).mtimeMs : Infinity;
+  if (idadeMs > CACHE_TTL_MS) {
+    // TSE atualiza o arquivo continuamente (novas candidaturas, substituições
+    // por desistência) — sem TTL, um cache velho pode dizer "não é candidato"
+    // pra alguém que se registrou depois do download. Ver caso Aécio Neves/MG:
+    // registro de 01/09 só apareceu porque o cache tinha sido feito em 02/09.
+    console.log(`⬇️  baixando ${TSE_ZIP_URL(ano)} (cache ausente ou com mais de 24h)`);
     const res = await fetch(TSE_ZIP_URL(ano));
     if (!res.ok) throw new Error(`TSE respondeu ${res.status}`);
     fs.writeFileSync(cachePath, Buffer.from(await res.arrayBuffer()));
