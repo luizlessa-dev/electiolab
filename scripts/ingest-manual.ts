@@ -5721,6 +5721,315 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Tiago",               percentage:  1 },
     ],
   },
+
+  // lote 26 — Presidência, cortes estaduais Quaest (protocolo BR pareado com Governador/Senador,
+  // mesmo padrão já mapeado pra Datafolha/RTBD). Cenário "sem Marçal" usado como base — cada
+  // protocolo também testou "com Marçal" com números 1-3pp diferentes, não inserido por vez.
+
+  // Quaest · 25-28 ago 2026 · TSE PA-07718/2026 (par: BR-05309/2026) · n=804
+  // Fonte: https://www.metropoles.com/brasil/quaest-no-para-lula-lidera-com-39-no-1o-turno-flavio-bolsonaro-tem-28
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-29",
+    fieldwork_start: "2026-08-25",
+    fieldwork_end: "2026-08-28",
+    sample_size: 804,
+    methodology: "presencial",
+    scope: "PA",
+    source_url: "https://www.metropoles.com/brasil/quaest-no-para-lula-lidera-com-39-no-1o-turno-flavio-bolsonaro-tem-28",
+    tse_protocolo: "BR053092026",
+    results: [
+      { candidate_name: "Lula",          percentage: 37 },
+      { candidate_name: "Flávio",        percentage: 29 },
+      { candidate_name: "Augusto Cury", percentage:  5 },
+      { candidate_name: "Renan",         percentage:  3 },
+      { candidate_name: "Caiado",        percentage:  2 },
+    ],
+  },
+
+  // Quaest · 23-26 ago 2026 · TSE BR-08926/2026 · n=804
+  // Fonte: https://portalranielycarvalho.com.br/politica/2026/08/28/pesquisa-presidencial-em-roraima/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-23",
+    fieldwork_end: "2026-08-26",
+    sample_size: 804,
+    methodology: "presencial",
+    scope: "RR",
+    source_url: "https://portalranielycarvalho.com.br/politica/2026/08/28/pesquisa-presidencial-em-roraima/",
+    tse_protocolo: "BR089262026",
+    results: [
+      { candidate_name: "Flávio",             percentage: 52 },
+      { candidate_name: "Lula",               percentage: 17 },
+      { candidate_name: "Renan",              percentage:  4 },
+      { candidate_name: "Caiado",             percentage:  3 },
+      { candidate_name: "Augusto Cury",       percentage:  3 },
+      { candidate_name: "Samara Martins",     percentage:  1 },
+      { candidate_name: "Zema",               percentage:  1 },
+      { candidate_name: "Rui Costa Pimenta",  percentage:  1 },
+    ],
+  },
+
+  // Quaest · 23-26 ago 2026 · TSE BR-07281/2026 · n=804
+  // Fonte: https://fanf1.com.br/2026/08/27/lula-lidera-disputa-pela-presidencia-em-sergipe-com-53-aponta-pesquisa-quaest/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-23",
+    fieldwork_end: "2026-08-26",
+    sample_size: 804,
+    methodology: "presencial",
+    scope: "SE",
+    source_url: "https://fanf1.com.br/2026/08/27/lula-lidera-disputa-pela-presidencia-em-sergipe-com-53-aponta-pesquisa-quaest/",
+    tse_protocolo: "BR072812026",
+    results: [
+      { candidate_name: "Lula",          percentage: 53 },
+      { candidate_name: "Flávio",        percentage: 19 },
+      { candidate_name: "Caiado",        percentage:  3 },
+      { candidate_name: "Augusto Cury", percentage:  2 },
+      { candidate_name: "Renan",         percentage:  2 },
+      { candidate_name: "Samara Martins", percentage: 1 },
+    ],
+  },
+
+  // Quaest · 23-26 ago 2026 · TSE BR-07810/2026 (par: GO-06186/2026) · n=804
+  // Fonte: https://aredacao.com.br/com-32-caiado-lidera-disputa-pela-presidencia-entre-eleitores-de-goias-aponta-quaest/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-23",
+    fieldwork_end: "2026-08-26",
+    sample_size: 804,
+    methodology: "presencial",
+    scope: "GO",
+    source_url: "https://aredacao.com.br/com-32-caiado-lidera-disputa-pela-presidencia-entre-eleitores-de-goias-aponta-quaest/",
+    tse_protocolo: "BR078102026",
+    results: [
+      { candidate_name: "Caiado",        percentage: 32 },
+      { candidate_name: "Flávio",        percentage: 27 },
+      { candidate_name: "Lula",          percentage: 20 },
+      { candidate_name: "Renan",         percentage:  2 },
+      { candidate_name: "Zema",          percentage:  2 },
+      { candidate_name: "Augusto Cury", percentage:  1 },
+      { candidate_name: "Samara Martins", percentage: 1 },
+    ],
+  },
+
+  // Quaest · 23-26 ago 2026 · TSE ES-04444/2026 (par: BR-06255/2026) · n=804
+  // Fonte: https://gazetabrasil.com.br/ultimas-noticias/2026/08/27/pesquisa-quaest-revela-cenario-inedito-para-a-disputa-presidencial-de-2026-no-espirito-santo/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-27",
+    fieldwork_start: "2026-08-23",
+    fieldwork_end: "2026-08-26",
+    sample_size: 804,
+    methodology: "presencial",
+    scope: "ES",
+    source_url: "https://gazetabrasil.com.br/ultimas-noticias/2026/08/27/pesquisa-quaest-revela-cenario-inedito-para-a-disputa-presidencial-de-2026-no-espirito-santo/",
+    tse_protocolo: "BR062552026",
+    results: [
+      { candidate_name: "Flávio",        percentage: 37 },
+      { candidate_name: "Lula",          percentage: 30 },
+      { candidate_name: "Renan",         percentage:  4 },
+      { candidate_name: "Caiado",        percentage:  3 },
+      { candidate_name: "Zema",          percentage:  2 },
+      { candidate_name: "Augusto Cury", percentage:  2 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE PE-07828/2026 (par: BR-04281/2026) · n=1.302
+  // Fonte: https://tvsimbrasil.com.br/eleicoes-2026/quaest-lula-54-flavio-bolsonaro-19-primeiro-turno-pernambuco
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 1302,
+    methodology: "presencial",
+    scope: "PE",
+    source_url: "https://tvsimbrasil.com.br/eleicoes-2026/quaest-lula-54-flavio-bolsonaro-19-primeiro-turno-pernambuco",
+    tse_protocolo: "BR042812026",
+    results: [
+      { candidate_name: "Lula",   percentage: 54 },
+      { candidate_name: "Flávio", percentage: 19 },
+      { candidate_name: "Caiado", percentage:  3 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE RJ-08748/2026 (par: BR-09895/2026) · n=1.302
+  // Fonte: https://www.metropoles.com/brasil/flavio-bolsonaro-e-lula-estao-tecnicamente-empatados-no-rj-diz-quaest
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 1302,
+    methodology: "presencial",
+    scope: "RJ",
+    source_url: "https://www.metropoles.com/brasil/flavio-bolsonaro-e-lula-estao-tecnicamente-empatados-no-rj-diz-quaest",
+    tse_protocolo: "BR098952026",
+    results: [
+      { candidate_name: "Flávio",        percentage: 31 },
+      { candidate_name: "Lula",          percentage: 29 },
+      { candidate_name: "Renan",         percentage:  2 },
+      { candidate_name: "Caiado",        percentage:  2 },
+      { candidate_name: "Zema",          percentage:  2 },
+      { candidate_name: "Augusto Cury", percentage:  1 },
+      { candidate_name: "Samara Martins", percentage: 1 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE BR-08827/2026 · n=804
+  // Fonte: https://conectamapa.com/pesquisa-no-amapa-lula-lidera-com-36-dos-votos/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 804,
+    methodology: "presencial",
+    scope: "AP",
+    source_url: "https://conectamapa.com/pesquisa-no-amapa-lula-lidera-com-36-dos-votos/",
+    tse_protocolo: "BR088272026",
+    results: [
+      { candidate_name: "Lula",             percentage: 36 },
+      { candidate_name: "Flávio",           percentage: 33 },
+      { candidate_name: "Renan",            percentage:  3 },
+      { candidate_name: "Augusto Cury",    percentage:  2 },
+      { candidate_name: "Caiado",           percentage:  2 },
+      { candidate_name: "Zema",             percentage:  1 },
+      { candidate_name: "Rui Costa Pimenta", percentage: 1 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE MS-00793/2026 (par: BR-04312/2026) · n=804
+  // Fonte: https://www.ocorreionews.com.br/2026/08/26/intencoes-de-votos-para-presidente-em-ms-flavio-bolsonaro-33-lula-27-caiado-5-renan-santos-4-cury-3-segundo-pesquisa-quaest/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 804,
+    methodology: "presencial",
+    scope: "MS",
+    source_url: "https://www.ocorreionews.com.br/2026/08/26/intencoes-de-votos-para-presidente-em-ms-flavio-bolsonaro-33-lula-27-caiado-5-renan-santos-4-cury-3-segundo-pesquisa-quaest/",
+    tse_protocolo: "BR043122026",
+    results: [
+      { candidate_name: "Flávio",          percentage: 33 },
+      { candidate_name: "Lula",            percentage: 27 },
+      { candidate_name: "Caiado",          percentage:  5 },
+      { candidate_name: "Renan",           percentage:  4 },
+      { candidate_name: "Augusto Cury",   percentage:  3 },
+      { candidate_name: "Zema",            percentage:  2 },
+      { candidate_name: "Samara Martins",  percentage:  2 },
+      { candidate_name: "Clariana Barao", percentage:  1 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE MT-04846/2026 (par: BR-00817/2026) · n=804
+  // Fonte: https://www.powermix.com.br/politica/quaest-flavio-bolsonaro-tem-43-e-lula-26-na-disputa-presidencial-em-mato-grosso/56594
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 804,
+    methodology: "presencial",
+    scope: "MT",
+    source_url: "https://www.powermix.com.br/politica/quaest-flavio-bolsonaro-tem-43-e-lula-26-na-disputa-presidencial-em-mato-grosso/56594",
+    tse_protocolo: "BR008172026",
+    results: [
+      { candidate_name: "Flávio",        percentage: 43 },
+      { candidate_name: "Lula",          percentage: 26 },
+      { candidate_name: "Caiado",        percentage:  4 },
+      { candidate_name: "Renan",         percentage:  3 },
+      { candidate_name: "Zema",          percentage:  2 },
+      { candidate_name: "Augusto Cury", percentage:  1 },
+      { candidate_name: "Samara Martins", percentage: 1 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE RO-05711/2026 (par: BR-00490/2026) · n=804
+  // Fonte: https://www.agenciarondonia.com/2026/08/quaest-aponta-flavio-bolsonaro-com-45-e.html
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 804,
+    methodology: "presencial",
+    scope: "RO",
+    source_url: "https://www.agenciarondonia.com/2026/08/quaest-aponta-flavio-bolsonaro-com-45-e.html",
+    tse_protocolo: "BR004902026",
+    results: [
+      { candidate_name: "Flávio",                     percentage: 45 },
+      { candidate_name: "Lula",                       percentage: 25 },
+      { candidate_name: "Caiado",                      percentage:  3 },
+      { candidate_name: "Renan",                       percentage:  3 },
+      { candidate_name: "Zema",                        percentage:  2 },
+      { candidate_name: "Augusto Cury",               percentage:  1 },
+      { candidate_name: "Veterinário Wilson Grassi",  percentage:  1 },
+      { candidate_name: "Clariana Barao",             percentage:  1 },
+    ],
+  },
+
+  // Quaest · 21-24 ago 2026 · TSE BR-00699/2026 (par: PB-07850/2026) · n=804
+  // Fonte: https://jornaldaparaiba.com.br/politica/quaest-na-paraiba-pesquisa-todos-os-numeros-agosto
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-25",
+    fieldwork_start: "2026-08-21",
+    fieldwork_end: "2026-08-24",
+    sample_size: 804,
+    methodology: "presencial",
+    scope: "PB",
+    source_url: "https://jornaldaparaiba.com.br/politica/quaest-na-paraiba-pesquisa-todos-os-numeros-agosto",
+    tse_protocolo: "BR006992026",
+    results: [
+      { candidate_name: "Lula",   percentage: 50 },
+      { candidate_name: "Flávio", percentage: 21 },
+      { candidate_name: "Caiado", percentage:  3 },
+      { candidate_name: "Renan",  percentage:  2 },
+      { candidate_name: "Zema",   percentage:  1 },
+    ],
+  },
+
+  // Quaest · 20-23 ago 2026 · TSE PR-05388/2026 (par: BR-03761/2026) · n=804
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/flavio-bolsonaro-tem-41-no-1o-turno-no-parana-diz-quaest/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-08-24",
+    fieldwork_start: "2026-08-20",
+    fieldwork_end: "2026-08-23",
+    sample_size: 804,
+    methodology: "presencial",
+    scope: "PR",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/flavio-bolsonaro-tem-41-no-1o-turno-no-parana-diz-quaest/",
+    tse_protocolo: "BR037612026",
+    results: [
+      { candidate_name: "Flávio",          percentage: 41 },
+      { candidate_name: "Lula",            percentage: 23 },
+      { candidate_name: "Caiado",          percentage:  5 },
+      { candidate_name: "Zema",            percentage:  3 },
+      { candidate_name: "Renan",           percentage:  2 },
+      { candidate_name: "Augusto Cury",   percentage:  1 },
+      { candidate_name: "Edmilson Costa", percentage:  1 },
+    ],
+  },
 ];
 
 async function main() {
