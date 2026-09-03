@@ -4863,6 +4863,74 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Carlos Jordy",      percentage: 11 },
     ],
   },
+
+  // lote 21 — Presidência, completa 2º turno de pesquisa já curada (só tinha 1º turno)
+  // Datafolha · 18-20 ago 2026 · TSE BR-04496/2026 · n=2.058
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-presidente-agosto-2026/
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-08-21",
+    fieldwork_start: "2026-08-18",
+    fieldwork_end: "2026-08-20",
+    sample_size: 2058,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-presidente-agosto-2026/",
+    tse_protocolo: "BR044962026",
+    scenario_label: "Lula vs Flavio Bolsonaro",
+    results: [
+      { candidate_name: "Lula",            percentage: 47 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 43 },
+    ],
+  },
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-08-21",
+    fieldwork_start: "2026-08-18",
+    fieldwork_end: "2026-08-20",
+    sample_size: 2058,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-presidente-agosto-2026/",
+    tse_protocolo: "BR044962026",
+    scenario_label: "Lula vs Caiado",
+    results: [
+      { candidate_name: "Lula",   percentage: 47 },
+      { candidate_name: "Caiado", percentage: 40 },
+    ],
+  },
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-08-21",
+    fieldwork_start: "2026-08-18",
+    fieldwork_end: "2026-08-20",
+    sample_size: 2058,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-presidente-agosto-2026/",
+    tse_protocolo: "BR044962026",
+    scenario_label: "Lula vs Zema",
+    results: [
+      { candidate_name: "Lula", percentage: 48 },
+      { candidate_name: "Zema", percentage: 38 },
+    ],
+  },
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-08-21",
+    fieldwork_start: "2026-08-18",
+    fieldwork_end: "2026-08-20",
+    sample_size: 2058,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-presidente-agosto-2026/",
+    tse_protocolo: "BR044962026",
+    scenario_label: "Lula vs Renan Santos",
+    results: [
+      { candidate_name: "Lula",         percentage: 47 },
+      { candidate_name: "Renan Santos", percentage: 37 },
+    ],
+  },
 ];
 
 async function main() {
