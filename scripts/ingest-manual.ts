@@ -5224,6 +5224,107 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Lula",            percentage: 37 },
     ],
   },
+
+  // lote 24 — Senado, repescagem 03/09
+  // Instituto Paraná Pesquisas · 31 ago-02 set 2026 · TSE PR-03399/2026 · n=1.280
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/parana-pesquisas-senador-parana-setembro-2026/
+  {
+    institute_name: "Paraná Pesquisas",
+    election_name: "Senador Parana 2026",
+    publication_date: "2026-09-03",
+    fieldwork_start: "2026-08-31",
+    fieldwork_end: "2026-09-02",
+    sample_size: 1280,
+    margin_of_error: 2.8,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/parana-pesquisas-senador-parana-setembro-2026/",
+    tse_protocolo: "PR033992026",
+    results: [
+      { candidate_name: "Deltan Dallagnol",  percentage: 30.8 },
+      { candidate_name: "Alexandre Curi",    percentage: 28.4 },
+      { candidate_name: "Gleisi Hoffmann",   percentage: 25.7 },
+      { candidate_name: "Filipe Barros",     percentage: 22.9 },
+      { candidate_name: "Cristina Graeml",   percentage: 14.4 },
+      { candidate_name: "Dr Rosinha",        percentage: 13.0 },
+      { candidate_name: "Marcelo Marcelino", percentage:  1.7 },
+      { candidate_name: "Joaquim do Mlb",    percentage:  1.3 },
+      { candidate_name: "Karen Guerreiro",   percentage:  0.9 },
+    ],
+  },
+
+  // Real Time Big Data · 29 ago-02 set 2026 · TSE MT-07156/2026 · n=1.600
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-mato-grosso-setembro-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Mato Grosso 2026",
+    publication_date: "2026-09-03",
+    fieldwork_start: "2026-08-29",
+    fieldwork_end: "2026-09-02",
+    sample_size: 1600,
+    margin_of_error: 2,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-mato-grosso-setembro-2026/",
+    tse_protocolo: "MT071562026",
+    results: [
+      { candidate_name: "Mauro Mendes",        percentage: 27 },
+      { candidate_name: "Janaina Riva",        percentage: 26 },
+      { candidate_name: "Carlos Favaro",       percentage: 14 },
+      { candidate_name: "Jose Medeiros",       percentage: 13 },
+      { candidate_name: "Pedro Taques",        percentage: 13 },
+      { candidate_name: "Galvan",              percentage:  2 },
+      { candidate_name: "Margareth Buzetti",   percentage:  2 },
+    ],
+  },
+
+  // AtlasIntel · 28 ago-02 set 2026 · TSE BA-08891/2026 · n=1.804 (base: total de entrevistados)
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governo-senado-bahia-setembro-2026/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Senador Bahia 2026",
+    publication_date: "2026-09-03",
+    fieldwork_start: "2026-08-28",
+    fieldwork_end: "2026-09-02",
+    sample_size: 1804,
+    margin_of_error: 2,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governo-senado-bahia-setembro-2026/",
+    tse_protocolo: "BA088912026",
+    results: [
+      { candidate_name: "Rui Costa",          percentage: 28.2 },
+      { candidate_name: "Jaques Wagner",      percentage: 23.7 },
+      { candidate_name: "Joao Roma",          percentage: 18.3 },
+      { candidate_name: "Angelo Coronel",     percentage: 16.0 },
+      { candidate_name: "Professora Delliana", percentage: 2.3 },
+      { candidate_name: "Marcelo Carvalho",   percentage:  0.5 },
+      { candidate_name: "Carlos Sodré",       percentage:  0.2 },
+      { candidate_name: "Gregorio Gould",     percentage:  0.1 },
+      { candidate_name: "Marcelo Santtana",   percentage:  0.1 },
+    ],
+  },
+
+  // Real Time Big Data · 29 ago-02 set 2026 · TSE PE-09116/2026 · n=1.600
+  // Fonte: https://blogdomagno.com.br/marilia-arraes-segue-na-lideranca-na-disputa-pelo-senado/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Pernambuco 2026",
+    publication_date: "2026-09-03",
+    fieldwork_start: "2026-08-29",
+    fieldwork_end: "2026-09-02",
+    sample_size: 1600,
+    margin_of_error: 2,
+    methodology: "telefonica",
+    source_url: "https://blogdomagno.com.br/marilia-arraes-segue-na-lideranca-na-disputa-pelo-senado/",
+    tse_protocolo: "PE091162026",
+    results: [
+      { candidate_name: "Marilia Arraes",       percentage: 29 },
+      { candidate_name: "Mendonça Filho",       percentage: 20 },
+      { candidate_name: "Humberto Costa",       percentage: 19 },
+      { candidate_name: "Eduardo da Fonte",     percentage: 13 },
+      { candidate_name: "Tulio Gadelha",        percentage: 12 },
+      { candidate_name: "Carlos Sant Anna",     percentage:  1 },
+      { candidate_name: "Paulo Rubem Santiago", percentage:  1 },
+    ],
+  },
 ];
 
 async function main() {
