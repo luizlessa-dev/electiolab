@@ -33,7 +33,7 @@ export async function generateMetadata({
 
   const title = `Pesquisas Senador ${uf.toUpperCase()} 2026 — ${stateName} | ElectioLab`;
   const description =
-    `Pesquisas de intenção de voto para o Senado em ${stateName} nas eleições 2026. ` +
+    `Pesquisas de intenção de voto para as 2 vagas ao Senado em ${stateName} nas eleições 2026. ` +
     `Candidatos, média das pesquisas e dados dos institutos registrados no TSE.`;
 
   return {
@@ -60,12 +60,12 @@ export default async function SenadorPage({ params }: { params: Promise<{ uf: UF
   const FAQ = [
     {
       q: `Quantas vagas ao Senado ${stateName} elege em 2026?`,
-      a: `Em 2026 cada estado elege 1 vaga ao Senado (renovação de 1/3). ${stateName}, como todas as unidades da federação, terá uma cadeira em disputa, com mandato de 8 anos.`,
+      a: `Em 2026 cada estado elege 2 vagas ao Senado — o eleitor vota em até dois nomes e os dois mais votados são eleitos. É ano de renovação de dois terços da Casa (54 das 81 cadeiras); em 2022 havia apenas 1 vaga em disputa por estado. Cada mandato dura 8 anos.`,
     },
     {
       q: `Quem lidera as pesquisas para o Senado em ${stateName}?`,
       a: leader
-        ? `${leader.name}${leader.party ? ` (${leader.party})` : ""} aparece à frente na pesquisa mais recente indexada pelo ElectioLab (${snapshot?.institute_name}, ${snapshot?.publication_date}), com ${leader.pct.toFixed(1)}%. As pesquisas de Senado são menos frequentes que as de governador.`
+        ? `${leader.name}${leader.party ? ` (${leader.party})` : ""} aparece à frente na pesquisa mais recente indexada pelo ElectioLab (${snapshot?.institute_name}, ${snapshot?.publication_date}), com ${leader.pct.toFixed(1)}%, para uma das 2 vagas em disputa. As pesquisas de Senado são menos frequentes que as de governador.`
         : `As pesquisas para o Senado em ${stateName} ainda são esparsas em 2026. O ElectioLab indexa cada nova pesquisa registrada no TSE assim que publicada.`,
     },
     {
@@ -148,9 +148,10 @@ export default async function SenadorPage({ params }: { params: Promise<{ uf: UF
             Pesquisas para Senador em {stateName} 2026
           </h1>
           <p className="text-muted-foreground max-w-2xl leading-relaxed">
-            {stateName} elege 1 vaga ao Senado em 2026, em turno único. O ElectioLab agrega as
-            pesquisas registradas no TSE e mostra a mais recente abaixo. Pesquisas de Senado são
-            menos frequentes que as de governador — atualizamos assim que novas são publicadas.
+            {stateName} elege 2 vagas ao Senado em 2026, em turno único — o eleitor vota em até
+            dois nomes, e os dois mais votados são eleitos. O ElectioLab agrega as pesquisas
+            registradas no TSE e mostra a mais recente abaixo. Pesquisas de Senado são menos
+            frequentes que as de governador — atualizamos assim que novas são publicadas.
           </p>
         </div>
 

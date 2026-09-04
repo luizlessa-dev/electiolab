@@ -243,8 +243,10 @@ export default async function EstadoPage({ params }: { params: Promise<{ uf: UF 
             </h2>
             <div className="border border-border rounded-lg p-5 space-y-3">
               <p className="text-sm text-muted-foreground leading-relaxed">
-                {stateName} elegerá 1 senador em 2026 (alternância de 1/3 e 2/3 das cadeiras).
-                Pesquisas para senador são menos frequentes que as para governador — os primeiros
+                {stateName} elegerá 2 senadores em 2026 — o eleitor vota em até dois nomes, e os
+                dois mais votados são eleitos. 2026 é ano de renovação de dois terços do Senado
+                (54 das 81 cadeiras); em 2022 apenas 1 vaga por estado esteve em disputa. Pesquisas
+                para senador são menos frequentes que as para governador — os primeiros
                 levantamentos costumam surgir a partir de março do ano eleitoral.
               </p>
               <div className="flex flex-wrap gap-2">
