@@ -3,7 +3,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, BarChart3, MapPin, Users, TrendingUp } from "lucide-react";
 import { UF_NAMES } from "@/components/historic-election/page-template";
-import { getLatestStateGovPoll, getStateRunoffScenarios, toRunoffTabs } from "@/lib/marketing-data";
+import {
+  getLatestStateGovPoll,
+  getLatestDeputadoFederalPoll,
+  getStateRunoffScenarios,
+  toRunoffTabs,
+} from "@/lib/marketing-data";
 import { StatePollSnapshotCard } from "@/components/state-poll-snapshot";
 import { StateRunoffTabs } from "@/components/state-runoff-tabs";
 
@@ -26,6 +31,13 @@ const UF_REGION: Record<string, string> = {
   DF: "Centro-Oeste", GO: "Centro-Oeste", MS: "Centro-Oeste", MT: "Centro-Oeste",
   ES: "Sudeste", MG: "Sudeste", RJ: "Sudeste", SP: "Sudeste",
   PR: "Sul", RS: "Sul", SC: "Sul",
+};
+
+// Cadeiras de deputado federal por UF (Lei Complementar 78/1993, distribuição vigente em 2026 — total 513)
+const DEPUTADOS_FEDERAIS_POR_UF: Record<string, number> = {
+  SP: 70, MG: 53, RJ: 46, BA: 39, RS: 31, PR: 30, PE: 25, CE: 22, MA: 18,
+  GO: 17, PA: 17, SC: 16, PB: 12, ES: 10, PI: 10, AL: 9,
+  AC: 8, AM: 8, AP: 8, DF: 8, MS: 8, MT: 8, RN: 8, RO: 8, RR: 8, SE: 8, TO: 8,
 };
 
 // Colégio eleitoral estimado 2026 (TSE fev/2026, em milhões)
@@ -82,9 +94,10 @@ export default async function EstadoPage({ params }: { params: Promise<{ uf: UF 
   const region = UF_REGION[ufUpper] ?? "";
   const eleitores = UF_ELEITORES[ufUpper] ?? "";
 
-  const [govSnapshot, runoffScenarios] = await Promise.all([
+  const [govSnapshot, runoffScenarios, depFedSnapshot] = await Promise.all([
     getLatestStateGovPoll(ufUpper),
     getStateRunoffScenarios(ufUpper),
+    getLatestDeputadoFederalPoll(ufUpper),
   ]);
   const runoffTabs = toRunoffTabs(runoffScenarios);
 
@@ -251,7 +264,7 @@ export default async function EstadoPage({ params }: { params: Promise<{ uf: UF 
               </p>
               <div className="flex flex-wrap gap-2">
                 <Link
-                  href={`/candidatos?estado=${uf}&cargo=senador`}
+                  href={`/candidatos?uf=${ufUpper}&type=senador`}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs border border-border rounded-md hover:bg-muted/30 transition-colors"
                 >
                   <Users className="h-3 w-3" />
@@ -263,6 +276,50 @@ export default async function EstadoPage({ params }: { params: Promise<{ uf: UF 
                 >
                   <BarChart3 className="h-3 w-3" />
                   Institutos que cobrem {stateName}
+                </Link>
+              </div>
+            </div>
+          </section>
+
+          {/* Deputado Federal */}
+          <section className="space-y-4">
+            <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              Deputado Federal 2026
+            </h2>
+            <div className="border border-border rounded-lg p-5 space-y-3">
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {stateName} elege {DEPUTADOS_FEDERAIS_POR_UF[ufUpper] ?? "várias"} cadeiras de
+                deputado federal em 2026, pelo sistema proporcional (quociente eleitoral) — não é
+                um confronto de 2 ou 3 nomes como governador. Por isso, pesquisa nominal pra esse
+                cargo é rara: a maioria dos institutos testa só governador e senador. Quando existe,
+                costuma ser pesquisa <strong>espontânea</strong> (o entrevistado cita quem quiser,
+                sem lista de opções) — os números ficam na casa de poucos % porque dezenas de
+                candidatos dividem a atenção, o que não é comparável ao formato "líder a 40%" de
+                governador.
+              </p>
+              {depFedSnapshot ? (
+                <div className="space-y-2">
+                  <p className="text-xs font-mono text-muted-foreground uppercase tracking-wide">
+                    Candidatos mais citados espontaneamente
+                  </p>
+                  <StatePollSnapshotCard snapshot={depFedSnapshot} />
+                </div>
+              ) : (
+                <div className="border border-border rounded-sm bg-card p-4">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Nenhuma pesquisa nominal de deputado federal indexada pra {stateName} ainda. O
+                    ElectioLab atualiza assim que institutos publicarem.
+                  </p>
+                </div>
+              )}
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  href={`/candidatos?uf=${ufUpper}&type=deputado_federal`}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs border border-border rounded-md hover:bg-muted/30 transition-colors"
+                >
+                  <Users className="h-3 w-3" />
+                  Ver candidatos a deputado federal de {ufUpper}
                 </Link>
               </div>
             </div>
@@ -282,7 +339,7 @@ export default async function EstadoPage({ params }: { params: Promise<{ uf: UF 
                   icon: TrendingUp,
                 },
                 {
-                  href: `/candidatos?estado=${uf}`,
+                  href: `/candidatos?uf=${ufUpper}`,
                   label: `Candidatos de ${stateName}`,
                   desc: "Perfis com dados TSE, patrimônio e FEFC",
                   icon: Users,

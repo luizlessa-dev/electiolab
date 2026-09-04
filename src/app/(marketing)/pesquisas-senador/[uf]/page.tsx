@@ -197,7 +197,7 @@ export default async function SenadorPage({ params }: { params: Promise<{ uf: UF
             {[
               { href: `/eleicoes-governador-${uf}-2026`, label: `Governador ${ufUpper} 2026`, desc: "Pesquisas e análise da corrida estadual", icon: TrendingUp },
               { href: `/eleicoes/${uf}`, label: `Hub eleitoral ${ufUpper}`, desc: "Governador, senador e histórico", icon: Landmark },
-              { href: `/candidatos?estado=${uf}&cargo=senador`, label: "Candidatos a senador", desc: "Perfis com dados TSE", icon: Users },
+              { href: `/candidatos?uf=${ufUpper}&type=senador`, label: "Candidatos a senador", desc: "Perfis com dados TSE", icon: Users },
               { href: "/pesquisas-presidenciais-2026", label: "Presidencial 2026", desc: "Média ponderada nacional", icon: BarChart3 },
             ].map((item) => (
               <Link key={item.href} href={item.href} className="group border border-border rounded-lg px-4 py-3 hover:bg-muted/30 transition-colors flex items-start justify-between gap-3">

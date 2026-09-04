@@ -32,6 +32,7 @@ export type StatePollSnapshot = {
   scope: string | null;
   scenario_label: string | null;
   source_url: string | null;
+  poll_type: string | null;
   results: StatePollResult[];
 };
 
@@ -41,7 +42,7 @@ export type StatePollSnapshot = {
  */
 async function getLatestStatePollByType(
   uf: string,
-  type: "governador" | "senador"
+  type: "governador" | "senador" | "deputado_federal"
 ): Promise<StatePollSnapshot | null> {
   const supabase = sb();
 
@@ -61,7 +62,7 @@ async function getLatestStatePollByType(
     .from("polls")
     .select(
       `id, publication_date, sample_size, margin_of_error, methodology, scope,
-       scenario_label, source_url,
+       scenario_label, source_url, poll_type,
        institute:institutes(name, slug),
        results:poll_results!inner(percentage, candidate:candidates(name, party, color))`
     )
@@ -84,6 +85,7 @@ async function getLatestStatePollByType(
       scope: string | null;
       scenario_label: string | null;
       source_url: string | null;
+      poll_type: string | null;
       institute: { name: string; slug: string | null }[] | { name: string; slug: string | null } | null;
       results: Array<{
         percentage: number;
@@ -135,6 +137,7 @@ async function getLatestStatePollByType(
     scope: best.scope,
     scenario_label: best.scenario_label,
     source_url: best.source_url,
+    poll_type: best.poll_type,
     results,
   };
 }
@@ -145,6 +148,20 @@ export function getLatestStateGovPoll(uf: string): Promise<StatePollSnapshot | n
 
 export function getLatestSenatorPoll(uf: string): Promise<StatePollSnapshot | null> {
   return getLatestStatePollByType(uf, "senador");
+}
+
+/**
+ * Pesquisa mais recente de Deputado Federal por estado. Diferente de
+ * governador/senador: a imprensa raramente publica pesquisa ESTIMULADA
+ * (lista fechada de candidatos) pra deputado federal — o formato comum é
+ * ESPONTÂNEA (o entrevistado cita quem quiser, sem opções), o que produz
+ * líderes na casa de poucos % (dezenas de candidatos competindo por atenção),
+ * não comparável ao formato "líder a 40%" de governador. A UI que consome
+ * isso precisa deixar esse caveat explícito — ver seção "Deputado Federal"
+ * em /eleicoes/[uf].
+ */
+export function getLatestDeputadoFederalPoll(uf: string): Promise<StatePollSnapshot | null> {
+  return getLatestStatePollByType(uf, "deputado_federal");
 }
 
 /**
@@ -377,7 +394,7 @@ export async function getLatestPresidentialPoll(): Promise<StatePollSnapshot | n
     .from("polls")
     .select(
       `id, publication_date, sample_size, margin_of_error, methodology, scope,
-       scenario_label, source_url,
+       scenario_label, source_url, poll_type,
        institute:institutes(name, slug),
        results:poll_results!inner(percentage, candidate:candidates(name, party, color))`
     )
@@ -399,6 +416,7 @@ export async function getLatestPresidentialPoll(): Promise<StatePollSnapshot | n
       scope: string | null;
       scenario_label: string | null;
       source_url: string | null;
+      poll_type: string | null;
       institute: { name: string; slug: string | null }[] | { name: string; slug: string | null } | null;
       results: Array<{
         percentage: number;
@@ -434,6 +452,7 @@ export async function getLatestPresidentialPoll(): Promise<StatePollSnapshot | n
     scope: string | null;
     scenario_label: string | null;
     source_url: string | null;
+    poll_type: string | null;
     institute: { name: string; slug: string | null }[] | { name: string; slug: string | null } | null;
     results: Array<{
       percentage: number;
@@ -468,6 +487,7 @@ export async function getLatestPresidentialPoll(): Promise<StatePollSnapshot | n
     scope: best.scope,
     scenario_label: best.scenario_label,
     source_url: best.source_url,
+    poll_type: best.poll_type,
     results,
   };
 }

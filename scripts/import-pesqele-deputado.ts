@@ -2,6 +2,20 @@
 /**
  * P1.3: Import Federal Deputy (Deputado Federal) Polls from PesqEle
  *
+ * DESATUALIZADO (2026-09-04): esse script só grava metadado da pesquisa em
+ * `polls` — não tem campo pra candidato/percentual, então não grava
+ * `poll_results`. O `data/pesqele_deputado_import.json` que ele lia foi
+ * removido: os "4 exemplos" eram dado fabricado (mesma URL genérica do TSE
+ * repetida, protocolos sequenciais fake tipo BR-00001/2026, sem % nomeados).
+ *
+ * Deputado federal É pesquisado nominalmente (achamos exemplos reais: Igape/DF
+ * protocolo DF-02390/2026, Instituto Ranking Pesquisa/MS) — mas por institutos
+ * regionais, em pesquisa ESPONTÂNEA (recall livre, sem lista fechada), não
+ * pelos institutos Tier 1 listados abaixo. Ver `getLatestDeputadoFederalPoll`
+ * em src/lib/marketing-data.ts pro padrão de ingestão real (poll + poll_results
+ * ligados a candidatos já existentes de src/lib/ingest — candidaturas TSE já
+ * carregam ~19k candidatos de deputado federal/estadual/distrital).
+ *
  * Deputy polls are rare and expensive (low cost-benefit in 2026), but this
  * script extracts Tier 1 institute coverage when available.
  *
@@ -285,25 +299,11 @@ async function main() {
 
   if (allPolls.length === 0) {
     console.error(
-      "❌ Nenhuma pesquisa carregada. Criando arquivo de exemplo..."
+      `❌ Nenhuma pesquisa em ${jsonPath}. Esse script está desatualizado (não grava ` +
+      `poll_results) — ver nota no topo do arquivo. Preencha o JSON com dado real e ` +
+      `sourced, não invente exemplo.`
     );
-    allPolls = [
-      {
-        institute: "Datafolha",
-        position: "DEP_FEDERAL",
-        state: "SP",
-        fieldwork_date: "2026-08-18",
-        fieldwork_start: "2026-08-15",
-        fieldwork_end: "2026-08-18",
-        publication_date: "2026-08-19",
-        sample_size: 1610,
-        margin_of_error: 2.44,
-        poll_name: "Datafolha — Deputado Federal São Paulo",
-        tse_register: "BR-00001/2026",
-        source_url:
-          "https://www.tse.jus.br/eleitor/glossario/termos/pesquisas-eleitorais",
-      },
-    ];
+    return;
   }
 
   // Filtrar por estado se solicitado
