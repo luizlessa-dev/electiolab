@@ -6117,6 +6117,29 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Renan Santos", percentage: 38 },
     ],
   },
+
+  // lote 28 — primeira pesquisa de Deputado Federal curada
+  // Instituto Paraná Pesquisas · 31 mai-02 jun 2026 · TSE AC-01182/2026 · n=1.000
+  // Fonte: https://www.poder360.com.br (5 nomes empatam na disputa para deputado federal no AC)
+  {
+    institute_name: "Paraná Pesquisas",
+    election_name: "Deputado Federal Acre 2026",
+    publication_date: "2026-06-03",
+    fieldwork_start: "2026-05-31",
+    fieldwork_end: "2026-06-02",
+    sample_size: 1000,
+    margin_of_error: 3.2,
+    methodology: "presencial",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/5-nomes-empatam-na-disputa-para-deputado-federal-no-ac/",
+    tse_protocolo: "AC011822026",
+    results: [
+      { candidate_name: "Coronel Ulysses",  percentage: 12.5 },
+      { candidate_name: "Socorro Neri",     percentage: 12.2 },
+      { candidate_name: "Minoru Kinpara",   percentage:  8.5 },
+      { candidate_name: "Perpétua Almeida", percentage:  8.1 },
+      { candidate_name: "Antônia Lúcia",    percentage:  6.4 },
+    ],
+  },
 ];
 
 async function main() {
