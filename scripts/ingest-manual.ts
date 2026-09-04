@@ -6140,6 +6140,94 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Antônia Lúcia",    percentage:  6.4 },
     ],
   },
+
+  // lote 29 — Senado, Instituto Gazeta (novo instituto, contratado pela TV Atual/Record News,
+  // confirmado com cobertura real de imprensa em GO/DF). Número usado: "1º voto".
+
+  // Instituto Gazeta · 18-22 ago 2026 · TSE DF-09414/2026 · n=2.000
+  // Fonte: https://www.metropoles.com/colunas/grande-angular/michelle-lidera-como-favorita-ao-senado-pelo-df-diz-pesquisa-igape
+  {
+    institute_name: "Instituto Gazeta",
+    election_name: "Senador Distrito Federal 2026",
+    publication_date: "2026-08-23",
+    fieldwork_start: "2026-08-18",
+    fieldwork_end: "2026-08-22",
+    sample_size: 2000,
+    margin_of_error: 2.2,
+    methodology: "telefonica",
+    source_url: "https://www.metropoles.com/colunas/grande-angular/michelle-lidera-como-favorita-ao-senado-pelo-df-diz-pesquisa-igape",
+    tse_protocolo: "DF094142026",
+    results: [
+      { candidate_name: "Michelle Bolsonaro",         percentage: 23.6 },
+      { candidate_name: "Leila Barros",                percentage: 11.4 },
+      { candidate_name: "Érika Kokay",                 percentage:  9.9 },
+      { candidate_name: "Bia Kicis",                   percentage:  9.1 },
+      { candidate_name: "Ronaldo Fonseca",              percentage:  2.5 },
+      { candidate_name: "Sebastião Coelho",            percentage:  2.1 },
+      { candidate_name: "Tiago",                        percentage:  1.5 },
+      { candidate_name: "Guto Felício Dos Santos",     percentage:  1.3 },
+      { candidate_name: "Professor Guilherme Amorim",  percentage:  1.3 },
+      { candidate_name: "Zanata",                       percentage:  1.0 },
+      { candidate_name: "Marley",                       percentage:  0.8 },
+      { candidate_name: "Avenir Rosa",                  percentage:  0.6 },
+      { candidate_name: "David Horn",                   percentage:  0.4 },
+    ],
+  },
+
+  // Instituto Gazeta · 25-29 ago 2026 · TSE DF-02089/2026 · n=2.000
+  // Fonte: https://jornaldebrasilia.com.br/brasilia/michelle-dispara-na-corrida-pelo-senado-e-chega-a-271-no-df/
+  {
+    institute_name: "Instituto Gazeta",
+    election_name: "Senador Distrito Federal 2026",
+    publication_date: "2026-08-30",
+    fieldwork_start: "2026-08-25",
+    fieldwork_end: "2026-08-29",
+    sample_size: 2000,
+    margin_of_error: 2.2,
+    methodology: "telefonica",
+    source_url: "https://jornaldebrasilia.com.br/brasilia/michelle-dispara-na-corrida-pelo-senado-e-chega-a-271-no-df/",
+    tse_protocolo: "DF020892026",
+    results: [
+      { candidate_name: "Michelle Bolsonaro",         percentage: 27.1 },
+      { candidate_name: "Leila Barros",                percentage: 13.7 },
+      { candidate_name: "Érika Kokay",                 percentage: 10.3 },
+      { candidate_name: "Bia Kicis",                   percentage:  8.7 },
+      { candidate_name: "Sebastião Coelho",            percentage:  2.8 },
+      { candidate_name: "Ronaldo Fonseca",              percentage:  1.9 },
+      { candidate_name: "Tiago",                        percentage:  1.7 },
+      { candidate_name: "Guto Felício Dos Santos",     percentage:  1.5 },
+      { candidate_name: "Professor Guilherme Amorim",  percentage:  1.4 },
+      { candidate_name: "Zanata",                       percentage:  0.9 },
+      { candidate_name: "Avenir Rosa",                  percentage:  0.7 },
+      { candidate_name: "David Horn",                   percentage:  0.5 },
+      { candidate_name: "Marley",                       percentage:  0.4 },
+    ],
+  },
+
+  // Instituto Gazeta · 20-29 ago 2026 · TSE GO-09302/2026 · n=3.000
+  // Fonte: https://www.diariodeaparecida.com.br/2026/08/31/gracinha-caiado-desponta-na-lideranca-pelo-senado-em-goias-mas-indecisao-ainda-marca-o-cenario-eleitoral/
+  {
+    institute_name: "Instituto Gazeta",
+    election_name: "Senador Goias 2026",
+    publication_date: "2026-08-31",
+    fieldwork_start: "2026-08-20",
+    fieldwork_end: "2026-08-29",
+    sample_size: 3000,
+    margin_of_error: 1.8,
+    methodology: "telefonica",
+    source_url: "https://www.diariodeaparecida.com.br/2026/08/31/gracinha-caiado-desponta-na-lideranca-pelo-senado-em-goias-mas-indecisao-ainda-marca-o-cenario-eleitoral/",
+    tse_protocolo: "GO093022026",
+    results: [
+      { candidate_name: "Gracinha Caiado",   percentage: 14.0 },
+      { candidate_name: "Gustavo Gayer",     percentage: 12.4 },
+      { candidate_name: "Gustavo Mendanha",  percentage:  7.8 },
+      { candidate_name: "Vanderlan Cardoso", percentage:  5.7 },
+      { candidate_name: "Zacarias Calil",    percentage:  3.1 },
+      { candidate_name: "Cintia Dias",       percentage:  1.4 },
+      { candidate_name: "Isaura Lemos",      percentage:  1.2 },
+      { candidate_name: "Ernesto Roller",    percentage:  1.0 },
+    ],
+  },
 ];
 
 async function main() {
