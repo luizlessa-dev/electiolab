@@ -42,7 +42,7 @@ export type StatePollSnapshot = {
  */
 async function getLatestStatePollByType(
   uf: string,
-  type: "governador" | "senador" | "deputado_federal" | "deputado_estadual"
+  type: "governador" | "senador" | "deputado_federal" | "deputado_estadual" | "deputado_distrital"
 ): Promise<StatePollSnapshot | null> {
   const supabase = sb();
 
@@ -173,6 +173,15 @@ export function getLatestDeputadoFederalPoll(uf: string): Promise<StatePollSnaps
  */
 export function getLatestDeputadoEstadualPoll(uf: string): Promise<StatePollSnapshot | null> {
   return getLatestStatePollByType(uf, "deputado_estadual");
+}
+
+/**
+ * Pesquisa mais recente de Deputado Distrital — só existe no DF (Câmara
+ * Legislativa faz o papel de Assembleia Legislativa + deputado estadual).
+ * Mesmo caveat de espontânea/pulverização do deputado estadual.
+ */
+export function getLatestDeputadoDistritalPoll(uf: string): Promise<StatePollSnapshot | null> {
+  return getLatestStatePollByType(uf, "deputado_distrital");
 }
 
 /**

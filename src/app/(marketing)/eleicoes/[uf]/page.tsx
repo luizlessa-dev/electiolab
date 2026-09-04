@@ -7,6 +7,7 @@ import {
   getLatestStateGovPoll,
   getLatestDeputadoFederalPoll,
   getLatestDeputadoEstadualPoll,
+  getLatestDeputadoDistritalPoll,
   getStateRunoffScenarios,
   toRunoffTabs,
 } from "@/lib/marketing-data";
@@ -104,11 +105,12 @@ export default async function EstadoPage({ params }: { params: Promise<{ uf: UF 
   const region = UF_REGION[ufUpper] ?? "";
   const eleitores = UF_ELEITORES[ufUpper] ?? "";
 
-  const [govSnapshot, runoffScenarios, depFedSnapshot, depEstSnapshot] = await Promise.all([
+  const [govSnapshot, runoffScenarios, depFedSnapshot, depEstSnapshot, depDistSnapshot] = await Promise.all([
     getLatestStateGovPoll(ufUpper),
     getStateRunoffScenarios(ufUpper),
     getLatestDeputadoFederalPoll(ufUpper),
     ufUpper === "DF" ? Promise.resolve(null) : getLatestDeputadoEstadualPoll(ufUpper),
+    ufUpper === "DF" ? getLatestDeputadoDistritalPoll(ufUpper) : Promise.resolve(null),
   ]);
   const runoffTabs = toRunoffTabs(runoffScenarios);
 
@@ -373,6 +375,49 @@ export default async function EstadoPage({ params }: { params: Promise<{ uf: UF 
                   >
                     <Users className="h-3 w-3" />
                     Ver candidatos a deputado estadual de {ufUpper}
+                  </Link>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* Deputado Distrital (só existe no DF — Câmara Legislativa) */}
+          {ufUpper === "DF" && (
+            <section className="space-y-4">
+              <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                Deputado Distrital 2026
+              </h2>
+              <div className="border border-border rounded-lg p-5 space-y-3">
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  O Distrito Federal elege 24 cadeiras na Câmara Legislativa (CLDF) em 2026 — o
+                  equivalente distrital à Assembleia Legislativa dos estados. Mesmo caveat do
+                  deputado estadual: pesquisa nominal é rara e, quando existe, é espontânea — o
+                  primeiro colocado costuma ficar na casa de poucos %, dentro da margem de erro da
+                  amostra total.
+                </p>
+                {depDistSnapshot ? (
+                  <div className="space-y-2">
+                    <p className="text-xs font-mono text-muted-foreground uppercase tracking-wide">
+                      Candidatos mais citados espontaneamente
+                    </p>
+                    <StatePollSnapshotCard snapshot={depDistSnapshot} />
+                  </div>
+                ) : (
+                  <div className="border border-border rounded-sm bg-card p-4">
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      Nenhuma pesquisa nominal de deputado distrital indexada ainda. O ElectioLab
+                      atualiza assim que institutos publicarem.
+                    </p>
+                  </div>
+                )}
+                <div className="flex flex-wrap gap-2">
+                  <Link
+                    href={`/candidatos?uf=DF&type=deputado_distrital`}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs border border-border rounded-md hover:bg-muted/30 transition-colors"
+                  >
+                    <Users className="h-3 w-3" />
+                    Ver candidatos a deputado distrital
                   </Link>
                 </div>
               </div>
