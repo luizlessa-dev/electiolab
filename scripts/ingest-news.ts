@@ -105,6 +105,47 @@ const PENDING_NEWS: Array<{
     candidate_names: ["Lula", "Flávio", "Augusto Cury"],
     status: "published",
   },
+  // ─── lote 2 — escândalo Banco Master, verificado via WebSearch/WebFetch em 2026-09-04 ───
+  {
+    title: "Em cartaz, a caixa-preta",
+    source_name: "piauí",
+    source_url: "https://piaui.uol.com.br/revista/240/caixa-preta-flavio-bolsonaro-vorcaro-dark-horse/",
+    published_at: "2026-09-01",
+    summary: "Relatório inédito do Coaf mostra que os repasses de Daniel Vorcaro para o filme Dark Horse, sobre Jair Bolsonaro, foram maiores e mais frequentes do que Flávio Bolsonaro havia admitido publicamente.",
+    election_name: "Presidencial 2026 - 1º Turno",
+    candidate_names: ["Flávio"],
+    status: "published",
+  },
+  {
+    title: "Alvo da PF, Ciro Nogueira era tratado como 'grande amigo' de Vorcaro",
+    source_name: "Estado de Minas",
+    source_url: "https://www.em.com.br/politica/2026/05/7414101-alvo-da-pf-ciro-nogueira-era-tratado-como-grande-amigo-de-vorcaro.html",
+    published_at: "2026-05-07",
+    summary: "Mensagens obtidas pela Polícia Federal mostram Daniel Vorcaro se referindo ao senador Ciro Nogueira como 'grande amigo de vida', numa das fases da Operação Compliance Zero que apura favorecimento ao banqueiro do Master.",
+    election_name: "Senador Piaui 2026",
+    candidate_names: ["Ciro Nogueira"],
+    status: "published",
+  },
+  {
+    title: "Entenda como o PT na Bahia vendeu o Credcesta e negócio favoreceu o Master",
+    source_name: "Poder360",
+    source_url: "https://www.poder360.com.br/poder-justica/entenda-como-o-pt-na-bahia-vendeu-o-credcesta-e-negocio-favoreceu-o-master/",
+    published_at: "2026-08-10",
+    summary: "Reportagem detalha como a venda do Credcesta, cartão consignado de servidores da Bahia, a um futuro sócio de Daniel Vorcaro durante a gestão de Jaques Wagner na Secretaria de Desenvolvimento Econômico do estado ajudou a alavancar o crescimento do Master.",
+    election_name: "Senador Bahia 2026",
+    candidate_names: ["Jaques Wagner"],
+    status: "published",
+  },
+  {
+    title: "BRB, rombo bilionário e a questão: o que Ibaneis Rocha tem a ver com crise do Banco Master",
+    source_name: "Agência Pública",
+    source_url: "https://apublica.org/2026/02/brb-como-ibaneis-rocha-esta-ligado-a-crise-do-banco-master/",
+    published_at: "2026-02-04",
+    summary: "A compra de ativos do Master pelo BRB, banco estatal controlado pelo governo do Distrito Federal sob Ibaneis Rocha, deixou um rombo bilionário nas contas da instituição — hoje sob investigação sobre o papel do ex-governador na negociação.",
+    election_name: "Senador Distrito Federal 2026",
+    candidate_names: ["Ibaneis Rocha"],
+    status: "published",
+  },
 ];
 
 async function main() {
