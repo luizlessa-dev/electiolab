@@ -928,6 +928,42 @@ export type Database = {
           },
         ]
       }
+      candidates_tse_stamp_backup_20260831: {
+        Row: {
+          backed_up_at: string | null
+          cpf: string | null
+          election_id: string | null
+          id: string | null
+          name: string | null
+          tse_id: string | null
+          tse_last_situation: string | null
+          tse_last_situation_detail: string | null
+          tse_last_situation_year: number | null
+        }
+        Insert: {
+          backed_up_at?: string | null
+          cpf?: string | null
+          election_id?: string | null
+          id?: string | null
+          name?: string | null
+          tse_id?: string | null
+          tse_last_situation?: string | null
+          tse_last_situation_detail?: string | null
+          tse_last_situation_year?: number | null
+        }
+        Update: {
+          backed_up_at?: string | null
+          cpf?: string | null
+          election_id?: string | null
+          id?: string | null
+          name?: string | null
+          tse_id?: string | null
+          tse_last_situation?: string | null
+          tse_last_situation_detail?: string | null
+          tse_last_situation_year?: number | null
+        }
+        Relationships: []
+      }
       data_source_audit: {
         Row: {
           ano: number | null
@@ -1604,6 +1640,85 @@ export type Database = {
           },
         ]
       }
+      news_item_links: {
+        Row: {
+          candidate_id: string | null
+          election_id: string | null
+          id: string
+          news_item_id: string
+        }
+        Insert: {
+          candidate_id?: string | null
+          election_id?: string | null
+          id?: string
+          news_item_id: string
+        }
+        Update: {
+          candidate_id?: string | null
+          election_id?: string | null
+          id?: string
+          news_item_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_item_links_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "news_item_links_election_id_fkey"
+            columns: ["election_id"]
+            isOneToOne: false
+            referencedRelation: "elections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "news_item_links_news_item_id_fkey"
+            columns: ["news_item_id"]
+            isOneToOne: false
+            referencedRelation: "news_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      news_items: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          published_at: string
+          source_name: string
+          source_url: string
+          status: string
+          summary: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          published_at: string
+          source_name: string
+          source_url: string
+          status?: string
+          summary?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          published_at?: string
+          source_name?: string
+          source_url?: string
+          status?: string
+          summary?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       newsletter_subscribers: {
         Row: {
           beehiiv_id: string | null
@@ -1975,6 +2090,72 @@ export type Database = {
           uf?: string | null
           value_brl?: number | null
           zona?: string | null
+        }
+        Relationships: []
+      }
+      pesqele_contratante: {
+        Row: {
+          ano: number
+          cd_contratante: number
+          cpf_cnpj: string | null
+          ingested_at: string
+          is_pagante: boolean | null
+          nome: string
+          origem_recurso: string | null
+          protocolo: string
+          vr_pago: number | null
+        }
+        Insert: {
+          ano: number
+          cd_contratante: number
+          cpf_cnpj?: string | null
+          ingested_at?: string
+          is_pagante?: boolean | null
+          nome: string
+          origem_recurso?: string | null
+          protocolo: string
+          vr_pago?: number | null
+        }
+        Update: {
+          ano?: number
+          cd_contratante?: number
+          cpf_cnpj?: string | null
+          ingested_at?: string
+          is_pagante?: boolean | null
+          nome?: string
+          origem_recurso?: string | null
+          protocolo?: string
+          vr_pago?: number | null
+        }
+        Relationships: []
+      }
+      pesqele_pagante: {
+        Row: {
+          ano: number
+          cd_contratante: number
+          cpf_cnpj: string
+          ingested_at: string
+          nome: string
+          origem_recurso: string | null
+          protocolo: string
+        }
+        Insert: {
+          ano: number
+          cd_contratante: number
+          cpf_cnpj: string
+          ingested_at?: string
+          nome: string
+          origem_recurso?: string | null
+          protocolo: string
+        }
+        Update: {
+          ano?: number
+          cd_contratante?: number
+          cpf_cnpj?: string
+          ingested_at?: string
+          nome?: string
+          origem_recurso?: string | null
+          protocolo?: string
         }
         Relationships: []
       }
@@ -2350,6 +2531,20 @@ export type Database = {
             foreignKeyName: "poll_drafts_tse_protocolo_fkey"
             columns: ["tse_protocolo"]
             isOneToOne: false
+            referencedRelation: "pesqele_missing_deputado_federal"
+            referencedColumns: ["protocolo"]
+          },
+          {
+            foreignKeyName: "poll_drafts_tse_protocolo_fkey"
+            columns: ["tse_protocolo"]
+            isOneToOne: false
+            referencedRelation: "pesqele_missing_senador"
+            referencedColumns: ["protocolo"]
+          },
+          {
+            foreignKeyName: "poll_drafts_tse_protocolo_fkey"
+            columns: ["tse_protocolo"]
+            isOneToOne: false
             referencedRelation: "pesqele_registry"
             referencedColumns: ["protocolo"]
           },
@@ -2552,6 +2747,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      pro_report_runs: {
+        Row: {
+          failures: number
+          id: string
+          notes: string | null
+          payload: Json | null
+          recipients: number
+          sent_at: string
+          successes: number
+        }
+        Insert: {
+          failures?: number
+          id?: string
+          notes?: string | null
+          payload?: Json | null
+          recipients?: number
+          sent_at?: string
+          successes?: number
+        }
+        Update: {
+          failures?: number
+          id?: string
+          notes?: string | null
+          payload?: Json | null
+          recipients?: number
+          sent_at?: string
+          successes?: number
+        }
+        Relationships: []
       }
       sanctioned_entities: {
         Row: {
@@ -3353,7 +3578,100 @@ export type Database = {
         }
         Relationships: []
       }
+      pesqele_financiamento: {
+        Row: {
+          ano: number | null
+          cargos: string | null
+          contratante: string | null
+          contratante_cpf_cnpj: string | null
+          contratante_origem_recurso: string | null
+          contratante_valor_pago: number | null
+          dt_divulgacao: string | null
+          instituto: string | null
+          instituto_cnpj: string | null
+          is_pagante: boolean | null
+          pagante: string | null
+          pagante_cpf_cnpj: string | null
+          protocolo: string | null
+          qt_entrevistados: number | null
+          uf: string | null
+          valor_total_pesquisa: number | null
+        }
+        Relationships: []
+      }
       pesqele_missing: {
+        Row: {
+          ano: number | null
+          cargos: string | null
+          days_since_fieldwork: number | null
+          fieldwork_end: string | null
+          instituto: string | null
+          protocolo: string | null
+          publication_date: string | null
+          sample_size: number | null
+          uf: string | null
+        }
+        Insert: {
+          ano?: number | null
+          cargos?: string | null
+          days_since_fieldwork?: never
+          fieldwork_end?: string | null
+          instituto?: string | null
+          protocolo?: string | null
+          publication_date?: string | null
+          sample_size?: number | null
+          uf?: string | null
+        }
+        Update: {
+          ano?: number | null
+          cargos?: string | null
+          days_since_fieldwork?: never
+          fieldwork_end?: string | null
+          instituto?: string | null
+          protocolo?: string | null
+          publication_date?: string | null
+          sample_size?: number | null
+          uf?: string | null
+        }
+        Relationships: []
+      }
+      pesqele_missing_deputado_federal: {
+        Row: {
+          ano: number | null
+          cargos: string | null
+          days_since_fieldwork: number | null
+          fieldwork_end: string | null
+          instituto: string | null
+          protocolo: string | null
+          publication_date: string | null
+          sample_size: number | null
+          uf: string | null
+        }
+        Insert: {
+          ano?: number | null
+          cargos?: string | null
+          days_since_fieldwork?: never
+          fieldwork_end?: string | null
+          instituto?: string | null
+          protocolo?: string | null
+          publication_date?: string | null
+          sample_size?: number | null
+          uf?: string | null
+        }
+        Update: {
+          ano?: number | null
+          cargos?: string | null
+          days_since_fieldwork?: never
+          fieldwork_end?: string | null
+          instituto?: string | null
+          protocolo?: string | null
+          publication_date?: string | null
+          sample_size?: number | null
+          uf?: string | null
+        }
+        Relationships: []
+      }
+      pesqele_missing_senador: {
         Row: {
           ano: number | null
           cargos: string | null
@@ -3411,6 +3729,7 @@ export type Database = {
         Args: { p_payload: Json; p_unsub_url: string }
         Returns: string
       }
+      build_pro_report_html: { Args: { p_payload: Json }; Returns: string }
       check_ip_rate: {
         Args: {
           p_ip_hash: string
@@ -3432,6 +3751,14 @@ export type Database = {
       }
       cron_check_user_alerts: { Args: never; Returns: Json }
       cron_recalculate_averages: { Args: never; Returns: number }
+      cron_send_pro_weekly_report: {
+        Args: {
+          p_dry_run?: boolean
+          p_test_recipient?: string
+          p_window_days?: number
+        }
+        Returns: Json
+      }
       cron_send_weekly_digest: {
         Args: { p_dry_run?: boolean; p_test_recipient?: string }
         Returns: Json
@@ -3500,12 +3827,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -3529,11 +3856,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -3554,11 +3881,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -3579,11 +3906,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -3596,11 +3923,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }

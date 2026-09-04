@@ -1,10 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getCandidateBySlug, type CandidateElectionOption } from "@/lib/queries";
+import { getCandidateBySlug, getNewsForCandidate, type CandidateElectionOption } from "@/lib/queries";
 import { getCandidateEditorial } from "@/lib/marketing-data";
 import { getParlamentarByCpf, getCeapByCamaraId, crossCeapWithCeis } from "@/lib/tf-data";
 import {
   ArrowLeft,
+  Newspaper,
   Briefcase,
   GraduationCap,
   Calendar,
@@ -51,6 +52,7 @@ export type CandidateViewProps = {
  */
 export async function CandidateView({ c, slug, canonicalPath, elections }: CandidateViewProps) {
   const editorial = await getCandidateEditorial(slug);
+  const news = await getNewsForCandidate(c.id);
 
   const election = c.election;
   const polls = c.poll_results ?? [];
@@ -485,6 +487,37 @@ export async function CandidateView({ c, slug, canonicalPath, elections }: Candi
                 Glossário →
               </Link>
             </p>
+          </section>
+        )}
+
+        {/* Notícias recentes */}
+        {news.length > 0 && (
+          <section>
+            <div className="flex items-center gap-2 mb-4">
+              <Newspaper className="h-4 w-4 text-primary" />
+              <h2 className="text-xl font-bold">Notícias recentes</h2>
+            </div>
+            <div className="space-y-3">
+              {news.map((n) => (
+                <a
+                  key={n.id}
+                  href={n.source_url}
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
+                  className="block rounded-lg border border-border bg-card p-3 hover:border-primary/50 transition-colors"
+                >
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                    <span className="font-medium">{n.source_name}</span>
+                    <span>·</span>
+                    <span>{new Date(n.published_at).toLocaleDateString("pt-BR")}</span>
+                  </div>
+                  <p className="text-sm font-medium leading-snug">{n.title}</p>
+                  {n.summary && (
+                    <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{n.summary}</p>
+                  )}
+                </a>
+              ))}
+            </div>
           </section>
         )}
 

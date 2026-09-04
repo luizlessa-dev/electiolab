@@ -410,6 +410,33 @@ export async function getCandidateBySlugAndSegment(slug: string, segment: string
   return fetchCandidateDetail(alvo.candidateId);
 }
 
+/**
+ * Notícias publicadas linkadas a um candidato ou a uma eleição (feed MVP,
+ * curadoria manual via scripts/ingest-news.ts). Sempre status='published' —
+ * a RLS já restringe a leitura pública a isso, o filtro aqui só documenta.
+ */
+export async function getNewsForCandidate(candidateId: string) {
+  const { data } = await supabase
+    .from("news_item_links")
+    .select("news_item:news_items(id, title, source_name, source_url, published_at, summary)")
+    .eq("candidate_id", candidateId)
+    .eq("news_item.status", "published")
+    .order("published_at", { foreignTable: "news_items", ascending: false })
+    .limit(5);
+  return (data ?? []).map((r) => r.news_item).filter((n): n is NonNullable<typeof n> => n !== null);
+}
+
+export async function getNewsForElection(electionId: string) {
+  const { data } = await supabase
+    .from("news_item_links")
+    .select("news_item:news_items(id, title, source_name, source_url, published_at, summary)")
+    .eq("election_id", electionId)
+    .eq("news_item.status", "published")
+    .order("published_at", { foreignTable: "news_items", ascending: false })
+    .limit(8);
+  return (data ?? []).map((r) => r.news_item).filter((n): n is NonNullable<typeof n> => n !== null);
+}
+
 export async function getCandidatesWithBio() {
   const { data } = await supabase
     .from("candidates")
