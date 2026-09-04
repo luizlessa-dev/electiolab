@@ -377,7 +377,7 @@ export async function CandidateView({ c, slug, canonicalPath, elections }: Candi
                   ) : (
                     latestPoll.poll?.institute?.name
                   )}
-                  {" · "}{new Date(latestPoll.poll?.publication_date ?? "").toLocaleDateString("pt-BR")}
+                  {" · "}{new Date(latestPoll.poll?.publication_date ?? "").toLocaleDateString("pt-BR", { timeZone: "UTC" })}
                 </p>
               </div>
             )}
@@ -457,7 +457,7 @@ export async function CandidateView({ c, slug, canonicalPath, elections }: Candi
               {sortedPolls.slice(0, 10).map((pr, i) => (
                 <div key={pr.poll?.id ?? i} className={`flex items-center px-3 py-2 text-sm border-b border-border/30 ${i % 2 ? "bg-muted/15" : ""}`}>
                   <span className="w-24 font-mono tabular-nums text-xs text-muted-foreground">
-                    {pr.poll?.publication_date ? new Date(pr.poll.publication_date).toLocaleDateString("pt-BR") : "—"}
+                    {pr.poll?.publication_date ? new Date(pr.poll.publication_date).toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "—"}
                   </span>
                   <span className="flex-1">
                     {pr.poll?.institute?.slug ? (
@@ -832,8 +832,8 @@ export async function CandidateView({ c, slug, canonicalPath, elections }: Candi
                       <p className="font-medium">{m.sancao.tipo_sancao ?? "Sanção registrada"}</p>
                       <p className="text-[10px] text-muted-foreground mt-1">
                         Sanção por {m.sancao.orgao_sancionador ?? "—"}
-                        {m.sancao.data_inicio && <> · desde {new Date(m.sancao.data_inicio).toLocaleDateString("pt-BR")}</>}
-                        {m.sancao.data_fim && <> até {new Date(m.sancao.data_fim).toLocaleDateString("pt-BR")}</>}
+                        {m.sancao.data_inicio && <> · desde {new Date(m.sancao.data_inicio).toLocaleDateString("pt-BR", { timeZone: "UTC" })}</>}
+                        {m.sancao.data_fim && <> até {new Date(m.sancao.data_fim).toLocaleDateString("pt-BR", { timeZone: "UTC" })}</>}
                       </p>
                     </div>
                   </div>
@@ -963,7 +963,7 @@ export async function CandidateView({ c, slug, canonicalPath, elections }: Candi
                       }`}
                     >
                       <span className="text-xs font-mono text-muted-foreground w-20 shrink-0">
-                        {new Date(v.vote_date).toLocaleDateString("pt-BR")}
+                        {new Date(v.vote_date).toLocaleDateString("pt-BR", { timeZone: "UTC" })}
                       </span>
                       <span className="flex-1 line-clamp-2">{v.bill_title}</span>
                       <span

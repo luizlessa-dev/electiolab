@@ -133,7 +133,7 @@ export default async function InstitutoPage({
   const lastPoll = polls[0];
   const lastPollDate = lastPoll?.publication_date
     ? new Date(lastPoll.publication_date).toLocaleDateString("pt-BR", {
-        day: "2-digit", month: "long", year: "numeric",
+        day: "2-digit", month: "long", year: "numeric", timeZone: "UTC",
       })
     : null;
 
@@ -336,7 +336,7 @@ export default async function InstitutoPage({
                 >
                   <span className="md:w-24 font-mono tabular-nums text-xs text-muted-foreground">
                     {p.publication_date
-                      ? new Date(p.publication_date).toLocaleDateString("pt-BR")
+                      ? new Date(p.publication_date).toLocaleDateString("pt-BR", { timeZone: "UTC" })
                       : "—"}
                   </span>
                   <span className="flex-1 mt-1 md:mt-0">

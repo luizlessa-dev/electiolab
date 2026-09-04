@@ -251,6 +251,7 @@ export default async function HomePage() {
     ? new Date(presPoll.publication_date).toLocaleDateString("pt-BR", {
         month: "long",
         year: "numeric",
+        timeZone: "UTC",
       })
     : "abril/2026";
   const presInstitute = presPoll?.institute_name ?? "Quaest";

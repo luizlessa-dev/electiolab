@@ -440,7 +440,7 @@ function CompareTable({ candidates }: { candidates: ComparedCandidate[] }) {
       values: candidates.map((c) =>
         c.latest_poll
           ? `${c.latest_poll.percentage}% · ${c.latest_poll.institute ?? "?"} · ${
-              c.latest_poll.date ? new Date(c.latest_poll.date).toLocaleDateString("pt-BR") : "?"
+              c.latest_poll.date ? new Date(c.latest_poll.date).toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "?"
             }`
           : "—"
       ),

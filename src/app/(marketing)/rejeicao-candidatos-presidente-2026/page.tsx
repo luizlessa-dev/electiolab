@@ -33,6 +33,7 @@ export default async function RejeicaoPresidente2026Page() {
         day: "2-digit",
         month: "long",
         year: "numeric",
+        timeZone: "UTC",
       })
     : null;
 

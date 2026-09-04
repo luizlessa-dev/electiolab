@@ -497,7 +497,7 @@ export default async function Quem2TurnoPage() {
                         >
                           <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1">
                             <span>{p.institute}</span>
-                            <span>{new Date(p.publication_date).toLocaleDateString("pt-BR")}</span>
+                            <span>{new Date(p.publication_date).toLocaleDateString("pt-BR", { timeZone: "UTC" })}</span>
                           </div>
                           <div className="flex items-center gap-3 flex-wrap">
                             {p.results
@@ -570,7 +570,7 @@ export default async function Quem2TurnoPage() {
       <footer className="border-t border-border py-6 mt-12">
         <div className="max-w-3xl mx-auto px-4 text-xs text-muted-foreground font-mono text-center">
           ElectioLab · Última pesquisa indexada:{" "}
-          {updated ? new Date(updated).toLocaleDateString("pt-BR") : new Date().toLocaleDateString("pt-BR")}
+          {updated ? new Date(updated).toLocaleDateString("pt-BR", { timeZone: "UTC" }) : new Date().toLocaleDateString("pt-BR")}
         </div>
       </footer>
     </div>
