@@ -6030,6 +6030,93 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Edmilson Costa", percentage:  1 },
     ],
   },
+
+  // lote 27 — Presidência, Datafolha nacional 03/09 (19h16)
+  // Datafolha · 01-03 set 2026 · TSE BR-03669/2026 · n=2.002 · nacional
+  // Fonte: https://www.opovo.com.br/noticias/politica/eleicoes/2026/09/03/datafolha-tem-lula-com-38-contra-33-de-flavio-bolsonaro-no-1-turno-ha-empate-tecnico-no-2.html
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-03",
+    fieldwork_start: "2026-09-01",
+    fieldwork_end: "2026-09-03",
+    sample_size: 2002,
+    methodology: "presencial",
+    source_url: "https://www.opovo.com.br/noticias/politica/eleicoes/2026/09/03/datafolha-tem-lula-com-38-contra-33-de-flavio-bolsonaro-no-1-turno-ha-empate-tecnico-no-2.html",
+    tse_protocolo: "BR036692026",
+    results: [
+      { candidate_name: "Lula",          percentage: 38 },
+      { candidate_name: "Flávio",        percentage: 33 },
+      { candidate_name: "Augusto Cury", percentage:  8 },
+      { candidate_name: "Caiado",        percentage:  4 },
+      { candidate_name: "Renan",         percentage:  3 },
+      { candidate_name: "Zema",          percentage:  2 },
+    ],
+  },
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-03",
+    fieldwork_start: "2026-09-01",
+    fieldwork_end: "2026-09-03",
+    sample_size: 2002,
+    methodology: "presencial",
+    source_url: "https://www.opovo.com.br/noticias/politica/eleicoes/2026/09/03/datafolha-tem-lula-com-38-contra-33-de-flavio-bolsonaro-no-1-turno-ha-empate-tecnico-no-2.html",
+    tse_protocolo: "BR036692026",
+    scenario_label: "Lula vs Flavio Bolsonaro",
+    results: [
+      { candidate_name: "Lula",            percentage: 46 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 44 },
+    ],
+  },
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-03",
+    fieldwork_start: "2026-09-01",
+    fieldwork_end: "2026-09-03",
+    sample_size: 2002,
+    methodology: "presencial",
+    source_url: "https://www.opovo.com.br/noticias/politica/eleicoes/2026/09/03/datafolha-tem-lula-com-38-contra-33-de-flavio-bolsonaro-no-1-turno-ha-empate-tecnico-no-2.html",
+    tse_protocolo: "BR036692026",
+    scenario_label: "Lula vs Caiado",
+    results: [
+      { candidate_name: "Lula",   percentage: 46 },
+      { candidate_name: "Caiado", percentage: 41 },
+    ],
+  },
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-03",
+    fieldwork_start: "2026-09-01",
+    fieldwork_end: "2026-09-03",
+    sample_size: 2002,
+    methodology: "presencial",
+    source_url: "https://www.opovo.com.br/noticias/politica/eleicoes/2026/09/03/datafolha-tem-lula-com-38-contra-33-de-flavio-bolsonaro-no-1-turno-ha-empate-tecnico-no-2.html",
+    tse_protocolo: "BR036692026",
+    scenario_label: "Lula vs Zema",
+    results: [
+      { candidate_name: "Lula", percentage: 48 },
+      { candidate_name: "Zema", percentage: 39 },
+    ],
+  },
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-03",
+    fieldwork_start: "2026-09-01",
+    fieldwork_end: "2026-09-03",
+    sample_size: 2002,
+    methodology: "presencial",
+    source_url: "https://www.opovo.com.br/noticias/politica/eleicoes/2026/09/03/datafolha-tem-lula-com-38-contra-33-de-flavio-bolsonaro-no-1-turno-ha-empate-tecnico-no-2.html",
+    tse_protocolo: "BR036692026",
+    scenario_label: "Lula vs Renan Santos",
+    results: [
+      { candidate_name: "Lula",         percentage: 47 },
+      { candidate_name: "Renan Santos", percentage: 38 },
+    ],
+  },
 ];
 
 async function main() {
