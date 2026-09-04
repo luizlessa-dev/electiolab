@@ -84,7 +84,7 @@ async function getCruzamentos() {
 
 function fmtDate(s: string | null): string {
   if (!s) return "—";
-  return new Date(s).toLocaleDateString("pt-BR");
+  return new Date(s).toLocaleDateString("pt-BR", { timeZone: "UTC" });
 }
 
 export default async function SancoesPage() {

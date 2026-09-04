@@ -47,7 +47,7 @@ export function DriftChart({ candidateId, candidateName, color, initialData }: P
 
   const formatted = data.map((d) => ({
     ...d,
-    dateStr: new Date(d.date).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }),
+    dateStr: new Date(d.date).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", timeZone: "UTC" }),
     pct: Number(d.weighted_average),
   }));
 

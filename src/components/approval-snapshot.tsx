@@ -32,7 +32,7 @@ export function ApprovalSnapshot({
   }
 
   const dateBR = aggregate.latestDate
-    ? new Date(aggregate.latestDate).toLocaleDateString("pt-BR")
+    ? new Date(aggregate.latestDate).toLocaleDateString("pt-BR", { timeZone: "UTC" })
     : null;
 
   return (

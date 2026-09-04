@@ -146,7 +146,7 @@ export function BrazilMap({ states }: Props) {
                   {hoveredData.most_recent && (
                     <>
                       {" · última "}
-                      {new Date(hoveredData.most_recent).toLocaleDateString("pt-BR")}
+                      {new Date(hoveredData.most_recent).toLocaleDateString("pt-BR", { timeZone: "UTC" })}
                     </>
                   )}
                 </p>
