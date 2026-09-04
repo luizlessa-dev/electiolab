@@ -6253,6 +6253,67 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Lino Alves",          percentage:  1 },
     ],
   },
+
+  // lote 31 — Governador, repescagem 04/09
+  // Vox Brasil · 29-31 ago 2026 · TSE SP-00940/2026 · n=1.480 · presencial
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/vox-brasil-tarcisio-tem-553-e-haddad-351-no-1o-turno-em-sp/
+  {
+    institute_name: "VOX BRASIL",
+    election_name: "Governador SP 2026 - 1º Turno",
+    publication_date: "2026-09-01",
+    fieldwork_start: "2026-08-29",
+    fieldwork_end: "2026-08-31",
+    sample_size: 1480,
+    margin_of_error: 2.55,
+    methodology: "presencial",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/vox-brasil-tarcisio-tem-553-e-haddad-351-no-1o-turno-em-sp/",
+    tse_protocolo: "SP009402026",
+    results: [
+      { candidate_name: "Tarcísio",     percentage: 55.3 },
+      { candidate_name: "Haddad",       percentage: 35.1 },
+      { candidate_name: "Carlos Machado", percentage: 1.1 },
+      { candidate_name: "Vera Lúcia",   percentage:  0.7 },
+      { candidate_name: "Vivian Mendes", percentage: 0.5 },
+    ],
+  },
+
+  // AtlasIntel/Estadão · 26-31 ago 2026 · TSE SP-06964/2026 · n=1.800 · online
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governador-sao-paulo-setembro-2026/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador SP 2026 - 1º Turno",
+    publication_date: "2026-09-01",
+    fieldwork_start: "2026-08-26",
+    fieldwork_end: "2026-08-31",
+    sample_size: 1800,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governador-sao-paulo-setembro-2026/",
+    tse_protocolo: "SP069642026",
+    results: [
+      { candidate_name: "Tarcísio", percentage: 51.1 },
+      { candidate_name: "Haddad",   percentage: 39.9 },
+    ],
+  },
+
+  // Instituto Veritá · 15-19 ago 2026 · TSE BA-02806/2026 · n=2.020 · presencial
+  // Fonte: https://interiordabahia.com.br/2026/08/22/acm-neto-abre-20-pontos-sobre-jeronimo-e-chega-a-561-aponta-pesquisa/
+  {
+    institute_name: "Veritá",
+    election_name: "Governador BA 2026 - 1º Turno",
+    publication_date: "2026-08-22",
+    fieldwork_start: "2026-08-15",
+    fieldwork_end: "2026-08-19",
+    sample_size: 2020,
+    margin_of_error: 2.5,
+    methodology: "presencial",
+    source_url: "https://interiordabahia.com.br/2026/08/22/acm-neto-abre-20-pontos-sobre-jeronimo-e-chega-a-561-aponta-pesquisa/",
+    tse_protocolo: "BA028062026",
+    results: [
+      { candidate_name: "ACM Neto",          percentage: 56.1 },
+      { candidate_name: "Jeronimo Rodrigues", percentage: 35.8 },
+    ],
+  },
 ];
 
 async function main() {
