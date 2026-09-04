@@ -166,6 +166,7 @@ interface PollQueryRow {
   fieldwork_end: string;
   sample_size: number;
   methodology: string;
+  round: number;
   institute: InstituteJoin | null;
   results: ResultRow[];
 }
@@ -230,7 +231,7 @@ async function recalculateForElection(
   let pollsQuery = supabase
     .from("polls")
     .select(`
-      id, fieldwork_end, sample_size, methodology,
+      id, fieldwork_end, sample_size, methodology, round,
       institute:institutes(reliability_score),
       results:poll_results(candidate_id, percentage)
     `)
@@ -266,28 +267,52 @@ async function recalculateForElection(
     institute_reliability: p.institute?.reliability_score ?? 0.7,
   }));
 
-  // Snapshot: limpa entradas anteriores antes de inserir.
-  if (!keepHistory) {
-    const { error: delErr } = await supabase
-      .from("weighted_averages")
-      .delete()
-      .eq("election_id", electionId);
-    if (delErr) return { error: "Failed to clear old: " + delErr.message, electionId };
-  }
-
   const now = new Date().toISOString();
   const rows: WeightedAverageInsertRow[] = [];
   const summary: WeightedAverageSummary[] = [];
 
-  const isSecondRound = election.round === 2;
+  // Separa por round DO POLL, não da election. Presidente tem uma election
+  // por round (round1Polls/round2Polls nunca se misturam por construção),
+  // mas Governador só tem a election de round=1 — pesquisas de cenário de 2º
+  // turno (2 candidatos, scenario_label) apontam pro MESMO election_id com
+  // polls.round=2. Sem esse split, uma pesquisa de 2T (ex: "ACM Neto ×
+  // Jerônimo") entrava como se fosse mais uma pesquisa comum de 1T na média
+  // global do candidato — inflava o líder e reduzia artificialmente o resto
+  // do campo.
+  const round1Polls = enrichedPolls.filter((p) => p.round === 1);
+  const round2Polls = enrichedPolls.filter((p) => p.round === 2);
 
-  if (isSecondRound) {
-    // ─── 2T: agrupa por cenário (par de candidatos) ───
-    // Cada cenário (A vs B) é independente — média por cenário, não global.
+  // ─── Round 1 (e qualquer round que não seja 1 nem 2): média clássica global por candidato ───
+  const otherRoundPolls = enrichedPolls.filter((p) => p.round !== 1 && p.round !== 2);
+  const classicPolls = election.round === 2 ? [] : [...round1Polls, ...otherRoundPolls];
+  for (const cand of candidates) {
+    const avg = calculateWeightedAverage(classicPolls, cand.id, referenceDate);
+    if (!avg) continue;
+    rows.push({
+      election_id: electionId,
+      candidate_id: cand.id,
+      scenario_label: null,
+      calculated_at: now,
+      ...avg,
+      calculation_params: {
+        half_life: 10,
+        reference_date: referenceDate.toISOString(),
+      },
+    });
+    summary.push({ candidate: cand.name, ...avg });
+  }
+
+  // ─── Round 2: agrupa por cenário (par de candidatos) ───
+  // Cada cenário (A vs B) é independente — média por cenário, não global.
+  // Cobre tanto a election dedicada de 2T (Presidente) quanto o caso em que
+  // o 2T mora na mesma election de round=1 (Governador).
+  const scenarioSourcePolls = election.round === 2 ? enrichedPolls : round2Polls;
+  let scenarioCount = 0;
+  if (scenarioSourcePolls.length > 0) {
     const candById = new Map<string, CandidateRow>(
       candidates.map((c): [string, CandidateRow] => [c.id, c]),
     );
-    const scenarios = groupPollsByScenario(enrichedPolls, candById);
+    const scenarios = groupPollsByScenario(scenarioSourcePolls, candById);
 
     for (const [scenarioLabel, { polls: scenarioPolls, candidateIds }] of scenarios) {
       for (const cid of candidateIds) {
@@ -308,24 +333,7 @@ async function recalculateForElection(
         });
         summary.push({ candidate: cand.name, scenario: scenarioLabel, ...avg });
       }
-    }
-  } else {
-    // ─── 1T (e demais): lógica clássica, média global por candidato ───
-    for (const cand of candidates) {
-      const avg = calculateWeightedAverage(enrichedPolls, cand.id, referenceDate);
-      if (!avg) continue;
-      rows.push({
-        election_id: electionId,
-        candidate_id: cand.id,
-        scenario_label: null,
-        calculated_at: now,
-        ...avg,
-        calculation_params: {
-          half_life: 10,
-          reference_date: referenceDate.toISOString(),
-        },
-      });
-      summary.push({ candidate: cand.name, ...avg });
+      scenarioCount++;
     }
   }
 
@@ -333,14 +341,28 @@ async function recalculateForElection(
     return { election: election.name, results: [], note: "No candidates with valid weighted average" };
   }
 
-  const { error: insErr } = await supabase.from("weighted_averages").insert(rows);
-  if (insErr) return { error: "Insert failed: " + insErr.message, electionId };
+  // keepHistory=false (padrão, usado pelo cron): delete+insert precisam ser
+  // atômicos — duas chamadas PostgREST separadas (antigo comportamento)
+  // deixam uma janela de corrida entre execuções concorrentes da mesma
+  // election_id, e uma execução pode inserir depois que a outra já deletou,
+  // acumulando linhas obsoletas (era 66% da tabela). A RPC faz DELETE+INSERT
+  // numa única transação no banco.
+  if (keepHistory) {
+    const { error: insErr } = await supabase.from("weighted_averages").insert(rows);
+    if (insErr) return { error: "Insert failed: " + insErr.message, electionId };
+  } else {
+    const { error: rpcErr } = await supabase.rpc("recalc_replace_weighted_averages", {
+      p_election_id: electionId,
+      p_rows: rows,
+    });
+    if (rpcErr) return { error: "Replace failed: " + rpcErr.message, electionId };
+  }
 
   return {
     election: election.name,
     round: election.round,
     count: rows.length,
-    scenarios: isSecondRound ? summary.length / 2 : null,
+    scenarios: scenarioCount || null,
     results: summary,
     timestamp: now,
   };
