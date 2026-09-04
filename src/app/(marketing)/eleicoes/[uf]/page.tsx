@@ -6,6 +6,7 @@ import { UF_NAMES } from "@/components/historic-election/page-template";
 import {
   getLatestStateGovPoll,
   getLatestDeputadoFederalPoll,
+  getLatestDeputadoEstadualPoll,
   getStateRunoffScenarios,
   toRunoffTabs,
 } from "@/lib/marketing-data";
@@ -38,6 +39,15 @@ const DEPUTADOS_FEDERAIS_POR_UF: Record<string, number> = {
   SP: 70, MG: 53, RJ: 46, BA: 39, RS: 31, PR: 30, PE: 25, CE: 22, MA: 18,
   GO: 17, PA: 17, SC: 16, PB: 12, ES: 10, PI: 10, AL: 9,
   AC: 8, AM: 8, AP: 8, DF: 8, MS: 8, MT: 8, RN: 8, RO: 8, RR: 8, SE: 8, TO: 8,
+};
+
+// Cadeiras de deputado estadual por UF (CF art. 27: 3x deputados federais até
+// 12; acima disso, 36 + (federais - 12)). DF não tem deputado estadual — tem
+// Câmara Legislativa (deputado distrital), fora desse mapa.
+const DEPUTADOS_ESTADUAIS_POR_UF: Record<string, number> = {
+  SP: 94, MG: 77, RJ: 70, BA: 63, RS: 55, PR: 54, PE: 49, CE: 46, MA: 42,
+  GO: 41, PA: 41, SC: 40, PB: 36, ES: 30, PI: 30, AL: 27,
+  AC: 24, AM: 24, AP: 24, MS: 24, MT: 24, RN: 24, RO: 24, RR: 24, SE: 24, TO: 24,
 };
 
 // Colégio eleitoral estimado 2026 (TSE fev/2026, em milhões)
@@ -94,10 +104,11 @@ export default async function EstadoPage({ params }: { params: Promise<{ uf: UF 
   const region = UF_REGION[ufUpper] ?? "";
   const eleitores = UF_ELEITORES[ufUpper] ?? "";
 
-  const [govSnapshot, runoffScenarios, depFedSnapshot] = await Promise.all([
+  const [govSnapshot, runoffScenarios, depFedSnapshot, depEstSnapshot] = await Promise.all([
     getLatestStateGovPoll(ufUpper),
     getStateRunoffScenarios(ufUpper),
     getLatestDeputadoFederalPoll(ufUpper),
+    ufUpper === "DF" ? Promise.resolve(null) : getLatestDeputadoEstadualPoll(ufUpper),
   ]);
   const runoffTabs = toRunoffTabs(runoffScenarios);
 
@@ -324,6 +335,49 @@ export default async function EstadoPage({ params }: { params: Promise<{ uf: UF 
               </div>
             </div>
           </section>
+
+          {/* Deputado Estadual (DF não tem — usa Câmara Legislativa/deputado distrital) */}
+          {ufUpper !== "DF" && (
+            <section className="space-y-4">
+              <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                Deputado Estadual 2026
+              </h2>
+              <div className="border border-border rounded-lg p-5 space-y-3">
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {stateName} elege {DEPUTADOS_ESTADUAIS_POR_UF[ufUpper] ?? "várias"} cadeiras na
+                  Assembleia Legislativa em 2026 — ainda mais pulverizado que deputado federal, então
+                  pesquisa nominal é raríssima. Quando existe, é espontânea e o primeiro colocado
+                  costuma ficar na casa de 1-2%, dentro da margem de erro da amostra total — leia como
+                  termômetro de quem está mais lembrado, não como projeção de resultado.
+                </p>
+                {depEstSnapshot ? (
+                  <div className="space-y-2">
+                    <p className="text-xs font-mono text-muted-foreground uppercase tracking-wide">
+                      Candidatos mais citados espontaneamente
+                    </p>
+                    <StatePollSnapshotCard snapshot={depEstSnapshot} />
+                  </div>
+                ) : (
+                  <div className="border border-border rounded-sm bg-card p-4">
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      Nenhuma pesquisa nominal de deputado estadual indexada pra {stateName} ainda. O
+                      ElectioLab atualiza assim que institutos publicarem.
+                    </p>
+                  </div>
+                )}
+                <div className="flex flex-wrap gap-2">
+                  <Link
+                    href={`/candidatos?uf=${ufUpper}&type=deputado_estadual`}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs border border-border rounded-md hover:bg-muted/30 transition-colors"
+                  >
+                    <Users className="h-3 w-3" />
+                    Ver candidatos a deputado estadual de {ufUpper}
+                  </Link>
+                </div>
+              </div>
+            </section>
+          )}
 
           {/* Links para outras disputas */}
           <section className="space-y-4">

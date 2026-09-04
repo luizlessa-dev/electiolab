@@ -42,7 +42,7 @@ export type StatePollSnapshot = {
  */
 async function getLatestStatePollByType(
   uf: string,
-  type: "governador" | "senador" | "deputado_federal"
+  type: "governador" | "senador" | "deputado_federal" | "deputado_estadual"
 ): Promise<StatePollSnapshot | null> {
   const supabase = sb();
 
@@ -162,6 +162,17 @@ export function getLatestSenatorPoll(uf: string): Promise<StatePollSnapshot | nu
  */
 export function getLatestDeputadoFederalPoll(uf: string): Promise<StatePollSnapshot | null> {
   return getLatestStatePollByType(uf, "deputado_federal");
+}
+
+/**
+ * Pesquisa mais recente de Deputado Estadual por estado. Mesmo caveat de
+ * espontânea/recall do federal, só que mais extremo: dezenas de cadeiras por
+ * Assembleia (vs. Câmara Federal), então a atenção se pulveriza ainda mais —
+ * primeiro colocado tipicamente na casa de 1-2%, dentro da margem de erro da
+ * amostra total.
+ */
+export function getLatestDeputadoEstadualPoll(uf: string): Promise<StatePollSnapshot | null> {
+  return getLatestStatePollByType(uf, "deputado_estadual");
 }
 
 /**
