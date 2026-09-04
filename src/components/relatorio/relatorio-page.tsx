@@ -189,6 +189,7 @@ export function RelatorioPage({ data: d }: { data: ReportData }) {
               day: "2-digit",
               month: "long",
               year: "numeric",
+              timeZone: "UTC",
             })}
           </p>
         </div>

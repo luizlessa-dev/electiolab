@@ -25,7 +25,7 @@ export function StatePollSnapshotCard({
   // Calcula maior pct para escala dos bars
   const maxPct = Math.max(...snapshot.results.map((r) => r.pct), 1);
   const pubDate = new Date(snapshot.publication_date);
-  const dateBR = pubDate.toLocaleDateString("pt-BR");
+  const dateBR = pubDate.toLocaleDateString("pt-BR", { timeZone: "UTC" });
   // Sinal de frescor para conteúdo YMYL eleitoral: pesquisa com >90 dias é
   // sinalizada visualmente (estados pequenos recebem poucas pesquisas).
   // Server Component (renderiza uma vez por request no servidor, sem

@@ -385,6 +385,7 @@ export default async function PesquisasPresidenciais2026Page() {
                     day: "2-digit",
                     month: "long",
                     year: "numeric",
+                    timeZone: "UTC",
                   })})`
                 : ""}
               , {top1t[0].name}
@@ -406,7 +407,7 @@ export default async function PesquisasPresidenciais2026Page() {
             <p className="text-xs text-muted-foreground font-mono">
               Última pesquisa indexada:{" "}
               {new Date(updated).toLocaleDateString("pt-BR", {
-                day: "2-digit", month: "long", year: "numeric",
+                day: "2-digit", month: "long", year: "numeric", timeZone: "UTC",
               })}
             </p>
           )}
