@@ -6228,6 +6228,31 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Ernesto Roller",    percentage:  1.0 },
     ],
   },
+
+  // lote 30 — Senado, repescagem 04/09
+  // Datafolha · 31 ago-02 set 2026 · TSE CE-04122/2026 (par: BR-05635/2026) · n=1.204
+  // Fonte: https://www.opovo.com.br/noticias/politica/eleicoes/2026/09/04/pesquisa-datafolha-senado-tem-cid-wagner-e-luizianne-a-frente.html
+  {
+    institute_name: "Datafolha",
+    election_name: "Senador Ceara 2026",
+    publication_date: "2026-09-04",
+    fieldwork_start: "2026-08-31",
+    fieldwork_end: "2026-09-02",
+    sample_size: 1204,
+    methodology: "presencial",
+    source_url: "https://www.opovo.com.br/noticias/politica/eleicoes/2026/09/04/pesquisa-datafolha-senado-tem-cid-wagner-e-luizianne-a-frente.html",
+    tse_protocolo: "CE041222026",
+    results: [
+      { candidate_name: "Cid Gomes",           percentage: 24 },
+      { candidate_name: "Capitão Wagner",      percentage: 20 },
+      { candidate_name: "Luizianne Lins",      percentage: 17 },
+      { candidate_name: "Alcides Fernandes",   percentage:  8 },
+      { candidate_name: "Catarina Matos",      percentage:  2 },
+      { candidate_name: "Guilherme Theophilo", percentage:  2 },
+      { candidate_name: "Reginaldo",           percentage:  2 },
+      { candidate_name: "Lino Alves",          percentage:  1 },
+    ],
+  },
 ];
 
 async function main() {
