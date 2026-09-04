@@ -509,7 +509,10 @@ export async function CandidateView({ c, slug, canonicalPath, elections }: Candi
                   <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
                     <span className="font-medium">{n.source_name}</span>
                     <span>·</span>
-                    <span>{new Date(n.published_at).toLocaleDateString("pt-BR")}</span>
+                    {/* timeZone: "UTC" — published_at é timestamptz gravado à meia-noite UTC do dia
+                        de publicação; sem fixar o fuso, toLocaleDateString desloca um dia pra trás
+                        em qualquer render a oeste de UTC (o próprio horário de Brasília). */}
+                    <span>{new Date(n.published_at).toLocaleDateString("pt-BR", { timeZone: "UTC" })}</span>
                   </div>
                   <p className="text-sm font-medium leading-snug">{n.title}</p>
                   {n.summary && (

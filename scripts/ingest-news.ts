@@ -53,7 +53,59 @@ const PENDING_NEWS: Array<{
   candidate_names?: string[];
   /** 'published' assume revisão humana já feita ao escrever a entrada; default 'draft'. */
   status?: "draft" | "published";
-}> = [];
+}> = [
+  // ─── lote 1 — verificado via WebSearch/WebFetch em 2026-09-04 ───
+  {
+    title: "Band promove primeiro debate neste domingo. Veja horário e candidatos confirmados",
+    source_name: "Gazeta do Povo",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/debate-presidenciaveis-band-horarios-candidatos-confirmados/",
+    published_at: "2026-08-23",
+    summary: "Caiado, Renan Santos e Augusto Cury confirmaram presença no primeiro debate presidencial, na Band; Lula, Flávio Bolsonaro e Zema recusaram participar.",
+    election_name: "Presidencial 2026 - 1º Turno",
+    candidate_names: ["Caiado", "Renan Santos", "Augusto Cury", "Lula", "Flávio", "Zema"],
+    status: "published",
+  },
+  {
+    title: "TSE concede liminar proibindo Pablo Marçal de usar recursos oficiais para campanha",
+    source_name: "TSE",
+    source_url: "https://www.tse.jus.br/comunicacao/noticias/2026/Agosto/tse-concede-liminar-proibindo-pablo-marcal-de-usar-recursos-oficiais-para-campanha",
+    published_at: "2026-08-20",
+    summary: "TSE vetou o acesso de Pablo Marçal ao Fundo Eleitoral e à propaganda gratuita em rádio/TV, atendendo pedido do Ministério Público Eleitoral sobre a validade de sua filiação partidária e sua inelegibilidade.",
+    election_name: "Presidencial 2026 - 1º Turno",
+    candidate_names: ["Pablo Marçal"],
+    status: "published",
+  },
+  {
+    title: "Tarcísio de Freitas lidera disputa pelo governo de SP, diz Gerp",
+    source_name: "Poder360",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/tarcisio-de-freitas-lidera-disputa-pelo-governo-de-sp-diz-gerp/",
+    published_at: "2026-08-25",
+    summary: "Pesquisa Gerp mostra Tarcísio na frente de Haddad tanto no primeiro turno quanto num eventual segundo turno para o governo de São Paulo.",
+    election_name: "Governador SP 2026 - 1º Turno",
+    candidate_names: ["Tarcísio", "Haddad"],
+    status: "published",
+  },
+  {
+    title: "Caiado anuncia Ratinho Júnior para Ministério da Infraestrutura em eventual vitória ao Planalto",
+    source_name: "Diário do Grande ABC",
+    source_url: "https://www.dgabc.com.br/Noticia/4344577/caiado-anuncia-ratinho-junior-para-ministerio-da-infraestrutura-em-eventual-vitoria-ao-planalto",
+    published_at: "2026-09-01",
+    summary: "Caiado anunciou que reservaria o Ministério da Infraestrutura para o governador do Paraná, Ratinho Júnior, em caso de vitória na disputa presidencial.",
+    election_name: "Presidencial 2026 - 1º Turno",
+    candidate_names: ["Caiado", "Ratinho"],
+    status: "published",
+  },
+  {
+    title: "O que mostra a nova pesquisa Quaest para presidente",
+    source_name: "Gazeta do Povo",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-presidente-setembro-2026/",
+    published_at: "2026-09-02",
+    summary: "Quaest mostra Lula na frente com 37%, Flávio Bolsonaro em segundo com 30% e Augusto Cury em ascensão, com queda no número de indecisos desde o início da campanha.",
+    election_name: "Presidencial 2026 - 1º Turno",
+    candidate_names: ["Lula", "Flávio", "Augusto Cury"],
+    status: "published",
+  },
+];
 
 async function main() {
   console.log("📰 ElectioLab — Ingestão Manual de Notícias\n");
