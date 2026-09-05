@@ -6314,6 +6314,89 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Jeronimo Rodrigues", percentage: 35.8 },
     ],
   },
+
+  // ─── Curadoria 05/09/2026 — lote 7 (Tier 1, Governador) ──
+
+  // Quaest · 31 ago-3 set 2026 · TSE CE-01149/2026 · n=900 · presencial
+  // Fonte: https://www.opovo.com.br/noticias/politica/eleicoes/2026/09/04/pesquisa-quaest-para-governador-do-ceara-traz-ciro-com-45-e-elmano-com-34.html
+  {
+    institute_name: "Quaest",
+    election_name: "Governador CE 2026 - 1º Turno",
+    publication_date: "2026-09-04",
+    fieldwork_start: "2026-08-31",
+    fieldwork_end: "2026-09-03",
+    sample_size: 900,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.opovo.com.br/noticias/politica/eleicoes/2026/09/04/pesquisa-quaest-para-governador-do-ceara-traz-ciro-com-45-e-elmano-com-34.html",
+    tse_protocolo: "CE011492026",
+    results: [
+      { candidate_name: "Ciro Gomes",        percentage: 45 },
+      { candidate_name: "Elmano de Freitas", percentage: 34 },
+    ],
+  },
+
+  // Atlas Intel · 28 ago-2 set 2026 · TSE CE-02357/2026 · n=1.834 · online
+  // Fonte: https://www.cartacapital.com.br/politica/atlasintel-ciro-gomes-lidera-o-2o-turno-no-ceara-mas-vantagem-para-elmano-de-freitas-cai/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador CE 2026 - 1º Turno",
+    publication_date: "2026-09-03",
+    fieldwork_start: "2026-08-28",
+    fieldwork_end: "2026-09-02",
+    sample_size: 1834,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://www.cartacapital.com.br/politica/atlasintel-ciro-gomes-lidera-o-2o-turno-no-ceara-mas-vantagem-para-elmano-de-freitas-cai/",
+    tse_protocolo: "CE023572026",
+    results: [
+      { candidate_name: "Ciro Gomes",        percentage: 48.4 },
+      { candidate_name: "Elmano de Freitas", percentage: 45.8 },
+    ],
+  },
+
+  // Atlas Intel · 26-31 ago 2026 · TSE RJ-04067/2026 · n=1.784 · online
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/paes-lidera-disputa-pelo-governo-do-rj-com-436-diz-pesquisa/
+  // Cenário "com Garotinho" (candidato testado na mesma rodada); percentuais dos demais nomes
+  // testados não foram usados por falta de confirmação consistente entre fontes.
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador RJ 2026 - 1º Turno",
+    publication_date: "2026-09-03",
+    fieldwork_start: "2026-08-26",
+    fieldwork_end: "2026-08-31",
+    sample_size: 1784,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/paes-lidera-disputa-pelo-governo-do-rj-com-436-diz-pesquisa/",
+    tse_protocolo: "RJ040672026",
+    results: [
+      { candidate_name: "Eduardo Paes",      percentage: 43.6 },
+      { candidate_name: "Douglas Ruas",      percentage: 27.6 },
+      { candidate_name: "Anthony Garotinho", percentage: 10.7 },
+    ],
+  },
+
+  // Atlas Intel · 27 ago-1 set 2026 · TSE RS-00652/2026 · n=1.783 · online
+  // Fonte: https://www.infomoney.com.br/politica/atlasintel-zucco-lidera-corrida-no-rs-com-443-juliana-brizola-tem-375/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador RS 2026 - 1º Turno",
+    publication_date: "2026-09-02",
+    fieldwork_start: "2026-08-27",
+    fieldwork_end: "2026-09-01",
+    sample_size: 1783,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://www.infomoney.com.br/politica/atlasintel-zucco-lidera-corrida-no-rs-com-443-juliana-brizola-tem-375/",
+    tse_protocolo: "RS006522026",
+    results: [
+      { candidate_name: "Luciano Zucco",     percentage: 44.3 },
+      { candidate_name: "Juliana Brizola",   percentage: 37.5 },
+      { candidate_name: "Gabriel Souza",     percentage: 10.4 },
+      { candidate_name: "Marcelo Maranata",  percentage:  2.3 },
+    ],
+  },
 ];
 
 async function main() {
