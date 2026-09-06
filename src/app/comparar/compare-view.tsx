@@ -43,6 +43,8 @@ export type ComparedCandidate = {
     date: string | null;
     institute: string | null;
   } | null;
+  /** Síntese aprovada do plano de governo, por tema — vazio se o candidato não tem plano registrado ou nenhuma síntese passou por revisão ainda. */
+  planos: { tema_slug: string; tema_nome: string; texto: string }[];
 };
 
 type Option = {
@@ -538,6 +540,51 @@ function CompareTable({ candidates }: { candidates: ComparedCandidate[] }) {
           </div>
         </div>
       )}
+
+      {/* Planos de governo, por tema — só temas com pelo menos 1 síntese aprovada entre os comparados */}
+      {(() => {
+        const temasMap = new Map<string, string>();
+        for (const c of candidates) {
+          for (const p of c.planos) temasMap.set(p.tema_slug, p.tema_nome);
+        }
+        const temas = [...temasMap.entries()];
+        if (temas.length === 0) return null;
+        return (
+          <div className="border-t border-border px-4 py-3 space-y-4">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
+              Planos de governo
+            </p>
+            {temas.map(([temaSlug, temaNome]) => (
+              <div key={temaSlug}>
+                <p className="text-sm font-semibold mb-2">{temaNome}</p>
+                <div
+                  className={`grid gap-3 ${
+                    candidates.length === 2 ? "md:grid-cols-2" : "md:grid-cols-3"
+                  }`}
+                >
+                  {candidates.map((c) => {
+                    const plano = c.planos.find((p) => p.tema_slug === temaSlug);
+                    return (
+                      <div key={c.slug} className="text-xs leading-relaxed bg-muted/20 rounded-md p-3">
+                        <strong className="text-foreground block mb-1">{c.name}</strong>
+                        <span className="text-muted-foreground">
+                          {plano ? plano.texto : "Sem síntese aprovada para este tema ainda."}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+            <p className="text-[11px] text-muted-foreground">
+              Resumo editorial a partir do plano de governo oficial registrado no TSE.{" "}
+              <Link href="/planos/metodologia" className="text-primary hover:underline">
+                Metodologia →
+              </Link>
+            </p>
+          </div>
+        );
+      })()}
     </div>
   );
 }
