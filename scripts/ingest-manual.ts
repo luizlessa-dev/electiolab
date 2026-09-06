@@ -6419,6 +6419,53 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Caiado",         percentage:  1 },
     ],
   },
+
+  // ─── Curadoria automática 06/09 (repescagem pesqele_missing) ──────────────
+  // Atlas Intel · 27 ago-1 set 2026 · TSE GO-05293/2026 · n=1.214 · online
+  // Fonte: https://www.maisgoias.com.br/politica/atlasintel-daniel-vilela-lidera-com-435-wilder-tem-201-e-marconi-161/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador GO 2026 - 1º Turno",
+    publication_date: "2026-09-03",
+    fieldwork_start: "2026-08-27",
+    fieldwork_end: "2026-09-01",
+    sample_size: 1214,
+    margin_of_error: 3.0,
+    methodology: "online",
+    source_url: "https://www.maisgoias.com.br/politica/atlasintel-daniel-vilela-lidera-com-435-wilder-tem-201-e-marconi-161/",
+    tse_protocolo: "GO052932026",
+    results: [
+      { candidate_name: "Daniel Vilela",    percentage: 43.5 },
+      { candidate_name: "Wilder Morais",    percentage: 20.1 },
+      { candidate_name: "Marconi Perillo",  percentage: 16.1 },
+      { candidate_name: "Luis Cesar Bueno", percentage: 10.7 },
+      { candidate_name: "Luciana Amorim",   percentage:  0.1 },
+    ],
+  },
+
+  // Atlas Intel · 27 ago-1 set 2026 · TSE DF-02018/2026 · n=1.193 · online
+  // Fonte: https://www.infomoney.com.br/politica/atlasintel-no-df-celina-leao-tem-307-e-leandro-grass-29-no-1o-turno/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador Distrito Federal 2026",
+    publication_date: "2026-09-03",
+    fieldwork_start: "2026-08-27",
+    fieldwork_end: "2026-09-01",
+    sample_size: 1193,
+    margin_of_error: 3.0,
+    methodology: "online",
+    source_url: "https://www.infomoney.com.br/politica/atlasintel-no-df-celina-leao-tem-307-e-leandro-grass-29-no-1o-turno/",
+    tse_protocolo: "DF020182026",
+    results: [
+      { candidate_name: "Celina Leao",              percentage: 30.7 },
+      { candidate_name: "Leandro Grass",             percentage: 29.0 },
+      { candidate_name: "Arruda",                    percentage: 14.2 },
+      { candidate_name: "Paula Belmonte",            percentage:  8.2 },
+      { candidate_name: "Ricardo Cappelli",          percentage:  5.8 },
+      { candidate_name: "Kiko Caputo",                percentage:  4.3 },
+      { candidate_name: "Professora Samara Mineiro", percentage:  1.3 },
+    ],
+  },
 ];
 
 async function main() {
