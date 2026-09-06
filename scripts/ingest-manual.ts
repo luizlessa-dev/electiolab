@@ -6397,6 +6397,28 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Marcelo Maranata",  percentage:  2.3 },
     ],
   },
+  // Quaest · 31 ago-3 set 2026 · TSE BR-04576/2026 (par: CE-01149/2026, corte cearense disfarçado de nacional) · n=900
+  // Fonte: https://www.metropoles.com/brasil/quaest-no-ceara-lula-tem-54-flavio-bolsonaro-16-e-cury-10
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-04",
+    fieldwork_start: "2026-08-31",
+    fieldwork_end: "2026-09-03",
+    sample_size: 900,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.metropoles.com/brasil/quaest-no-ceara-lula-tem-54-flavio-bolsonaro-16-e-cury-10",
+    tse_protocolo: "BR045762026",
+    scope: "CE",
+    results: [
+      { candidate_name: "Lula",           percentage: 54 },
+      { candidate_name: "Flávio",         percentage: 16 },
+      { candidate_name: "Augusto Cury",   percentage: 10 },
+      { candidate_name: "Renan",          percentage:  2 },
+      { candidate_name: "Caiado",         percentage:  1 },
+    ],
+  },
 ];
 
 async function main() {
