@@ -6565,6 +6565,216 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Caiado", percentage: 24.9 },
     ],
   },
+
+  // ─── lote 32 — repescagem 09/09: 10 pesquisas confirmadas via imprensa ────
+  // Atlas Intel · 30 ago-4 set 2026 · TSE MG-01579/2026 · n=1.800 · online
+  // Fonte: https://www.em.com.br/politica/2026/09/7495825-atlasintel-cleitinho-tem-41-patrus-30-e-kalil-9-em-minas.html
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador MG 2026 - 1º Turno",
+    publication_date: "2026-09-08",
+    fieldwork_start: "2026-08-30",
+    fieldwork_end: "2026-09-04",
+    sample_size: 1800,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://www.em.com.br/politica/2026/09/7495825-atlasintel-cleitinho-tem-41-patrus-30-e-kalil-9-em-minas.html",
+    tse_protocolo: "MG015792026",
+    results: [
+      { candidate_name: "Cleitinho",       percentage: 41.0 },
+      { candidate_name: "Patrus Ananias",  percentage: 30.0 },
+      { candidate_name: "Alexandre Kalil", percentage:  9.2 },
+      { candidate_name: "Gabriel Azevedo", percentage:  4.7 },
+      { candidate_name: "Ben Mendes",      percentage:  4.1 },
+      { candidate_name: "Flávio Roscoe",   percentage:  4.0 },
+      { candidate_name: "Mateus Simões",   percentage:  4.0 },
+    ],
+  },
+
+  // GERP · 3-8 set 2026 · TSE BR-00251/2026 · n=2.400 · telefônica
+  // Fonte: https://exame.com/brasil/pesquisa-gerp-flavio-bolsonaro-tem-37-e-lula-34-no-1o-turno/
+  {
+    institute_name: "GERP",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-09",
+    fieldwork_start: "2026-09-03",
+    fieldwork_end: "2026-09-08",
+    sample_size: 2400,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://exame.com/brasil/pesquisa-gerp-flavio-bolsonaro-tem-37-e-lula-34-no-1o-turno/",
+    tse_protocolo: "BR002512026",
+    results: [
+      { candidate_name: "Flávio",       percentage: 36.6 },
+      { candidate_name: "Lula",         percentage: 34.4 },
+      { candidate_name: "Augusto Cury", percentage:  6.0 },
+      { candidate_name: "Caiado",       percentage:  5.0 },
+      { candidate_name: "Renan",        percentage:  4.0 },
+      { candidate_name: "Pablo Marçal", percentage:  2.0 },
+      { candidate_name: "Zema",         percentage:  1.0 },
+    ],
+  },
+
+  // Quaest · 2-7 set 2026 · TSE RJ-04768/2026 · n=1.302 · presencial
+  // Fonte: https://exame.com/brasil/pesquisa-quaest-paes-lidera-com-39-e-ruas-chega-a-18-no-rio/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador RJ 2026 - 1º Turno",
+    publication_date: "2026-09-08",
+    fieldwork_start: "2026-09-02",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1302,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://exame.com/brasil/pesquisa-quaest-paes-lidera-com-39-e-ruas-chega-a-18-no-rio/",
+    tse_protocolo: "RJ047682026",
+    results: [
+      { candidate_name: "Eduardo Paes",       percentage: 39.0 },
+      { candidate_name: "Douglas Ruas",       percentage: 18.0 },
+      { candidate_name: "Anthony Garotinho",  percentage:  8.0 },
+    ],
+  },
+
+  // Quaest · 4-7 set 2026 · TSE PE-00285/2026 · n=1.302 · presencial
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-pernambuco-setembro-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador PE 2026 - 1º Turno",
+    publication_date: "2026-09-08",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1302,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-pernambuco-setembro-2026/",
+    tse_protocolo: "PE002852026",
+    results: [
+      { candidate_name: "Raquel Lyra", percentage: 43.0 },
+      { candidate_name: "João Campos", percentage: 37.0 },
+    ],
+  },
+
+  // Quaest · 4-7 set 2026 · TSE SP-00959/2026 · n=1.800 · presencial
+  // Fonte: https://exame.com/brasil/pesquisa-quaest-em-sao-paulo-tarcisio-lidera-com-42-haddad-tem-27/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador SP 2026 - 1º Turno",
+    publication_date: "2026-09-08",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1800,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://exame.com/brasil/pesquisa-quaest-em-sao-paulo-tarcisio-lidera-com-42-haddad-tem-27/",
+    tse_protocolo: "SP009592026",
+    results: [
+      { candidate_name: "Tarcísio",      percentage: 42.0 },
+      { candidate_name: "Haddad",        percentage: 27.0 },
+      { candidate_name: "Vera Lúcia",    percentage:  1.0 },
+      { candidate_name: "Izadora Dias",  percentage:  1.0 },
+      { candidate_name: "Carlos Machado",percentage:  1.0 },
+    ],
+  },
+
+  // Quaest · 4-7 set 2026 · TSE MG-04716/2026 · n=1.506 · presencial
+  // Fonte: https://www.metropoles.com/minas-gerais/quaest-em-mg-traz-cleitinho-com-32-patrus-e-kalil-com-11-e-simoes-com-8
+  {
+    institute_name: "Quaest",
+    election_name: "Governador MG 2026 - 1º Turno",
+    publication_date: "2026-09-08",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1506,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.metropoles.com/minas-gerais/quaest-em-mg-traz-cleitinho-com-32-patrus-e-kalil-com-11-e-simoes-com-8",
+    tse_protocolo: "MG047162026",
+    results: [
+      { candidate_name: "Cleitinho",       percentage: 32.0 },
+      { candidate_name: "Patrus Ananias",  percentage: 11.0 },
+      { candidate_name: "Alexandre Kalil", percentage: 11.0 },
+      { candidate_name: "Mateus Simões",   percentage:  8.0 },
+    ],
+  },
+
+  // Quaest · 4-7 set 2026 · TSE DF-01987/2026 · n=1.104 · presencial
+  // Fonte: https://www.bnews.com.br/noticias/politica/celina-leao-lidera-corrida-pelo-governo-do-df-com-35-aponta-quaest.html
+  {
+    institute_name: "Quaest",
+    election_name: "Governador Distrito Federal 2026",
+    publication_date: "2026-09-08",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1104,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.bnews.com.br/noticias/politica/celina-leao-lidera-corrida-pelo-governo-do-df-com-35-aponta-quaest.html",
+    tse_protocolo: "DF019872026",
+    results: [
+      { candidate_name: "Celina Leao",    percentage: 35.0 },
+      { candidate_name: "Arruda",         percentage: 18.0 },
+      { candidate_name: "Leandro Grass",  percentage: 17.0 },
+    ],
+  },
+
+  // Real Time Big Data · 4-8 set 2026 · TSE BA-01568/2026 · n=1.600 · telefônica
+  // Fonte: https://jornalgrandebahia.com.br/2026/09/pesquisa-real-time-big-data-na-bahia-aponta-empate-tecnico-entre-jeronimo-e-acm-neto-rui-costa-lidera-senado-e-governo-tem-53-de-aprovacao/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador BA 2026 - 1º Turno",
+    publication_date: "2026-09-09",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-08",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://jornalgrandebahia.com.br/2026/09/pesquisa-real-time-big-data-na-bahia-aponta-empate-tecnico-entre-jeronimo-e-acm-neto-rui-costa-lidera-senado-e-governo-tem-53-de-aprovacao/",
+    tse_protocolo: "BA015682026",
+    results: [
+      { candidate_name: "Jeronimo Rodrigues", percentage: 45.0 },
+      { candidate_name: "ACM Neto",           percentage: 44.0 },
+    ],
+  },
+
+  // Real Time Big Data · 4-8 set 2026 · TSE DF-09600/2026 · n=1.600 · telefônica
+  // Fonte: https://jornaldebrasilia.com.br/brasilia/real-time-big-data-celina-lidera-corrida-pelo-gdf-com-35-e-abre-15-pontos-sobre-adversarios/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Distrito Federal 2026",
+    publication_date: "2026-09-09",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-08",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://jornaldebrasilia.com.br/brasilia/real-time-big-data-celina-lidera-corrida-pelo-gdf-com-35-e-abre-15-pontos-sobre-adversarios/",
+    tse_protocolo: "DF096002026",
+    results: [
+      { candidate_name: "Celina Leao",   percentage: 35.0 },
+      { candidate_name: "Arruda",        percentage: 20.0 },
+      { candidate_name: "Leandro Grass", percentage: 20.0 },
+    ],
+  },
+
+  // Instituto Índice Inteligência · 2-4 set 2026 · TSE PR-01047/2026 · n=1.200 · telefônica
+  // Fonte: https://massa.com.br/politica/eleicoes2026/pesquisa-sandro-alex-moro-indice-inteligencia
+  {
+    institute_name: "Instituto Índice Inteligência",
+    election_name: "Governador Parana 2026",
+    publication_date: "2026-09-07",
+    fieldwork_start: "2026-09-02",
+    fieldwork_end: "2026-09-04",
+    sample_size: 1200,
+    margin_of_error: 2.83,
+    methodology: "telefonica",
+    source_url: "https://massa.com.br/politica/eleicoes2026/pesquisa-sandro-alex-moro-indice-inteligencia",
+    tse_protocolo: "PR010472026",
+    results: [
+      { candidate_name: "Sergio Moro",     percentage: 35.3 },
+      { candidate_name: "Sandro Alex",     percentage: 30.6 },
+      { candidate_name: "Requiao Filho",   percentage: 20.1 },
+    ],
+  },
 ];
 
 async function main() {
