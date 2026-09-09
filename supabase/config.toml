@@ -412,3 +412,44 @@ enabled = true
 # declarative_schema_path = "./database"
 # JSON string passed through to pg-delta SQL formatting.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":80,\"commaStyle\":\"trailing\"}"
+
+# ---------------------------------------------------------------------------
+# Production overrides (electiolab.com, project ref xoxztzologqeqbajlhya)
+#
+# Everything above this point is LOCAL DEV config, used by `supabase start`.
+# This block only takes effect when explicitly pushed to that project ref —
+# it does not affect local dev and is not applied automatically.
+#
+# NOT YET PUSHED. Before running `supabase config push --project-ref
+# xoxztzologqeqbajlhya`:
+#   1. `supabase login` (interactive — needs a browser)
+#   2. `supabase link --project-ref xoxztzologqeqbajlhya`
+#   3. Create supabase/.env (gitignored, do not commit) with:
+#        SUPABASE_AUTH_SMTP_PASS=<resend api key>
+#        SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID=<google oauth client id>
+#        SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET=<google oauth client secret>
+#   4. Confirm this whole block reflects what you want live — `config push`
+#      syncs the entire [remotes.production] tree to the project, so any
+#      field left out here that differs from current dashboard settings
+#      may get reset to its config.toml default.
+# ---------------------------------------------------------------------------
+[remotes.production]
+project_id = "xoxztzologqeqbajlhya"
+
+[remotes.production.auth]
+site_url = "https://electiolab.com"
+additional_redirect_urls = ["https://electiolab.com/auth/callback"]
+
+[remotes.production.auth.email.smtp]
+enabled = true
+host = "smtp.resend.com"
+port = 465
+user = "resend"
+pass = "env(SUPABASE_AUTH_SMTP_PASS)"
+admin_email = "login@electiolab.com"
+sender_name = "ElectioLab"
+
+[remotes.production.auth.external.google]
+enabled = true
+client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
