@@ -6839,6 +6839,44 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Zema", percentage: 1.0 },
     ],
   },
+  // Datafolha 1T + 2T
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-03",
+    fieldwork_start: "2026-09-01",
+    fieldwork_end: "2026-09-02",
+    sample_size: 2002,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-presidente-setembro-2026/",
+    tse_protocolo: "a confirmar",
+    results: [
+      { candidate_name: "Lula", percentage: 38.0 },
+      { candidate_name: "Flávio", percentage: 33.0 },
+      { candidate_name: "Cury", percentage: 8.0 },
+      { candidate_name: "Renan", percentage: 3.0 },
+      { candidate_name: "Caiado", percentage: 4.0 },
+      { candidate_name: "Zema", percentage: 2.0 },
+    ],
+  },
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-03",
+    fieldwork_start: "2026-09-01",
+    fieldwork_end: "2026-09-02",
+    sample_size: 2002,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-presidente-setembro-2026/",
+    tse_protocolo: "a confirmar",
+    scenario_label: "Lula vs Flávio",
+    results: [
+      { candidate_name: "Lula", percentage: 46.0 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 44.0 },
+    ],
+  },
 ];
 
 async function main() {
