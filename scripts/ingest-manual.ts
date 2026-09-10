@@ -7070,6 +7070,85 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Lula", percentage: 41.0 },
     ],
   },
+
+  // ─── Quaest · 04-07 set 2026 · 2 pesquisas presidencial ──────────────────
+  // Minas Gerais: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-minas-gerais-setembro-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-08",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1506,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-minas-gerais-setembro-2026/",
+    tse_protocolo: "MG047162026",
+    results: [
+      { candidate_name: "Lula", percentage: 31.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 27.0 },
+      { candidate_name: "Augusto Cury", percentage: 8.0 },
+      { candidate_name: "Ronaldo Caiado", percentage: 4.0 },
+      { candidate_name: "Renan Santos", percentage: 2.0 },
+      { candidate_name: "Romeu Zema", percentage: 1.0 },
+    ],
+  },
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-08",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1506,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-minas-gerais-setembro-2026/",
+    tse_protocolo: "MG047162026",
+    scenario_label: "Flávio vs Lula",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 40.0 },
+      { candidate_name: "Lula", percentage: 37.0 },
+    ],
+  },
+
+  // São Paulo: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-sao-paulo-setembro-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-08",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1800,
+    margin_of_error: 2.8,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-sao-paulo-setembro-2026/",
+    tse_protocolo: "SP009592026",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 31.0 },
+      { candidate_name: "Lula", percentage: 30.0 },
+      { candidate_name: "Augusto Cury", percentage: 8.0 },
+      { candidate_name: "Ronaldo Caiado", percentage: 4.0 },
+      { candidate_name: "Renan Santos", percentage: 2.0 },
+      { candidate_name: "Romeu Zema", percentage: 1.0 },
+    ],
+  },
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-08",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1800,
+    margin_of_error: 2.8,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-sao-paulo-setembro-2026/",
+    tse_protocolo: "SP009592026",
+    scenario_label: "Lula vs Flávio",
+    results: [
+      { candidate_name: "Lula", percentage: 41.0 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 41.0 },
+    ],
+  },
 ];
 
 async function main() {
