@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "deploy": "npm run build && npm start",
     "lint": "eslint",
     "test": "jest",
     "test:watch": "jest --watch",
