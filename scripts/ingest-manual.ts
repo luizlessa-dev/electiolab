@@ -7262,6 +7262,29 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Flavio Bolsonaro", percentage: 42.6 },
     ],
   },
+
+  // ─── Vetor Arrow · 29 ago - 1 set 2026 · TSE RJ-09316/2026 · n=14.000 · telefônica
+  // Fonte: https://mancheterio.com.br/benedita-lidera-disputa-pelo-senado-no-rio-aponta-pesquisa-vetor-arrow/
+  {
+    institute_name: "Vetor Arrow",
+    election_name: "Senador Rio de Janeiro 2026 - 1º Turno",
+    publication_date: "2026-09-04",
+    fieldwork_start: "2026-08-29",
+    fieldwork_end: "2026-09-01",
+    sample_size: 14000,
+    margin_of_error: 0.8,
+    methodology: "telefonica",
+    source_url: "https://mancheterio.com.br/benedita-lidera-disputa-pelo-senado-no-rio-aponta-pesquisa-vetor-arrow/",
+    tse_protocolo: "RJ093162026",
+    poll_type: "espontanea",
+    results: [
+      { candidate_name: "Benedita da Silva", percentage: 9.1 },
+      { candidate_name: "Carlos Jordy", percentage: 2.8 },
+      { candidate_name: "Carlos Portinho", percentage: 1.6 },
+      { candidate_name: "Pedro Paulo", percentage: 1.5 },
+      { candidate_name: "Marcelo Crivella", percentage: 1.5 },
+    ],
+  },
 ];
 
 async function main() {
