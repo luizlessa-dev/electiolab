@@ -7205,6 +7205,63 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Ronaldo Caiado", percentage: 42.0 },
     ],
   },
+
+  // ─── Atlas Intel · setembro 2026 · 2 pesquisas ────────────────────────────
+  // Minas Gerais: https://agenciasertao.com/eleicoes/pesquisas.php?protocolo=BR030462026
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-04",
+    fieldwork_start: "2026-08-30",
+    fieldwork_end: "2026-09-04",
+    sample_size: 1804,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://agenciasertao.com/eleicoes/pesquisas.php?protocolo=BR030462026&uf=BR",
+    tse_protocolo: "BR030462026",
+    scope: "MG",
+    results: [
+      { candidate_name: "Lula", percentage: 44.3 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 35.4 },
+    ],
+  },
+
+  // Nacional: https://www.correiobraziliense.com.br/politica/2026/09/7496900-atlasintel-divulga-hoje-nova-pesquisa-sobre-eleicao-presidencial.html
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-10",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-09",
+    sample_size: 5000,
+    margin_of_error: 1.4,
+    methodology: "online",
+    source_url: "https://www.correiobraziliense.com.br/politica/2026/09/7496900-atlasintel-divulga-hoje-nova-pesquisa-sobre-eleicao-presidencial.html",
+    tse_protocolo: "BR014522026",
+    results: [
+      { candidate_name: "Lula", percentage: 43.0 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 37.4 },
+      { candidate_name: "Augusto Cury", percentage: 8.2 },
+      { candidate_name: "Ronaldo Caiado", percentage: 3.8 },
+    ],
+  },
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-10",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-09",
+    sample_size: 5000,
+    margin_of_error: 1.4,
+    methodology: "online",
+    source_url: "https://www.correiobraziliense.com.br/politica/2026/09/7496900-atlasintel-divulga-hoje-nova-pesquisa-sobre-eleicao-presidencial.html",
+    tse_protocolo: "BR014522026",
+    scenario_label: "Lula vs Flavio",
+    results: [
+      { candidate_name: "Lula", percentage: 47.1 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 42.6 },
+    ],
+  },
 ];
 
 async function main() {
