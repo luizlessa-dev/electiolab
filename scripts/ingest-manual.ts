@@ -7370,6 +7370,104 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Sebastião Coelho", percentage: 2.0 },
     ],
   },
+
+  // ─── Real Time Big Data · 03-08 set 2026 · 5 pesquisas Senador ─────────────
+  // DF: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-distrito-federal-setembro-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Distrito Federal 2026",
+    publication_date: "2026-09-09",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-08",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "mista",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-distrito-federal-setembro-2026/",
+    tse_protocolo: "DF096002026",
+    results: [
+      { candidate_name: "Michelle Bolsonaro", percentage: 26.0 },
+      { candidate_name: "Leila Barros", percentage: 17.0 },
+      { candidate_name: "Bia Kicis", percentage: 17.0 },
+    ],
+  },
+
+  // BA: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-bahia-setembro-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Bahia 2026",
+    publication_date: "2026-09-09",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-08",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "mista",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-bahia-setembro-2026/",
+    tse_protocolo: "BA015682026",
+    results: [
+      { candidate_name: "Rui Costa", percentage: 26.0 },
+      { candidate_name: "Jaques Wagner", percentage: 19.0 },
+      { candidate_name: "João Roma", percentage: 17.0 },
+      { candidate_name: "Angelo Coronel", percentage: 15.0 },
+    ],
+  },
+
+  // CE: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-ceara-setembro-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Ceará 2026",
+    publication_date: "2026-09-08",
+    fieldwork_start: "2026-09-03",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "mista",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-ceara-setembro-2026/",
+    tse_protocolo: "CE032932026",
+    results: [
+      { candidate_name: "Cid Gomes", percentage: 27.0 },
+      { candidate_name: "Capitão Wagner", percentage: 20.0 },
+      { candidate_name: "Luizianne Lins", percentage: 20.0 },
+    ],
+  },
+
+  // AP: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-amapa-setembro-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Amapá 2026",
+    publication_date: "2026-09-08",
+    fieldwork_start: "2026-09-03",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "mista",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-amapa-setembro-2026/",
+    tse_protocolo: "AP040002026",
+    results: [
+      { candidate_name: "Rayssa Furlan", percentage: 33.0 },
+      { candidate_name: "Randolfe Rodrigues", percentage: 20.0 },
+      { candidate_name: "Lucas Barreto", percentage: 14.0 },
+    ],
+  },
+
+  // ES: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-espirito-santo-setembro-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Espírito Santo 2026",
+    publication_date: "2026-09-09",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-08",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "mista",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-espirito-santo-setembro-2026/",
+    tse_protocolo: "ES019672026",
+    results: [
+      { candidate_name: "Renato Casagrande", percentage: 28.0 },
+      { candidate_name: "Sergio Meneguelli", percentage: 12.0 },
+      { candidate_name: "Evair de Melo", percentage: 9.0 },
+      { candidate_name: "Fabiano Contarato", percentage: 9.0 },
+    ],
+  },
 ];
 
 async function main() {
