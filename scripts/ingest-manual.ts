@@ -7266,8 +7266,8 @@ const PENDING_POLLS: Array<{
   // ─── Vetor Arrow · 29 ago - 1 set 2026 · TSE RJ-09316/2026 · n=14.000 · telefônica
   // Fonte: https://mancheterio.com.br/benedita-lidera-disputa-pelo-senado-no-rio-aponta-pesquisa-vetor-arrow/
   {
-    institute_name: "Vetor Arrow",
-    election_name: "Senador Rio de Janeiro 2026 - 1º Turno",
+    institute_name: "Vetor/Arrow",
+    election_name: "Senador Rio de Janeiro 2026",
     publication_date: "2026-09-04",
     fieldwork_start: "2026-08-29",
     fieldwork_end: "2026-09-01",
