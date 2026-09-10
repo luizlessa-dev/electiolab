@@ -7285,6 +7285,91 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Marcelo Crivella", percentage: 1.5 },
     ],
   },
+
+  // ─── Quaest · 04-07 set 2026 · 4 pesquisas Senador (MG, PE, RJ, DF) ────────
+  // Minas Gerais: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-minas-gerais-setembro-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Senador Minas Gerais 2026",
+    publication_date: "2026-09-08",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1506,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-minas-gerais-setembro-2026/",
+    tse_protocolo: "MG047162026",
+    results: [
+      { candidate_name: "Marília Campos", percentage: 13.0 },
+      { candidate_name: "Aécio Neves", percentage: 10.0 },
+      { candidate_name: "Carlos Viana", percentage: 8.0 },
+      { candidate_name: "Domingos Sávio", percentage: 6.0 },
+      { candidate_name: "Marcelo Aro", percentage: 4.0 },
+    ],
+  },
+
+  // Pernambuco: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-pernambuco-setembro-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Senador Pernambuco 2026",
+    publication_date: "2026-09-08",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1302,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-pernambuco-setembro-2026/",
+    tse_protocolo: "PE002852026",
+    results: [
+      { candidate_name: "Marília Arraes", percentage: 17.0 },
+      { candidate_name: "Humberto Costa", percentage: 14.0 },
+      { candidate_name: "Mendonça Filho", percentage: 11.0 },
+      { candidate_name: "Eduardo da Fonte", percentage: 7.0 },
+      { candidate_name: "Túlio Gadêlha", percentage: 4.0 },
+    ],
+  },
+
+  // Rio de Janeiro: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-rio-de-janeiro-setembro-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Senador Rio de Janeiro 2026",
+    publication_date: "2026-09-09",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1302,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-rio-de-janeiro-setembro-2026/",
+    tse_protocolo: "RJ047682026",
+    results: [
+      { candidate_name: "Benedita da Silva", percentage: 15.0 },
+      { candidate_name: "Marcelo Crivella", percentage: 8.0 },
+      { candidate_name: "Carlos Jordy", percentage: 6.0 },
+      { candidate_name: "Pedro Paulo", percentage: 6.0 },
+      { candidate_name: "Carlos Portinho", percentage: 6.0 },
+    ],
+  },
+
+  // Distrito Federal: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-distrito-federal-setembro-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Senador Distrito Federal 2026",
+    publication_date: "2026-09-08",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1104,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-distrito-federal-setembro-2026/",
+    tse_protocolo: "DF019872026",
+    results: [
+      { candidate_name: "Michelle Bolsonaro", percentage: 26.0 },
+      { candidate_name: "Leila do Vôlei", percentage: 17.0 },
+      { candidate_name: "Erika Kokay", percentage: 13.0 },
+      { candidate_name: "Bia Kicis", percentage: 11.0 },
+      { candidate_name: "Sebastião Coelho", percentage: 2.0 },
+    ],
+  },
 ];
 
 async function main() {
