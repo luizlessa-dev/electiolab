@@ -7149,6 +7149,62 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Flavio Bolsonaro", percentage: 41.0 },
     ],
   },
+
+  // ─── Ideia (Meio) · 04-07 set 2026 · TSE BR-07935/2026 · n=1.500 · telefônica
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/meio-ideia-presidente-setembro-2026/
+  {
+    institute_name: "Meio/Ideia",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-09",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1500,
+    margin_of_error: 2.5,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/meio-ideia-presidente-setembro-2026/",
+    tse_protocolo: "BR079352026",
+    results: [
+      { candidate_name: "Lula", percentage: 38.4 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 37.3 },
+      { candidate_name: "Augusto Cury", percentage: 6.6 },
+      { candidate_name: "Renan Santos", percentage: 4.0 },
+      { candidate_name: "Ronaldo Caiado", percentage: 4.0 },
+    ],
+  },
+  {
+    institute_name: "Meio/Ideia",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-09",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1500,
+    margin_of_error: 2.5,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/meio-ideia-presidente-setembro-2026/",
+    tse_protocolo: "BR079352026",
+    scenario_label: "Lula vs Flávio",
+    results: [
+      { candidate_name: "Lula", percentage: 46.0 },
+      { candidate_name: "Flavio Bolsonaro", percentage: 46.0 },
+    ],
+  },
+  {
+    institute_name: "Meio/Ideia",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-09",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1500,
+    margin_of_error: 2.5,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/meio-ideia-presidente-setembro-2026/",
+    tse_protocolo: "BR079352026",
+    scenario_label: "Lula vs Caiado",
+    results: [
+      { candidate_name: "Lula", percentage: 46.0 },
+      { candidate_name: "Ronaldo Caiado", percentage: 42.0 },
+    ],
+  },
 ];
 
 async function main() {
