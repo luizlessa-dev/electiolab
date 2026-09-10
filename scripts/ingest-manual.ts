@@ -7670,7 +7670,7 @@ const PENDING_POLLS: Array<{
   },
   {
     institute_name: "Real Time Big Data",
-    election_name: "Governador Mato Grosso do Sul 2026",
+    election_name: "Governador MS 2026",
     publication_date: "2026-09-10",
     fieldwork_start: "2026-09-05",
     fieldwork_end: "2026-09-09",
@@ -7691,7 +7691,7 @@ const PENDING_POLLS: Array<{
   },
   {
     institute_name: "Real Time Big Data",
-    election_name: "Governador Para 2026",
+    election_name: "Governador PA 2026",
     publication_date: "2026-09-08",
     fieldwork_start: "2026-09-03",
     fieldwork_end: "2026-09-07",
@@ -7708,7 +7708,7 @@ const PENDING_POLLS: Array<{
   },
   {
     institute_name: "Real Time Big Data",
-    election_name: "Governador Rio Grande do Norte 2026",
+    election_name: "Governador RN 2026",
     publication_date: "2026-09-10",
     fieldwork_start: "2026-09-05",
     fieldwork_end: "2026-09-09",
@@ -7727,7 +7727,7 @@ const PENDING_POLLS: Array<{
   },
   {
     institute_name: "Real Time Big Data",
-    election_name: "Governador Rio Grande do Sul 2026",
+    election_name: "Governador RS 2026 - 1º Turno",
     publication_date: "2026-09-10",
     fieldwork_start: "2026-09-05",
     fieldwork_end: "2026-09-09",
@@ -7745,7 +7745,7 @@ const PENDING_POLLS: Array<{
   },
   {
     institute_name: "Real Time Big Data",
-    election_name: "Governador Roraima 2026",
+    election_name: "Governador RR 2026",
     publication_date: "2026-09-10",
     fieldwork_start: "2026-09-05",
     fieldwork_end: "2026-09-09",
