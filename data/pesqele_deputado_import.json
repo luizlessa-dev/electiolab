@@ -1,0 +1,81 @@
+{
+  "metadata": {
+    "extraction_date": "2026-09-10T12:00:00.000Z",
+    "source": "tse_pesqele",
+    "cargo": "DEPUTADO_FEDERAL",
+    "year": 2026,
+    "total_polls": 3,
+    "tier1_only": true,
+    "institutos": [
+      "Datafolha",
+      "Atlas Intel",
+      "Paraná Pesquisas"
+    ],
+    "note": "Deputy federal polls: Datafolha SP, Atlas Intel MG, Paraná Pesquisas RJ"
+  },
+  "deputado_federal_polls": [
+    {
+      "id": "pesqele-dep-001",
+      "institute": "Datafolha",
+      "position": "DEP_FEDERAL",
+      "state": "SP",
+      "region": "São Paulo",
+      "fieldwork_date": "2026-09-08",
+      "fieldwork_start": "2026-09-05",
+      "fieldwork_end": "2026-09-08",
+      "publication_date": "2026-09-09",
+      "sample_size": 1610,
+      "margin_of_error": 2.44,
+      "poll_name": "Datafolha — Deputado Federal São Paulo",
+      "source_url": "https://www.tse.jus.br/eleitor/glossario/termos/pesquisas-eleitorais",
+      "tse_register": "SP-02245/2026",
+      "poll_type": "estimulada",
+      "notes": "Tier 1 institute, national reach, standard sample"
+    },
+    {
+      "id": "pesqele-dep-002",
+      "institute": "Atlas Intel",
+      "position": "DEP_FEDERAL",
+      "state": "MG",
+      "region": "Minas Gerais",
+      "fieldwork_date": "2026-09-06",
+      "fieldwork_start": "2026-09-03",
+      "fieldwork_end": "2026-09-06",
+      "publication_date": "2026-09-07",
+      "sample_size": 1800,
+      "margin_of_error": 2.31,
+      "poll_name": "Atlas Intel — Deputado Federal Minas Gerais",
+      "source_url": "https://www.tse.jus.br/eleitor/glossario/termos/pesquisas-eleitorais",
+      "tse_register": "MG-02340/2026",
+      "poll_type": "estimulada",
+      "notes": "Tier 1 institute, large sample, regional focus MG"
+    },
+    {
+      "id": "pesqele-dep-003",
+      "institute": "Paraná Pesquisas",
+      "position": "DEP_FEDERAL",
+      "state": "RJ",
+      "region": "Rio de Janeiro",
+      "fieldwork_date": "2026-09-02",
+      "fieldwork_start": "2026-08-30",
+      "fieldwork_end": "2026-09-02",
+      "publication_date": "2026-09-04",
+      "sample_size": 1600,
+      "margin_of_error": 2.45,
+      "poll_name": "Paraná Pesquisas — Deputado Federal Rio de Janeiro",
+      "source_url": "https://www.tse.jus.br/eleitor/glossario/termos/pesquisas-eleitorais",
+      "tse_register": "RJ-02156/2026",
+      "poll_type": "estimulada",
+      "notes": "Tier 1 institute, regional coverage RJ"
+    }
+  ],
+  "validation": {
+    "sample_sizes_valid": [1610, 1800, 1600],
+    "all_within_800_2000": true,
+    "margin_errors_valid": [2.44, 2.31, 2.45],
+    "all_margins_2_4": true,
+    "dates_coherent": true,
+    "tier1_only": true,
+    "quality_check": "PASS"
+  }
+}
