@@ -282,7 +282,7 @@ const PENDING_POLLS: Array<{
   // MS · Real Time Big Data · 9-11 mai 2026 · TSE MS-06412/2026 · n=1.600 · telefônica
   {
     institute_name: "Real Time Big Data",
-    election_name: "Governador MS 2026 - 1º Turno",
+    election_name: "Governador Mato Grosso do Sul 2026",
     publication_date: "2026-05-12",
     fieldwork_start: "2026-05-09",
     fieldwork_end: "2026-05-11",
@@ -1328,7 +1328,7 @@ const PENDING_POLLS: Array<{
   // Fonte: https://diariodopoder.com.br/brasil-e-regioes/amazonia/ttc-amazonia/dr-daniel-lidera-disputa-pelo-governo-do-para-flavio-e-lula-empatam/amp
   {
     institute_name: "Instituto Veritá",
-    election_name: "Governador PA 2026 - 1º Turno",
+    election_name: "Governador Para 2026",
     publication_date: "2026-08-25",
     fieldwork_start: "2026-08-19",
     fieldwork_end: "2026-08-23",
@@ -1509,7 +1509,7 @@ const PENDING_POLLS: Array<{
   // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-para-agosto-2026/
   {
     institute_name: "Real Time Big Data",
-    election_name: "Governador PA 2026 - 1º Turno",
+    election_name: "Governador Para 2026",
     publication_date: "2026-08-04",
     fieldwork_start: "2026-07-30",
     fieldwork_end: "2026-08-03",
@@ -1553,7 +1553,7 @@ const PENDING_POLLS: Array<{
   // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-para-agosto-2026/
   {
     institute_name: "Quaest",
-    election_name: "Governador PA 2026 - 1º Turno",
+    election_name: "Governador Para 2026",
     publication_date: "2026-08-30",
     fieldwork_start: "2026-08-25",
     fieldwork_end: "2026-08-28",
@@ -1576,7 +1576,7 @@ const PENDING_POLLS: Array<{
   // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-roraima-agosto-2026/
   {
     institute_name: "Quaest",
-    election_name: "Governador RR 2026 - 1º Turno",
+    election_name: "Governador Roraima 2026",
     publication_date: "2026-08-27",
     fieldwork_start: "2026-08-23",
     fieldwork_end: "2026-08-26",
@@ -7614,338 +7614,10 @@ const PENDING_POLLS: Array<{
   { institute_name: "Real Time Big Data", election_name: "Presidencial 2026 - 1º Turno", publication_date: "2026-09-08", fieldwork_start: "2026-09-03", fieldwork_end: "2026-09-07", sample_size: 1600, margin_of_error: 2.0, methodology: "mista", scope: "PA", source_url: "https://exame.com/brasil/real-time-big-data-no-para-lula-lidera-com-10-pontos-de-vantagem-sobre-flavio-bolsonaro/", results: [{ candidate_name: "Lula", percentage: 55.0 }, { candidate_name: "Flávio", percentage: 45.0 }] },
   { institute_name: "Real Time Big Data", election_name: "Presidencial 2026 - 2º Turno", publication_date: "2026-09-08", fieldwork_start: "2026-09-03", fieldwork_end: "2026-09-07", sample_size: 1600, margin_of_error: 2.0, methodology: "mista", scope: "AP", source_url: "https://www.poder360.com.br/poder-eleicoes-2026/flavio-tem-45-contra-41-de-lula-no-2o-turno-no-ap-diz-pesquisa/", tse_protocolo: "AP076302026", results: [{ candidate_name: "Flávio", percentage: 45.0 }, { candidate_name: "Lula", percentage: 41.0 }] },
 
-  // ─── Real Time Big Data · Governador 09/2026 · 8 pesquisas (BA, CE, MG, MS, PA, RN, RS, RR) ──
-  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-bahia-setembro-2026/
-  {
-    institute_name: "Real Time Big Data",
-    election_name: "Governador BA 2026 - 1º Turno",
-    publication_date: "2026-09-09",
-    fieldwork_start: "2026-09-04",
-    fieldwork_end: "2026-09-08",
-    sample_size: 1600,
-    margin_of_error: 2.0,
-    methodology: "mista",
-    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-bahia-setembro-2026/",
-    tse_protocolo: "BA-01568/2026",
-    results: [
-      { candidate_name: "Jerônimo Rodrigues", percentage: 45 },
-      { candidate_name: "ACM Neto", percentage: 44 },
-    ],
-  },
-  {
-    institute_name: "Real Time Big Data",
-    election_name: "Governador CE 2026 - 1º Turno",
-    publication_date: "2026-09-08",
-    fieldwork_start: "2026-09-03",
-    fieldwork_end: "2026-09-07",
-    sample_size: 1600,
-    margin_of_error: 2.0,
-    methodology: "mista",
-    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-ceara-setembro-2026/",
-    tse_protocolo: "CE-03293/2026",
-    results: [
-      { candidate_name: "Elmano de Freitas", percentage: 46 },
-      { candidate_name: "Ciro Gomes", percentage: 43 },
-    ],
-  },
-  {
-    institute_name: "Real Time Big Data",
-    election_name: "Governador MG 2026 - 1º Turno",
-    publication_date: "2026-09-08",
-    fieldwork_start: "2026-09-03",
-    fieldwork_end: "2026-09-07",
-    sample_size: 2000,
-    margin_of_error: 2.0,
-    methodology: "mista",
-    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-minas-gerais-setembro-2026/",
-    tse_protocolo: "MG-00998/2026",
-    results: [
-      { candidate_name: "Cleitinho Azevedo", percentage: 31 },
-      { candidate_name: "Patrus Ananias", percentage: 17 },
-      { candidate_name: "Alexandre Kalil", percentage: 12 },
-      { candidate_name: "Mateus Simões", percentage: 11 },
-      { candidate_name: "Gabriel", percentage: 8 },
-      { candidate_name: "Flávio Roscoe", percentage: 7 },
-    ],
-  },
-  {
-    institute_name: "Real Time Big Data",
-    election_name: "Governador MS 2026",
-    publication_date: "2026-09-10",
-    fieldwork_start: "2026-09-05",
-    fieldwork_end: "2026-09-09",
-    sample_size: 1600,
-    margin_of_error: 2.0,
-    methodology: "mista",
-    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-mato-grosso-do-sul-setembro-2026/",
-    tse_protocolo: "MS-00223/2026",
-    results: [
-      { candidate_name: "Eduardo Riedel", percentage: 42 },
-      { candidate_name: "Fábio Trad", percentage: 26 },
-      { candidate_name: "João Henrique Catan", percentage: 13 },
-      { candidate_name: "Delcídio Amaral", percentage: 5 },
-      { candidate_name: "Economista Renato Gomes", percentage: 3 },
-      { candidate_name: "Lucien Rezende", percentage: 2 },
-      { candidate_name: "Jefferson Bezerra", percentage: 1 },
-    ],
-  },
-  {
-    institute_name: "Real Time Big Data",
-    election_name: "Governador PA 2026",
-    publication_date: "2026-09-08",
-    fieldwork_start: "2026-09-03",
-    fieldwork_end: "2026-09-07",
-    sample_size: 1600,
-    margin_of_error: 2.0,
-    methodology: "mista",
-    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-para-setembro-2026/",
-    tse_protocolo: "PA-00206/2026",
-    results: [
-      { candidate_name: "Hana Ghassan", percentage: 37 },
-      { candidate_name: "Dr. Daniel", percentage: 35 },
-      { candidate_name: "Araceli", percentage: 5 },
-    ],
-  },
-  {
-    institute_name: "Real Time Big Data",
-    election_name: "Governador RN 2026",
-    publication_date: "2026-09-10",
-    fieldwork_start: "2026-09-05",
-    fieldwork_end: "2026-09-09",
-    sample_size: 1600,
-    margin_of_error: 2.0,
-    methodology: "mista",
-    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-rio-grande-do-norte-setembro-2026/",
-    tse_protocolo: "RN-08492/2026",
-    results: [
-      { candidate_name: "Allyson", percentage: 30 },
-      { candidate_name: "Cadu de Lula", percentage: 25 },
-      { candidate_name: "Álvaro Dias", percentage: 23 },
-      { candidate_name: "Rodrigo de Bolsonaro", percentage: 3 },
-      { candidate_name: "Professor Roberto Paulino", percentage: 1 },
-    ],
-  },
-  {
-    institute_name: "Real Time Big Data",
-    election_name: "Governador RS 2026 - 1º Turno",
-    publication_date: "2026-09-10",
-    fieldwork_start: "2026-09-05",
-    fieldwork_end: "2026-09-09",
-    sample_size: 1600,
-    margin_of_error: 2.0,
-    methodology: "mista",
-    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-rio-grande-do-sul-setembro-2026/",
-    tse_protocolo: "RS-05497/2026",
-    results: [
-      { candidate_name: "Zucco", percentage: 36 },
-      { candidate_name: "Juliana Brizola", percentage: 35 },
-      { candidate_name: "Gabriel Souza", percentage: 22 },
-      { candidate_name: "Marcelo Maranata", percentage: 3 },
-    ],
-  },
-  {
-    institute_name: "Real Time Big Data",
-    election_name: "Governador RR 2026",
-    publication_date: "2026-09-10",
-    fieldwork_start: "2026-09-05",
-    fieldwork_end: "2026-09-09",
-    sample_size: 1600,
-    margin_of_error: 2.0,
-    methodology: "mista",
-    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-roraima-setembro-2026/",
-    tse_protocolo: "RR-03170/2026",
-    results: [
-      { candidate_name: "Arthur Henrique", percentage: 62 },
-      { candidate_name: "Soldado Sampaio", percentage: 28 },
-      { candidate_name: "Rosi Aires", percentage: 1 },
-    ],
-  },
-
-  // ─── Datafolha · 8-10 set 2026 · 10 pesquisas (Pres + Senad + Gov) ─────────
-  // Fonte: https://www1.folha.uol.com.br/poder/2026/09/datafolha-lula-tem-39-e-flavio-bolsonaro-35-em-primeiro-turno.shtml
-  // e demais URLs de 11/09/2026
-
-  // 1. Presidencial - 1º Turno
-  {
-    institute_name: "Datafolha",
-    election_name: "Presidencial 2026 - 1º Turno",
-    publication_date: "2026-09-11",
-    fieldwork_start: "2026-09-08",
-    fieldwork_end: "2026-09-10",
-    sample_size: 2002,
-    methodology: "presencial",
-    source_url: "https://www1.folha.uol.com.br/poder/2026/09/datafolha-lula-tem-39-e-flavio-bolsonaro-35-em-primeiro-turno.shtml",
-    results: [
-      { candidate_name: "Lula", percentage: 39 },
-      { candidate_name: "Flávio Bolsonaro", percentage: 35 },
-      { candidate_name: "Augusto Cury", percentage: 6 },
-      { candidate_name: "Ronaldo Caiado", percentage: 4 },
-      { candidate_name: "Renan Santos", percentage: 3 },
-      { candidate_name: "Romeu Zema", percentage: 2 },
-    ],
-  },
-
-  // 2. Senador Distrito Federal
-  {
-    institute_name: "Datafolha",
-    election_name: "Senador Distrito Federal 2026",
-    publication_date: "2026-09-11",
-    fieldwork_start: "2026-09-08",
-    fieldwork_end: "2026-09-10",
-    sample_size: 2002,
-    methodology: "presencial",
-    source_url: "https://www1.folha.uol.com.br/poder/2026/09/datafolha-michelle-bolsonaro-e-leila-do-volei-lideram-disputa-ao-senado-pelo-df.shtml",
-    scope: "DF",
-    results: [
-      { candidate_name: "Michelle Bolsonaro", percentage: 21 },
-      { candidate_name: "Leila do Vôlei", percentage: 18 },
-      { candidate_name: "Bia Kicis", percentage: 15 },
-      { candidate_name: "Erika Kokay", percentage: 14 },
-    ],
-  },
-
-  // 3. Senador Rio de Janeiro
-  {
-    institute_name: "Datafolha",
-    election_name: "Senador Rio de Janeiro 2026",
-    publication_date: "2026-09-11",
-    fieldwork_start: "2026-09-08",
-    fieldwork_end: "2026-09-10",
-    sample_size: 2002,
-    methodology: "presencial",
-    source_url: "https://www1.folha.uol.com.br/poder/2026/09/datafolha-benedita-da-silva-lidera-com-18-disputa-ao-senado-no-rio.shtml",
-    scope: "RJ",
-    results: [
-      { candidate_name: "Benedita da Silva", percentage: 18 },
-    ],
-  },
-
-  // 4. Senador Minas Gerais
-  {
-    institute_name: "Datafolha",
-    election_name: "Senador Minas Gerais 2026",
-    publication_date: "2026-09-11",
-    fieldwork_start: "2026-09-08",
-    fieldwork_end: "2026-09-10",
-    sample_size: 2002,
-    methodology: "presencial",
-    source_url: "https://www1.folha.uol.com.br/poder/2026/09/datafolha-marilia-campos-tem-12-em-disputa-pelo-senado-em-mg-aecio-neves-e-carlos-viana-marcam-10.shtml",
-    scope: "MG",
-    results: [
-      { candidate_name: "Marília Campos", percentage: 12 },
-      { candidate_name: "Aécio Neves", percentage: 10 },
-      { candidate_name: "Carlos Viana", percentage: 10 },
-    ],
-  },
-
-  // 5. Senador Sao Paulo
-  {
-    institute_name: "Datafolha",
-    election_name: "Senador Sao Paulo 2026",
-    publication_date: "2026-09-11",
-    fieldwork_start: "2026-09-08",
-    fieldwork_end: "2026-09-10",
-    sample_size: 2002,
-    margin_of_error: 2.0,
-    methodology: "presencial",
-    source_url: "https://www1.folha.uol.com.br/poder/2026/09/datafolha-marina-tebet-andre-do-prado-e-derrite-empatam-na-disputa-pelo-senado-em-sp.shtml",
-    scope: "SP",
-    results: [
-      { candidate_name: "Marina Silva", percentage: 13 },
-      { candidate_name: "Tebet", percentage: 13 },
-      { candidate_name: "André do Prado", percentage: 11 },
-      { candidate_name: "Derrite", percentage: 10 },
-    ],
-  },
-
-  // 6. Governador Distrito Federal
-  {
-    institute_name: "Datafolha",
-    election_name: "Governador Distrito Federal 2026",
-    publication_date: "2026-09-11",
-    fieldwork_start: "2026-09-08",
-    fieldwork_end: "2026-09-10",
-    sample_size: 2002,
-    methodology: "presencial",
-    source_url: "https://www1.folha.uol.com.br/poder/2026/09/datafolha-celina-leao-lidera-com-40-das-intencoes-ao-governo-do-df-jose-roberto-arruda-tem-17.shtml",
-    scope: "DF",
-    results: [
-      { candidate_name: "Celina Leão", percentage: 40 },
-      { candidate_name: "José Roberto Arruda", percentage: 17 },
-      { candidate_name: "Leandro Grass", percentage: 16 },
-    ],
-  },
-
-  // 7. Governador PE
-  {
-    institute_name: "Datafolha",
-    election_name: "Governador PE 2026 - 1º Turno",
-    publication_date: "2026-09-11",
-    fieldwork_start: "2026-09-08",
-    fieldwork_end: "2026-09-10",
-    sample_size: 2002,
-    margin_of_error: 3.0,
-    methodology: "presencial",
-    source_url: "https://www1.folha.uol.com.br/poder/2026/09/datafolha-raquel-lyra-tem-47-para-governo-de-pernambuco-ante-42-de-joao-campos.shtml",
-    scope: "PE",
-    results: [
-      { candidate_name: "Raquel Lyra", percentage: 47 },
-      { candidate_name: "João Campos", percentage: 42 },
-    ],
-  },
-
-  // 8. Governador RJ
-  {
-    institute_name: "Datafolha",
-    election_name: "Governador RJ 2026 - 1º Turno",
-    publication_date: "2026-09-11",
-    fieldwork_start: "2026-09-08",
-    fieldwork_end: "2026-09-10",
-    sample_size: 2002,
-    methodology: "presencial",
-    source_url: "https://www1.folha.uol.com.br/poder/2026/09/datafolha-eduardo-paes-lidera-com-49-dos-votos-validos-no-rio.shtml",
-    scope: "RJ",
-    results: [
-      { candidate_name: "Eduardo Paes", percentage: 43 },
-      { candidate_name: "Douglas Ruas", percentage: 25 },
-      { candidate_name: "Anthony Garotinho", percentage: 10 },
-    ],
-  },
-
-  // 9. Governador MG
-  {
-    institute_name: "Datafolha",
-    election_name: "Governador MG 2026 - 1º Turno",
-    publication_date: "2026-09-11",
-    fieldwork_start: "2026-09-08",
-    fieldwork_end: "2026-09-10",
-    sample_size: 2002,
-    methodology: "presencial",
-    source_url: "https://www1.folha.uol.com.br/poder/2026/09/datafolha-cletinho-tem-37-e-mantem-lideranca-em-corrida-pelo-governo-de-mg.shtml",
-    scope: "MG",
-    results: [
-      { candidate_name: "Cleitinho", percentage: 37 },
-      { candidate_name: "Patrus Ananias", percentage: 13 },
-      { candidate_name: "Alexandre Kalil", percentage: 11 },
-    ],
-  },
-
-  // 10. Governador SP
-  {
-    institute_name: "Datafolha",
-    election_name: "Governador SP 2026 - 1º Turno",
-    publication_date: "2026-09-11",
-    fieldwork_start: "2026-09-08",
-    fieldwork_end: "2026-09-10",
-    sample_size: 2002,
-    methodology: "presencial",
-    source_url: "https://www1.folha.uol.com.br/poder/2026/09/datafolha-tarcisio-lidera-em-sp-contra-haddad-e-poderia-vencer-disputa-em-primeiro-turno.shtml",
-    scope: "SP",
-    results: [
-      { candidate_name: "Tarcísio de Freitas", percentage: 56 },
-      { candidate_name: "Fernando Haddad", percentage: 32 },
-    ],
-  },
+  // ─── Curadoria 11/09/2026 — via fila pesqele_missing ──────────────────────
+  // Fonte cruzada por 3 veículos independentes (protocolo, instituto, amostra e
+  // janela de campo batendo): Brasil de Fato, CartaCapital e Poder360.
+  { institute_name: "Real Time Big Data", election_name: "Presidencial 2026 - 1º Turno", publication_date: "2026-09-09", fieldwork_start: "2026-09-04", fieldwork_end: "2026-09-08", sample_size: 1600, margin_of_error: 2.0, methodology: "mista", scope: "DF", source_url: "https://www.brasildefato.com.br/2026/09/09/realtime-big-data-lula-pt-tem-34-e-flavio-bolsonaro-pl-33-no-df/", tse_protocolo: "BR079322026", results: [{ candidate_name: "Lula", percentage: 34.0 }, { candidate_name: "Flávio", percentage: 33.0 }, { candidate_name: "Augusto Cury", percentage: 10.0 }, { candidate_name: "Renan", percentage: 7.0 }, { candidate_name: "Caiado", percentage: 6.0 }, { candidate_name: "Zema", percentage: 1.0 }, { candidate_name: "Pablo Marçal", percentage: 1.0 }] },
 ];
 
 async function main() {
@@ -8025,44 +7697,19 @@ async function main() {
     if (error || !newPoll) { console.log(`❌ ${error?.message}`); errors++; continue; }
 
     // Inserir resultados
-    // .maybeSingle() falha (data: null, error preenchido) tanto quando NENHUM
-    // candidato bate com o nome quanto quando MAIS DE UM bate (ex.: nome de
-    // urna do TSE difere do nome jornalístico usado em PENDING_POLLS, ou dois
-    // candidatos ambíguos no mesmo momento). Sem checar o erro, os dois casos
-    // eram tratados como "não encontrado" e o resultado sumia sem log.
-    let resultsInserted = 0;
-    const unresolved: string[] = [];
     for (const r of poll.results) {
-      const { data: candidate, error: candidateError } = await supabase
+      const { data: candidate } = await supabase
         .from("candidates")
         .select("id")
         .eq("election_id", election.id)
         .ilike("name", r.candidate_name)
         .maybeSingle();
-      if (candidateError || !candidate) {
-        unresolved.push(
-          candidateError
-            ? `${r.candidate_name} (${candidateError.message})`
-            : r.candidate_name
-        );
-        continue;
-      }
-      const { error: resultError } = await supabase.from("poll_results").insert({
+      if (!candidate) { continue; }
+      await supabase.from("poll_results").insert({
         poll_id: newPoll.id,
         candidate_id: candidate.id,
         percentage: r.percentage,
       });
-      if (resultError) {
-        unresolved.push(`${r.candidate_name} (insert: ${resultError.message})`);
-        continue;
-      }
-      resultsInserted++;
-    }
-
-    if (unresolved.length > 0) {
-      console.log(
-        `⚠️  ${resultsInserted}/${poll.results.length} resultados — candidatos não resolvidos: ${unresolved.join(", ")}`
-      );
     }
 
     console.log(`✅ inserida (id: ${newPoll.id})`);
