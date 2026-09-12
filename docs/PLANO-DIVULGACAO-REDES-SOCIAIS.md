@@ -1,8 +1,8 @@
 # Plano de Divulgação — Redes Sociais ElectioLab
 
-**Início:** 10/09/2026 (quinta) · **1º turno:** 04/10/2026 (domingo) · **2º turno:** 25/10/2026 (domingo)
+**Início:** 13/09/2026 (domingo — ajustado em 12/09; início original era 10/09) · **1º turno:** 04/10/2026 (domingo) · **2º turno:** 25/10/2026 (domingo)
 **Objetivo:** tráfego + autoridade no site durante o pico de interesse eleitoral (não é lançamento de produto — ElectioLab já está no ar desde abril/2026)
-**Canais:** X (Twitter), Instagram, LinkedIn
+**Canais:** X (Twitter), Instagram, Facebook (espelha o Instagram), LinkedIn
 **Capacidade:** fundador solo (Luiz Lessa)
 **Meta:** maximizar sessões em electiolab.com e reconhecimento de marca até o fim do 2º turno; assinantes da newsletter e conversão Pro são efeito colateral bem-vindo, não o KPI principal desta campanha.
 
@@ -29,55 +29,29 @@ Faltam ~3,5 semanas para o 1º turno. É a janela de maior volume de busca e con
 
 ---
 
-## Fase 1 — Aquecimento (10/09 a 03/10, 3,5 semanas)
+## Fases e cadência
 
-**Cadência:** X 1x/dia (mais nos dias de pesquisa nova) · Instagram 3x/semana · LinkedIn 2x/semana
+O dia a dia (posts-âncora, grade de rotação, bancos de template) vive só nos calendários por canal, pra não ter duas fontes de verdade desalinhando — ver **[índice dos calendários](./CALENDARIO-CONTEUDO-REDES-SOCIAIS.md)**. Aqui fica só o resumo estratégico de cada fase.
 
-### Semana de 10/09 (hoje) a 14/09
-- **Qui 10/09** — X: thread "por que cada instituto dá um número diferente" (pilar 2), linkando `/por-que-institutos-dao-numeros-diferentes`. LinkedIn: post de apresentação do projeto pro público de LinkedIn (pitch curto do press kit + link).
-- **Sex 11/09** — Instagram: carrossel com os 13 institutos e score de acurácia de cada um.
-- **Sáb-Dom 13-14/09** — X: recap da semana + qualquer pesquisa nova que saia no fim de semana.
+**Cadência:** X e Instagram/Facebook diários (grade de rotação por dia da semana) · LinkedIn 4-5x/semana.
 
-### Semana de 15/09 a 21/09
-- Reagir em tempo real a cada pesquisa nova publicada (Datafolha/Quaest/Atlas costumam sair nessa janela pré-1º-turno).
-- LinkedIn: post sobre a arquitetura (dado oficial TSE + Google Transparency + Meta Ad Library num pipeline aberto) — ângulo tech + transparência.
-- Instagram: carrossel "quanto cada candidato gastou em Google Ads/Meta Ads" (dado 2022 como teaser do que dá pra ver por candidato hoje).
+### Fase 1 — Aquecimento (13/09 a 03/10, ~3 semanas)
+Lançamento simultâneo em todos os canais no dia 13/09 (metodologia). Da semana de 15/09 em diante: reação em tempo real a pesquisa nova, destaque de arquitetura/transparência (17/09), gasto digital (19/09), simulação de 2º turno (24/09) e outreach de imprensa (26/09). Última semana (29/09-03/10): contagem regressiva diária + checar carga do site antes do Dia D.
 
-### Semana de 22/09 a 28/09
-- X: começar a puxar a régua do 1º turno — "faltam X dias, aqui está a média ponderada atual".
-- Instagram + LinkedIn: destacar página de simulação de 2º turno (`/quem-vence-no-segundo-turno-presidencia-2026`), à medida que fica tecnicamente relevante.
-- Iniciar outreach individual (DM/e-mail) para 5-10 jornalistas/criadores da lista do PRESS-KIT.md (Núcleo Jornalismo, Tilt UOL, Manual do Usuário) — pedir menção ou usar como fonte antes do 1º turno.
+### Fase 2 — 1º turno (04/10 domingo) e semana seguinte
+Cobertura ao vivo da apuração comparando com a média ponderada — maior potencial de viralização do ano. Dias seguintes: prova social (acerto/erro da média) e virada de chave editorial pro 2º turno.
 
-### Semana de 29/09 a 03/10 (véspera)
-- Ritmo diário em todos os canais: contagem regressiva pro 1º turno.
-- Preparar com antecedência os posts de "Dia D" (não escrever em cima da hora no domingo da apuração).
-- Checar analytics do site (picos de tráfego esperado) e testar que a home carrega rápido sob carga.
+### Fase 3 — Entre turnos (05/10 a 24/10)
+Mesma cadência da Fase 1, conteúdo migra pro confronto do 2º turno. Retomar outreach de imprensa com o número real de acerto do 1º turno como gancho. Contagem regressiva final na última semana.
 
-## Fase 2 — 1º turno (04/10 domingo) e semana seguinte
-
-- **Dom 04/10 (dia da votação/apuração):** X ao vivo comentando a apuração parcial vs. o que a média ponderada previa — este é o momento de maior potencial de viralização do ano. LinkedIn/Instagram: post "como saiu vs. o que a média dizia" assim que houver resultado oficial.
-- **Seg-Ter 05-06/10:** post de "acerto/erro da média" comparando previsão x resultado real por instituto — conteúdo de prova social direto (mostra a acurácia funcionando).
-- **Qua-Sex 07-10/10:** virar a chave pro 2º turno — todo conteúdo agora foca nos cenários que restaram, com dados atualizados dos candidatos remanescentes.
-
-## Fase 3 — Entre turnos (05/10 a 24/10)
-
-**Cadência:** mesma da Fase 1, mas todo o pilar de conteúdo migra para o confronto do 2º turno.
-
-- Semana de 05/10: retomar outreach de imprensa citando os números de acerto do 1º turno (prova concreta de acurácia — ótimo gancho pra pauta).
-- Semana de 12/10: pesquisas do 2º turno começam a sair — voltar ao ritmo reativo diário.
-- Semana de 19/10: contagem regressiva final, reforçar página de simulação e relatório semanal.
-
-## Fase 4 — 2º turno (25/10) e pós-eleição
-
-- **Dom 25/10:** cobertura ao vivo igual à do 1º turno.
-- **Semana de 26/10 em diante:** post de retrospectiva da temporada — quantas pesquisas indexadas, acurácia final por instituto vs. resultado real do TSE. Esse é o melhor material de autoridade pro ano seguinte (e reaproveitável em outreach de imprensa pós-eleição).
-- Avaliar aqui, com dados de tráfego reais da campanha toda, se vale manter cadência diária ou reduzir — não é o foco deste plano, mas fica registrado como próxima decisão.
+### Fase 4 — 2º turno (25/10) e pós-eleição
+Cobertura ao vivo igual à do 1º turno, seguida de retrospectiva da temporada (pesquisas indexadas, acurácia final por instituto vs. TSE) — melhor material de autoridade pro ano seguinte e reaproveitável em outreach pós-eleição. Decisão de manter ou reduzir cadência fica pra depois, com dado real de tráfego da campanha em mãos.
 
 ---
 
 ## Checklist de assets (antes de 15/09)
 
-- [ ] Confirmar/criar handles oficiais @electiolab no X, Instagram e LinkedIn (verificar se já existem)
+- [ ] Confirmar/criar handles oficiais @electiolab no X, Instagram, Facebook e LinkedIn (verificar se já existem)
 - [ ] Template de carrossel Instagram (Canva ou Figma) com identidade visual do site
 - [ ] Banco de 10-15 posts pré-escritos pros pilares 1, 2 e 4 (dado pronto, só plugar número da semana)
 - [ ] Print/GIF do dashboard e do relatório semanal pra usar em stories/LinkedIn
@@ -95,6 +69,6 @@ Faltam ~3,5 semanas para o 1º turno. É a janela de maior volume de busca e con
 
 ## Riscos
 
-1. **Capacidade solo** — cadência diária em 3 canais é pesada pra uma pessoa. Mitigação: banco de posts pré-escritos (checklist acima) e priorizar X > LinkedIn > Instagram se faltar tempo.
+1. **Capacidade solo** — cadência diária em 4 canais é pesada pra uma pessoa. Mitigação: Facebook replica o Instagram (cross-post, sem produção extra), banco de posts pré-escritos (checklist acima) e priorizar X > LinkedIn > Instagram/Facebook se faltar tempo.
 2. **Pico de tráfego no dia da apuração derruba o site** — testar carga antes de 04/10 e 25/10.
 3. **Dado errado postado ao vivo** — ter processo de checagem rápida antes de postar número de apuração parcial.
