@@ -282,7 +282,7 @@ const PENDING_POLLS: Array<{
   // MS · Real Time Big Data · 9-11 mai 2026 · TSE MS-06412/2026 · n=1.600 · telefônica
   {
     institute_name: "Real Time Big Data",
-    election_name: "Governador Mato Grosso do Sul 2026",
+    election_name: "Governador MS 2026 - 1º Turno",
     publication_date: "2026-05-12",
     fieldwork_start: "2026-05-09",
     fieldwork_end: "2026-05-11",
@@ -1328,7 +1328,7 @@ const PENDING_POLLS: Array<{
   // Fonte: https://diariodopoder.com.br/brasil-e-regioes/amazonia/ttc-amazonia/dr-daniel-lidera-disputa-pelo-governo-do-para-flavio-e-lula-empatam/amp
   {
     institute_name: "Instituto Veritá",
-    election_name: "Governador Para 2026",
+    election_name: "Governador PA 2026 - 1º Turno",
     publication_date: "2026-08-25",
     fieldwork_start: "2026-08-19",
     fieldwork_end: "2026-08-23",
@@ -1509,7 +1509,7 @@ const PENDING_POLLS: Array<{
   // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-para-agosto-2026/
   {
     institute_name: "Real Time Big Data",
-    election_name: "Governador Para 2026",
+    election_name: "Governador PA 2026 - 1º Turno",
     publication_date: "2026-08-04",
     fieldwork_start: "2026-07-30",
     fieldwork_end: "2026-08-03",
@@ -1553,7 +1553,7 @@ const PENDING_POLLS: Array<{
   // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-para-agosto-2026/
   {
     institute_name: "Quaest",
-    election_name: "Governador Para 2026",
+    election_name: "Governador PA 2026 - 1º Turno",
     publication_date: "2026-08-30",
     fieldwork_start: "2026-08-25",
     fieldwork_end: "2026-08-28",
@@ -1576,7 +1576,7 @@ const PENDING_POLLS: Array<{
   // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-roraima-agosto-2026/
   {
     institute_name: "Quaest",
-    election_name: "Governador Roraima 2026",
+    election_name: "Governador RR 2026 - 1º Turno",
     publication_date: "2026-08-27",
     fieldwork_start: "2026-08-23",
     fieldwork_end: "2026-08-26",
