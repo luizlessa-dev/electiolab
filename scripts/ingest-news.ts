@@ -62,7 +62,7 @@ const PENDING_NEWS: Array<{
     published_at: "2026-08-23",
     summary: "Caiado, Renan Santos e Augusto Cury confirmaram presença no primeiro debate presidencial, na Band; Lula, Flávio Bolsonaro e Zema recusaram participar.",
     election_name: "Presidencial 2026 - 1º Turno",
-    candidate_names: ["Caiado", "Renan Santos", "Augusto Cury", "Lula", "Flávio", "Zema"],
+    candidate_names: ["Caiado", "Renan Santos", "Augusto Cury", "Lula", "Flávio Bolsonaro", "Zema"],
     status: "published",
   },
   {
@@ -102,7 +102,7 @@ const PENDING_NEWS: Array<{
     published_at: "2026-09-02",
     summary: "Quaest mostra Lula na frente com 37%, Flávio Bolsonaro em segundo com 30% e Augusto Cury em ascensão, com queda no número de indecisos desde o início da campanha.",
     election_name: "Presidencial 2026 - 1º Turno",
-    candidate_names: ["Lula", "Flávio", "Augusto Cury"],
+    candidate_names: ["Lula", "Flávio Bolsonaro", "Augusto Cury"],
     status: "published",
   },
   // ─── lote 2 — escândalo Banco Master, verificado via WebSearch/WebFetch em 2026-09-04 ───
@@ -113,7 +113,7 @@ const PENDING_NEWS: Array<{
     published_at: "2026-09-01",
     summary: "Relatório inédito do Coaf mostra que os repasses de Daniel Vorcaro para o filme Dark Horse, sobre Jair Bolsonaro, foram maiores e mais frequentes do que Flávio Bolsonaro havia admitido publicamente.",
     election_name: "Presidencial 2026 - 1º Turno",
-    candidate_names: ["Flávio"],
+    candidate_names: ["Flávio Bolsonaro"],
     status: "published",
   },
   {

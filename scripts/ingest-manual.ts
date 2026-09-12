@@ -85,7 +85,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.brasildefato.com.br/2026/05/28/lula-lidera-todos-os-cenarios-e-abre-cinco-pontos-sobre-flavio-bolsonaro-no-2o-turno-aponta-pesquisa-meioideia/",
     results: [
       { candidate_name: "Lula",            percentage: 38.5 },
-      { candidate_name: "Flávio", percentage: 31.5 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 31.5 },
       { candidate_name: "Caiado",          percentage:  5.5 },
       { candidate_name: "Zema",            percentage:  2.4 },
       { candidate_name: "Renan Santos",    percentage:  2.1 },
@@ -103,7 +103,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.brasildefato.com.br/2026/05/28/lula-lidera-todos-os-cenarios-e-abre-cinco-pontos-sobre-flavio-bolsonaro-no-2o-turno-aponta-pesquisa-meioideia/",
     results: [
       { candidate_name: "Lula",            percentage: 46.5 },
-      { candidate_name: "Flávio", percentage: 41.4 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 41.4 },
     ],
   },
 
@@ -122,7 +122,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-presidente-maio-2026/",
     results: [
       { candidate_name: "Lula",            percentage: 40 },
-      { candidate_name: "Flávio", percentage: 34 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 34 },
       { candidate_name: "Caiado",          percentage:  5 },
       { candidate_name: "Zema",            percentage:  4 },
       { candidate_name: "Renan Santos",    percentage:  3 },
@@ -147,7 +147,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/meio-ideia-presidente-maio-2026/",
     results: [
       { candidate_name: "Lula",            percentage: 40 },
-      { candidate_name: "Flávio", percentage: 36 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 36 },
       { candidate_name: "Caiado",          percentage:  5.6 },
       { candidate_name: "Zema",            percentage:  3 },
       { candidate_name: "Augusto Cury",    percentage:  1.5 },
@@ -312,7 +312,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-presidente-maio-2026/",
     results: [
       { candidate_name: "Lula",            percentage: 47.0 },
-      { candidate_name: "Flávio", percentage: 34.3 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 34.3 },
       { candidate_name: "Renan Santos",     percentage:  6.9 },
       { candidate_name: "Zema",             percentage:  5.2 },
       { candidate_name: "Caiado",           percentage:  2.7 },
@@ -330,7 +330,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-presidente-maio-2026/",
     results: [
       { candidate_name: "Lula",            percentage: 48.9 },
-      { candidate_name: "Flávio", percentage: 41.8 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 41.8 },
     ],
   },
 
@@ -348,7 +348,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/gerp-presidente-maio-2026/",
     results: [
       { candidate_name: "Lula",            percentage: 38.0 },
-      { candidate_name: "Flávio", percentage: 38.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 38.0 },
       { candidate_name: "Zema",             percentage:  3.0 },
       { candidate_name: "Caiado",           percentage:  2.0 },
     ],
@@ -369,7 +369,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-presidente-maio-2026-2/",
     results: [
       { candidate_name: "Lula",            percentage: 40 },
-      { candidate_name: "Flávio", percentage: 31 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 31 },
       { candidate_name: "Caiado",          percentage:  4 },
       { candidate_name: "Zema",            percentage:  3 },
       { candidate_name: "Renan Santos",    percentage:  3 },
@@ -394,7 +394,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/nexus-btg-pactual-presidente-maio-2026/",
     results: [
       { candidate_name: "Lula",            percentage: 41 },
-      { candidate_name: "Flávio", percentage: 35 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 35 },
       { candidate_name: "Caiado",          percentage:  5 },
       { candidate_name: "Zema",            percentage:  4 },
     ],
@@ -415,7 +415,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/poder-data-presidente-maio-2026/",
     results: [
       { candidate_name: "Lula",            percentage: 40 },
-      { candidate_name: "Flávio", percentage: 35 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 35 },
       { candidate_name: "Zema",            percentage:  4 },
       { candidate_name: "Renan Santos",    percentage:  3 },
       { candidate_name: "Augusto Cury",    percentage:  3 },
@@ -434,7 +434,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/poder-data-presidente-maio-2026/",
     results: [
       { candidate_name: "Lula",            percentage: 46 },
-      { candidate_name: "Flávio", percentage: 42 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 42 },
     ],
   },
 
@@ -496,7 +496,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/futura-inteligencia-presidente-abril-2026/",
     results: [
       { candidate_name: "Lula", percentage: 39.8 },
-      { candidate_name: "Flávio", percentage: 37.3 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 37.3 },
       { candidate_name: "Caiado", percentage: 4.8 },
       { candidate_name: "Zema", percentage: 2.9 },
       { candidate_name: "Renan Santos", percentage: 1.4 },
@@ -515,7 +515,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.poder360.com.br/poder-pesquisas/lula-lidera-todos-os-cenarios-de-1o-e-2o-turnos-diz-pesquisa-cnt-mda/",
     results: [
       { candidate_name: "Lula", percentage: 39.2 },
-      { candidate_name: "Flávio", percentage: 30.2 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 30.2 },
       { candidate_name: "Caiado", percentage: 4.6 },
       { candidate_name: "Zema", percentage: 3.3 },
       { candidate_name: "Renan Santos", percentage: 1.5 },
@@ -698,7 +698,7 @@ const PENDING_POLLS: Array<{
     scope: "nacional",
     results: [
       { candidate_name: "Lula",         percentage: 39 },
-      { candidate_name: "Flávio",       percentage: 33 },
+      { candidate_name: "Flávio Bolsonaro",       percentage: 33 },
       { candidate_name: "Augusto Cury", percentage: 11 },
       { candidate_name: "Caiado",       percentage:  5 },
       { candidate_name: "Renan",        percentage:  3 },
@@ -721,7 +721,7 @@ const PENDING_POLLS: Array<{
     scope: "nacional",
     results: [
       { candidate_name: "Lula",                       percentage: 43.4 },
-      { candidate_name: "Flávio",                      percentage: 33.7 },
+      { candidate_name: "Flávio Bolsonaro",                      percentage: 33.7 },
       { candidate_name: "Augusto Cury",                percentage:  7.8 },
       { candidate_name: "Renan",                       percentage:  7.6 },
       { candidate_name: "Caiado",                      percentage:  3.3 },
@@ -750,7 +750,7 @@ const PENDING_POLLS: Array<{
     scope: "nacional",
     results: [
       { candidate_name: "Lula",         percentage: 37.1 },
-      { candidate_name: "Flávio",       percentage: 34.8 },
+      { candidate_name: "Flávio Bolsonaro",       percentage: 34.8 },
       { candidate_name: "Caiado",       percentage:  5.0 },
       { candidate_name: "Renan",        percentage:  3.3 },
       { candidate_name: "Zema",         percentage:  2.8 },
@@ -777,7 +777,7 @@ const PENDING_POLLS: Array<{
     scope: "nacional",
     results: [
       { candidate_name: "Lula",         percentage: 38 },
-      { candidate_name: "Flávio",       percentage: 35 },
+      { candidate_name: "Flávio Bolsonaro",       percentage: 35 },
       { candidate_name: "Caiado",       percentage:  4 },
       { candidate_name: "Renan",        percentage:  4 },
       { candidate_name: "Augusto Cury", percentage:  4 },
@@ -804,7 +804,7 @@ const PENDING_POLLS: Array<{
     scope: "nacional",
     results: [
       { candidate_name: "Lula",         percentage: 38 },
-      { candidate_name: "Flávio",       percentage: 30 },
+      { candidate_name: "Flávio Bolsonaro",       percentage: 30 },
       { candidate_name: "Augusto Cury", percentage: 11 },
       { candidate_name: "Renan",        percentage:  7 },
       { candidate_name: "Caiado",       percentage:  4 },
@@ -826,7 +826,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR035472026",
     scope: "nacional",
     results: [
-      { candidate_name: "Flávio",       percentage: 38 },
+      { candidate_name: "Flávio Bolsonaro",       percentage: 38 },
       { candidate_name: "Lula",         percentage: 37 },
       { candidate_name: "Pablo Marçal", percentage:  4 },
       { candidate_name: "Renan",        percentage:  3 },
@@ -851,7 +851,7 @@ const PENDING_POLLS: Array<{
     scope: "nacional",
     results: [
       { candidate_name: "Lula",   percentage: 41 },
-      { candidate_name: "Flávio", percentage: 37 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 37 },
       { candidate_name: "Caiado", percentage:  5 },
       { candidate_name: "Renan",  percentage:  3 },
       { candidate_name: "Zema",   percentage:  3 },
@@ -876,7 +876,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-presidente-agosto-26-sp-mg-rj-pe-df/",
     tse_protocolo: "BR071852026",
     results: [
-      { candidate_name: "Flávio",                    percentage: 35 },
+      { candidate_name: "Flávio Bolsonaro",                    percentage: 35 },
       { candidate_name: "Lula",                       percentage: 34 },
       { candidate_name: "Renan",                       percentage:  5 },
       { candidate_name: "Pablo Marçal",                percentage:  4 },
@@ -904,7 +904,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.otempo.com.br/eleicoes/2026/pesquisas/2026/8/25/lula-e-flavio-tem-empate-tecnico-em-sao-paulo-minas-e-rio-os-tres-maiores-colegios-do-brasil",
     tse_protocolo: "BR098182026",
     results: [
-      { candidate_name: "Flávio", percentage: 31 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 31 },
       { candidate_name: "Lula",   percentage: 30 },
     ],
   },
@@ -923,7 +923,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://exame.com/eleicoes/pesquisa-real-time-big-data-flavio-bolsonaro-tem-44-e-lula-30-no-1o-turno-no-parana/",
     tse_protocolo: "BR071712026",
     results: [
-      { candidate_name: "Flávio",       percentage: 44 },
+      { candidate_name: "Flávio Bolsonaro",       percentage: 44 },
       { candidate_name: "Lula",         percentage: 30 },
       { candidate_name: "Renan",        percentage:  4 },
       { candidate_name: "Pablo Marçal", percentage:  4 },
@@ -948,7 +948,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR031472026",
     results: [
       { candidate_name: "Lula",         percentage: 39 },
-      { candidate_name: "Flávio",       percentage: 34 },
+      { candidate_name: "Flávio Bolsonaro",       percentage: 34 },
       { candidate_name: "Zema",         percentage:  9 },
       { candidate_name: "Renan",        percentage:  5 },
       { candidate_name: "Pablo Marçal", percentage:  4 },
@@ -971,7 +971,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://exame.com/brasil/real-time-big-data-flavio-bolsonaro-e-lula-empatam-no-1o-turno-no-espirito-santo/",
     tse_protocolo: "BR037062026",
     results: [
-      { candidate_name: "Flávio",       percentage: 35 },
+      { candidate_name: "Flávio Bolsonaro",       percentage: 35 },
       { candidate_name: "Lula",         percentage: 34 },
       { candidate_name: "Renan",        percentage:  5 },
       { candidate_name: "Pablo Marçal", percentage:  4 },
@@ -996,7 +996,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR091402026",
     results: [
       { candidate_name: "Lula",         percentage: 40 },
-      { candidate_name: "Flávio",       percentage: 39 },
+      { candidate_name: "Flávio Bolsonaro",       percentage: 39 },
       { candidate_name: "Renan",        percentage:  5 },
       { candidate_name: "Pablo Marçal", percentage:  5 },
       { candidate_name: "Caiado",       percentage:  3 },
@@ -1020,7 +1020,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.cnnbrasil.com.br/eleicoes/real-time-big-data-flavio-tem-42-e-lula-39-no-1o-turno-no-rs/",
     tse_protocolo: "BR028232026",
     results: [
-      { candidate_name: "Flávio", percentage: 42 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 42 },
       { candidate_name: "Lula",   percentage: 39 },
     ],
   },
@@ -1050,7 +1050,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR040062026",
     results: [
       { candidate_name: "Lula",           percentage: 39.3 },
-      { candidate_name: "Flávio",         percentage: 39.1 },
+      { candidate_name: "Flávio Bolsonaro",         percentage: 39.1 },
       { candidate_name: "Pablo Marçal",   percentage:  5.2 },
       { candidate_name: "Renan",          percentage:  3.8 },
       { candidate_name: "Caiado",         percentage:  3.3 },
@@ -2080,7 +2080,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://todotemponoticias.com.br/pesquisa-verita-mostra-eleicao-em-aberto-para-governador-em-goias-75-dos-eleitores-ainda-nao-definiram-candidato/",
     tse_protocolo: "BR046052026",
     results: [
-      { candidate_name: "Flávio", percentage: 26.8 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 26.8 },
       { candidate_name: "Lula",   percentage: 18.1 },
     ],
   },
@@ -2100,7 +2100,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://opiniaoempauta.com.br/no-para-pesquisa-mostra-dr-daniel-perto-de-vencer-eleicao-no-primeiro-turno-49-x-41/",
     tse_protocolo: "BR075882026",
     results: [
-      { candidate_name: "Flávio", percentage: 44.6 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 44.6 },
       { candidate_name: "Lula",   percentage: 44.2 },
     ],
   },
@@ -2406,7 +2406,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR080632026",
     results: [
       { candidate_name: "Caiado", percentage: 33 },
-      { candidate_name: "Flávio", percentage: 27 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 27 },
       { candidate_name: "Lula",   percentage: 23 },
     ],
   },
@@ -2426,7 +2426,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR010842026",
     results: [
       { candidate_name: "Lula",         percentage: 40.5 },
-      { candidate_name: "Flávio",       percentage: 31.2 },
+      { candidate_name: "Flávio Bolsonaro",       percentage: 31.2 },
       { candidate_name: "Caiado",       percentage:  5.5 },
       { candidate_name: "Zema",         percentage:  3.2 },
       { candidate_name: "Renan",        percentage:  3.0 },
@@ -2449,7 +2449,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.correiobraziliense.com.br/politica/2026/07/7470832-quaest-mostra-cenario-presidencial-em-10-estados-veja.html",
     tse_protocolo: "BR018712026",
     results: [
-      { candidate_name: "Flávio", percentage: 32 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 32 },
       { candidate_name: "Lula",   percentage: 30 },
       { candidate_name: "Caiado", percentage:  3 },
       { candidate_name: "Renan",  percentage:  2 },
@@ -2473,7 +2473,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR032382026",
     results: [
       { candidate_name: "Lula",           percentage: 55 },
-      { candidate_name: "Flávio",         percentage: 22 },
+      { candidate_name: "Flávio Bolsonaro",         percentage: 22 },
       { candidate_name: "Renan",          percentage:  2 },
       { candidate_name: "Caiado",         percentage:  1 },
       { candidate_name: "Zema",           percentage:  1 },
@@ -2498,7 +2498,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR058562026",
     results: [
       { candidate_name: "Lula",           percentage: 52 },
-      { candidate_name: "Flávio",         percentage: 18 },
+      { candidate_name: "Flávio Bolsonaro",         percentage: 18 },
       { candidate_name: "Caiado",         percentage:  3 },
       { candidate_name: "Renan",          percentage:  1 },
       { candidate_name: "Zema",           percentage:  1 },
@@ -2522,7 +2522,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://g1.globo.com/politica/eleicoes/2026/noticia/2026/07/30/eleicoes-2026-presidencial-10-estados-quaest.ghtml",
     tse_protocolo: "BR099982026",
     results: [
-      { candidate_name: "Flávio",         percentage: 34 },
+      { candidate_name: "Flávio Bolsonaro",         percentage: 34 },
       { candidate_name: "Lula",           percentage: 30 },
       { candidate_name: "Renan",          percentage:  3 },
       { candidate_name: "Zema",           percentage:  3 },
@@ -2548,7 +2548,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR038102026",
     results: [
       { candidate_name: "Lula",         percentage: 55 },
-      { candidate_name: "Flávio",       percentage: 21 },
+      { candidate_name: "Flávio Bolsonaro",       percentage: 21 },
       { candidate_name: "Augusto Cury", percentage:  2 },
       { candidate_name: "Renan",        percentage:  2 },
       { candidate_name: "Zema",         percentage:  1 },
@@ -2571,7 +2571,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.cnnbrasil.com.br/eleicoes/real-time-big-data-flavio-e-lula-tem-empate-tecnico-no-1o-turno-no-rj/",
     tse_protocolo: "BR060742026",
     results: [
-      { candidate_name: "Flávio",       percentage: 39 },
+      { candidate_name: "Flávio Bolsonaro",       percentage: 39 },
       { candidate_name: "Lula",         percentage: 37 },
       { candidate_name: "Renan",        percentage:  7 },
       { candidate_name: "Caiado",       percentage:  4 },
@@ -2597,7 +2597,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR093332026",
     results: [
       { candidate_name: "Lula",   percentage: 30 },
-      { candidate_name: "Flávio", percentage: 29 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 29 },
       { candidate_name: "Zema",   percentage: 12 },
       { candidate_name: "Caiado", percentage:  4 },
       { candidate_name: "Renan",  percentage:  2 },
@@ -2619,7 +2619,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://g1.globo.com/pr/parana/noticia/2026/07/27/quaest-parana-presidente-julho.ghtml",
     tse_protocolo: "BR034452026",
     results: [
-      { candidate_name: "Flávio",         percentage: 42 },
+      { candidate_name: "Flávio Bolsonaro",         percentage: 42 },
       { candidate_name: "Lula",           percentage: 24 },
       { candidate_name: "Augusto Cury",   percentage:  2 },
       { candidate_name: "Renan",          percentage:  2 },
@@ -2645,7 +2645,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR067522026",
     results: [
       { candidate_name: "Lula",           percentage: 38 },
-      { candidate_name: "Flávio",         percentage: 31 },
+      { candidate_name: "Flávio Bolsonaro",         percentage: 31 },
       { candidate_name: "Caiado",         percentage:  3 },
       { candidate_name: "Renan",          percentage:  3 },
       { candidate_name: "Augusto Cury",   percentage:  2 },
@@ -2667,7 +2667,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.cartacapital.com.br/politica/a-disputa-de-lula-e-flavio-bolsonaro-entre-eleitores-do-acre-segundo-nova-pesquisa/",
     tse_protocolo: "BR080862026",
     results: [
-      { candidate_name: "Flávio", percentage: 50 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 50 },
       { candidate_name: "Lula",   percentage: 30 },
       { candidate_name: "Renan",  percentage:  5 },
       { candidate_name: "Caiado", percentage:  3 },
@@ -2690,7 +2690,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR087072026",
     results: [
       { candidate_name: "Lula",         percentage: 58 },
-      { candidate_name: "Flávio",       percentage: 20 },
+      { candidate_name: "Flávio Bolsonaro",       percentage: 20 },
       { candidate_name: "Caiado",       percentage:  3 },
       { candidate_name: "Renan",        percentage:  2 },
       { candidate_name: "Augusto Cury", percentage:  1 },
@@ -2712,7 +2712,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.cartacapital.com.br/politica/a-disputa-pela-presidencia-entre-os-eleitores-do-rj-segundo-nova-pesquisa/",
     tse_protocolo: "BR076702026",
     results: [
-      { candidate_name: "Flávio", percentage: 32 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 32 },
       { candidate_name: "Lula",   percentage: 30 },
       { candidate_name: "Caiado", percentage:  3 },
       { candidate_name: "Renan",  percentage:  2 },
@@ -2735,7 +2735,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR055422026",
     results: [
       { candidate_name: "Lula",   percentage: 36 },
-      { candidate_name: "Flávio", percentage: 31 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 31 },
       { candidate_name: "Caiado", percentage:  8 },
       { candidate_name: "Renan",  percentage:  7 },
     ],
@@ -2756,7 +2756,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR073352026",
     results: [
       { candidate_name: "Lula",   percentage: 56.9 },
-      { candidate_name: "Flávio", percentage: 28.5 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 28.5 },
     ],
   },
 
@@ -2973,7 +2973,7 @@ const PENDING_POLLS: Array<{
     results: [
       { candidate_name: "Caiado", percentage: 37 },
       { candidate_name: "Lula",   percentage: 27 },
-      { candidate_name: "Flávio", percentage: 25 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 25 },
     ],
   },
 
@@ -2995,7 +2995,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR052052026",
     results: [
       { candidate_name: "Lula",   percentage: 56 },
-      { candidate_name: "Flávio", percentage: 23 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 23 },
       { candidate_name: "Renan",  percentage:  5 },
       { candidate_name: "Caiado", percentage:  3 },
     ],
@@ -3780,7 +3780,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR070652026",
     results: [
       { candidate_name: "Lula",             percentage: 37 },
-      { candidate_name: "Flávio",  percentage: 30 },
+      { candidate_name: "Flávio Bolsonaro",  percentage: 30 },
       { candidate_name: "Augusto Cury",      percentage: 10 },
       { candidate_name: "Renan Santos",      percentage:  3 },
       { candidate_name: "Caiado",            percentage:  1 },
@@ -3806,7 +3806,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR070652026",
     results: [
       { candidate_name: "Lula",            percentage: 42 },
-      { candidate_name: "Flávio", percentage: 41 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 41 },
     ],
   },
 
@@ -3904,7 +3904,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR024032026",
     results: [
       { candidate_name: "Lula",            percentage: 28 },
-      { candidate_name: "Flávio", percentage: 26 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 26 },
     ],
   },
 
@@ -3921,7 +3921,7 @@ const PENDING_POLLS: Array<{
     scope: "MG",
     source_url: "https://www.cartacapital.com.br/politica/",
     results: [
-      { candidate_name: "Flávio", percentage: 31 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 31 },
       { candidate_name: "Lula",            percentage: 30 },
     ],
   },
@@ -3939,7 +3939,7 @@ const PENDING_POLLS: Array<{
     scope: "RJ",
     source_url: "https://agendadopoder.com.br/pesquisa-quaest-no-rio-aponta-flavio-a-frente-de-lula-por-31-a-29/",
     results: [
-      { candidate_name: "Flávio", percentage: 31 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 31 },
       { candidate_name: "Lula",            percentage: 29 },
     ],
   },
@@ -3958,7 +3958,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.cnnbrasil.com.br/eleicoes/quaest-flavio-tem-30-e-lula-29-em-sp-no-1o-turno/",
     tse_protocolo: "BR020962026",
     results: [
-      { candidate_name: "Flávio", percentage: 30 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 30 },
       { candidate_name: "Lula",            percentage: 29 },
     ],
   },
@@ -3977,7 +3977,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.poder360.com.br/poder-eleicoes-2026/",
     results: [
       { candidate_name: "Lula",            percentage: 54 },
-      { candidate_name: "Flávio", percentage: 19 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 19 },
       { candidate_name: "Caiado",          percentage:  3 },
     ],
   },
@@ -3997,7 +3997,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR088702026",
     results: [
       { candidate_name: "Lula",            percentage: 50 },
-      { candidate_name: "Flávio", percentage: 17 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 17 },
       { candidate_name: "Caiado",          percentage:  4 },
       { candidate_name: "Augusto Cury",     percentage:  4 },
     ],
@@ -4017,7 +4017,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.poder360.com.br/poder-eleicoes-2026/",
     results: [
       { candidate_name: "Caiado",          percentage: 32 },
-      { candidate_name: "Flávio", percentage: 27 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 27 },
       { candidate_name: "Lula",            percentage: 20 },
     ],
   },
@@ -4036,7 +4036,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://jornalsete.com.br/",
     results: [
       { candidate_name: "Lula",            percentage: 53 },
-      { candidate_name: "Flávio", percentage: 19 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 19 },
       { candidate_name: "Caiado",          percentage:  3 },
       { candidate_name: "Augusto Cury",     percentage:  2 },
     ],
@@ -4056,7 +4056,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.poder360.com.br/poder-eleicoes-2026/no-acre-flavio-tem-42-e-lula-25-no-1o-turno-diz-quaest/",
     tse_protocolo: "BR070152026",
     results: [
-      { candidate_name: "Flávio", percentage: 42 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 42 },
       { candidate_name: "Lula",            percentage: 25 },
       { candidate_name: "Caiado",          percentage:  5 },
     ],
@@ -4075,7 +4075,7 @@ const PENDING_POLLS: Array<{
     scope: "RO",
     source_url: "https://agenciarondonia.com.br/",
     results: [
-      { candidate_name: "Flávio", percentage: 45 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 45 },
       { candidate_name: "Lula",            percentage: 25 },
       { candidate_name: "Caiado",          percentage:  3 },
     ],
@@ -4095,7 +4095,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.cartacapital.com.br/politica/como-esta-a-disputa-pela-presidencia-em-6-estados-segundo-a-quaest/",
     tse_protocolo: "BR086122026",
     results: [
-      { candidate_name: "Flávio", percentage: 34 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 34 },
       { candidate_name: "Lula",            percentage: 28 },
       { candidate_name: "Caiado",          percentage:  3 },
     ],
@@ -4114,7 +4114,7 @@ const PENDING_POLLS: Array<{
     scope: "PR",
     source_url: "https://www.cartacapital.com.br/politica/como-esta-a-disputa-pela-presidencia-em-6-estados-segundo-a-quaest/",
     results: [
-      { candidate_name: "Flávio", percentage: 41 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 41 },
       { candidate_name: "Lula",            percentage: 23 },
     ],
   },
@@ -4134,7 +4134,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR096502026",
     results: [
       { candidate_name: "Lula",            percentage: 43 },
-      { candidate_name: "Flávio", percentage: 33 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 33 },
     ],
   },
   {
@@ -4150,7 +4150,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR096502026",
     results: [
       { candidate_name: "Lula",            percentage: 45 },
-      { candidate_name: "Flávio", percentage: 36 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 36 },
     ],
   },
 
@@ -4168,7 +4168,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.poder360.com.br/poder-eleicoes-2026/",
     tse_protocolo: "BR017842026",
     results: [
-      { candidate_name: "Flávio", percentage: 42 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 42 },
       { candidate_name: "Lula",            percentage: 34 },
     ],
   },
@@ -4184,7 +4184,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.poder360.com.br/poder-eleicoes-2026/",
     tse_protocolo: "BR017842026",
     results: [
-      { candidate_name: "Flávio", percentage: 50 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 50 },
       { candidate_name: "Lula",            percentage: 38 },
     ],
   },
@@ -4203,7 +4203,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://exame.com/brasil/",
     tse_protocolo: "BR068332026",
     results: [
-      { candidate_name: "Flávio", percentage: 43 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 43 },
       { candidate_name: "Lula",            percentage: 33 },
     ],
   },
@@ -4219,7 +4219,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://exame.com/brasil/",
     tse_protocolo: "BR068332026",
     results: [
-      { candidate_name: "Flávio", percentage: 51 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 51 },
       { candidate_name: "Lula",            percentage: 37 },
     ],
   },
@@ -4239,7 +4239,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR085922026",
     results: [
       { candidate_name: "Lula",            percentage: 58 },
-      { candidate_name: "Flávio", percentage: 24 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 24 },
     ],
   },
 
@@ -4257,7 +4257,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.cnnbrasil.com.br/eleicoes/",
     tse_protocolo: "BR092752026",
     results: [
-      { candidate_name: "Flávio", percentage: 44 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 44 },
       { candidate_name: "Lula",            percentage: 31 },
     ],
   },
@@ -4273,7 +4273,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.cnnbrasil.com.br/eleicoes/",
     tse_protocolo: "BR092752026",
     results: [
-      { candidate_name: "Flávio", percentage: 52 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 52 },
       { candidate_name: "Lula",            percentage: 35 },
     ],
   },
@@ -4293,7 +4293,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR054232026",
     results: [
       { candidate_name: "Lula",            percentage: 36 },
-      { candidate_name: "Flávio", percentage: 35 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 35 },
     ],
   },
   {
@@ -4308,7 +4308,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.poder360.com.br/poder-eleicoes-2026/",
     tse_protocolo: "BR054232026",
     results: [
-      { candidate_name: "Flávio", percentage: 44 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 44 },
       { candidate_name: "Lula",            percentage: 39 },
     ],
   },
@@ -4328,7 +4328,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR087912026",
     results: [
       { candidate_name: "Lula",            percentage: 65 },
-      { candidate_name: "Flávio", percentage: 21 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 21 },
     ],
   },
   {
@@ -4344,7 +4344,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR087912026",
     results: [
       { candidate_name: "Lula",            percentage: 66 },
-      { candidate_name: "Flávio", percentage: 27 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 27 },
     ],
   },
 
@@ -4362,7 +4362,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.metropoles.com/",
     tse_protocolo: "BR065372026",
     results: [
-      { candidate_name: "Flávio", percentage: 38 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 38 },
       { candidate_name: "Lula",            percentage: 33 },
     ],
   },
@@ -4379,7 +4379,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR065372026",
     results: [
       { candidate_name: "Lula",            percentage: 49 },
-      { candidate_name: "Flávio", percentage: 44 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 44 },
     ],
   },
 
@@ -4398,7 +4398,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR087762026",
     results: [
       { candidate_name: "Lula",            percentage: 55 },
-      { candidate_name: "Flávio", percentage: 26 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 26 },
     ],
   },
   {
@@ -4414,7 +4414,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR087762026",
     results: [
       { candidate_name: "Lula",            percentage: 59 },
-      { candidate_name: "Flávio", percentage: 32 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 32 },
     ],
   },
 
@@ -4433,7 +4433,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR067082026",
     results: [
       { candidate_name: "Lula",            percentage: 36 },
-      { candidate_name: "Flávio", percentage: 36 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 36 },
     ],
   },
   {
@@ -4448,7 +4448,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.poder360.com.br/poder-eleicoes-2026/",
     tse_protocolo: "BR067082026",
     results: [
-      { candidate_name: "Flávio", percentage: 45 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 45 },
       { candidate_name: "Lula",            percentage: 39 },
     ],
   },
@@ -4468,7 +4468,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.brasildefato.com.br/2026/09/02/",
     tse_protocolo: "BR083332026",
     results: [
-      { candidate_name: "Flávio", percentage: 36 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 36 },
       { candidate_name: "Lula",            percentage: 34 },
     ],
   },
@@ -4484,7 +4484,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.brasildefato.com.br/2026/09/02/",
     tse_protocolo: "BR083332026",
     results: [
-      { candidate_name: "Flávio", percentage: 45 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 45 },
       { candidate_name: "Lula",            percentage: 41 },
     ],
   },
@@ -4503,7 +4503,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://eleicoes26.institutoverita.com.br/pesquisa/4c688ea9-6806-4e1e-bc62-fb50adb26edc",
     tse_protocolo: "BR086532026",
     results: [
-      { candidate_name: "Flávio", percentage: 51.9 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 51.9 },
       { candidate_name: "Lula",            percentage: 28.3 },
       { candidate_name: "Augusto Cury",     percentage:  9.2 },
       { candidate_name: "Renan Santos",     percentage:  3.7 },
@@ -4523,7 +4523,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://eleicoes26.institutoverita.com.br/pesquisa/4c688ea9-6806-4e1e-bc62-fb50adb26edc",
     tse_protocolo: "BR086532026",
     results: [
-      { candidate_name: "Flávio", percentage: 65.5 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 65.5 },
       { candidate_name: "Lula",            percentage: 34.5 },
     ],
   },
@@ -4542,7 +4542,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://diariodopoder.com.br/brasil-e-regioes/csa-brasil/flavio-supera-lula-nos-dois-turnos-entre-eleitores-do-amazonas",
     tse_protocolo: "BR095242026",
     results: [
-      { candidate_name: "Flávio", percentage: 44.8 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 44.8 },
       { candidate_name: "Lula",            percentage: 38.5 },
     ],
   },
@@ -4558,7 +4558,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://diariodopoder.com.br/brasil-e-regioes/csa-brasil/flavio-supera-lula-nos-dois-turnos-entre-eleitores-do-amazonas",
     tse_protocolo: "BR095242026",
     results: [
-      { candidate_name: "Flávio", percentage: 55.9 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 55.9 },
       { candidate_name: "Lula",            percentage: 44.1 },
     ],
   },
@@ -4880,7 +4880,7 @@ const PENDING_POLLS: Array<{
     scenario_label: "Lula vs Flavio Bolsonaro",
     results: [
       { candidate_name: "Lula",            percentage: 47 },
-      { candidate_name: "Flávio", percentage: 43 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 43 },
     ],
   },
   {
@@ -4969,7 +4969,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR043962026",
     results: [
       { candidate_name: "Lula",   percentage: 37 },
-      { candidate_name: "Flávio", percentage: 31 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 31 },
       { candidate_name: "Zema",   percentage: 10 },
     ],
   },
@@ -4986,7 +4986,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR043962026",
     results: [
       { candidate_name: "Lula",            percentage: 46 },
-      { candidate_name: "Flávio", percentage: 42 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 42 },
     ],
   },
   {
@@ -5002,7 +5002,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR056722026",
     results: [
       { candidate_name: "Lula",   percentage: 60 },
-      { candidate_name: "Flávio", percentage: 18 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 18 },
     ],
   },
   {
@@ -5018,7 +5018,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR056722026",
     results: [
       { candidate_name: "Lula",            percentage: 68 },
-      { candidate_name: "Flávio", percentage: 24 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 24 },
     ],
   },
   {
@@ -5033,7 +5033,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.poder360.com.br/poder-eleicoes-2026/flavio-tem-49-e-lula-40-no-2o-turno-no-rj-diz-datafolha/",
     tse_protocolo: "BR084482026",
     results: [
-      { candidate_name: "Flávio", percentage: 49 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 49 },
       { candidate_name: "Lula",            percentage: 40 },
     ],
   },
@@ -5050,7 +5050,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR001092026",
     results: [
       { candidate_name: "Lula",   percentage: 56 },
-      { candidate_name: "Flávio", percentage: 24 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 24 },
     ],
   },
 
@@ -5069,7 +5069,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR075612026",
     results: [
       { candidate_name: "Lula",              percentage: 37 },
-      { candidate_name: "Flávio",            percentage: 34 },
+      { candidate_name: "Flávio Bolsonaro",            percentage: 34 },
       { candidate_name: "Augusto Cury",      percentage: 10 },
       { candidate_name: "Renan",             percentage:  3 },
       { candidate_name: "Caiado",            percentage:  2 },
@@ -5094,7 +5094,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR075612026",
     scenario_label: "Lula vs Flavio Bolsonaro",
     results: [
-      { candidate_name: "Flávio", percentage: 45 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 45 },
       { candidate_name: "Lula",             percentage: 44 },
     ],
   },
@@ -5162,7 +5162,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR058622026",
     results: [
       { candidate_name: "Lula",         percentage: 56 },
-      { candidate_name: "Flávio",       percentage: 23 },
+      { candidate_name: "Flávio Bolsonaro",       percentage: 23 },
       { candidate_name: "Augusto Cury", percentage:  7 },
       { candidate_name: "Renan",        percentage:  3 },
       { candidate_name: "Pablo Marçal", percentage:  3 },
@@ -5181,7 +5181,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR058622026",
     results: [
       { candidate_name: "Lula",            percentage: 59 },
-      { candidate_name: "Flávio", percentage: 35 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 35 },
     ],
   },
 
@@ -5199,7 +5199,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.midianews.com.br/politica/real-time-big-data-flavio-tem-52-no-2-turno-em-mt-lula-37/528456",
     tse_protocolo: "BR046782026",
     results: [
-      { candidate_name: "Flávio",       percentage: 41 },
+      { candidate_name: "Flávio Bolsonaro",       percentage: 41 },
       { candidate_name: "Lula",         percentage: 32 },
       { candidate_name: "Augusto Cury", percentage:  9 },
       { candidate_name: "Renan",        percentage:  5 },
@@ -5220,7 +5220,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.midianews.com.br/politica/real-time-big-data-flavio-tem-52-no-2-turno-em-mt-lula-37/528456",
     tse_protocolo: "BR046782026",
     results: [
-      { candidate_name: "Flávio", percentage: 52 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 52 },
       { candidate_name: "Lula",            percentage: 37 },
     ],
   },
@@ -5741,7 +5741,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR053092026",
     results: [
       { candidate_name: "Lula",          percentage: 37 },
-      { candidate_name: "Flávio",        percentage: 29 },
+      { candidate_name: "Flávio Bolsonaro",        percentage: 29 },
       { candidate_name: "Augusto Cury", percentage:  5 },
       { candidate_name: "Renan",         percentage:  3 },
       { candidate_name: "Caiado",        percentage:  2 },
@@ -5762,7 +5762,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://portalranielycarvalho.com.br/politica/2026/08/28/pesquisa-presidencial-em-roraima/",
     tse_protocolo: "BR089262026",
     results: [
-      { candidate_name: "Flávio",             percentage: 52 },
+      { candidate_name: "Flávio Bolsonaro",             percentage: 52 },
       { candidate_name: "Lula",               percentage: 17 },
       { candidate_name: "Renan",              percentage:  4 },
       { candidate_name: "Caiado",             percentage:  3 },
@@ -5788,7 +5788,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR072812026",
     results: [
       { candidate_name: "Lula",          percentage: 53 },
-      { candidate_name: "Flávio",        percentage: 19 },
+      { candidate_name: "Flávio Bolsonaro",        percentage: 19 },
       { candidate_name: "Caiado",        percentage:  3 },
       { candidate_name: "Augusto Cury", percentage:  2 },
       { candidate_name: "Renan",         percentage:  2 },
@@ -5811,7 +5811,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR078102026",
     results: [
       { candidate_name: "Caiado",        percentage: 32 },
-      { candidate_name: "Flávio",        percentage: 27 },
+      { candidate_name: "Flávio Bolsonaro",        percentage: 27 },
       { candidate_name: "Lula",          percentage: 20 },
       { candidate_name: "Renan",         percentage:  2 },
       { candidate_name: "Zema",          percentage:  2 },
@@ -5834,7 +5834,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://gazetabrasil.com.br/ultimas-noticias/2026/08/27/pesquisa-quaest-revela-cenario-inedito-para-a-disputa-presidencial-de-2026-no-espirito-santo/",
     tse_protocolo: "BR062552026",
     results: [
-      { candidate_name: "Flávio",        percentage: 37 },
+      { candidate_name: "Flávio Bolsonaro",        percentage: 37 },
       { candidate_name: "Lula",          percentage: 30 },
       { candidate_name: "Renan",         percentage:  4 },
       { candidate_name: "Caiado",        percentage:  3 },
@@ -5858,7 +5858,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR042812026",
     results: [
       { candidate_name: "Lula",   percentage: 54 },
-      { candidate_name: "Flávio", percentage: 19 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 19 },
       { candidate_name: "Caiado", percentage:  3 },
     ],
   },
@@ -5877,7 +5877,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.metropoles.com/brasil/flavio-bolsonaro-e-lula-estao-tecnicamente-empatados-no-rj-diz-quaest",
     tse_protocolo: "BR098952026",
     results: [
-      { candidate_name: "Flávio",        percentage: 31 },
+      { candidate_name: "Flávio Bolsonaro",        percentage: 31 },
       { candidate_name: "Lula",          percentage: 29 },
       { candidate_name: "Renan",         percentage:  2 },
       { candidate_name: "Caiado",        percentage:  2 },
@@ -5902,7 +5902,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR088272026",
     results: [
       { candidate_name: "Lula",             percentage: 36 },
-      { candidate_name: "Flávio",           percentage: 33 },
+      { candidate_name: "Flávio Bolsonaro",           percentage: 33 },
       { candidate_name: "Renan",            percentage:  3 },
       { candidate_name: "Augusto Cury",    percentage:  2 },
       { candidate_name: "Caiado",           percentage:  2 },
@@ -5925,7 +5925,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.ocorreionews.com.br/2026/08/26/intencoes-de-votos-para-presidente-em-ms-flavio-bolsonaro-33-lula-27-caiado-5-renan-santos-4-cury-3-segundo-pesquisa-quaest/",
     tse_protocolo: "BR043122026",
     results: [
-      { candidate_name: "Flávio",          percentage: 33 },
+      { candidate_name: "Flávio Bolsonaro",          percentage: 33 },
       { candidate_name: "Lula",            percentage: 27 },
       { candidate_name: "Caiado",          percentage:  5 },
       { candidate_name: "Renan",           percentage:  4 },
@@ -5950,7 +5950,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.powermix.com.br/politica/quaest-flavio-bolsonaro-tem-43-e-lula-26-na-disputa-presidencial-em-mato-grosso/56594",
     tse_protocolo: "BR008172026",
     results: [
-      { candidate_name: "Flávio",        percentage: 43 },
+      { candidate_name: "Flávio Bolsonaro",        percentage: 43 },
       { candidate_name: "Lula",          percentage: 26 },
       { candidate_name: "Caiado",        percentage:  4 },
       { candidate_name: "Renan",         percentage:  3 },
@@ -5974,7 +5974,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.agenciarondonia.com/2026/08/quaest-aponta-flavio-bolsonaro-com-45-e.html",
     tse_protocolo: "BR004902026",
     results: [
-      { candidate_name: "Flávio",                     percentage: 45 },
+      { candidate_name: "Flávio Bolsonaro",                     percentage: 45 },
       { candidate_name: "Lula",                       percentage: 25 },
       { candidate_name: "Caiado",                      percentage:  3 },
       { candidate_name: "Renan",                       percentage:  3 },
@@ -6000,7 +6000,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR006992026",
     results: [
       { candidate_name: "Lula",   percentage: 50 },
-      { candidate_name: "Flávio", percentage: 21 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 21 },
       { candidate_name: "Caiado", percentage:  3 },
       { candidate_name: "Renan",  percentage:  2 },
       { candidate_name: "Zema",   percentage:  1 },
@@ -6021,7 +6021,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.poder360.com.br/poder-eleicoes-2026/flavio-bolsonaro-tem-41-no-1o-turno-no-parana-diz-quaest/",
     tse_protocolo: "BR037612026",
     results: [
-      { candidate_name: "Flávio",          percentage: 41 },
+      { candidate_name: "Flávio Bolsonaro",          percentage: 41 },
       { candidate_name: "Lula",            percentage: 23 },
       { candidate_name: "Caiado",          percentage:  5 },
       { candidate_name: "Zema",            percentage:  3 },
@@ -6046,7 +6046,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR036692026",
     results: [
       { candidate_name: "Lula",          percentage: 38 },
-      { candidate_name: "Flávio",        percentage: 33 },
+      { candidate_name: "Flávio Bolsonaro",        percentage: 33 },
       { candidate_name: "Augusto Cury", percentage:  8 },
       { candidate_name: "Caiado",        percentage:  4 },
       { candidate_name: "Renan",         percentage:  3 },
@@ -6066,7 +6066,7 @@ const PENDING_POLLS: Array<{
     scenario_label: "Lula vs Flavio Bolsonaro",
     results: [
       { candidate_name: "Lula",            percentage: 46 },
-      { candidate_name: "Flávio", percentage: 44 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 44 },
     ],
   },
   {
@@ -6413,7 +6413,7 @@ const PENDING_POLLS: Array<{
     scope: "CE",
     results: [
       { candidate_name: "Lula",           percentage: 54 },
-      { candidate_name: "Flávio",         percentage: 16 },
+      { candidate_name: "Flávio Bolsonaro",         percentage: 16 },
       { candidate_name: "Augusto Cury",   percentage: 10 },
       { candidate_name: "Renan",          percentage:  2 },
       { candidate_name: "Caiado",         percentage:  1 },
@@ -6481,7 +6481,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.cnnbrasil.com.br/eleicoes/verita-flavio-tem-389-no-1o-turno-lula-384-e-cury-122/",
     tse_protocolo: "BR09426/2026",
     results: [
-      { candidate_name: "Flávio",         percentage: 38.9 },
+      { candidate_name: "Flávio Bolsonaro",         percentage: 38.9 },
       { candidate_name: "Lula",           percentage: 38.4 },
       { candidate_name: "Augusto Cury",   percentage: 12.2 },
       { candidate_name: "Renan",          percentage:  3.7 },
@@ -6510,7 +6510,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR09426/2026",
     scenario_label: "Flávio vs Lula",
     results: [
-      { candidate_name: "Flávio", percentage: 48.5 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 48.5 },
       { candidate_name: "Lula",             percentage: 43.1 },
     ],
   },
@@ -6605,7 +6605,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://exame.com/brasil/pesquisa-gerp-flavio-bolsonaro-tem-37-e-lula-34-no-1o-turno/",
     tse_protocolo: "BR002512026",
     results: [
-      { candidate_name: "Flávio",       percentage: 36.6 },
+      { candidate_name: "Flávio Bolsonaro",       percentage: 36.6 },
       { candidate_name: "Lula",         percentage: 34.4 },
       { candidate_name: "Augusto Cury", percentage:  6.0 },
       { candidate_name: "Caiado",       percentage:  5.0 },
@@ -6789,7 +6789,7 @@ const PENDING_POLLS: Array<{
     source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/gerp-presidente-setembro-2026/",
     tse_protocolo: "BR002512026",
     results: [
-      { candidate_name: "Flávio", percentage: 37.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 37.0 },
       { candidate_name: "Lula", percentage: 34.0 },
       { candidate_name: "Cury", percentage: 6.0 },
       { candidate_name: "Caiado", percentage: 5.0 },
@@ -6811,7 +6811,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR017202026",
     results: [
       { candidate_name: "Lula", percentage: 36.0 },
-      { candidate_name: "Flávio", percentage: 29.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 29.0 },
       { candidate_name: "Cury", percentage: 8.0 },
       { candidate_name: "Renan", percentage: 3.0 },
       { candidate_name: "Caiado", percentage: 3.0 },
@@ -6831,7 +6831,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR049142026",
     results: [
       { candidate_name: "Lula", percentage: 37.0 },
-      { candidate_name: "Flávio", percentage: 34.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 34.0 },
       { candidate_name: "Cury", percentage: 10.0 },
       { candidate_name: "Renan", percentage: 3.0 },
       { candidate_name: "Caiado", percentage: 2.0 },
@@ -6853,7 +6853,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "a confirmar",
     results: [
       { candidate_name: "Lula", percentage: 38.0 },
-      { candidate_name: "Flávio", percentage: 33.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 33.0 },
       { candidate_name: "Cury", percentage: 8.0 },
       { candidate_name: "Renan", percentage: 3.0 },
       { candidate_name: "Caiado", percentage: 4.0 },
@@ -6874,7 +6874,7 @@ const PENDING_POLLS: Array<{
     scenario_label: "Lula vs Flávio",
     results: [
       { candidate_name: "Lula", percentage: 46.0 },
-      { candidate_name: "Flávio", percentage: 44.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 44.0 },
     ],
   },
 
@@ -6915,7 +6915,7 @@ const PENDING_POLLS: Array<{
     scenario_label: "Lula vs Flávio",
     results: [
       { candidate_name: "Lula", percentage: 44.0 },
-      { candidate_name: "Flávio", percentage: 44.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 44.0 },
     ],
   },
 
@@ -6934,7 +6934,7 @@ const PENDING_POLLS: Array<{
     scope: "CE",
     results: [
       { candidate_name: "Lula", percentage: 61.0 },
-      { candidate_name: "Flávio", percentage: 19.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 19.0 },
       { candidate_name: "Cury", percentage: 7.0 },
     ],
   },
@@ -6953,7 +6953,7 @@ const PENDING_POLLS: Array<{
     scenario_label: "Lula vs Flávio",
     results: [
       { candidate_name: "Lula", percentage: 65.0 },
-      { candidate_name: "Flávio", percentage: 27.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 27.0 },
     ],
   },
 
@@ -6972,7 +6972,7 @@ const PENDING_POLLS: Array<{
     scope: "MA",
     results: [
       { candidate_name: "Lula", percentage: 62.0 },
-      { candidate_name: "Flávio", percentage: 25.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 25.0 },
     ],
   },
   {
@@ -6990,7 +6990,7 @@ const PENDING_POLLS: Array<{
     scenario_label: "Lula vs Flávio",
     results: [
       { candidate_name: "Lula", percentage: 65.0 },
-      { candidate_name: "Flávio", percentage: 30.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 30.0 },
     ],
   },
 
@@ -7009,7 +7009,7 @@ const PENDING_POLLS: Array<{
     scope: "BA",
     results: [
       { candidate_name: "Lula", percentage: 55.0 },
-      { candidate_name: "Flávio", percentage: 24.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 24.0 },
     ],
   },
 
@@ -7029,7 +7029,7 @@ const PENDING_POLLS: Array<{
     scenario_label: "Lula vs Flávio",
     results: [
       { candidate_name: "Lula", percentage: 46.0 },
-      { candidate_name: "Flávio", percentage: 44.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 44.0 },
     ],
   },
 
@@ -7047,7 +7047,7 @@ const PENDING_POLLS: Array<{
     scope: "PA",
     results: [
       { candidate_name: "Lula", percentage: 55.0 },
-      { candidate_name: "Flávio", percentage: 45.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 45.0 },
     ],
   },
 
@@ -7066,7 +7066,7 @@ const PENDING_POLLS: Array<{
     scope: "AP",
     scenario_label: "Flávio vs Lula",
     results: [
-      { candidate_name: "Flávio", percentage: 45.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 45.0 },
       { candidate_name: "Lula", percentage: 41.0 },
     ],
   },
@@ -7146,7 +7146,7 @@ const PENDING_POLLS: Array<{
     scenario_label: "Lula vs Flávio",
     results: [
       { candidate_name: "Lula", percentage: 41.0 },
-      { candidate_name: "Flávio", percentage: 41.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 41.0 },
     ],
   },
 
@@ -7165,7 +7165,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR079352026",
     results: [
       { candidate_name: "Lula", percentage: 38.4 },
-      { candidate_name: "Flávio", percentage: 37.3 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 37.3 },
       { candidate_name: "Augusto Cury", percentage: 6.6 },
       { candidate_name: "Renan Santos", percentage: 4.0 },
       { candidate_name: "Ronaldo Caiado", percentage: 4.0 },
@@ -7185,7 +7185,7 @@ const PENDING_POLLS: Array<{
     scenario_label: "Lula vs Flávio",
     results: [
       { candidate_name: "Lula", percentage: 46.0 },
-      { candidate_name: "Flávio", percentage: 46.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 46.0 },
     ],
   },
   {
@@ -7222,7 +7222,7 @@ const PENDING_POLLS: Array<{
     scope: "MG",
     results: [
       { candidate_name: "Lula", percentage: 44.3 },
-      { candidate_name: "Flávio", percentage: 35.4 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 35.4 },
     ],
   },
 
@@ -7240,7 +7240,7 @@ const PENDING_POLLS: Array<{
     tse_protocolo: "BR014522026",
     results: [
       { candidate_name: "Lula", percentage: 43.0 },
-      { candidate_name: "Flávio", percentage: 37.4 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 37.4 },
       { candidate_name: "Augusto Cury", percentage: 8.2 },
       { candidate_name: "Ronaldo Caiado", percentage: 3.8 },
     ],
@@ -7259,7 +7259,7 @@ const PENDING_POLLS: Array<{
     scenario_label: "Lula vs Flavio",
     results: [
       { candidate_name: "Lula", percentage: 47.1 },
-      { candidate_name: "Flávio", percentage: 42.6 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 42.6 },
     ],
   },
 
@@ -7605,19 +7605,19 @@ const PENDING_POLLS: Array<{
   },
 
   // ─── Real Time Big Data · Presidencial 09/2026 · 7 pesquisas (CE, MA, BA, MG, PA, AP) ──
-  { institute_name: "Real Time Big Data", election_name: "Presidencial 2026 - 1º Turno", publication_date: "2026-09-08", fieldwork_start: "2026-09-03", fieldwork_end: "2026-09-07", sample_size: 1600, margin_of_error: 2.0, methodology: "mista", scope: "CE", source_url: "https://www.cnnbrasil.com.br/eleicoes/real-time-big-data-lula-lidera-cenarios-de-1o-e-2o-turnos-no-ceara/", tse_protocolo: "BR056432026", results: [{ candidate_name: "Lula", percentage: 61.0 }, { candidate_name: "Flávio", percentage: 19.0 }] },
-  { institute_name: "Real Time Big Data", election_name: "Presidencial 2026 - 2º Turno", publication_date: "2026-09-08", fieldwork_start: "2026-09-03", fieldwork_end: "2026-09-07", sample_size: 1600, margin_of_error: 2.0, methodology: "mista", scope: "CE", source_url: "https://www.cnnbrasil.com.br/eleicoes/real-time-big-data-lula-lidera-cenarios-de-1o-e-2o-turnos-no-ceara/", tse_protocolo: "BR056432026", results: [{ candidate_name: "Lula", percentage: 65.0 }, { candidate_name: "Flávio", percentage: 27.0 }] },
-  { institute_name: "Real Time Big Data", election_name: "Presidencial 2026 - 1º Turno", publication_date: "2026-09-09", fieldwork_start: "2026-09-05", fieldwork_end: "2026-09-09", sample_size: 1600, margin_of_error: 2.0, methodology: "mista", scope: "MA", source_url: "https://www.cnnbrasil.com.br/eleicoes/real-time-big-data-lula-lidera-cenarios-de-1o-e-2o-turnos-no-maranhao/", tse_protocolo: "MA025692026", results: [{ candidate_name: "Lula", percentage: 62.0 }, { candidate_name: "Flávio", percentage: 25.0 }] },
-  { institute_name: "Real Time Big Data", election_name: "Presidencial 2026 - 2º Turno", publication_date: "2026-09-09", fieldwork_start: "2026-09-05", fieldwork_end: "2026-09-09", sample_size: 1600, margin_of_error: 2.0, methodology: "mista", scope: "MA", source_url: "https://www.cnnbrasil.com.br/eleicoes/real-time-big-data-lula-lidera-cenarios-de-1o-e-2o-turnos-no-maranhao/", tse_protocolo: "MA025692026", results: [{ candidate_name: "Lula", percentage: 65.0 }, { candidate_name: "Flávio", percentage: 30.0 }] },
-  { institute_name: "Real Time Big Data", election_name: "Presidencial 2026 - 1º Turno", publication_date: "2026-09-09", fieldwork_start: "2026-09-04", fieldwork_end: "2026-09-08", sample_size: 1600, margin_of_error: 2.0, methodology: "mista", scope: "BA", source_url: "https://exame.com/brasil/real-time-big-data-lula-tem-vantagem-de-31-pontos-sobre-flavio-bolsonaro-na-bahia/", tse_protocolo: "BA015682026", results: [{ candidate_name: "Lula", percentage: 55.0 }, { candidate_name: "Flávio", percentage: 24.0 }] },
-  { institute_name: "Real Time Big Data", election_name: "Presidencial 2026 - 2º Turno", publication_date: "2026-09-08", fieldwork_start: "2026-09-03", fieldwork_end: "2026-09-07", sample_size: 2000, margin_of_error: 2.0, methodology: "mista", scope: "MG", source_url: "https://www.cnnbrasil.com.br/eleicoes/real-time-big-data-lula-tem-46-no-2o-turno-em-minas-flavio-44/", tse_protocolo: "BR018252026", results: [{ candidate_name: "Lula", percentage: 46.0 }, { candidate_name: "Flávio", percentage: 44.0 }] },
-  { institute_name: "Real Time Big Data", election_name: "Presidencial 2026 - 1º Turno", publication_date: "2026-09-08", fieldwork_start: "2026-09-03", fieldwork_end: "2026-09-07", sample_size: 1600, margin_of_error: 2.0, methodology: "mista", scope: "PA", source_url: "https://exame.com/brasil/real-time-big-data-no-para-lula-lidera-com-10-pontos-de-vantagem-sobre-flavio-bolsonaro/", results: [{ candidate_name: "Lula", percentage: 55.0 }, { candidate_name: "Flávio", percentage: 45.0 }] },
-  { institute_name: "Real Time Big Data", election_name: "Presidencial 2026 - 2º Turno", publication_date: "2026-09-08", fieldwork_start: "2026-09-03", fieldwork_end: "2026-09-07", sample_size: 1600, margin_of_error: 2.0, methodology: "mista", scope: "AP", source_url: "https://www.poder360.com.br/poder-eleicoes-2026/flavio-tem-45-contra-41-de-lula-no-2o-turno-no-ap-diz-pesquisa/", tse_protocolo: "AP076302026", results: [{ candidate_name: "Flávio", percentage: 45.0 }, { candidate_name: "Lula", percentage: 41.0 }] },
+  { institute_name: "Real Time Big Data", election_name: "Presidencial 2026 - 1º Turno", publication_date: "2026-09-08", fieldwork_start: "2026-09-03", fieldwork_end: "2026-09-07", sample_size: 1600, margin_of_error: 2.0, methodology: "mista", scope: "CE", source_url: "https://www.cnnbrasil.com.br/eleicoes/real-time-big-data-lula-lidera-cenarios-de-1o-e-2o-turnos-no-ceara/", tse_protocolo: "BR056432026", results: [{ candidate_name: "Lula", percentage: 61.0 }, { candidate_name: "Flávio Bolsonaro", percentage: 19.0 }] },
+  { institute_name: "Real Time Big Data", election_name: "Presidencial 2026 - 2º Turno", publication_date: "2026-09-08", fieldwork_start: "2026-09-03", fieldwork_end: "2026-09-07", sample_size: 1600, margin_of_error: 2.0, methodology: "mista", scope: "CE", source_url: "https://www.cnnbrasil.com.br/eleicoes/real-time-big-data-lula-lidera-cenarios-de-1o-e-2o-turnos-no-ceara/", tse_protocolo: "BR056432026", results: [{ candidate_name: "Lula", percentage: 65.0 }, { candidate_name: "Flávio Bolsonaro", percentage: 27.0 }] },
+  { institute_name: "Real Time Big Data", election_name: "Presidencial 2026 - 1º Turno", publication_date: "2026-09-09", fieldwork_start: "2026-09-05", fieldwork_end: "2026-09-09", sample_size: 1600, margin_of_error: 2.0, methodology: "mista", scope: "MA", source_url: "https://www.cnnbrasil.com.br/eleicoes/real-time-big-data-lula-lidera-cenarios-de-1o-e-2o-turnos-no-maranhao/", tse_protocolo: "MA025692026", results: [{ candidate_name: "Lula", percentage: 62.0 }, { candidate_name: "Flávio Bolsonaro", percentage: 25.0 }] },
+  { institute_name: "Real Time Big Data", election_name: "Presidencial 2026 - 2º Turno", publication_date: "2026-09-09", fieldwork_start: "2026-09-05", fieldwork_end: "2026-09-09", sample_size: 1600, margin_of_error: 2.0, methodology: "mista", scope: "MA", source_url: "https://www.cnnbrasil.com.br/eleicoes/real-time-big-data-lula-lidera-cenarios-de-1o-e-2o-turnos-no-maranhao/", tse_protocolo: "MA025692026", results: [{ candidate_name: "Lula", percentage: 65.0 }, { candidate_name: "Flávio Bolsonaro", percentage: 30.0 }] },
+  { institute_name: "Real Time Big Data", election_name: "Presidencial 2026 - 1º Turno", publication_date: "2026-09-09", fieldwork_start: "2026-09-04", fieldwork_end: "2026-09-08", sample_size: 1600, margin_of_error: 2.0, methodology: "mista", scope: "BA", source_url: "https://exame.com/brasil/real-time-big-data-lula-tem-vantagem-de-31-pontos-sobre-flavio-bolsonaro-na-bahia/", tse_protocolo: "BA015682026", results: [{ candidate_name: "Lula", percentage: 55.0 }, { candidate_name: "Flávio Bolsonaro", percentage: 24.0 }] },
+  { institute_name: "Real Time Big Data", election_name: "Presidencial 2026 - 2º Turno", publication_date: "2026-09-08", fieldwork_start: "2026-09-03", fieldwork_end: "2026-09-07", sample_size: 2000, margin_of_error: 2.0, methodology: "mista", scope: "MG", source_url: "https://www.cnnbrasil.com.br/eleicoes/real-time-big-data-lula-tem-46-no-2o-turno-em-minas-flavio-44/", tse_protocolo: "BR018252026", results: [{ candidate_name: "Lula", percentage: 46.0 }, { candidate_name: "Flávio Bolsonaro", percentage: 44.0 }] },
+  { institute_name: "Real Time Big Data", election_name: "Presidencial 2026 - 1º Turno", publication_date: "2026-09-08", fieldwork_start: "2026-09-03", fieldwork_end: "2026-09-07", sample_size: 1600, margin_of_error: 2.0, methodology: "mista", scope: "PA", source_url: "https://exame.com/brasil/real-time-big-data-no-para-lula-lidera-com-10-pontos-de-vantagem-sobre-flavio-bolsonaro/", results: [{ candidate_name: "Lula", percentage: 55.0 }, { candidate_name: "Flávio Bolsonaro", percentage: 45.0 }] },
+  { institute_name: "Real Time Big Data", election_name: "Presidencial 2026 - 2º Turno", publication_date: "2026-09-08", fieldwork_start: "2026-09-03", fieldwork_end: "2026-09-07", sample_size: 1600, margin_of_error: 2.0, methodology: "mista", scope: "AP", source_url: "https://www.poder360.com.br/poder-eleicoes-2026/flavio-tem-45-contra-41-de-lula-no-2o-turno-no-ap-diz-pesquisa/", tse_protocolo: "AP076302026", results: [{ candidate_name: "Flávio Bolsonaro", percentage: 45.0 }, { candidate_name: "Lula", percentage: 41.0 }] },
 
   // ─── Curadoria 11/09/2026 — via fila pesqele_missing ──────────────────────
   // Fonte cruzada por 3 veículos independentes (protocolo, instituto, amostra e
   // janela de campo batendo): Brasil de Fato, CartaCapital e Poder360.
-  { institute_name: "Real Time Big Data", election_name: "Presidencial 2026 - 1º Turno", publication_date: "2026-09-09", fieldwork_start: "2026-09-04", fieldwork_end: "2026-09-08", sample_size: 1600, margin_of_error: 2.0, methodology: "mista", scope: "DF", source_url: "https://www.brasildefato.com.br/2026/09/09/realtime-big-data-lula-pt-tem-34-e-flavio-bolsonaro-pl-33-no-df/", tse_protocolo: "BR079322026", results: [{ candidate_name: "Lula", percentage: 34.0 }, { candidate_name: "Flávio", percentage: 33.0 }, { candidate_name: "Augusto Cury", percentage: 10.0 }, { candidate_name: "Renan", percentage: 7.0 }, { candidate_name: "Caiado", percentage: 6.0 }, { candidate_name: "Zema", percentage: 1.0 }, { candidate_name: "Pablo Marçal", percentage: 1.0 }] },
+  { institute_name: "Real Time Big Data", election_name: "Presidencial 2026 - 1º Turno", publication_date: "2026-09-09", fieldwork_start: "2026-09-04", fieldwork_end: "2026-09-08", sample_size: 1600, margin_of_error: 2.0, methodology: "mista", scope: "DF", source_url: "https://www.brasildefato.com.br/2026/09/09/realtime-big-data-lula-pt-tem-34-e-flavio-bolsonaro-pl-33-no-df/", tse_protocolo: "BR079322026", results: [{ candidate_name: "Lula", percentage: 34.0 }, { candidate_name: "Flávio Bolsonaro", percentage: 33.0 }, { candidate_name: "Augusto Cury", percentage: 10.0 }, { candidate_name: "Renan", percentage: 7.0 }, { candidate_name: "Caiado", percentage: 6.0 }, { candidate_name: "Zema", percentage: 1.0 }, { candidate_name: "Pablo Marçal", percentage: 1.0 }] },
 ];
 
 async function main() {
