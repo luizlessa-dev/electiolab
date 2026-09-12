@@ -7760,6 +7760,192 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Rosi Aires", percentage: 1 },
     ],
   },
+
+  // ─── Datafolha · 8-10 set 2026 · 10 pesquisas (Pres + Senad + Gov) ─────────
+  // Fonte: https://www1.folha.uol.com.br/poder/2026/09/datafolha-lula-tem-39-e-flavio-bolsonaro-35-em-primeiro-turno.shtml
+  // e demais URLs de 11/09/2026
+
+  // 1. Presidencial - 1º Turno
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-08",
+    fieldwork_end: "2026-09-10",
+    sample_size: 2002,
+    methodology: "presencial",
+    source_url: "https://www1.folha.uol.com.br/poder/2026/09/datafolha-lula-tem-39-e-flavio-bolsonaro-35-em-primeiro-turno.shtml",
+    results: [
+      { candidate_name: "Lula", percentage: 39 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 35 },
+      { candidate_name: "Augusto Cury", percentage: 6 },
+      { candidate_name: "Ronaldo Caiado", percentage: 4 },
+      { candidate_name: "Renan Santos", percentage: 3 },
+      { candidate_name: "Romeu Zema", percentage: 2 },
+    ],
+  },
+
+  // 2. Senador Distrito Federal
+  {
+    institute_name: "Datafolha",
+    election_name: "Senador Distrito Federal 2026",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-08",
+    fieldwork_end: "2026-09-10",
+    sample_size: 2002,
+    methodology: "presencial",
+    source_url: "https://www1.folha.uol.com.br/poder/2026/09/datafolha-michelle-bolsonaro-e-leila-do-volei-lideram-disputa-ao-senado-pelo-df.shtml",
+    scope: "DF",
+    results: [
+      { candidate_name: "Michelle Bolsonaro", percentage: 21 },
+      { candidate_name: "Leila do Vôlei", percentage: 18 },
+      { candidate_name: "Bia Kicis", percentage: 15 },
+      { candidate_name: "Erika Kokay", percentage: 14 },
+    ],
+  },
+
+  // 3. Senador Rio de Janeiro
+  {
+    institute_name: "Datafolha",
+    election_name: "Senador Rio de Janeiro 2026",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-08",
+    fieldwork_end: "2026-09-10",
+    sample_size: 2002,
+    methodology: "presencial",
+    source_url: "https://www1.folha.uol.com.br/poder/2026/09/datafolha-benedita-da-silva-lidera-com-18-disputa-ao-senado-no-rio.shtml",
+    scope: "RJ",
+    results: [
+      { candidate_name: "Benedita da Silva", percentage: 18 },
+    ],
+  },
+
+  // 4. Senador Minas Gerais
+  {
+    institute_name: "Datafolha",
+    election_name: "Senador Minas Gerais 2026",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-08",
+    fieldwork_end: "2026-09-10",
+    sample_size: 2002,
+    methodology: "presencial",
+    source_url: "https://www1.folha.uol.com.br/poder/2026/09/datafolha-marilia-campos-tem-12-em-disputa-pelo-senado-em-mg-aecio-neves-e-carlos-viana-marcam-10.shtml",
+    scope: "MG",
+    results: [
+      { candidate_name: "Marília Campos", percentage: 12 },
+      { candidate_name: "Aécio Neves", percentage: 10 },
+      { candidate_name: "Carlos Viana", percentage: 10 },
+    ],
+  },
+
+  // 5. Senador Sao Paulo
+  {
+    institute_name: "Datafolha",
+    election_name: "Senador Sao Paulo 2026",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-08",
+    fieldwork_end: "2026-09-10",
+    sample_size: 2002,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www1.folha.uol.com.br/poder/2026/09/datafolha-marina-tebet-andre-do-prado-e-derrite-empatam-na-disputa-pelo-senado-em-sp.shtml",
+    scope: "SP",
+    results: [
+      { candidate_name: "Marina Silva", percentage: 13 },
+      { candidate_name: "Tebet", percentage: 13 },
+      { candidate_name: "André do Prado", percentage: 11 },
+      { candidate_name: "Derrite", percentage: 10 },
+    ],
+  },
+
+  // 6. Governador Distrito Federal
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador Distrito Federal 2026",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-08",
+    fieldwork_end: "2026-09-10",
+    sample_size: 2002,
+    methodology: "presencial",
+    source_url: "https://www1.folha.uol.com.br/poder/2026/09/datafolha-celina-leao-lidera-com-40-das-intencoes-ao-governo-do-df-jose-roberto-arruda-tem-17.shtml",
+    scope: "DF",
+    results: [
+      { candidate_name: "Celina Leão", percentage: 40 },
+      { candidate_name: "José Roberto Arruda", percentage: 17 },
+      { candidate_name: "Leandro Grass", percentage: 16 },
+    ],
+  },
+
+  // 7. Governador PE
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador PE 2026 - 1º Turno",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-08",
+    fieldwork_end: "2026-09-10",
+    sample_size: 2002,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www1.folha.uol.com.br/poder/2026/09/datafolha-raquel-lyra-tem-47-para-governo-de-pernambuco-ante-42-de-joao-campos.shtml",
+    scope: "PE",
+    results: [
+      { candidate_name: "Raquel Lyra", percentage: 47 },
+      { candidate_name: "João Campos", percentage: 42 },
+    ],
+  },
+
+  // 8. Governador RJ
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador RJ 2026 - 1º Turno",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-08",
+    fieldwork_end: "2026-09-10",
+    sample_size: 2002,
+    methodology: "presencial",
+    source_url: "https://www1.folha.uol.com.br/poder/2026/09/datafolha-eduardo-paes-lidera-com-49-dos-votos-validos-no-rio.shtml",
+    scope: "RJ",
+    results: [
+      { candidate_name: "Eduardo Paes", percentage: 43 },
+      { candidate_name: "Douglas Ruas", percentage: 25 },
+      { candidate_name: "Anthony Garotinho", percentage: 10 },
+    ],
+  },
+
+  // 9. Governador MG
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador MG 2026 - 1º Turno",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-08",
+    fieldwork_end: "2026-09-10",
+    sample_size: 2002,
+    methodology: "presencial",
+    source_url: "https://www1.folha.uol.com.br/poder/2026/09/datafolha-cletinho-tem-37-e-mantem-lideranca-em-corrida-pelo-governo-de-mg.shtml",
+    scope: "MG",
+    results: [
+      { candidate_name: "Cleitinho", percentage: 37 },
+      { candidate_name: "Patrus Ananias", percentage: 13 },
+      { candidate_name: "Alexandre Kalil", percentage: 11 },
+    ],
+  },
+
+  // 10. Governador SP
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador SP 2026 - 1º Turno",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-08",
+    fieldwork_end: "2026-09-10",
+    sample_size: 2002,
+    methodology: "presencial",
+    source_url: "https://www1.folha.uol.com.br/poder/2026/09/datafolha-tarcisio-lidera-em-sp-contra-haddad-e-poderia-vencer-disputa-em-primeiro-turno.shtml",
+    scope: "SP",
+    results: [
+      { candidate_name: "Tarcísio de Freitas", percentage: 56 },
+      { candidate_name: "Fernando Haddad", percentage: 32 },
+    ],
+  },
 ];
 
 async function main() {
