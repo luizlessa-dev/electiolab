@@ -7668,8 +7668,22 @@ async function main() {
     dedupQuery = poll.scenario_label
       ? dedupQuery.eq("scenario_label", poll.scenario_label)
       : dedupQuery.is("scenario_label", null);
-    const { data: existing } = await dedupQuery.maybeSingle();
-    if (existing) { console.log("⏭️  já existe"); skipped++; continue; }
+    // .maybeSingle() lança erro (data: null) se já existir MAIS DE UMA linha
+    // batendo a mesma chave de dedup. Tratar isso como "não achei" faria o
+    // script inserir mais uma cópia a cada execução — um loop de duplicação
+    // que só piora sozinho (foi o que gerou 53 cópias do GERP 21/05/2026).
+    // Em vez disso, contar as linhas e tratar 1+ sempre como "já existe".
+    const { data: existingRows, error: dedupError } = await dedupQuery;
+    if (dedupError) { console.log(`❌ dedup: ${dedupError.message}`); errors++; continue; }
+    if (existingRows && existingRows.length > 0) {
+      if (existingRows.length > 1) {
+        console.log(`⏭️  já existe (⚠️  ${existingRows.length} linhas duplicadas — limpar manualmente: ${existingRows.map((r) => r.id).join(", ")})`);
+      } else {
+        console.log("⏭️  já existe");
+      }
+      skipped++;
+      continue;
+    }
 
     // Inserir poll
     const { data: newPoll, error } = await supabase
