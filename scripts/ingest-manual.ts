@@ -8025,19 +8025,44 @@ async function main() {
     if (error || !newPoll) { console.log(`❌ ${error?.message}`); errors++; continue; }
 
     // Inserir resultados
+    // .maybeSingle() falha (data: null, error preenchido) tanto quando NENHUM
+    // candidato bate com o nome quanto quando MAIS DE UM bate (ex.: nome de
+    // urna do TSE difere do nome jornalístico usado em PENDING_POLLS, ou dois
+    // candidatos ambíguos no mesmo momento). Sem checar o erro, os dois casos
+    // eram tratados como "não encontrado" e o resultado sumia sem log.
+    let resultsInserted = 0;
+    const unresolved: string[] = [];
     for (const r of poll.results) {
-      const { data: candidate } = await supabase
+      const { data: candidate, error: candidateError } = await supabase
         .from("candidates")
         .select("id")
         .eq("election_id", election.id)
         .ilike("name", r.candidate_name)
         .maybeSingle();
-      if (!candidate) { continue; }
-      await supabase.from("poll_results").insert({
+      if (candidateError || !candidate) {
+        unresolved.push(
+          candidateError
+            ? `${r.candidate_name} (${candidateError.message})`
+            : r.candidate_name
+        );
+        continue;
+      }
+      const { error: resultError } = await supabase.from("poll_results").insert({
         poll_id: newPoll.id,
         candidate_id: candidate.id,
         percentage: r.percentage,
       });
+      if (resultError) {
+        unresolved.push(`${r.candidate_name} (insert: ${resultError.message})`);
+        continue;
+      }
+      resultsInserted++;
+    }
+
+    if (unresolved.length > 0) {
+      console.log(
+        `⚠️  ${resultsInserted}/${poll.results.length} resultados — candidatos não resolvidos: ${unresolved.join(", ")}`
+      );
     }
 
     console.log(`✅ inserida (id: ${newPoll.id})`);
