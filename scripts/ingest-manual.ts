@@ -7618,6 +7618,56 @@ const PENDING_POLLS: Array<{
   // Fonte cruzada por 3 veículos independentes (protocolo, instituto, amostra e
   // janela de campo batendo): Brasil de Fato, CartaCapital e Poder360.
   { institute_name: "Real Time Big Data", election_name: "Presidencial 2026 - 1º Turno", publication_date: "2026-09-09", fieldwork_start: "2026-09-04", fieldwork_end: "2026-09-08", sample_size: 1600, margin_of_error: 2.0, methodology: "mista", scope: "DF", source_url: "https://www.brasildefato.com.br/2026/09/09/realtime-big-data-lula-pt-tem-34-e-flavio-bolsonaro-pl-33-no-df/", tse_protocolo: "BR079322026", results: [{ candidate_name: "Lula", percentage: 34.0 }, { candidate_name: "Flávio", percentage: 33.0 }, { candidate_name: "Augusto Cury", percentage: 10.0 }, { candidate_name: "Renan", percentage: 7.0 }, { candidate_name: "Caiado", percentage: 6.0 }, { candidate_name: "Zema", percentage: 1.0 }, { candidate_name: "Pablo Marçal", percentage: 1.0 }] },
+
+  // ─── Curadoria 12/09/2026 — via fila pesqele_missing ──────────────────────
+  // Nota: nesta rodada também foram CORRIGIDOS via SQL direto (sem entrada nova
+  // aqui, pra não duplicar) 4 polls Datafolha já curados anteriormente que
+  // estavam com tse_registration nulo, fieldwork_end e sample_size levemente
+  // errados (provavelmente copiados de uma matéria genérica em vez do BID TSE):
+  //   RJ-09217/2026 (Governador RJ, Eduardo Paes 43/Douglas Ruas 25/Garotinho 10)
+  //   DF-06055/2026 (Governador DF, Celina Leão 40/Arruda 17/Leandro Grass 16)
+  //   MG-01611/2026 (Governador MG, Cleitinho 37/Patrus Ananias 13/Kalil 11)
+  //   PE-04411/2026 (Governador PE, Raquel Lyra 47/João Campos 42)
+  // Percentuais batiam exatamente com a matéria (Folha/Datafolha, 11/09/2026);
+  // só fieldwork_end (09-10→09-11) e sample_size (2002→valor real do BID) e o
+  // tse_registration em si precisavam de correção. Ver commit para o UPDATE.
+
+  // AtlasIntel · 5-10 set 2026 · TSE PA-09626/2026 · n=1.200 · online · Governador PA
+  // Fonte: https://exame.com/brasil/pesquisa-atlasintel-hana-tem-485-e-dr-daniel-417-no-1o-turno-no-para/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador PA 2026 - 1º Turno",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-05",
+    fieldwork_end: "2026-09-10",
+    sample_size: 1200,
+    methodology: "online",
+    source_url: "https://exame.com/brasil/pesquisa-atlasintel-hana-tem-485-e-dr-daniel-417-no-1o-turno-no-para/",
+    tse_protocolo: "PA096262026",
+    results: [
+      { candidate_name: "Hana Ghassan", percentage: 48.5 },
+      { candidate_name: "Dr Daniel",    percentage: 41.7 },
+    ],
+  },
+
+  // AtlasIntel · 4-9 set 2026 · TSE SC-02036/2026 · n=1.200 · online · Governador SC
+  // Fonte: https://itatiaia.com.br/politica/eleicoes/jorginho-mello-lidera-pesquisa-atlasintel-para-o-governo-de-santa-catarina/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador Santa Catarina 2026",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-09",
+    sample_size: 1200,
+    methodology: "online",
+    source_url: "https://itatiaia.com.br/politica/eleicoes/jorginho-mello-lidera-pesquisa-atlasintel-para-o-governo-de-santa-catarina/",
+    tse_protocolo: "SC020362026",
+    results: [
+      { candidate_name: "Jorginho Mello",  percentage: 51.6 },
+      { candidate_name: "Joao Rodrigues",  percentage: 18.5 },
+      { candidate_name: "Gelson Merisio",  percentage: 17.6 },
+    ],
+  },
 ];
 
 async function main() {
