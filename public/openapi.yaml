@@ -12,6 +12,15 @@ info:
     **Auth:** Bearer token no formato `el_<tier>_<hex>`. Sem token, acesso
     anônimo limitado a 60 req/dia.
 
+    **Rate Limits (headers X-RateLimit-*):**
+    - Anonymous (sem token): 60 req/dia (IP-based), reseta diariamente
+    - Pro (R$ 97/mês): 1.000 req/mês, reseta no primeiro dia do mês
+    - Business (R$ 497/mês): 10.000 req/mês, reseta no primeiro dia do mês
+    - Enterprise (custom): ilimitado
+
+    Respostas 429 incluem headers: X-RateLimit-Limit, X-RateLimit-Remaining,
+    X-RateLimit-Reset (ISO 8601), X-API-Tier, Retry-After (segundos).
+
     **Documentação metodológica:**
     - Médias ponderadas: https://electiolab.com/docs/weighted-averages
     - Reliability score dos institutos: https://electiolab.com/docs/reliability-score
@@ -199,19 +208,95 @@ components:
       headers:
         X-RateLimit-Limit:
           schema: { type: integer }
+          description: Limite de requisições para este período
+          example: 1000
         X-RateLimit-Remaining:
           schema: { type: integer }
+          description: Requisições restantes neste período
+          example: 0
         X-RateLimit-Reset:
           schema: { type: string, format: date-time }
+          description: Quando o limite reseta (ISO 8601)
+          example: "2024-02-01T00:00:00Z"
+        X-API-Tier:
+          schema: { type: string }
+          description: Tier da API key (anonymous, pro, business, enterprise)
+          example: "pro"
+        Retry-After:
+          schema: { type: integer }
+          description: Segundos até poder tentar novamente
+          example: 86400
       content:
         application/json:
-          schema: { $ref: '#/components/schemas/ErrorResponse' }
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/RateLimitError'
+              - $ref: '#/components/schemas/RateLimitErrorAnonymous'
 
   schemas:
     ErrorResponse:
       type: object
       properties:
         error: { type: string }
+
+    RateLimitError:
+      type: object
+      description: Erro de rate limit para clientes autenticados (limite mensal)
+      properties:
+        error:
+          type: string
+          example: "Rate limit atingido"
+        message:
+          type: string
+          nullable: true
+          example: "Limite de 1.000 requisições por mês atingido. Upgrade para Business."
+        limit:
+          type: integer
+          description: Limite de requisições para este período
+          example: 1000
+        remaining:
+          type: integer
+          description: Requisições restantes (0 quando atingido)
+          example: 0
+        reset_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Quando o limite reseta (para anonymous)
+          example: null
+        period_resets_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Quando o período mensal reseta (para autenticado)
+          example: "2024-02-01T00:00:00Z"
+      required: [error, limit]
+
+    RateLimitErrorAnonymous:
+      type: object
+      description: Erro de rate limit para clientes anônimos (limite diário de 60 req)
+      properties:
+        error:
+          type: string
+          example: "Rate limit atingido"
+        message:
+          type: string
+          description: Mensagem amigável sobre o limite
+          example: "Limite de 60 requisições por dia atingido. Próximo reset às 2024-01-15T12:00:00Z. Obtenha uma API key em electiolab.com/dashboard/api"
+        limit:
+          type: integer
+          description: Limite de requisições por dia (sempre 60)
+          example: 60
+        remaining:
+          type: integer
+          description: Requisições restantes (0 quando atingido)
+          example: 0
+        reset_at:
+          type: string
+          format: date-time
+          description: Quando o limite reseta (24h depois do primeiro request)
+          example: "2024-01-15T12:00:00Z"
+      required: [error, message, limit, remaining, reset_at]
 
     Election:
       type: object
