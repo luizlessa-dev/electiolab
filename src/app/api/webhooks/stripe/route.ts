@@ -113,7 +113,7 @@ export async function POST(request: Request) {
       }
 
       case "customer.subscription.updated": {
-        const sub = event.data.object;
+        const sub = event.data.object as any;
         const userId = sub.metadata?.user_id;
         const tier = (sub.metadata?.tier ?? "pro") as "pro" | "business" | "enterprise";
 

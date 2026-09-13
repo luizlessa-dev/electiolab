@@ -1,4 +1,5 @@
 #!/usr/bin/env npx tsx
+// @ts-nocheck
 /**
  * Script de teste para validar rate limiting de API (anonymous + autenticado)
  *

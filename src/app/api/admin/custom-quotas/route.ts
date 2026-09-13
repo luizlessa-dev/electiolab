@@ -73,7 +73,7 @@ export async function POST(request: Request) {
 
     // Chamar função Supabase para upsert custom quota
     const { data: result, error: rpcError } = await supabase.rpc(
-      "set_custom_quota",
+      "set_custom_quota" as any,
       {
         p_api_key_id: api_key_id,
         p_user_id: apiKey.user_id,
@@ -91,15 +91,20 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!Array.isArray(result) || result.length === 0 || !result[0].success) {
-      const msg = Array.isArray(result) ? result[0]?.message : "Unknown error";
+    const changeInfo = (Array.isArray(result) ? result[0] : result) as {
+      success: boolean;
+      old_limit: number | null;
+      new_limit: number;
+      message: string;
+    } | null;
+
+    if (!changeInfo?.success) {
+      const msg = changeInfo?.message || "Unknown error";
       return NextResponse.json({ error: msg }, { status: 400 });
     }
 
-    const changeInfo = result[0];
-
     // Email ao customer notificando mudança
-    const tierLabel = apiKey.tier.toUpperCase();
+    const tierLabel = (apiKey.tier || "pro").toUpperCase();
     const oldLabel = changeInfo.old_limit
       ? `${changeInfo.old_limit.toLocaleString("pt-BR")} (${tierLabel})`
       : "Padrão";
@@ -191,7 +196,7 @@ export async function GET(request: Request) {
 
     // Listar custom quotas (últimas 50)
     const { data: quotas, error } = await supabase
-      .from("custom_quotas")
+      .from("custom_quotas" as any)
       .select("id, api_key_id, user_id, override_limit, override_reason, changed_at")
       .order("changed_at", { ascending: false })
       .limit(50);
@@ -241,7 +246,7 @@ export async function DELETE(request: Request) {
 
     // Remover custom quota (volta para tier padrão)
     const { error } = await supabase
-      .from("custom_quotas")
+      .from("custom_quotas" as any)
       .delete()
       .eq("id", quotaId);
 

@@ -48,7 +48,7 @@ export default function AdminCustomQuotasPage() {
       }
 
       // Carregar API keys para busca
-      const { data: keys } = await sb.from("api_keys").select("*").limit(100);
+      const { data: keys } = await sb.from("api_keys" as any).select("*").limit(100);
       if (keys) {
         setApiKeys(keys as ApiKey[]);
       }

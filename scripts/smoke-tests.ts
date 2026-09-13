@@ -1,4 +1,5 @@
 #!/usr/bin/env npx tsx
+// @ts-nocheck
 /**
  * Smoke tests pós-configuração de envs no Vercel.
  *
@@ -21,7 +22,7 @@ const SKIP = new Set((process.argv.find((a) => a.startsWith("--skip="))?.split("
 const SMOKE_EMAIL = process.env.SMOKE_EMAIL ?? `smoke+${Date.now()}@electiolab.dev`;
 
 let passCount = 0, failCount = 0;
-const results: { name: string; ok: boolean; status?: number; note: string }[] = [];
+let results: { name: string; ok: boolean; status?: number; note: string }[] = [];
 
 function rec(name: string, ok: boolean, note: string, status?: number) {
   results.push({ name, ok, status, note });
