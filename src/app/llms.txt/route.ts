@@ -229,9 +229,9 @@ Cada perfil em /candidato/{slug} inclui:
 
 Fórmula: W = Wr × Wa × Wm × Wi
 
-- **Wr (Recência)**: e^(−t × ln2 / 10) — meia-vida de 10 dias
+- **Wr (Recência)**: e^(−t × ln2 / 14) — meia-vida de 14 dias
 - **Wa (Amostra)**: √n / 1.000 — raiz quadrada do tamanho da amostra
-- **Wm (Metodologia)**: presencial 1,0 · telefônica 0,85 · mista 0,75 · online 0,60
+- **Wm (Metodologia)**: presencial 1,0 · telefônica 0,95 · online 0,9 · mista 0,85
 - **Wi (Acurácia)**: score baseado no erro médio absoluto do instituto nas últimas eleições
 
 Documentação completa: ${SITE}/metodologia

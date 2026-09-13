@@ -45,7 +45,7 @@ const FAQ = [
   },
   {
     q: "Pesquisa eleitoral é previsão do resultado?",
-    a: "Não. Pesquisa é uma fotografia do momento, não uma previsão. Ela mede a intenção de voto na data do campo — e a opinião muda até a eleição. Por isso a recência importa: o ElectioLab dá peso decrescente a pesquisas mais antigas (meia-vida de 10 dias).",
+    a: "Não. Pesquisa é uma fotografia do momento, não uma previsão. Ela mede a intenção de voto na data do campo — e a opinião muda até a eleição. Por isso a recência importa: o ElectioLab dá peso decrescente a pesquisas mais antigas (meia-vida de 14 dias).",
   },
 ];
 
@@ -169,7 +169,7 @@ export default function PesquisasSaoConfiaveisPage() {
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border rounded-sm overflow-hidden text-xs text-center">
             {[
-              { label: "Recência", note: "Pesquisa recente pesa mais (meia-vida 10 dias)" },
+              { label: "Recência", note: "Pesquisa recente pesa mais (meia-vida 14 dias)" },
               { label: "Amostra", note: "Mais entrevistados, mais peso (√n)" },
               { label: "Metodologia", note: "Presencial > telefônica > online" },
               { label: "Acurácia", note: "Quem acertou no passado pesa mais" },

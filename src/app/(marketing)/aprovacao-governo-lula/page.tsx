@@ -60,7 +60,7 @@ export default async function AprovacaoLulaPage() {
     },
     {
       q: "Como o ElectioLab calcula a média de aprovação?",
-      a: "Com o mesmo motor da intenção de voto: cada pesquisa recebe um peso pela recência (meia-vida de 10 dias), tamanho da amostra (√n), metodologia de coleta (presencial > telefônica > online) e acurácia histórica do instituto. A média ponderada é mais estável que qualquer pesquisa isolada. Detalhes em /metodologia.",
+      a: "Com o mesmo motor da intenção de voto: cada pesquisa recebe um peso pela recência (meia-vida de 14 dias), tamanho da amostra (√n), metodologia de coleta (presencial > telefônica > online > mista) e acurácia histórica do instituto. A média ponderada é mais estável que qualquer pesquisa isolada. Detalhes em /metodologia.",
     },
     {
       q: "Aprovação de governo é a mesma coisa que intenção de voto?",

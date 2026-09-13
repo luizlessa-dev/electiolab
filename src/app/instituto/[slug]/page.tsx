@@ -160,7 +160,7 @@ export default async function InstitutoPage({
       : []),
     {
       q: `Como o ElectioLab pondera as pesquisas do ${institute.name}?`,
-      a: `Cada pesquisa do ${institute.name} entra na média ponderada do ElectioLab com peso baseado em quatro fatores: (1) recência (meia-vida de 10 dias), (2) tamanho da amostra (raiz quadrada do n), (3) metodologia, e (4) histórico de acurácia do instituto. O score de acurácia funciona como multiplicador final — institutos com menor erro vs resultado oficial ganham mais peso.`,
+      a: `Cada pesquisa do ${institute.name} entra na média ponderada do ElectioLab com peso baseado em quatro fatores: (1) recência (meia-vida de 14 dias), (2) tamanho da amostra (raiz quadrada do n), (3) metodologia, e (4) histórico de acurácia do instituto. O score de acurácia funciona como multiplicador final — institutos com menor erro vs resultado oficial ganham mais peso.`,
     },
   ];
 

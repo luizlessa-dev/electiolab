@@ -53,7 +53,7 @@ const FAQ_ITEMS = [
   {
     question: "Como funciona a média ponderada das pesquisas?",
     answer:
-      "A média ponderada do ElectioLab considera quatro fatores para cada pesquisa: (1) Recência — pesquisas mais antigas decaem com meia-vida de 10 dias; (2) Tamanho da amostra — amostras maiores têm mais peso, com retorno decrescente calculado via raiz quadrada do n; (3) Metodologia de coleta — presencial supera telefônica, que supera online; (4) Histórico de acurácia do instituto — institutos com menor Erro Médio Absoluto em eleições anteriores recebem peso maior. O resultado é uma estimativa mais estável do que qualquer pesquisa individual.",
+      "A média ponderada do ElectioLab considera quatro fatores para cada pesquisa: (1) Recência — pesquisas mais antigas decaem com meia-vida de 14 dias; (2) Tamanho da amostra — amostras maiores têm mais peso, com retorno decrescente calculado via raiz quadrada do n; (3) Metodologia de coleta — presencial supera telefônica, que supera online e mista; (4) Histórico de acurácia do instituto — institutos com menor Erro Médio Absoluto em eleições anteriores recebem peso maior. O resultado é uma estimativa mais estável do que qualquer pesquisa individual.",
   },
   {
     question: "As pesquisas presidenciais 2026 são confiáveis?",
@@ -228,7 +228,7 @@ function buildJsonLd(lastUpdated: string | null) {
         "@id": "https://electiolab.com/pesquisas-presidenciais-2026#dataset",
         "name": "Média Agregada de Pesquisas Presidenciais 2026 — Brasil",
         "description":
-          "Média ponderada ao vivo de todas as pesquisas presidenciais do Brasil em 2026, calculada por recência (meia-vida 10 dias), tamanho amostral (√n), metodologia de coleta (presencial > online) e acurácia histórica do instituto. Atualizada a cada 6 horas.",
+          "Média ponderada ao vivo de todas as pesquisas presidenciais do Brasil em 2026, calculada por recência (meia-vida 14 dias), tamanho amostral (√n), metodologia de coleta (presencial > online) e acurácia histórica do instituto. Atualizada a cada 6 horas.",
         "url": "https://electiolab.com/pesquisas-presidenciais-2026",
         "sameAs": "https://electiolab.com/#dataset",
         "keywords": [
@@ -489,7 +489,7 @@ export default async function PesquisasPresidenciais2026Page() {
               <Link href="/margem-de-erro-pesquisa-eleitoral" className="text-primary hover:underline">
                 margem de erro
               </Link>
-              {" "}pra entender. Cada % é a média ponderada por recência (meia-vida 10 dias), tamanho
+              {" "}pra entender. Cada % é a média ponderada por recência (meia-vida 14 dias), tamanho
               da amostra (raiz quadrada),{" "}
               <Link href="/pesquisa-presencial-vs-online" className="text-primary hover:underline">
                 metodologia

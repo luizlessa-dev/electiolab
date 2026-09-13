@@ -227,7 +227,7 @@ export default function ImprensaPage() {
             </p>
             <p>
               A fórmula pondera cada pesquisa por quatro fatores: <strong className="text-foreground">recência</strong> (meia-vida de
-              10 dias), <strong className="text-foreground">tamanho da amostra</strong> (√n), <strong className="text-foreground">metodologia</strong> (presencial &gt; telefônica &gt; online) e
+              14 dias), <strong className="text-foreground">tamanho da amostra</strong> (√n), <strong className="text-foreground">metodologia</strong> (presencial &gt; telefônica &gt; online &gt; mista) e
               <strong className="text-foreground"> histórico de acurácia do instituto</strong> (score baseado no Erro Médio Absoluto em
               eleições anteriores). O resultado é uma estimativa mais estável e mais próxima da realidade do que
               qualquer pesquisa individual.
@@ -277,10 +277,10 @@ export default function ImprensaPage() {
 
               <p>
                 A metodologia de ponderação considera quatro fatores: <strong className="text-foreground">recência</strong> da
-                pesquisa (pesquisas mais antigas decaem com meia-vida de 10 dias), <strong className="text-foreground">tamanho da
+                pesquisa (pesquisas mais antigas decaem com meia-vida de 14 dias), <strong className="text-foreground">tamanho da
                 amostra</strong> (amostras maiores pesam mais, com retorno decrescente via √n),
                 <strong className="text-foreground"> metodologia de coleta</strong> (presencial supera telefônica, que supera
-                online) e <strong className="text-foreground">histórico de acurácia do instituto</strong> (institutos com menor
+                online e mista) e <strong className="text-foreground">histórico de acurácia do instituto</strong> (institutos com menor
                 Erro Médio Absoluto em eleições passadas têm peso maior).
               </p>
 

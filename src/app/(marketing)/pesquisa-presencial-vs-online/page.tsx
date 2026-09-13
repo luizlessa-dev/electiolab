@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 const FAQ = [
   {
     q: "Qual é a metodologia mais confiável em pesquisa eleitoral?",
-    a: "Presencial historicamente tem menor erro vs urna no Brasil — alcança eleitores de baixa escolaridade e baixa renda que metodologias remotas não acessam bem. Mas é a mais cara. Telefônica e online são alternativas mais baratas com vieses conhecidos (sub-representação de idosos no online, de jovens no telefônico). Mista (face a face + online ou telefônica) tenta compensar os vieses.",
+    a: "Presencial historicamente tem menor erro vs urna no Brasil — alcança eleitores de baixa escolaridade e baixa renda que metodologias remotas não acessam bem. Mas é a mais cara. Telefônica e online são alternativas mais baratas com vieses conhecidos (sub-representação de idosos no online, de jovens no telefônico). Mista (face a face + online ou telefônica) tenta compensar os vieses, mas o resultado depende de como a combinação é calibrada — mal feita, amplifica os vieses das partes em vez de cancelá-los.",
   },
   {
     q: "Por que pesquisa online sub-representa idosos?",
@@ -35,7 +35,7 @@ const FAQ = [
   },
   {
     q: "Como o ElectioLab pondera cada metodologia?",
-    a: "Na média ponderada, multiplicamos cada pesquisa por um peso de metodologia: presencial = 1,00 · telefônica = 0,85 · mista = 0,75 · online = 0,60. Os valores refletem o histórico de erro vs resultado oficial em eleições brasileiras anteriores, com presencial entregando consistentemente os menores desvios.",
+    a: "Na média ponderada, multiplicamos cada pesquisa por um peso de metodologia: presencial = 1,00 · telefônica = 0,95 · online = 0,90 · mista = 0,85. Os valores refletem o histórico de erro vs resultado oficial em eleições brasileiras anteriores — presencial segue com o menor desvio médio, mas institutos online consolidados (como Atlas Intel) fecharam boa parte da distância nos últimos ciclos. Mista fica com o menor peso porque a qualidade da combinação varia muito de instituto a instituto: bem calibrada, se aproxima da presencial; mal calibrada, amplifica os vieses das partes.",
   },
   {
     q: "Pesquisa eleitoral por WhatsApp é confiável?",
@@ -150,21 +150,21 @@ export default function PresencialOnlinePage() {
                     <td className="px-4 py-3 text-muted-foreground">Celular + fixo</td>
                     <td className="px-4 py-3 text-muted-foreground">Médio</td>
                     <td className="px-4 py-3 text-muted-foreground">Sub-representa jovens</td>
-                    <td className="px-4 py-3 text-right font-mono tabular-nums">0,85</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums">0,95</td>
                   </tr>
                   <tr className="border-t border-border/40">
-                    <td className="px-4 py-3 font-semibold">Mista</td>
-                    <td className="px-4 py-3 text-muted-foreground">Presencial + online/telefônica</td>
-                    <td className="px-4 py-3 text-muted-foreground">Médio-alto</td>
-                    <td className="px-4 py-3 text-muted-foreground">Tenta compensar (depende da mix)</td>
-                    <td className="px-4 py-3 text-right font-mono tabular-nums">0,75</td>
-                  </tr>
-                  <tr className="border-t border-border/40 bg-muted/15">
                     <td className="px-4 py-3 font-semibold">Online</td>
                     <td className="px-4 py-3 text-muted-foreground">Painel + redes sociais</td>
                     <td className="px-4 py-3 text-muted-foreground">Baixo</td>
                     <td className="px-4 py-3 text-muted-foreground">Sub-representa idosos e baixa renda</td>
-                    <td className="px-4 py-3 text-right font-mono tabular-nums">0,60</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums">0,90</td>
+                  </tr>
+                  <tr className="border-t border-border/40 bg-muted/15">
+                    <td className="px-4 py-3 font-semibold">Mista</td>
+                    <td className="px-4 py-3 text-muted-foreground">Presencial + online/telefônica</td>
+                    <td className="px-4 py-3 text-muted-foreground">Médio-alto</td>
+                    <td className="px-4 py-3 text-muted-foreground">Depende da mix — mal calibrada, amplifica vieses</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums">0,85</td>
                   </tr>
                 </tbody>
               </table>

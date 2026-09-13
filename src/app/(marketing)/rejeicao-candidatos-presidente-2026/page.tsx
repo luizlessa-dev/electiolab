@@ -59,7 +59,7 @@ export default async function RejeicaoPresidente2026Page() {
     },
     {
       q: "Como o ElectioLab calcula a média de rejeição?",
-      a: "Com o mesmo motor da intenção de voto: cada pesquisa é ponderada por recência (meia-vida de 10 dias), tamanho da amostra (√n), metodologia de coleta e acurácia histórica do instituto. As pesquisas de rejeição são agregadas separadamente das de aprovação e de intenção de voto. Detalhes em /metodologia.",
+      a: "Com o mesmo motor da intenção de voto: cada pesquisa é ponderada por recência (meia-vida de 14 dias), tamanho da amostra (√n), metodologia de coleta e acurácia histórica do instituto. As pesquisas de rejeição são agregadas separadamente das de aprovação e de intenção de voto. Detalhes em /metodologia.",
     },
   ];
 
