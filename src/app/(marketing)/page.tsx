@@ -20,7 +20,7 @@ import {
   Mail,
 } from "lucide-react";
 import { NewsletterSignup } from "@/components/newsletter/signup-form";
-import { getInstitutesRanking, getLatestPresidentialPoll } from "@/lib/marketing-data";
+import { getHomeStats, getInstitutesRanking, getLatestPresidentialPoll } from "@/lib/marketing-data";
 
 import type { Metadata } from "next";
 
@@ -55,7 +55,8 @@ export const metadata: Metadata = {
   },
 };
 
-const jsonLd = {
+function buildJsonLd(institutosAnswer: string, liderancaAnswer: string) {
+  return {
   "@context": "https://schema.org",
   "@graph": [
     {
@@ -200,7 +201,7 @@ const jsonLd = {
           "name": "Qual o instituto de pesquisa eleitoral mais acurado no Brasil?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Pelo histórico de erro absoluto vs. resultado oficial TSE em 2018 e 2022: Datafolha 92%, Ipec 88%, Quaest 85%, Genial/Quaest 84%, PoderData 80%, Atlas Intel 78%, Ipespe 77%.",
+            "text": institutosAnswer,
           },
         },
         {
@@ -208,7 +209,7 @@ const jsonLd = {
           "name": "Quem lidera as pesquisas para presidente em 2026?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Pela Quaest de abril/2026 (1º turno estimulado, n=2.004): Lula 37%, Flávio Bolsonaro 32%, Caiado 6%, Zema 3%. No 2º turno, os cenários ficam dentro da margem de erro.",
+            "text": liderancaAnswer,
           },
         },
         {
@@ -230,13 +231,22 @@ const jsonLd = {
       ],
     },
   ],
-};
+  };
+}
+
+/** Abrevia contagens grandes: 1.251.896 → "1,25mi", 8.400 → "8,4k". */
+function formatCount(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toLocaleString("pt-BR", { maximumFractionDigits: 2 })}mi`;
+  if (n >= 1_000) return `${(n / 1_000).toLocaleString("pt-BR", { maximumFractionDigits: 1 })}k`;
+  return n.toLocaleString("pt-BR");
+}
 
 export default async function HomePage() {
   // Dados dinâmicos do banco (refatorado de hardcoded em 2026-04-29)
-  const [institutes, presPoll] = await Promise.all([
+  const [institutes, presPoll, homeStats] = await Promise.all([
     getInstitutesRanking(),
     getLatestPresidentialPoll(),
+    getHomeStats(),
   ]);
 
   // Top 7 institutos para o texto SEO
@@ -256,6 +266,18 @@ export default async function HomePage() {
     : "abril/2026";
   const presInstitute = presPoll?.institute_name ?? "Quaest";
   const presN = presPoll?.sample_size ? `, n=${presPoll.sample_size.toLocaleString("pt-BR")}` : "";
+
+  // Textos do FAQPage (jsonLd) — derivados dos mesmos dados do FAQ visível
+  // abaixo, pra nunca mais divergir (o jsonLd antigo tinha número fixo de
+  // abril/2026 ainda citado em setembro).
+  const institutosAnswer = topInstitutes.length
+    ? `Pelo histórico de erro absoluto vs. resultado oficial TSE em 2018 e 2022: ${topInstitutes
+        .map((i) => `${i.name} ${i.pct}%`)
+        .join(", ")
+        .replace(/, ([^,]*)$/, " e $1")}.`
+    : "Ranking sendo calculado.";
+  const liderancaAnswer = `Pela ${presInstitute} de ${presDate} (1º turno estimulado${presN}): ${presText}. No 2º turno, os cenários ficam dentro da margem de erro.`;
+  const jsonLd = buildJsonLd(institutosAnswer, liderancaAnswer);
 
   return (
     <div className="min-h-screen bg-background">
@@ -340,9 +362,9 @@ export default async function HomePage() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-border rounded-sm overflow-hidden max-w-lg mx-auto">
             {[
-              { value: "26", label: "Pesquisas em 2026" },
-              { value: "13", label: "Institutos monitorados" },
-              { value: "60k+", label: "Entrevistados acumulados" },
+              { value: formatCount(homeStats.pesquisas2026), label: "Pesquisas em 2026" },
+              { value: String(homeStats.institutosMonitorados), label: "Institutos monitorados" },
+              { value: `${formatCount(homeStats.entrevistados2026)}+`, label: "Entrevistados acumulados" },
               { value: "3", label: "Eleições cobertas" },
             ].map((stat) => (
               <div key={stat.label} className="bg-card text-center px-3 py-2.5">
@@ -429,7 +451,7 @@ export default async function HomePage() {
             Sinal Eleitoral · Newsletter semanal
           </div>
           <h2 className="text-2xl font-bold tracking-tight">
-            Todo Monday, os dados que a imprensa vai citar — antes de todo mundo
+            Toda segunda-feira, os dados que a imprensa vai citar — antes de todo mundo
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
             Média ponderada da semana, ranking de institutos por acurácia, movimentações
@@ -774,9 +796,9 @@ export default async function HomePage() {
 
               {/* Data points */}
               {[
-                { label: "Pesquisas indexadas em 2026", value: "26+", icon: BarChart3 },
-                { label: "Institutos monitorados", value: "13", icon: Building2 },
-                { label: "Candidatos com perfil completo", value: "100+", icon: Users },
+                { label: "Pesquisas indexadas em 2026", value: `${formatCount(homeStats.pesquisas2026)}+`, icon: BarChart3 },
+                { label: "Institutos monitorados", value: String(homeStats.institutosMonitorados), icon: Building2 },
+                { label: "Candidatos com perfil completo", value: `${formatCount(homeStats.candidatosAtivos)}+`, icon: Users },
                 { label: "Dados disponíveis via API", value: "Gratuito", icon: Shield },
               ].map((item) => (
                 <div

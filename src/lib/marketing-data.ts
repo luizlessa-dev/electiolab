@@ -403,7 +403,10 @@ export async function getLatestPresidentialPoll(): Promise<StatePollSnapshot | n
   const { data: election } = await supabase
     .from("elections")
     .select("id")
-    .eq("type", "presidencial")
+    // O enum de elections.type usa "presidente", não "presidencial" — esse
+    // typo fazia essa função sempre retornar null e a home cair no fallback
+    // hardcoded ("Quaest de abril/2026... Lula 37%") indefinidamente.
+    .eq("type", "presidente")
     .eq("year", 2026)
     .eq("round", 1)
     .maybeSingle();
@@ -509,6 +512,49 @@ export async function getLatestPresidentialPoll(): Promise<StatePollSnapshot | n
     source_url: best.source_url,
     poll_type: best.poll_type,
     results,
+  };
+}
+
+export type HomeStats = {
+  pesquisas2026: number;
+  institutosMonitorados: number;
+  entrevistados2026: number;
+  candidatosAtivos: number;
+};
+
+/**
+ * Stats do hero/seção de imprensa da home. Antes eram hardcoded ("26 pesquisas",
+ * "13 institutos", "60k+ entrevistados") e ficaram defasados assim que o banco
+ * cresceu (708 pesquisas, 24 institutos, 1,25mi entrevistados em 2026-09)
+ * sem que ninguém atualizasse o texto à mão.
+ */
+export async function getHomeStats(): Promise<HomeStats> {
+  const supabase = sb();
+  const anoAtual = "2026-01-01";
+
+  const [pollsRes, candidatosRes] = await Promise.all([
+    supabase
+      .from("polls")
+      .select("institute_id, sample_size")
+      .gte("publication_date", anoAtual)
+      .or(PROVENIENCIA_PUBLICA),
+    supabase
+      .from("candidates")
+      .select("id, election:elections!inner(type, year)", { count: "exact", head: true })
+      .eq("is_active", true)
+      .eq("election.year", 2026)
+      .in("election.type", ["governador", "senador"]),
+  ]);
+
+  const polls = pollsRes.data ?? [];
+  const institutosMonitorados = new Set(polls.map((p) => p.institute_id)).size;
+  const entrevistados2026 = polls.reduce((sum, p) => sum + (p.sample_size ?? 0), 0);
+
+  return {
+    pesquisas2026: polls.length,
+    institutosMonitorados,
+    entrevistados2026,
+    candidatosAtivos: candidatosRes.count ?? 0,
   };
 }
 
