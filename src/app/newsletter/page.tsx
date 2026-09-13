@@ -12,7 +12,7 @@ import {
 import { NewsletterSignup } from "@/components/newsletter/signup-form";
 
 export const metadata: Metadata = {
-  title: "Sinal Eleitoral — Newsletter semanal de pesquisas eleitorais | ElectioLab",
+  title: { absolute: "Sinal Eleitoral — Newsletter semanal de pesquisas eleitorais | ElectioLab" },
   description:
     "Toda segunda-feira: média ponderada atualizada, ranking de institutos por acurácia e os movimentos que importam nas eleições 2026. Grátis.",
   alternates: { canonical: "https://electiolab.com/newsletter" },

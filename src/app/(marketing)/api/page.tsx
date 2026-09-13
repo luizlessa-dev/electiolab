@@ -5,7 +5,7 @@ import { ArrowLeft, Code, Key, Zap, FileJson, BookOpen } from "lucide-react";
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
-  title: "ElectioLab API — Dados eleitorais brasileiros como infraestrutura | ElectioLab",
+  title: { absolute: "ElectioLab API — Dados eleitorais brasileiros como infraestrutura | ElectioLab" },
   description: "API pública REST com eleições, pesquisas, médias ponderadas e drift histórico de candidatos brasileiros. OpenAPI 3.1, autenticação Bearer, free tier 1k req/mês.",
   alternates: { canonical: "https://electiolab.com/api" },
   openGraph: {
@@ -96,7 +96,7 @@ export default function ApiPage() {
             <Key className="h-4 w-4" /> Pegar minha API key
           </Link>
           <Link
-            href="/docs/weighted-averages"
+            href="/metodologia"
             className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-accent"
           >
             <BookOpen className="h-4 w-4" /> Metodologia das médias
@@ -232,14 +232,14 @@ export default function ApiPage() {
           </li>
           <li>
             <strong>Métodologia:</strong> a fórmula das{" "}
-            <Link href="/docs/weighted-averages" className="text-primary underline-offset-4 hover:underline">
+            <Link href="/metodologia" className="text-primary underline-offset-4 hover:underline">
               médias ponderadas
             </Link>{" "}
-            e do{" "}
-            <Link href="/docs/reliability-score" className="text-primary underline-offset-4 hover:underline">
-              reliability_score
+            é pública, assim como o{" "}
+            <Link href="/institutos" className="text-primary underline-offset-4 hover:underline">
+              ranking de reliability_score
             </Link>{" "}
-            são públicos. Citar a metodologia em apostas relevantes (rankings, comparações) é boa prática.
+            por instituto. Citar a metodologia em apostas relevantes (rankings, comparações) é boa prática.
           </li>
           <li>
             <strong>Erros e correções:</strong> achou algo estranho? Abra issue ou e-mail{" "}

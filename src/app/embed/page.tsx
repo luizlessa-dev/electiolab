@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, Code, Palette, Maximize2 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Embed Widget — Inclua dados eleitorais no seu site | ElectioLab",
+  title: { absolute: "Embed Widget — Inclua dados eleitorais no seu site | ElectioLab" },
   description:
     "Embed gratuito do ElectioLab pra blogs, jornais e portais. Mostre média ponderada de pesquisas eleitorais 2026 em qualquer página com 2 linhas de HTML.",
   alternates: { canonical: "https://electiolab.com/embed" },
