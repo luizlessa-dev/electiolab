@@ -525,6 +525,7 @@ export type HomeStats = {
   institutosMonitorados: number;
   entrevistados2026: number;
   candidatosAtivos: number;
+  eleicoesCobertas: number;
 };
 
 /**
@@ -537,7 +538,7 @@ export async function getHomeStats(): Promise<HomeStats> {
   const supabase = sb();
   const anoAtual = "2026-01-01";
 
-  const [pollsRes, candidatosRes] = await Promise.all([
+  const [pollsRes, candidatosRes, eleicoesRes] = await Promise.all([
     supabase
       .from("polls")
       .select("institute_id, sample_size")
@@ -549,6 +550,16 @@ export async function getHomeStats(): Promise<HomeStats> {
       .eq("is_active", true)
       .eq("election.year", 2026)
       .in("election.type", ["governador", "senador"]),
+    // 1 presidencial (nacional) + 27 governador + 27 senador (uma corrida por
+    // UF) = 55 eleições em 2026, não "3" (isso contava tipos de cargo, não
+    // corridas eleitorais reais). round=1 evita contar 2º turno da
+    // presidencial como uma eleição à parte.
+    supabase
+      .from("elections")
+      .select("id", { count: "exact", head: true })
+      .eq("year", 2026)
+      .eq("round", 1)
+      .in("type", ["presidente", "governador", "senador"]),
   ]);
 
   const polls = pollsRes.data ?? [];
@@ -560,6 +571,7 @@ export async function getHomeStats(): Promise<HomeStats> {
     institutosMonitorados,
     entrevistados2026,
     candidatosAtivos: candidatosRes.count ?? 0,
+    eleicoesCobertas: eleicoesRes.count ?? 0,
   };
 }
 

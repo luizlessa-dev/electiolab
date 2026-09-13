@@ -365,7 +365,7 @@ export default async function HomePage() {
               { value: formatCount(homeStats.pesquisas2026), label: "Pesquisas em 2026" },
               { value: String(homeStats.institutosMonitorados), label: "Institutos monitorados" },
               { value: `${formatCount(homeStats.entrevistados2026)}+`, label: "Entrevistados acumulados" },
-              { value: "3", label: "Eleições cobertas" },
+              { value: String(homeStats.eleicoesCobertas), label: "Eleições cobertas" },
             ].map((stat) => (
               <div key={stat.label} className="bg-card text-center px-3 py-2.5">
                 <p className="text-xl font-mono font-bold tabular-nums text-foreground">
