@@ -85,7 +85,7 @@ function buildJsonLd(institutesText: string) {
       name: "Como o ElectioLab calcula a média ponderada?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "O ElectioLab usa quatro fatores: recência (meia-vida de 10 dias, fórmula e^(-t/10)), tamanho da amostra (√n/1000), metodologia (presencial 1,0 > telefônica 0,8 > online 0,6) e histórico de acurácia do instituto (score baseado no Erro Médio Absoluto em eleições anteriores). A combinação produz uma estimativa mais estável que qualquer pesquisa individual.",
+        text: "O ElectioLab usa quatro fatores: recência (meia-vida de 14 dias, fórmula e^(-t/14)), tamanho da amostra (√n/1000), metodologia (presencial 1,0 > telefônica 0,95 > online 0,9 > mista 0,85) e histórico de acurácia do instituto (score baseado no Erro Médio Absoluto em eleições anteriores). A combinação produz uma estimativa mais estável que qualquer pesquisa individual.",
       },
     },
     {
@@ -293,9 +293,9 @@ export default async function SobrePage() {
 
           <div className="grid md:grid-cols-4 gap-px bg-border rounded-sm overflow-hidden">
             {[
-              { icon: Clock, title: "Recência", code: "e^(-t/10)", desc: "Meia-vida ~10 dias. Pesquisas antigas decaem gradualmente." },
+              { icon: Clock, title: "Recência", code: "e^(-t/14)", desc: "Meia-vida ~14 dias. Pesquisas antigas decaem gradualmente." },
               { icon: Users, title: "Amostra", code: "sqrt(n/1000)", desc: "Amostras maiores pesam mais, com retorno decrescente." },
-              { icon: FlaskConical, title: "Metodologia", code: "0.6 — 1.0", desc: "Presencial > telefônica > online." },
+              { icon: FlaskConical, title: "Metodologia", code: "0.85 — 1.0", desc: "Presencial > telefônica > online > mista." },
               { icon: Building2, title: "Instituto", code: "MAE → score", desc: "Quem acertou no passado pesa mais." },
             ].map((item) => (
               <div key={item.title} className="bg-card px-4 py-5 space-y-2 text-center">
@@ -331,7 +331,7 @@ export default async function SobrePage() {
             {[
               {
                 q: "Como o ElectioLab calcula a média ponderada?",
-                a: "Quatro fatores: recência (meia-vida de 10 dias), tamanho da amostra (√n), metodologia (presencial > telefônica > online) e histórico de acurácia do instituto. A combinação produz uma estimativa mais estável que qualquer pesquisa individual.",
+                a: "Quatro fatores: recência (meia-vida de 14 dias), tamanho da amostra (√n), metodologia (presencial > telefônica > online > mista) e histórico de acurácia do instituto. A combinação produz uma estimativa mais estável que qualquer pesquisa individual.",
               },
               {
                 q: "Quais institutos são monitorados?",

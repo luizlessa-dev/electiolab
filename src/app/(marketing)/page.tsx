@@ -193,7 +193,7 @@ function buildJsonLd(institutosAnswer: string, liderancaAnswer: string) {
           "name": "Como funciona a média ponderada do ElectioLab?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Cada pesquisa recebe peso por 4 fatores: recência (meia-vida 10 dias), tamanho da amostra (raiz quadrada do n), metodologia (presencial > telefônica > mista > online) e acurácia histórica do instituto. A combinação cancela ruído amostral e amplifica o sinal real. Recalculada a cada 6 horas.",
+            "text": "Cada pesquisa recebe peso por 4 fatores: recência (meia-vida 14 dias), tamanho da amostra (raiz quadrada do n), metodologia (presencial 1,0 > telefônica 0,95 > online 0,9 > mista 0,85) e acurácia histórica do instituto. A combinação cancela ruído amostral e amplifica o sinal real. Recalculada a cada 6 horas.",
           },
         },
         {
@@ -495,7 +495,7 @@ export default async function HomePage() {
               {
                 icon: Clock,
                 title: "Recência",
-                code: "meia-vida 10 dias",
+                code: "meia-vida 14 dias",
                 desc: "Pesquisa de 30 dias atrás vale menos que a de ontem.",
               },
               {
@@ -507,7 +507,7 @@ export default async function HomePage() {
               {
                 icon: FlaskConical,
                 title: "Metodologia",
-                code: "presencial → online",
+                code: "presencial → mista",
                 desc: "Presencial captura melhor o eleitor real.",
               },
               {
@@ -946,9 +946,9 @@ export default async function HomePage() {
             <div>
               <h2 className="text-lg font-bold mb-2">Como funciona a média ponderada do ElectioLab?</h2>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Cada pesquisa recebe peso por 4 fatores: recência (meia-vida 10 dias),
+                Cada pesquisa recebe peso por 4 fatores: recência (meia-vida 14 dias),
                 tamanho da amostra (raiz quadrada do n), metodologia (presencial &gt;
-                telefônica &gt; mista &gt; online) e acurácia histórica do instituto.
+                telefônica &gt; online &gt; mista) e acurácia histórica do instituto.
                 A combinação cancela ruído amostral e amplifica o sinal real da opinião pública.
                 A média é recalculada automaticamente a cada 6 horas.
               </p>
