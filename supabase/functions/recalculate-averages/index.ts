@@ -7,8 +7,12 @@ interface PollRow {
   sample_size: number;
   methodology: string;
   margin_of_error?: number; // margin of error in percentage points
-  institute_reliability?: number; // deprecated
-  credibility_score?: number; // 0-10 (from institutes table or data_source_audit)
+  institute_reliability?: number; // institutes.reliability_score (0-1), sempre presente via enrichedPolls
+  // Nunca populado de fato: data_source_audit.credibility_score existe mas é
+  // sobre saúde de pipelines de ingestão (source_type/cargo/estado/ano), sem
+  // FK pra polls nem institutes — não é a mesma coisa. Este campo fica pra
+  // uma futura fonte de credibilidade granular por poll que ainda não existe.
+  credibility_score?: number; // 0-1, mesma escala de institute_reliability
 }
 
 interface ResultRow {
@@ -80,9 +84,14 @@ function calculateWeightedAverage(
     const sampleWeight = Math.sqrt(poll.sample_size / 1000);
     const methodWeight = METHODOLOGY_WEIGHTS[poll.methodology] ?? 0.5;
 
-    // Institute credibility weight (0-10 scale with exponent 1.5)
-    const credScore = poll.credibility_score ?? poll.institute_reliability ?? 5;
-    const instituteWeight = Math.pow(Math.max(0, Math.min(10, credScore)) / 10, 1.5);
+    // Institute credibility weight — reliability_score é 0-1 (nunca 0-10:
+    // nenhuma linha em institutes.reliability_score passa de 1.00). O código
+    // dividia credScore por 10 como se fosse escala 0-10, esmagando Wi pra
+    // ~0,02-0,03 pra QUALQUER instituto (a ordem relativa entre institutos
+    // ficava certa, mas o fator perdia quase toda a amplitude descrita na
+    // documentação do site como "um dos fatores de peso").
+    const credScore = poll.credibility_score ?? poll.institute_reliability ?? 0.7;
+    const instituteWeight = Math.pow(Math.max(0, Math.min(1, credScore)), 1.5);
 
     // Margin of error weight (PHASE 2)
     let moeWeight = 1.0;
@@ -295,7 +304,7 @@ async function recalculateForElection(
       calculated_at: now,
       ...avg,
       calculation_params: {
-        half_life: 10,
+        half_life: RECENCY_HALF_LIFE_DAYS,
         reference_date: referenceDate.toISOString(),
       },
     });
@@ -326,7 +335,7 @@ async function recalculateForElection(
           calculated_at: now,
           ...avg,
           calculation_params: {
-            half_life: 10,
+            half_life: RECENCY_HALF_LIFE_DAYS,
             reference_date: referenceDate.toISOString(),
             scenario: scenarioLabel,
           },

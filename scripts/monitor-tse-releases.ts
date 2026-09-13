@@ -9,7 +9,7 @@
  *   npx tsx scripts/monitor-tse-releases.ts
  *
  * Para cron, adicione à .env ou .github/workflows:
- *   0 */6 * * * npx tsx scripts/monitor-tse-releases.ts
+ *   0 * * * * npx tsx scripts/monitor-tse-releases.ts (a cada 6h)
  */
 
 import { createClient } from "@supabase/supabase-js";
