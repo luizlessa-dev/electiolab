@@ -23,11 +23,11 @@ export const metadata: Metadata = {
 const FAQ = [
   {
     q: "Como o ElectioLab calcula a média ponderada das pesquisas?",
-    a: "Cada pesquisa recebe um peso final W = Wr × Wa × Wm × Wi, onde Wr é o fator de recência (decaimento exponencial com meia-vida de 10 dias), Wa é o fator amostral (√n / 1000), Wm é o fator metodológico (presencial 1,0; telefônica 0,8; mista 0,7; online 0,6) e Wi é o score de acurácia histórica do instituto. A média ponderada final é a soma dos votos × peso, dividida pela soma dos pesos.",
+    a: "Cada pesquisa recebe um peso final W = Wr × Wa × Wm × Wi, onde Wr é o fator de recência (decaimento exponencial com meia-vida de 14 dias), Wa é o fator amostral (√n / 1000), Wm é o fator metodológico (presencial 1,0; telefônica 0,95; online 0,9; mista 0,85) e Wi é o score de acurácia histórica do instituto. A média ponderada final é a soma dos votos × peso, dividida pela soma dos pesos.",
   },
   {
-    q: "O que é meia-vida de 10 dias na fórmula de recência?",
-    a: "Meia-vida de 10 dias significa que uma pesquisa feita há 10 dias tem peso 50% menor que uma publicada hoje; uma de 20 dias tem peso 25% do valor original. A fórmula exata é Wr = e^(-t × ln(2) / 10), onde t é o número de dias desde a publicação. Pesquisas muito antigas (>45 dias) têm peso residual quase nulo.",
+    q: "O que é meia-vida de 14 dias na fórmula de recência?",
+    a: "Meia-vida de 14 dias significa que uma pesquisa feita há 14 dias tem peso 50% menor que uma publicada hoje; uma de 28 dias tem peso 25% do valor original. A fórmula exata é Wr = e^(-t × ln(2) / 14), onde t é o número de dias desde a publicação. Pesquisas muito antigas (>56 dias) têm peso residual quase nulo.",
   },
   {
     q: "Por que o ElectioLab usa √n em vez de n direto para ponderar pelo tamanho amostral?",
@@ -35,7 +35,7 @@ const FAQ = [
   },
   {
     q: "Por que pesquisas presenciais pesam mais do que online?",
-    a: "Metodologias de coleta têm vieses estruturais diferentes. Pesquisas online sub-representam eleitores sem smartphone e sem acesso digital (em 2026, ainda 28% dos eleitores brasileiros acima de 55 anos). Presenciais — com cotas geográficas e socioeconômicas — têm melhor cobertura do eleitorado real. Isso é calibrado pelo fator Wm: presencial 1,0, telefônica 0,8, mista 0,7, online 0,6.",
+    a: "Metodologias de coleta têm vieses estruturais diferentes. Pesquisas online sub-representam eleitores sem smartphone e sem acesso digital (em 2026, ainda 28% dos eleitores brasileiros acima de 55 anos). Presenciais — com cotas geográficas e socioeconômicas — têm melhor cobertura do eleitorado real, mas a diferença hoje é pequena: institutos online consolidados fecharam boa parte da distância nos últimos ciclos. Isso é calibrado pelo fator Wm: presencial 1,0, telefônica 0,95, online 0,9, mista 0,85 — mista fica por último porque a qualidade da combinação varia muito de instituto a instituto.",
   },
   {
     q: "Como o ElectioLab calcula o score de acurácia histórica dos institutos?",
@@ -204,52 +204,41 @@ export default function MetodologiaPage() {
           <div className="border border-border rounded-sm p-4 bg-card space-y-2">
             <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Fórmula</p>
             <code className="block text-sm font-mono text-primary bg-primary/10 p-2 rounded-sm">
-              Wr = e^(−t × ln(2) / 10)
+              Wr = e^(−t × ln(2) / 14)
             </code>
             <p className="text-xs text-muted-foreground">onde <code className="text-primary">t</code> = dias desde a data de publicação</p>
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            O decaimento exponencial com <strong className="text-foreground">meia-vida de 10 dias</strong> é o coração do modelo.
-            Uma pesquisa publicada há 10 dias tem peso 50% menor que uma publicada hoje.
-            Uma de 20 dias tem peso 25%. Uma de 30 dias, 12,5%. Após 45 dias, o peso
-            residual é inferior a 5% — a pesquisa ainda está no modelo mas com influência mínima.
+            O decaimento exponencial com <strong className="text-foreground">meia-vida de 14 dias</strong> é o coração do modelo.
+            Uma pesquisa publicada há 14 dias tem peso 50% menor que uma publicada hoje.
+            Uma de 28 dias tem peso 25%. Uma de 42 dias, 12,5%. Após 56 dias, o peso
+            residual é inferior a 7% — a pesquisa ainda está no modelo mas com influência mínima.
           </p>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            A meia-vida de 10 dias foi calibrada para o ritmo eleitoral brasileiro: institutos
+            A meia-vida de 14 dias foi calibrada para o ritmo eleitoral brasileiro: institutos
             grandes (Datafolha, Quaest) publicam a cada 1–2 semanas durante o ciclo eleitoral.
-            Uma meia-vida mais curta (5 dias) tornaria o modelo volátil demais; mais longa (20 dias)
+            Uma meia-vida mais curta (5 dias) tornaria o modelo volátil demais; mais longa (30 dias)
             deixaria pesquisas antigas pesando excessivamente em momentos de virada de campanha.
           </p>
 
           <div className="bg-muted/30 rounded-sm p-4 space-y-2">
             <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Exemplo</p>
             <div className="grid grid-cols-3 gap-px bg-border rounded-sm overflow-hidden text-xs font-mono">
+              <div className="bg-card px-3 py-2 text-muted-foreground uppercase tracking-wider">Publicada há</div>
+              <div className="bg-card px-3 py-2 text-muted-foreground uppercase tracking-wider">Wr</div>
+              <div className="bg-card px-3 py-2 text-muted-foreground uppercase tracking-wider">Peso relativo</div>
               {[
-                ["Publicada há", "Wr", "Peso relativo"],
                 ["0 dias", "1,000", "100%"],
-                ["7 dias", "0,616", "61,6%"],
-                ["10 dias", "0,500", "50,0%"],
-                ["20 dias", "0,250", "25,0%"],
-                ["30 dias", "0,125", "12,5%"],
-                ["45 dias", "0,044", "4,4%"],
-              ].map(([a], i) => (
-                <div key={i} className={`bg-card px-3 py-2 ${i === 0 ? "text-muted-foreground uppercase tracking-wider" : ""}`}>
-                  {i === 0 ? a : a}
-                </div>
-              ))}
-            </div>
-            <div className="grid grid-cols-3 gap-px bg-border rounded-sm overflow-hidden text-xs font-mono">
-              {[
-                ["Publicada há", "Wr", "Peso relativo"],
-                ["0 dias", "1,000", "100%"],
-                ["7 dias", "0,616", "61,6%"],
-                ["10 dias", "0,500", "50,0%"],
-                ["20 dias", "0,250", "25,0%"],
-                ["30 dias", "0,125", "12,5%"],
-                ["45 dias", "0,044", "4,4%"],
-              ].map(([, b], i) => (
-                <div key={`b-${i}`} className={`bg-card px-3 py-2 ${i === 0 ? "text-muted-foreground" : i % 2 === 0 ? "text-primary" : ""}`}>{b}</div>
-              ))}
+                ["7 dias", "0,707", "70,7%"],
+                ["14 dias", "0,500", "50,0%"],
+                ["28 dias", "0,250", "25,0%"],
+                ["42 dias", "0,125", "12,5%"],
+                ["56 dias", "0,063", "6,3%"],
+              ].flatMap(([dias, wr, pct]) => [
+                <div key={`${dias}-d`} className="bg-card px-3 py-2">{dias}</div>,
+                <div key={`${dias}-w`} className="bg-card px-3 py-2 text-primary">{wr}</div>,
+                <div key={`${dias}-p`} className="bg-card px-3 py-2">{pct}</div>,
+              ])}
             </div>
           </div>
         </section>
@@ -305,9 +294,9 @@ export default function MetodologiaPage() {
             <div className="space-y-1 text-sm font-mono">
               {[
                 { m: "Presencial (face-a-face)", w: "1,00", note: "Cobertura mais completa do eleitorado" },
-                { m: "Telefônica (CATI / RDD)", w: "0,85", note: "Viés de sub-representação de jovens" },
-                { m: "Mista (presencial + online)", w: "0,75", note: "Combinação com vieses parciais" },
-                { m: "Online (painel / app)", w: "0,60", note: "Sub-representa idosos e baixa renda" },
+                { m: "Telefônica (CATI / RDD)", w: "0,95", note: "Viés de sub-representação de jovens" },
+                { m: "Online (painel / app)", w: "0,90", note: "Sub-representa idosos e baixa renda" },
+                { m: "Mista (presencial + online)", w: "0,85", note: "Herda vieses parciais das metodologias combinadas" },
               ].map((r) => (
                 <div key={r.m} className="flex items-start gap-3 py-1.5 border-b border-border/40 last:border-0">
                   <code className="text-primary shrink-0">Wm={r.w}</code>
@@ -330,7 +319,9 @@ export default function MetodologiaPage() {
           <p className="text-sm text-muted-foreground leading-relaxed">
             Pesquisas telefônicas sub-representam jovens (menos propensão a atender chamadas
             desconhecidas) e populações de áreas rurais (cobertura de operadoras). Pesquisas mistas
-            herdam vieses parciais de ambas as metodologias.
+            recebem o menor peso do grupo: combinam duas metodologias, mas herdam os vieses
+            parciais de ambas em vez de cancelá-los — a qualidade final depende de como a mistura
+            é calibrada, o que varia bastante de instituto a instituto.
           </p>
         </section>
 
@@ -358,7 +349,7 @@ export default function MetodologiaPage() {
           <p className="text-sm text-muted-foreground leading-relaxed">
             Institutos sem histórico de comparação com resultado real (lançados após 2022 ou
             sem pesquisas para cargos majoritários nas últimas duas eleições) recebem
-            score neutro <code className="text-foreground text-xs">Wi = 0,75</code>, equivalente a desempenho razoável.
+            score neutro <code className="text-foreground text-xs">Wi = 0,70</code>, equivalente a desempenho razoável.
             O score é recalculado após cada eleição com os novos resultados.
           </p>
           <p className="text-sm text-muted-foreground leading-relaxed">
@@ -380,9 +371,9 @@ export default function MetodologiaPage() {
             Os quatro fatores são multiplicados para produzir o peso total de cada pesquisa.
             A multiplicação — em vez de soma — garante que uma pesquisa com qualquer fator
             próximo de zero tenha peso próximo de zero no total, independentemente dos outros fatores.
-            Uma pesquisa de metodologia online (Wm=0,6) de um instituto com acurácia baixa (Wi=0,4)
-            publicada há 30 dias (Wr=0,125) com amostra de 500 pessoas (Wa=0,022) terá
-            peso total de apenas <code className="text-foreground text-xs">0,125 × 0,022 × 0,6 × 0,4 ≈ 0,00066</code> —
+            Uma pesquisa de metodologia mista (Wm=0,85) de um instituto com acurácia baixa (Wi=0,4)
+            publicada há 42 dias (Wr=0,125) com amostra de 500 pessoas (Wa=0,022) terá
+            peso total de apenas <code className="text-foreground text-xs">0,125 × 0,022 × 0,85 × 0,4 ≈ 0,00094</code> —
             uma influência mínima na média final.
           </p>
 
@@ -399,9 +390,9 @@ export default function MetodologiaPage() {
                 </thead>
                 <tbody>
                   {[
-                    ["Datafolha", "5", "2.000", "presencial", "0,92", "0,0133", "38%"],
-                    ["Quaest", "12", "2.004", "telefônica", "0,85", "0,0055", "37%"],
-                    ["AtlasIntel", "3", "1.800", "online", "0,78", "0,0068", "40%"],
+                    ["Datafolha", "5", "2.000", "presencial", "0,92", "0,0321", "38%"],
+                    ["Quaest", "12", "2.004", "telefônica", "0,85", "0,0200", "37%"],
+                    ["AtlasIntel", "3", "1.800", "online", "0,78", "0,0257", "40%"],
                   ].map((row, i) => (
                     <tr key={i} className="border-b border-border/40">
                       {row.map((cell, j) => (
@@ -413,7 +404,7 @@ export default function MetodologiaPage() {
               </table>
             </div>
             <p className="text-xs text-muted-foreground">
-              Média ponderada de Lula = (38×0,0133 + 37×0,0055 + 40×0,0068) / (0,0133 + 0,0055 + 0,0068)
+              Média ponderada de Lula = (38×0,0321 + 37×0,0200 + 40×0,0257) / (0,0321 + 0,0200 + 0,0257)
               = <strong className="text-foreground">38,4%</strong>
             </p>
           </div>
