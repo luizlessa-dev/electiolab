@@ -383,6 +383,11 @@ export async function getInstitutesRanking(): Promise<InstituteRanking[]> {
     .from("institutes")
     .select("id, name, slug, reliability_score")
     .not("reliability_score", "is", null)
+    // score = 1.00 é placeholder de cadastro recente sem histórico real
+    // (ver docs/RELIABILITY-SCORE.md §2 e §4) — sem esse filtro, institutos
+    // novos/pequenos aparecem como "mais acurados" à frente de Datafolha,
+    // Ipec e Quaest no FAQ editorial da home e do /sobre.
+    .lt("reliability_score", 1)
     .order("reliability_score", { ascending: false });
 
   return (data ?? []).map((i) => ({
