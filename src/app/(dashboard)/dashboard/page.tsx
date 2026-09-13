@@ -137,7 +137,7 @@ export default async function DashboardPage({
     );
   }
 
-  const [candidates, polls, institutes, electionResults] = (await Promise.all(
+  let [candidates, polls, institutes, electionResults] = (await Promise.all(
     [
       getCandidates(election.id),
       getPolls(election.id),
@@ -150,6 +150,43 @@ export default async function DashboardPage({
     InstituteWithAccuracy[],
     ElectionResultRow[],
   ];
+
+  // 2º turno: cada cenário (par de candidatos) é uma pergunta independente —
+  // "Lula vs Caiado" e "Lula vs Flávio" não podem ser somados como se fosse
+  // uma corrida só, senão a soma das médias nunca bate 100%. Agrupa pelo par
+  // de candidate_id de cada pesquisa (mais robusto que o texto livre de
+  // scenario_label) e mantém só o cenário mais pesquisado — mesmo critério
+  // já usado em src/app/embed/eleicao/[id]/page.tsx e na edge function
+  // recalculate-averages.
+  let scenarioLabel: string | null = null;
+  if (election.round === 2) {
+    const scenarios = new Map<string, PollWithRelations[]>();
+    for (const poll of polls) {
+      const results = poll.results ?? [];
+      if (results.length !== 2) continue;
+      const key = [...results.map((r) => r.candidate_id)].sort().join("|");
+      if (!scenarios.has(key)) scenarios.set(key, []);
+      scenarios.get(key)!.push(poll);
+    }
+    let bestKey: string | null = null;
+    let bestCount = -1;
+    for (const [key, list] of scenarios) {
+      if (list.length > bestCount) {
+        bestCount = list.length;
+        bestKey = key;
+      }
+    }
+    if (bestKey) {
+      const scenarioPolls = scenarios.get(bestKey)!;
+      const scenarioCandidateIds = new Set(bestKey.split("|"));
+      polls = scenarioPolls;
+      candidates = candidates.filter((c) => scenarioCandidateIds.has(c.id));
+      const labeledPoll = scenarioPolls.find((p) => p.scenario_label);
+      scenarioLabel =
+        labeledPoll?.scenario_label ??
+        candidates.map((c) => c.name).join(" vs ");
+    }
+  }
 
   // Calculate weighted averages
   const candidateAverages = candidates.map((c) => {
@@ -300,6 +337,9 @@ export default async function DashboardPage({
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white tracking-tight">{election.name}</h1>
+          {scenarioLabel && (
+            <p className="text-xs font-mono text-blue-400 mt-0.5">Cenário: {scenarioLabel}</p>
+          )}
           <p className="text-sm text-slate-400 mt-1">
             {polls.length} pesquisas analisadas &middot; {instituteCount} institutos &middot;{" "}
             <span className="text-slate-300">{totalSample.toLocaleString("pt-BR")}</span> entrevistados
