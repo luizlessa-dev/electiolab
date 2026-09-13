@@ -1,0 +1,28 @@
+name: Daily Quota Alerts
+
+on:
+  schedule:
+    # 6:00 UTC = 3:00 AM São Paulo
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Manual trigger para testes
+
+jobs:
+  send-alerts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Quota Alerts
+        run: |
+          curl -X GET \
+            "https://electiolab.com/api/admin/send-quota-alerts?token=${{ secrets.CRON_JOB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -w "\nStatus: %{http_code}\n"
+        env:
+          CRON_JOB_TOKEN: ${{ secrets.CRON_JOB_TOKEN }}
+
+      - name: Log Result
+        if: success()
+        run: echo "✅ Quota alerts sent successfully"
+
+      - name: Log Error
+        if: failure()
+        run: echo "❌ Quota alerts failed - check CRON_JOB_TOKEN in GitHub Secrets"
