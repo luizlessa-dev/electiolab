@@ -908,13 +908,19 @@ export default async function HomePage() {
                   <span className="text-[10px] font-mono text-muted-foreground">{grp.count} estados</span>
                   <div className={`flex-1 h-px ${grp.lineCls}`} />
                 </div>
-                {/* State buttons */}
-                <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-9 gap-px bg-border rounded-sm overflow-hidden">
+                {/* State buttons — flex-wrap com borda por célula em vez de
+                    grid-cols fixo + bg-border no container: numa grade fixa,
+                    regiões com contagem de estados que não é múltiplo do nº
+                    de colunas (Norte=7, Sul=3 etc.) deixam células vazias
+                    pintadas com a cor de fundo do container sobrando na
+                    linha. Com borda só nas células reais, o espaço sobrando
+                    no fim de uma linha curta simplesmente não pinta nada. */}
+                <div className="flex flex-wrap rounded-sm overflow-hidden border-t border-l border-border">
                   {grp.states.map((s) => (
                     <Link
                       key={s.uf}
                       href={s.href}
-                      className="bg-card px-2 py-3 flex flex-col items-center gap-1.5 hover:bg-muted/30 transition-colors group"
+                      className="flex-none basis-[88px] border-r border-b border-border bg-card px-2 py-3 flex flex-col items-center gap-1.5 hover:bg-muted/30 transition-colors group"
                     >
                       <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-sm ${grp.badgeCls}`}>
                         {s.uf}
