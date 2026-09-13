@@ -34,16 +34,27 @@ interface SubscriptionChange {
   notes: string | null;
 }
 
+interface QuotaAlertRun {
+  id: string;
+  email: string;
+  usage_percent: number;
+  status: string;
+  sent_at: string;
+}
+
 export default function AdminApiUsagePage() {
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [ipLimits, setIpLimits] = useState<IpRateLimit[]>([]);
   const [subscriptionChanges, setSubscriptionChanges] = useState<SubscriptionChange[]>([]);
+  const [quotaAlerts, setQuotaAlerts] = useState<QuotaAlertRun[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     activeKeys: 0,
     monthlyRequests: 0,
     anon24h: 0,
     topTier: "" as string,
+    quotaAlertsToday: 0,
+    quotaAlertsLastRun: "" as string,
   });
 
   useEffect(() => {
@@ -90,6 +101,35 @@ export default function AdminApiUsagePage() {
 
       if (!subsError && subs) {
         setSubscriptionChanges(subs as SubscriptionChange[]);
+      }
+
+      // Carregar quota alerts (últimos 20)
+      const { data: alerts, error: alertsError } = await sb
+        .from("quota_alert_runs")
+        .select("*")
+        .order("sent_at", { ascending: false })
+        .limit(20);
+
+      if (!alertsError && alerts) {
+        setQuotaAlerts(alerts as QuotaAlertRun[]);
+
+        // Calcular alertas de hoje
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const sentToday = alerts.filter((a: any) => {
+          const alertDate = new Date(a.sent_at);
+          return alertDate >= today && a.status === "sent";
+        }).length;
+
+        const lastRun = alerts.length > 0
+          ? new Date(alerts[0].sent_at).toLocaleString("pt-BR")
+          : "Nunca";
+
+        setStats((prev) => ({
+          ...prev,
+          quotaAlertsToday: sentToday,
+          quotaAlertsLastRun: lastRun,
+        }));
       }
 
       setLoading(false);
@@ -169,6 +209,18 @@ export default function AdminApiUsagePage() {
             <div className="text-2xl font-bold">{usageByTier.business}</div>
             <p className="text-xs text-muted-foreground mt-1">
               × 10.000 req/mês
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium">Alertas Quota Hoje</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.quotaAlertsToday}</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Última execução: {stats.quotaAlertsLastRun}
             </p>
           </CardContent>
         </Card>
@@ -252,6 +304,61 @@ export default function AdminApiUsagePage() {
                     </td>
                   </tr>
                 ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Quota Alerts History */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Alertas de Quota (Últimos 20)</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-2 px-2">Email</th>
+                  <th className="text-right py-2 px-2">Uso %</th>
+                  <th className="text-center py-2 px-2">Status</th>
+                  <th className="text-left py-2 px-2">Enviado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {quotaAlerts.length > 0 ? (
+                  quotaAlerts.map((alert) => (
+                    <tr key={alert.id} className="border-b hover:bg-muted/50">
+                      <td className="py-2 px-2 text-xs">{alert.email}</td>
+                      <td className="py-2 px-2 text-right font-mono">
+                        <span className={alert.usage_percent >= 100 ? "text-red-600" : alert.usage_percent >= 90 ? "text-orange-600" : ""}>
+                          {alert.usage_percent.toFixed(1)}%
+                        </span>
+                      </td>
+                      <td className="py-2 px-2 text-center">
+                        <span className={
+                          alert.status === "sent"
+                            ? "text-green-600 text-xs"
+                            : alert.status === "failed"
+                            ? "text-red-600 text-xs"
+                            : "text-muted-foreground text-xs"
+                        }>
+                          {alert.status === "sent" ? "✓" : alert.status === "failed" ? "✗" : "○"}
+                        </span>
+                      </td>
+                      <td className="py-2 px-2 text-xs">
+                        {new Date(alert.sent_at).toLocaleString("pt-BR")}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={4} className="py-8 px-2 text-center text-muted-foreground">
+                      Nenhum alerta enviado ainda
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
