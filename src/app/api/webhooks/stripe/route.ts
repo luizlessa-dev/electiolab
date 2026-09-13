@@ -2,6 +2,7 @@ import { getStripe } from "@/lib/stripe/config";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { syncSubscription, logPaymentFailure } from "@/lib/stripe/sync-subscription";
 
 let _admin: SupabaseClient | null = null;
 function getAdmin() {
@@ -114,14 +115,41 @@ export async function POST(request: Request) {
       case "customer.subscription.updated": {
         const sub = event.data.object;
         const userId = sub.metadata?.user_id;
-        if (userId) {
-          // Reativa se estava inativo (ex: pagamento voltou)
-          if (sub.status === "active" || sub.status === "trialing") {
-            await getAdmin()
-              .from("api_keys")
-              .update({ is_active: true })
-              .eq("user_id", userId);
+        const tier = (sub.metadata?.tier ?? "pro") as "pro" | "business" | "enterprise";
+
+        if (!userId) {
+          console.warn("[stripe webhook] subscription.updated sem user_id");
+          break;
+        }
+
+        // Se ativo ou trialing: sincronizar tier e rate_limit
+        if (sub.status === "active" || sub.status === "trialing") {
+          const result = await syncSubscription(getAdmin(), {
+            userId,
+            stripeSubscriptionId: sub.id,
+            tier,
+            currentPeriodEnd: new Date(sub.current_period_end * 1000),
+            trigger: "subscription.updated",
+          });
+
+          if (result.success) {
+            console.log(
+              `[stripe webhook] subscription updated for user ${userId} (tier: ${tier})`
+            );
+          } else {
+            console.error(
+              `[stripe webhook] subscription sync failed: ${result.error}`
+            );
           }
+        } else if (sub.status === "canceled" || sub.status === "past_due") {
+          // Desativar se cancelada ou em atraso
+          await getAdmin()
+            .from("api_keys")
+            .update({ is_active: false })
+            .eq("user_id", userId);
+          console.log(
+            `[stripe webhook] subscription ${sub.status} for user ${userId}`
+          );
         }
         break;
       }
@@ -140,9 +168,77 @@ export async function POST(request: Request) {
       }
 
       case "invoice.payment_failed": {
-        const invoice = event.data.object as { customer_email?: string | null };
-        console.warn(`[stripe webhook] payment_failed for ${invoice.customer_email ?? "unknown"}`);
-        // Email opcional avisando o usuário
+        const invoice = event.data.object as {
+          id: string;
+          customer_email?: string | null;
+          customer?: string | null;
+          amount_paid?: number;
+          currency?: string;
+          attempt_count?: number;
+          last_finalization_error?: { message?: string } | null;
+        };
+
+        const customerEmail = invoice.customer_email;
+        const invoiceId = invoice.id;
+        const amountCents = invoice.amount_paid ?? 0;
+        const currency = invoice.currency ?? "brl";
+        const failureReason =
+          invoice.last_finalization_error?.message ?? "Unknown failure";
+
+        console.warn(
+          `[stripe webhook] payment_failed: ${customerEmail ?? "unknown"} (${invoiceId}, attempt ${invoice.attempt_count ?? 1})`
+        );
+
+        // Log em payment_failures
+        await logPaymentFailure(getAdmin(), {
+          stripeCustomerId: invoice.customer || undefined,
+          invoiceId,
+          invoiceAmountCents: amountCents,
+          invoiceCurrency: currency,
+          failureReason,
+          customerEmail: customerEmail || undefined,
+        });
+
+        // Email ao admin (não ao customer ainda)
+        if (resend && process.env.ADMIN_EMAIL) {
+          await resend.emails.send({
+            from: FROM_EMAIL,
+            to: process.env.ADMIN_EMAIL,
+            subject: `⚠️ ElectioLab: Pagamento falhou - ${customerEmail || "Unknown"}`,
+            html: `
+              <div style="font-family: ui-sans-serif, system-ui; max-width: 600px; margin: 0 auto; padding: 24px;">
+                <h2 style="color: #dc2626;">Pagamento Falhou</h2>
+                <table style="width: 100%; border-collapse: collapse;">
+                  <tr style="border-bottom: 1px solid #e5e5e5;">
+                    <td style="padding: 8px; font-weight: bold;">Customer Email:</td>
+                    <td style="padding: 8px;">${customerEmail || "N/A"}</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #e5e5e5;">
+                    <td style="padding: 8px; font-weight: bold;">Invoice ID:</td>
+                    <td style="padding: 8px;"><code>${invoiceId}</code></td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #e5e5e5;">
+                    <td style="padding: 8px; font-weight: bold;">Valor:</td>
+                    <td style="padding: 8px;">R$ ${(amountCents / 100).toFixed(2)}</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #e5e5e5;">
+                    <td style="padding: 8px; font-weight: bold;">Motivo:</td>
+                    <td style="padding: 8px;">${failureReason}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px; font-weight: bold;">Tentativas:</td>
+                    <td style="padding: 8px;">${invoice.attempt_count ?? 1}</td>
+                  </tr>
+                </table>
+                <p style="color: #737373; font-size: 12px; margin-top: 24px;">
+                  Stripe retentará automaticamente até 5 vezes.
+                </p>
+              </div>
+            `,
+          }).catch((e) =>
+            console.error("[stripe webhook] admin email send failed:", e)
+          );
+        }
         break;
       }
 

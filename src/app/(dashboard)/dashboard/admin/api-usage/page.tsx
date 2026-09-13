@@ -22,9 +22,22 @@ interface IpRateLimit {
   reset_at: string;
 }
 
+interface SubscriptionChange {
+  id: string;
+  user_id: string;
+  old_tier: string | null;
+  new_tier: string;
+  old_rate_limit: number | null;
+  new_rate_limit: number;
+  trigger: string;
+  changed_at: string;
+  notes: string | null;
+}
+
 export default function AdminApiUsagePage() {
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [ipLimits, setIpLimits] = useState<IpRateLimit[]>([]);
+  const [subscriptionChanges, setSubscriptionChanges] = useState<SubscriptionChange[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     activeKeys: 0,
@@ -66,6 +79,17 @@ export default function AdminApiUsagePage() {
 
       if (!ipsError && ips) {
         setIpLimits(ips as IpRateLimit[]);
+      }
+
+      // Carregar histórico de mudanças de subscription (últimas 20)
+      const { data: subs, error: subsError } = await sb
+        .from("subscription_changes")
+        .select("*")
+        .order("changed_at", { ascending: false })
+        .limit(20);
+
+      if (!subsError && subs) {
+        setSubscriptionChanges(subs as SubscriptionChange[]);
       }
 
       setLoading(false);
@@ -228,6 +252,60 @@ export default function AdminApiUsagePage() {
                     </td>
                   </tr>
                 ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Subscription Changes History */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Histórico de Mudanças de Tier (Últimas 20)</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-2 px-2">User ID</th>
+                  <th className="text-left py-2 px-2">Mudança</th>
+                  <th className="text-left py-2 px-2">Limite</th>
+                  <th className="text-left py-2 px-2">Trigger</th>
+                  <th className="text-left py-2 px-2">Data</th>
+                </tr>
+              </thead>
+              <tbody>
+                {subscriptionChanges.length > 0 ? (
+                  subscriptionChanges.map((change) => (
+                    <tr key={change.id} className="border-b hover:bg-muted/50">
+                      <td className="py-2 px-2 font-mono text-xs">
+                        {change.user_id.slice(0, 8)}...
+                      </td>
+                      <td className="py-2 px-2 text-sm">
+                        <span className="text-muted-foreground">
+                          {change.old_tier || "—"} → {change.new_tier}
+                        </span>
+                      </td>
+                      <td className="py-2 px-2 text-xs text-muted-foreground">
+                        {change.old_rate_limit ? `${change.old_rate_limit} → ` : ""}
+                        {change.new_rate_limit}
+                      </td>
+                      <td className="py-2 px-2 text-xs capitalize">
+                        {change.trigger}
+                      </td>
+                      <td className="py-2 px-2 text-xs">
+                        {new Date(change.changed_at).toLocaleString("pt-BR")}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} className="py-8 px-2 text-center text-muted-foreground">
+                      Nenhuma mudança registrada
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
