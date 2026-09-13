@@ -19,7 +19,7 @@ import {
   Mail,
   ExternalLink,
 } from "lucide-react";
-import { getInstitutesRanking } from "@/lib/marketing-data";
+import { formatCount, getHomeStats, getInstitutesRanking } from "@/lib/marketing-data";
 
 export const revalidate = 3600;
 
@@ -109,7 +109,7 @@ function buildJsonLd(institutesText: string) {
       name: "Os dados do ElectioLab são atualizados com que frequência?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "As médias ponderadas são recalculadas automaticamente a cada 6 horas via cron. Pesquisas novas são ingeridas em até 24 horas após publicação dos institutos, e o sistema dispara alertas semanais quando alguma UF fica sem pesquisa nova por mais de 30 dias.",
+        text: "As médias ponderadas são recalculadas automaticamente a cada 6 horas via cron. Já a ingestão de pesquisas novas não segue cadência fixa: o registro no PesqEle do TSE é sincronizado todo dia, mas cada resultado é curado e conferido contra a fonte primária antes de entrar na média — o sistema dispara alertas quando alguma UF fica sem pesquisa nova por mais de 30 dias.",
       },
     },
     {
@@ -133,7 +133,7 @@ function buildJsonLd(institutesText: string) {
       name: "O ElectioLab tem API pública para jornalistas e desenvolvedores?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Sim, API REST gratuita em /api/v1 com endpoints para eleições, pesquisas, médias ponderadas e drift histórico. Suporta JSON e CSV. Acesso anônimo (60 req/h) ou autenticado via Bearer token (planos Pro 1.000 req/mês ou Business 10.000 req/mês). Documentação completa em /imprensa.",
+        text: "Sim, API REST gratuita em /api/v1 com endpoints para eleições, pesquisas, médias ponderadas e drift histórico. Suporta JSON e CSV. Acesso anônimo (60 req/mês) ou autenticado via Bearer token (planos Grátis 1.000 req/mês, Pro 50.000 req/mês ou Business 500.000 req/mês). Documentação completa em /api.",
       },
     },
     {
@@ -151,7 +151,10 @@ function buildJsonLd(institutesText: string) {
 }
 
 export default async function SobrePage() {
-  const institutes = await getInstitutesRanking();
+  const [institutes, homeStats] = await Promise.all([
+    getInstitutesRanking(),
+    getHomeStats(),
+  ]);
   const top7 = institutes.slice(0, 7);
   const institutesText = top7.length
     ? top7.map((i) => `${i.name} ${i.pct}%`).join(", ")
@@ -218,10 +221,10 @@ export default async function SobrePage() {
           {/* Stats */}
           <div className="flex items-center justify-center gap-6 md:gap-10 pt-4">
             {[
-              { value: "60.608", label: "Entrevistados" },
-              { value: "9", label: "Pesquisas 2026" },
-              { value: "13", label: "Institutos" },
-              { value: "3", label: "APIs Públicas" },
+              { value: `${formatCount(homeStats.entrevistados2026)}+`, label: "Entrevistados 2026" },
+              { value: formatCount(homeStats.pesquisas2026), label: "Pesquisas 2026" },
+              { value: String(homeStats.institutosMonitorados), label: "Institutos" },
+              { value: String(homeStats.eleicoesCobertas), label: "Eleições cobertas" },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
                 <p className="text-lg md:text-2xl font-mono font-bold tabular-nums text-foreground">
@@ -340,7 +343,23 @@ export default async function SobrePage() {
               },
               {
                 q: "Com que frequência os dados são atualizados?",
-                a: "Não numa cadência fixa: o registro de pesquisas no TSE (PesqEle) é sincronizado todo dia, e cada resultado é curado e conferido contra fonte primária antes de entrar na média ponderada — o ritmo acompanha o volume real de pesquisas publicadas pelos institutos, que sobe perto da eleição.",
+                a: "As médias ponderadas são recalculadas automaticamente a cada 6 horas via cron. Já a ingestão de pesquisas novas não segue cadência fixa: o registro no PesqEle do TSE é sincronizado todo dia, mas cada resultado é curado e conferido contra a fonte primária antes de entrar na média — o sistema dispara alertas quando alguma UF fica sem pesquisa nova por mais de 30 dias.",
+              },
+              {
+                q: "Qual o instituto de pesquisa eleitoral mais acurado no Brasil?",
+                a: `Pelo score histórico do ElectioLab (calculado pelo Erro Médio Absoluto vs resultado oficial TSE em 2018 e 2022): ${institutesText}. Ranking completo em /institutos.`,
+              },
+              {
+                q: "O ElectioLab cobre eleições para governador e senador?",
+                a: "Sim. Cobertura completa das 27 corridas para governador 2026 (todas as UFs) e 27 corridas para senador 2026, além da presidência (1º e 2º turno simulado).",
+              },
+              {
+                q: "O ElectioLab tem API pública para jornalistas e desenvolvedores?",
+                a: "Sim, API REST gratuita em /api/v1 com endpoints para eleições, pesquisas, médias ponderadas e drift histórico. Suporta JSON e CSV. Acesso anônimo (60 req/mês) ou autenticado via Bearer token (planos Grátis 1.000 req/mês, Pro 50.000 req/mês ou Business 500.000 req/mês). Documentação completa em /api.",
+              },
+              {
+                q: "Como saber se um candidato está apto pelo TSE (Ficha Limpa)?",
+                a: "Cada perfil em /candidato/[slug] mostra a situação da última candidatura registrada no TSE: ✓ Apto, ⚠️ Indeferido, ou Sem registro. Os filtros em /candidatos permitem listar apenas candidatos aptos ou apenas indeferidos. Os dados vêm direto do TSE Dados Abertos.",
               },
             ].map((item) => (
               <details key={item.q} className="border border-border rounded-sm bg-card group">

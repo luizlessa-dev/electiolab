@@ -15,6 +15,13 @@ function sb() {
   );
 }
 
+/** Abrevia contagens grandes: 1.251.896 → "1,25mi", 8.400 → "8,4k". */
+export function formatCount(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toLocaleString("pt-BR", { maximumFractionDigits: 2 })}mi`;
+  if (n >= 1_000) return `${(n / 1_000).toLocaleString("pt-BR", { maximumFractionDigits: 1 })}k`;
+  return n.toLocaleString("pt-BR");
+}
+
 export type StatePollResult = {
   name: string;
   party: string | null;

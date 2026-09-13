@@ -20,7 +20,7 @@ import {
   Mail,
 } from "lucide-react";
 import { NewsletterSignup } from "@/components/newsletter/signup-form";
-import { getHomeStats, getInstitutesRanking, getLatestPresidentialPoll } from "@/lib/marketing-data";
+import { formatCount, getHomeStats, getInstitutesRanking, getLatestPresidentialPoll } from "@/lib/marketing-data";
 
 import type { Metadata } from "next";
 
@@ -232,13 +232,6 @@ function buildJsonLd(institutosAnswer: string, liderancaAnswer: string) {
     },
   ],
   };
-}
-
-/** Abrevia contagens grandes: 1.251.896 → "1,25mi", 8.400 → "8,4k". */
-function formatCount(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toLocaleString("pt-BR", { maximumFractionDigits: 2 })}mi`;
-  if (n >= 1_000) return `${(n / 1_000).toLocaleString("pt-BR", { maximumFractionDigits: 1 })}k`;
-  return n.toLocaleString("pt-BR");
 }
 
 export default async function HomePage() {
