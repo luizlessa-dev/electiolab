@@ -8518,10 +8518,16 @@ async function main() {
     let resultsInserted = 0;
     const unresolved: string[] = [];
     for (const r of poll.results) {
+      // is_active=true: candidatos excluídos/duplicados na revisão de
+      // 2026-09 (mesmo nome ainda casa por ilike, mas não é mais candidato
+      // real ao cargo) não podem voltar a receber poll_results silenciosamente.
+      // Se a pesquisa citar um deles, cai em "candidatos não resolvidos" pra
+      // revisão manual em vez de reativar o erro que já foi corrigido.
       const { data: candidate, error: candidateError } = await supabase
         .from("candidates")
         .select("id")
         .eq("election_id", election.id)
+        .eq("is_active", true)
         .ilike("name", r.candidate_name)
         .maybeSingle();
       if (candidateError || !candidate) {
