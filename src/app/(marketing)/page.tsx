@@ -225,7 +225,7 @@ function buildJsonLd(institutosAnswer: string, liderancaAnswer: string) {
           "name": "O ElectioLab tem API pública?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Sim, gratuita em /api/v1 com endpoints para eleições, pesquisas, médias ponderadas e drift histórico. JSON e CSV. Anônimo: 60 req/h. Pro: 1.000 req/mês. Business: 10.000 req/mês.",
+            "text": "Sim, gratuita em /api/v1 com endpoints para eleições, pesquisas, médias ponderadas e drift histórico. JSON e CSV. Anônimo: 60 req/mês. Grátis (com cadastro): 1.000 req/mês. Pro: 50.000 req/mês. Business: 500.000 req/mês. Detalhes em /api.",
           },
         },
       ],
@@ -1001,8 +1001,9 @@ export default async function HomePage() {
               <h2 className="text-lg font-bold mb-2">O ElectioLab tem API pública?</h2>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Sim, gratuita em <code>/api/v1</code> com endpoints para eleições, pesquisas,
-                médias e drift histórico. JSON e CSV. Anônimo: 60 req/h. Pro: 1.000 req/mês.
-                Documentação em <Link href="/imprensa" className="text-primary hover:underline">/imprensa</Link>.
+                médias e drift histórico. JSON e CSV. Anônimo: 60 req/mês. Grátis (com cadastro):
+                1.000 req/mês. Pro: 50.000 req/mês. Business: 500.000 req/mês.
+                Documentação em <Link href="/api" className="text-primary hover:underline">/api</Link>.
               </p>
             </div>
           </div>
