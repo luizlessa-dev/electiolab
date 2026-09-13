@@ -301,7 +301,7 @@ Base URL: ${SITE}/api/v1/
 - \`GET /drift?candidate_id=\` — evolução temporal de intenção de voto
 - \`GET /me\` — status da API key (Bearer token)
 
-Tiers: Anônimo 60 req/h · Pro 1.000 req/mês · Business 10.000 req/mês
+Tiers: Anônimo 60 req/dia · Pro 1.000 req/mês · Business 10.000 req/mês
 
 Documentação interativa: ${SITE}/api
 Especificação OpenAPI 3.1: ${SITE}/openapi.yaml

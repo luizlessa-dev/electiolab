@@ -16,6 +16,7 @@
 
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { checkIpRate } from "./ip-rate-limit";
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -37,8 +38,18 @@ export type AuthOk =
       authenticated: false;
       tier: "anonymous";
       rateLimit: number;
-      remaining: null;
-      resetsAt: null;
+      remaining: number | null;
+      resetsAt: string | null;
+      blocked?: false;
+    }
+  | {
+      ok: true;
+      authenticated: false;
+      tier: "anonymous";
+      rateLimit: number;
+      remaining: number;
+      resetsAt: string;
+      blocked: true;
     }
   | {
       ok: true;
@@ -53,20 +64,62 @@ export type AuthOk =
 
 export type AuthResult = AuthOk | { ok: false; response: NextResponse };
 
-const ANON: AuthOk = {
-  ok: true,
-  authenticated: false,
-  tier: "anonymous",
-  rateLimit: 60,
-  remaining: null,
-  resetsAt: null,
+const createAnonOk = (
+  blocked: boolean,
+  rateLimit: number,
+  remaining?: number,
+  resetsAt?: string,
+): AuthOk => {
+  if (blocked) {
+    return {
+      ok: true,
+      authenticated: false,
+      tier: "anonymous",
+      rateLimit,
+      remaining: remaining ?? 0,
+      resetsAt: resetsAt ?? new Date().toISOString(),
+      blocked: true,
+    };
+  }
+  return {
+    ok: true,
+    authenticated: false,
+    tier: "anonymous",
+    rateLimit,
+    remaining: remaining !== undefined ? remaining : null,
+    resetsAt: resetsAt || null,
+    blocked: false,
+  };
 };
 
 export async function authenticate(request: Request): Promise<AuthResult> {
   const auth = request.headers.get("authorization") ?? "";
 
-  // Sem header → anonymous
-  if (!auth) return ANON;
+  // Sem header → verificar anonymous rate limit (60 req/dia = 86400s)
+  if (!auth) {
+    const rl = await checkIpRate(request, "api_v1_anonymous", {
+      limit: 60,
+      windowSeconds: 86400, // 24 horas
+    });
+
+    if (!rl.allowed) {
+      return {
+        ok: false,
+        response: NextResponse.json(
+          {
+            error: "Rate limit atingido",
+            message: `Limite de ${rl.remaining + 1} requisições por dia atingido. Próximo reset em ${rl.resetAt.toISOString()}`,
+            limit: 60,
+            remaining: rl.remaining,
+            reset_at: rl.resetAt.toISOString(),
+          },
+          { status: 429, headers: rl.headers },
+        ),
+      };
+    }
+
+    return createAnonOk(false, 60, rl.remaining, rl.resetAt.toISOString());
+  }
 
   // Header presente: deve ser Bearer válido
   const m = auth.match(/^Bearer\s+(el_[a-z]+_[a-f0-9]+)$/);
@@ -162,6 +215,12 @@ export function applyRateLimitHeaders(
     response.headers.set("X-API-Tier", auth.tier);
   } else {
     response.headers.set("X-RateLimit-Limit", String(auth.rateLimit));
+    if (auth.remaining !== null) {
+      response.headers.set("X-RateLimit-Remaining", String(auth.remaining));
+    }
+    if (auth.resetsAt) {
+      response.headers.set("X-RateLimit-Reset", auth.resetsAt);
+    }
     response.headers.set("X-API-Tier", "anonymous");
   }
   return response;

@@ -10,7 +10,7 @@ info:
     analistas. Não substitui auditoria editorial.
 
     **Auth:** Bearer token no formato `el_<tier>_<hex>`. Sem token, acesso
-    anônimo limitado a 60 req/mês.
+    anônimo limitado a 60 req/dia.
 
     **Documentação metodológica:**
     - Médias ponderadas: https://electiolab.com/docs/weighted-averages
@@ -182,11 +182,11 @@ components:
       bearerFormat: el_<tier>_<hex>
       description: |
         Tokens são gerados em https://electiolab.com/dashboard/api.
-        **Tiers e limites mensais (`X-RateLimit-Limit` no response):**
-        - `anonymous` (sem token): 60 req/mês
-        - `free`: 1.000 req/mês
-        - `pro`: 50.000 req/mês
-        - `business`: 500.000 req/mês
+        **Tiers e limites (`X-RateLimit-Limit` no response):**
+        - `anonymous` (sem token): 60 req/dia
+        - `pro`: 1.000 req/mês (R$ 97/mês)
+        - `business`: 10.000 req/mês (R$ 497/mês)
+        - `enterprise`: ilimitado (preço custom)
 
   responses:
     Unauthorized:
@@ -195,7 +195,7 @@ components:
         application/json:
           schema: { $ref: '#/components/schemas/ErrorResponse' }
     RateLimited:
-      description: Limite mensal atingido.
+      description: Rate limit atingido (diário para anônimo, mensal para autenticado).
       headers:
         X-RateLimit-Limit:
           schema: { type: integer }
