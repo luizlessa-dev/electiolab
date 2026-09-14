@@ -1,0 +1,63 @@
+name: Monitor New Polls
+
+on:
+  schedule:
+    # Check every 2 hours for new polls
+    - cron: '0 */2 * * *'
+  workflow_dispatch:
+
+jobs:
+  check-new-polls:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for new Quaest polls
+        id: quaest
+        run: |
+          YESTERDAY=$(date -u -d '24 hours ago' '+%Y-%m-%d')
+          TODAY=$(date -u '+%Y-%m-%d')
+
+          QUAEST_COUNT=$(curl -s "https://xoxztzologqeqbajlhya.supabase.co/rest/v1/polls?institute_id=eq.8&publication_date=gte.$TODAY&select=id" \
+            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhveHp0em9sb2dxZXFiYWpsaHlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMjAzODcsImV4cCI6MjA5MTU5NjM4N30.tIBGfuP-A5KTB7JKwXU4ffiqSUhAp_CMYRLjvggXerY" 2>/dev/null | jq 'length')
+
+          echo "quaest_count=$QUAEST_COUNT" >> $GITHUB_OUTPUT
+          echo "Quaest polls today: $QUAEST_COUNT"
+
+      - name: Check for new Datafolha polls
+        id: datafolha
+        run: |
+          TODAY=$(date -u '+%Y-%m-%d')
+
+          DATAFOLHA_COUNT=$(curl -s "https://xoxztzologqeqbajlhya.supabase.co/rest/v1/polls?institute_id=eq.2&publication_date=gte.$TODAY&select=id" \
+            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhveHp0em9sb2dxZXFiYWpsaHlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMjAzODcsImV4cCI6MjA5MTU5NjM4N30.tIBGfuP-A5KTB7JKwXU4ffiqSUhAp_CMYRLjvggXerY" 2>/dev/null | jq 'length')
+
+          echo "datafolha_count=$DATAFOLHA_COUNT" >> $GITHUB_OUTPUT
+          echo "Datafolha polls today: $DATAFOLHA_COUNT"
+
+      - name: Notify on new polls
+        if: steps.quaest.outputs.quaest_count > 0 || steps.datafolha.outputs.datafolha_count > 0
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const quaest = ${{ steps.quaest.outputs.quaest_count }};
+            const datafolha = ${{ steps.datafolha.outputs.datafolha_count }};
+
+            let message = "🔔 **Novas pesquisas ingeridas!**\n\n";
+            if (quaest > 0) message += `✅ Quaest: ${quaest} poll(s)\n`;
+            if (datafolha > 0) message += `✅ Datafolha: ${datafolha} poll(s)\n`;
+
+            console.log(message);
+
+            // Optional: Create issue for tracking
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `New polls ingested - Quaest: ${quaest}, Datafolha: ${datafolha}`,
+              body: message,
+              labels: ['ingestion', 'automated']
+            }).catch(err => console.log('Issue creation skipped (could be rate limited)'));
+
+      - name: Summary
+        run: |
+          echo "✅ Poll monitoring complete"
+          echo "Quaest: ${{ steps.quaest.outputs.quaest_count }} new polls"
+          echo "Datafolha: ${{ steps.datafolha.outputs.datafolha_count }} new polls"
