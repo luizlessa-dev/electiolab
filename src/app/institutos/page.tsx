@@ -7,14 +7,14 @@ import { PROVENIENCIA_PUBLICA } from "@/lib/poll-provenance";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Institutos de Pesquisa Eleitoral 2026 — Ranking",
+  title: "Qual o Melhor Instituto de Pesquisa Eleitoral? Ranking 2026",
   description:
-    "Institutos brasileiros ranqueados pela acurácia histórica vs. TSE: Datafolha, Quaest, Ipec, Atlas e mais.",
+    "Qual instituto de pesquisa eleitoral é mais confiável no Brasil? Ranking por acurácia histórica vs. resultado oficial do TSE: Datafolha, Quaest, Ipec, Atlas Intel e mais.",
   alternates: { canonical: "https://electiolab.com/institutos" },
   openGraph: {
-    title: "Institutos de Pesquisa 2026 — ElectioLab",
+    title: "Qual o Melhor Instituto de Pesquisa Eleitoral? Ranking 2026",
     description:
-      "Ranking de acurácia dos institutos brasileiros: Datafolha, Quaest, Ipec, Atlas Intel e mais.",
+      "Ranking dos institutos de pesquisa eleitoral mais confiáveis do Brasil, por acurácia histórica vs. TSE: Datafolha, Quaest, Ipec, Atlas Intel e mais.",
     images: [{ url: "https://electiolab.com/opengraph-image", width: 1200, height: 630 }],
   },
 };

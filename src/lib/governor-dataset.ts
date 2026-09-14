@@ -3,6 +3,18 @@ import type { StatePollSnapshot } from "@/lib/marketing-data";
 
 const ORG = "https://electiolab.com/#organization";
 
+// Objeto Organization inline (não só "@id"): o Dataset é emitido em uma tag
+// <script type="application/ld+json"> própria, sem @graph compartilhado com
+// nenhuma outra página que declare esse @id — uma referência solta faz o
+// Rich Results Test acusar "Invalid object type for field 'creator'/'publisher'"
+// porque não há como resolver o tipo do nó referenciado.
+const ORGANIZATION_NODE = {
+  "@type": "Organization",
+  "@id": ORG,
+  name: "ElectioLab",
+  url: "https://electiolab.com",
+};
+
 /**
  * Dataset (Schema.org) JSON-LD para páginas de cauda longa de cargo estadual
  * (governador / senador). Expõe a média de pesquisas por UF como dataset
@@ -33,8 +45,8 @@ export function buildStateRaceDataset(opts: {
     url: opts.url,
     isAccessibleForFree: true,
     inLanguage: "pt-BR",
-    creator: { "@id": ORG },
-    publisher: { "@id": ORG },
+    creator: ORGANIZATION_NODE,
+    publisher: ORGANIZATION_NODE,
     license: "https://creativecommons.org/licenses/by/4.0/",
     temporalCoverage: "2026",
     spatialCoverage: {
