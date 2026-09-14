@@ -35,10 +35,13 @@ export async function generateMetadata({
   // resolve para a linha de 2022 (é a mais recente dele) e anunciava
   // "Pesquisas Eleitorais 2026" no title, no OG e no Twitter card.
   const ano = c.election?.year ?? 2026;
-  const title = `${c.name}${c.party ? ` (${c.party})` : ""} — Pesquisas Eleitorais ${ano}`;
+  // GSC mostrava buscas do tipo "[nome] candidato [ano]" (ex.: "padre kelmon
+  // candidato 2026", 251 impr., 0 cliques) sem nenhum clique — a palavra
+  // "candidato" não aparecia em lugar nenhum do title.
+  const title = `${c.name}${c.party ? ` (${c.party})` : ""} — Candidato ${ano}: Pesquisas Eleitorais`;
   const description = `Pesquisas e intenção de voto de ${c.name}${
     c.party ? ` (${c.party})` : ""
-  } nas eleições ${ano}: média ponderada ElectioLab, trajetória, patrimônio e financiamento de campanha.`;
+  }, candidato(a) nas eleições ${ano}: média ponderada ElectioLab, trajetória, patrimônio e financiamento de campanha.`;
 
   return {
     title,

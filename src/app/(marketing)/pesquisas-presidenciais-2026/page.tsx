@@ -6,15 +6,20 @@ import { SecondRoundTabs, type TabScenario } from "./second-round-tabs";
 
 export const revalidate = 3600;
 
+// GSC: 1.101 impressões em 28 dias, posição 9,21, CTR de apenas 1,0% — pior
+// aproveitamento entre as páginas de maior tráfego do site. O title era
+// descritivo ("Média Agregada") mas não respondia a uma busca; a página já
+// tem uma FAQ com a pergunta "Qual candidato lidera..." — o title passou a
+// espelhar essa mesma pergunta, que é a intenção de busca mais provável.
 export const metadata: Metadata = {
-  title: { absolute: "Pesquisas Presidenciais 2026 — Média Agregada | ElectioLab" },
+  title: { absolute: "Quem Lidera as Pesquisas Presidenciais 2026? | ElectioLab" },
   description:
-    "Acompanhe a média agregada de todas as pesquisas presidenciais de 2026. Dados de Datafolha, Quaest, Atlas Intel e outros institutos. Atualizado semanalmente.",
+    "Quem lidera a corrida presidencial de 2026? Média agregada de todas as pesquisas: Datafolha, Quaest, Atlas Intel e outros institutos, atualizada semanalmente.",
   alternates: { canonical: "https://electiolab.com/pesquisas-presidenciais-2026" },
   openGraph: {
-    title: "Pesquisas Presidenciais 2026 — Média Agregada | ElectioLab",
+    title: "Quem Lidera as Pesquisas Presidenciais 2026? | ElectioLab",
     description:
-      "Acompanhe a média agregada de todas as pesquisas presidenciais de 2026. Dados de Datafolha, Quaest, Atlas Intel e outros institutos. Atualizado semanalmente.",
+      "Quem lidera a corrida presidencial de 2026? Média agregada de todas as pesquisas: Datafolha, Quaest, Atlas Intel e outros institutos, atualizada semanalmente.",
     url: "https://electiolab.com/pesquisas-presidenciais-2026",
     images: [
       {
@@ -27,9 +32,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pesquisas Presidenciais 2026 — Média Agregada | ElectioLab",
+    title: "Quem Lidera as Pesquisas Presidenciais 2026? | ElectioLab",
     description:
-      "Acompanhe a média agregada de todas as pesquisas presidenciais de 2026. Datafolha, Quaest, Atlas Intel.",
+      "Quem lidera a corrida presidencial de 2026? Datafolha, Quaest, Atlas Intel e mais, na média agregada do ElectioLab.",
     images: ["https://electiolab.com/opengraph-image"],
   },
 };

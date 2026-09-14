@@ -59,6 +59,15 @@ export default async function SenadorPage({ params }: { params: Promise<{ uf: UF
 
   const FAQ = [
     {
+      // GSC: variações de "pesquisa [para] senador [no/em] {estado} 2026"
+      // somavam mais de 1.700 impressões nesta página com CTR abaixo de 2% —
+      // nenhuma delas era respondida literalmente em nenhum FAQ existente.
+      q: `Qual é a pesquisa mais recente para senador em ${stateName} em 2026?`,
+      a: snapshot
+        ? `A pesquisa mais recente para o Senado em ${stateName} indexada pelo ElectioLab é do instituto ${snapshot.institute_name}, publicada em ${snapshot.publication_date}${leader ? `, com ${leader.name}${leader.party ? ` (${leader.party})` : ""} à frente com ${leader.pct.toFixed(1)}%` : ""}. O ElectioLab atualiza a página assim que um novo instituto registra uma pesquisa no TSE para ${stateName}.`
+        : `Ainda não há pesquisa registrada no TSE para o Senado em ${stateName} em 2026. O ElectioLab indexa e atualiza esta página automaticamente assim que a primeira pesquisa for publicada.`,
+    },
+    {
       q: `Quantas vagas ao Senado ${stateName} elege em 2026?`,
       a: `Em 2026 cada estado elege 2 vagas ao Senado — o eleitor vota em até dois nomes e os dois mais votados são eleitos. É ano de renovação de dois terços da Casa (54 das 81 cadeiras); em 2022 havia apenas 1 vaga em disputa por estado. Cada mandato dura 8 anos.`,
     },
