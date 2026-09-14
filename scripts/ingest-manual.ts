@@ -8417,6 +8417,27 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Gelson Merisio",  percentage: 17.6 },
     ],
   },
+
+  // ─── Curadoria automática 14/09/2026 ──
+  // Datafolha · 8-11 set 2026 · TSE SP-04189/2026 · n=1.610 · presencial · Governador SP
+  // Fonte: https://www.brasil247.com/sudeste/tarcisio-marca-49-e-haddad-tem-29-em-sp-aponta-datafolha/
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador SP 2026 - 1º Turno",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-08",
+    fieldwork_end: "2026-09-11",
+    sample_size: 1610,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.brasil247.com/sudeste/tarcisio-marca-49-e-haddad-tem-29-em-sp-aponta-datafolha/",
+    tse_protocolo: "SP041892026",
+    scope: "uf:SP",
+    results: [
+      { candidate_name: "Tarcísio", percentage: 49 },
+      { candidate_name: "Haddad",   percentage: 29 },
+    ],
+  },
 ];
 
 async function main() {
