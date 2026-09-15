@@ -8438,6 +8438,70 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Haddad",   percentage: 29 },
     ],
   },
+
+  // ─── Curadoria automática 15/09/2026 ──
+  // Nexus/BTG · 11-13 set 2026 · TSE BR-04076/2026 · n=2.000 · telefônica · Presidente
+  // Fonte: https://www.nexus.fsb.com.br/estudos-divulgados/pesquisa-btg-nexus-de-intencao-de-votos-para-presidente-do-brasil-14-de-setembro-de-2026/
+  {
+    institute_name: "Nexus",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-14",
+    fieldwork_start: "2026-09-11",
+    fieldwork_end: "2026-09-13",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.nexus.fsb.com.br/estudos-divulgados/pesquisa-btg-nexus-de-intencao-de-votos-para-presidente-do-brasil-14-de-setembro-de-2026/",
+    tse_protocolo: "BR040762026",
+    results: [
+      { candidate_name: "Lula",            percentage: 42 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 37 },
+      { candidate_name: "Augusto Cury",     percentage:  6 },
+      { candidate_name: "Caiado",          percentage:  5 },
+      { candidate_name: "Renan Santos",    percentage:  2 },
+      { candidate_name: "Zema",            percentage:  1 },
+    ],
+  },
+
+  // PoderData/Aya · 6-9 set 2026 · TSE BR-04914/2026 · n=3.000 · telefônica · Presidente
+  // Fonte: https://www.poder360.com.br/poderdata/poderdata-aya-lula-tem-38-contra-36-de-flavio-no-1o-turno/
+  {
+    institute_name: "PoderData",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-09",
+    fieldwork_start: "2026-09-06",
+    fieldwork_end: "2026-09-09",
+    sample_size: 3000,
+    margin_of_error: 1.8,
+    methodology: "telefonica",
+    source_url: "https://www.poder360.com.br/poderdata/poderdata-aya-lula-tem-38-contra-36-de-flavio-no-1o-turno/",
+    tse_protocolo: "BR049142026",
+    results: [
+      { candidate_name: "Lula",            percentage: 38 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 36 },
+    ],
+  },
+
+  // Genial/Quaest · 10-13 set 2026 · TSE BR-03607/2026 · n=2.004 · telefônica · Presidente
+  // Fonte: https://exame.com/brasil/genial-quaest-lula-lidera-com-37-flavio-bolsonaro-tem-29-e-cury-10-no-1o-turno/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-14",
+    fieldwork_start: "2026-09-10",
+    fieldwork_end: "2026-09-13",
+    sample_size: 2004,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://exame.com/brasil/genial-quaest-lula-lidera-com-37-flavio-bolsonaro-tem-29-e-cury-10-no-1o-turno/",
+    tse_protocolo: "BR036072026",
+    results: [
+      { candidate_name: "Lula",            percentage: 37 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 29 },
+      { candidate_name: "Augusto Cury",     percentage: 10 },
+      { candidate_name: "Caiado",          percentage:  1 },
+    ],
+  },
 ];
 
 async function main() {
