@@ -8502,6 +8502,31 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Caiado",          percentage:  1 },
     ],
   },
+
+  // ─── Curadoria 16/09/2026 ──
+
+  // Real Time Big Data · 9-12 set 2026 · TSE RJ-03902/2026 · n=2.000 · telefônica · Governador RJ
+  // Fonte: https://exame.com/brasil/real-time-big-data-paes-tem-35-e-ruas-25-no-1o-turno-no-rio-de-janeiro/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador RJ 2026 - 1º Turno",
+    publication_date: "2026-09-14",
+    fieldwork_start: "2026-09-09",
+    fieldwork_end: "2026-09-12",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://exame.com/brasil/real-time-big-data-paes-tem-35-e-ruas-25-no-1o-turno-no-rio-de-janeiro/",
+    tse_protocolo: "RJ039022026",
+    results: [
+      { candidate_name: "Eduardo Paes",      percentage: 35 },
+      { candidate_name: "Douglas Ruas",      percentage: 25 },
+      { candidate_name: "Anthony Garotinho", percentage:  7 },
+      { candidate_name: "William Siri",      percentage:  5 },
+      { candidate_name: "Coronel Busnello",  percentage:  4 },
+      { candidate_name: "André Marinho",     percentage:  3 },
+    ],
+  },
 ];
 
 async function main() {
