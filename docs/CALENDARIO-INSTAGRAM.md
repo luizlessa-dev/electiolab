@@ -1,5 +1,7 @@
 # Calendário de Conteúdo — Instagram
-**Período:** 13/09/2026 a 02/11/2026 · **Cadência:** todo dia
+**Período:** 17/09/2026 a 02/11/2026 · **Cadência:** todo dia
+
+**3ª data de início (10/09 → 13/09 → 17/09):** as linhas da grade com data entre 13/09 e 16/09 não rodaram — nada foi publicado nessa janela. Comece pela primeira linha com data igual ou posterior a 17/09.
 **Comum a todos os canais (checklist, snapshot de dados, outreach):** [CALENDARIO-COMUM.md](./CALENDARIO-COMUM.md)
 **Outros canais:** [X](./CALENDARIO-X.md) · [Facebook](./CALENDARIO-FACEBOOK.md) · [LinkedIn](./CALENDARIO-LINKEDIN.md)
 
@@ -54,9 +56,9 @@ Story com enquete simples ("quem você acha que vence em [Estado]?") pra engajam
 
 ---
 
-## FASE 1 — Aquecimento (13/09 a 03/10)
+## FASE 1 — Aquecimento (17/09 a 03/10)
 
-**Dom 13/09 — Lançamento simultâneo (X + Instagram + Facebook + LinkedIn) — Carrossel (6 slides) — Fixo**
+**Qui 17/09 (hoje) — Lançamento simultâneo (X + Instagram + Facebook + LinkedIn) — Carrossel (6 slides) — Fixo**
 
 Slide 1 (capa): "Nem toda pesquisa eleitoral acerta igual. Aqui está o placar."
 Slide 2: "Datafolha — 92% de acurácia histórica vs. resultado oficial do TSE"
@@ -196,7 +198,7 @@ Resultado atualizado sempre no site, de graça.
 
 | Data | O que já está escrito |
 |---|---|
-| 13/09 | Carrossel de metodologia (lançamento simultâneo) |
+| 17/09 | Carrossel de metodologia (lançamento simultâneo) |
 | 19/09 | Carrossel de gasto digital |
 | 24/09 | Carrossel "e se for pro 2º turno?" |
 | 04/10 | Resultado 1º turno |

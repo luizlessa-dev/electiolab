@@ -1,22 +1,24 @@
 # Calendário de Conteúdo — LinkedIn
-**Período:** 13/09/2026 a 02/11/2026 · **Cadência:** 4-5x/semana · **Perfil:** pessoal do Luiz, não company page
+**Período:** 17/09/2026 a 02/11/2026 · **Cadência:** 4-5x/semana · **Perfil:** pessoal do Luiz, não company page
 **Comum a todos os canais (checklist, snapshot de dados, outreach):** [CALENDARIO-COMUM.md](./CALENDARIO-COMUM.md)
 **Outros canais:** [X](./CALENDARIO-X.md) · [Instagram](./CALENDARIO-INSTAGRAM.md) · [Facebook](./CALENDARIO-FACEBOOK.md)
 
 Regra geral: nas datas da tabela de exceções no fim deste arquivo já existe post-âncora fixo — não rodar a rotação semanal nesse dia, usar o âncora. Link sempre no primeiro comentário, nunca no corpo do post.
 
+**3ª data de início (10/09 → 13/09 → 17/09):** o post de apresentação (antes em 13/09) virou o lançamento de hoje. O post de arquitetura (antes em 17/09) foi remarcado pra 23/09, já que hoje agora é o lançamento.
+
 ---
 
 ## Grade semanal — rotação de base
 
-**Segunda — founder/bastidor** · **Quarta — arquitetura/dado/metodologia** · **Sexta — opinião/ponto de vista sobre cobertura eleitoral.** Reaproveitar o tom dos posts de 13/09 e 17/09 já escritos como referência de voz (primeira pessoa, história pessoal, fecha com pergunta aberta); cada semana troca só o ângulo específico.
+**Segunda — founder/bastidor** · **Quarta — arquitetura/dado/metodologia** · **Sexta — opinião/ponto de vista sobre cobertura eleitoral.** Reaproveitar o tom do post de 17/09 já escrito como referência de voz (primeira pessoa, história pessoal, fecha com pergunta aberta); cada semana troca só o ângulo específico.
 
 ### Parâmetros por semana (ângulo específico, além dos posts-âncora já escritos)
 
 | Semana | Segunda (founder/bastidor) | Quarta (arquitetura/dado) | Sexta (opinião) |
 |---|---|---|---|
-| 14-18/09 | — (17/09 já é o âncora de arquitetura) | 17/09 âncora | Por que "empate técnico" é a palavra mais mal-empregada da cobertura eleitoral |
-| 21-25/09 | Como decido qual pesquisa entra na média (critério de inclusão/exclusão) | O que aprendi rodando um cron a cada 6h sozinho por 5 meses | 24/09 âncora (2º turno) |
+| 15-19/09 | — (17/09 já é o âncora de lançamento) | — (17/09 já é o âncora de lançamento) | Por que "empate técnico" é a palavra mais mal-empregada da cobertura eleitoral |
+| 21-25/09 | Como decido qual pesquisa entra na média (critério de inclusão/exclusão) | 23/09 âncora (arquitetura, remarcado de 17/09) | 24/09 âncora (2º turno) |
 | 28/09-02/10 | Por que não uso casas decimais além da 1ª no indicador de erro | Como o site aguenta o pico de tráfego do dia da apuração (ou não) | O que uma pesquisa de 2.000 pessoas realmente representa num país de 150 milhões de eleitores |
 | 05-09/10 | 05/10 âncora (acerto da média) | Comparando o erro do ElectioLab com o erro médio das pesquisas individuais | 07/10 âncora (virada pro 2º turno) |
 | 12-16/10 | Por que ninguém cobre o Senado com a mesma intensidade da Presidência | Como a média ponderada recalcula sozinha quando um instituto para de publicar | O 2º turno é mais previsível que o 1º? O que os dados mostram |
@@ -25,9 +27,9 @@ Regra geral: nas datas da tabela de exceções no fim deste arquivo já existe p
 
 ---
 
-## FASE 1 — Aquecimento (13/09 a 03/10)
+## FASE 1 — Aquecimento (17/09 a 03/10)
 
-**Dom 13/09 — Lançamento simultâneo (X + Instagram + Facebook + LinkedIn) — Fixo**
+**Qui 17/09 (hoje) — Lançamento simultâneo (X + Instagram + Facebook + LinkedIn) — Fixo**
 ```
 Faz uns anos que eu acompanho pesquisa eleitoral pelo mesmo lugar que todo mundo: manchete solta. "Datafolha aponta X", "Quaest mostra Y". Cada uma pega um instituto, ignora os outros, e quem lê sai mais confuso do que entrou.
 
@@ -43,7 +45,7 @@ O que você acha que falta numa cobertura de pesquisa eleitoral hoje?
 ```
 *(Link vai no primeiro comentário, não no corpo.)*
 
-**Qua 17/09 — Fixo**
+**Qua 23/09 — Fixo (arquitetura/gasto digital, remarcado de 17/09)**
 ```
 Uma pergunta que recebo direto: "como um projeto solo consegue dado oficial de gasto de campanha em Google Ads e Meta?"
 
@@ -149,8 +151,8 @@ Detalhe no primeiro comentário.
 
 | Data | O que já está escrito |
 |---|---|
-| 13/09 | Apresentação do projeto (lançamento simultâneo) |
-| 17/09 | Arquitetura / gasto digital |
+| 17/09 | Apresentação do projeto (lançamento simultâneo) |
+| 23/09 | Arquitetura / gasto digital (remarcado de 17/09) |
 | 24/09 | 2º turno em destaque |
 | 04/10 | Resultado 1º turno |
 | 05-06/10 | Acerto/erro da média |

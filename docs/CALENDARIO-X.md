@@ -1,9 +1,11 @@
 # Calendário de Conteúdo — X
-**Período:** 13/09/2026 a 02/11/2026 · **Cadência:** todo dia
+**Período:** 17/09/2026 a 02/11/2026 · **Cadência:** todo dia
 **Comum a todos os canais (checklist, snapshot de dados, outreach):** [CALENDARIO-COMUM.md](./CALENDARIO-COMUM.md)
 **Outros canais:** [Instagram](./CALENDARIO-INSTAGRAM.md) · [Facebook](./CALENDARIO-FACEBOOK.md) · [LinkedIn](./CALENDARIO-LINKEDIN.md)
 
 Regra geral: nas datas da tabela de exceções no fim deste arquivo já existe post-âncora fixo — não rodar a rotação semanal nesse dia, usar o âncora.
+
+**3ª data de início (10/09 → 13/09 → 17/09):** as linhas da grade com data entre 13/09 e 16/09 não rodaram — nada foi publicado nessa janela. Comece pela primeira linha com data igual ou posterior a 17/09; nada precisa ser recuperado retroativamente.
 
 ---
 
@@ -80,13 +82,13 @@ Semana que vem a gente continua, atualizado a cada 6h: electiolab.com [UTM]
 
 `*` = dia cai dentro de uma janela com post-âncora fixo neste canal (contagem regressiva ou virada de turno) — usar o âncora, pular a rotação neste dia.
 
-**Quinta (mito/página, rotação de 7):** 13/09 já usou `por-que-institutos-dao-numeros-diferentes` no post de apresentação; 17/09 e 24/09 têm âncora (ver exceções). A partir daí: 01/10* `pesquisa-estimulada-vs-espontanea`, 08/10* `pesquisa-presencial-vs-online`, 15/10 `pesquisas-eleitorais-sao-confiaveis`, 22/10* `pesquisas-erraram-2022`, 29/10* `rejeicao-candidatos-presidente-2026`.
+**Quinta (mito/página, rotação de 7):** 17/09 já usou `por-que-institutos-dao-numeros-diferentes` no post de apresentação; 24/09 tem âncora (ver exceções). A partir daí: 01/10* `pesquisa-estimulada-vs-espontanea`, 08/10* `pesquisa-presencial-vs-online`, 15/10 `pesquisas-eleitorais-sao-confiaveis`, 22/10* `pesquisas-erraram-2022`, 29/10* `rejeicao-candidatos-presidente-2026`.
 
 ---
 
-## FASE 1 — Aquecimento (13/09 a 03/10)
+## FASE 1 — Aquecimento (17/09 a 03/10)
 
-**Dom 13/09 — Lançamento simultâneo (X + Instagram + Facebook + LinkedIn) — Thread — Fixo**
+**Qui 17/09 (hoje) — Lançamento simultâneo (X + Instagram + Facebook + LinkedIn) — Thread — Fixo**
 ```
 1/ Por que Datafolha, Quaest e Atlas Intel dão números diferentes pra mesma eleição? Não é porque um está "certo" e o outro "errado". É porque cada um tem um histórico de acurácia diferente contra o resultado real do TSE.
 
@@ -265,7 +267,7 @@ electiolab.com [UTM]
 
 | Data | O que já está escrito |
 |---|---|
-| 13/09 | Metodologia (thread de apresentação — lançamento simultâneo) |
+| 17/09 | Metodologia (thread de apresentação — lançamento simultâneo) |
 | 22/09 | Contagem regressiva D-12 |
 | 29/09 a 03/10 | Contagem regressiva D-5 a D-1 |
 | 04/10 | Apuração 1º turno ao vivo |

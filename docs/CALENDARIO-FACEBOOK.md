@@ -1,5 +1,5 @@
 # Calendário de Conteúdo — Facebook
-**Período:** 13/09/2026 a 02/11/2026 · **Cadência:** todo dia (espelha o Instagram)
+**Período:** 17/09/2026 a 02/11/2026 · **Cadência:** todo dia (espelha o Instagram)
 **Comum a todos os canais (checklist, snapshot de dados, outreach):** [CALENDARIO-COMUM.md](./CALENDARIO-COMUM.md)
 **Outros canais:** [X](./CALENDARIO-X.md) · [Instagram](./CALENDARIO-INSTAGRAM.md) · [LinkedIn](./CALENDARIO-LINKEDIN.md)
 

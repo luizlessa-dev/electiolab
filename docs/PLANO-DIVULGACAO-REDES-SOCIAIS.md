@@ -1,6 +1,6 @@
 # Plano de Divulgação — Redes Sociais ElectioLab
 
-**Início:** 13/09/2026 (domingo — ajustado em 12/09; início original era 10/09) · **1º turno:** 04/10/2026 (domingo) · **2º turno:** 25/10/2026 (domingo)
+**Início:** 17/09/2026 (quinta — 3ª data; 10/09 e 13/09 não saíram do papel) · **1º turno:** 04/10/2026 (domingo) · **2º turno:** 25/10/2026 (domingo)
 **Objetivo:** tráfego + autoridade no site durante o pico de interesse eleitoral (não é lançamento de produto — ElectioLab já está no ar desde abril/2026)
 **Canais:** X (Twitter), Instagram, Facebook (espelha o Instagram), LinkedIn
 **Capacidade:** fundador solo (Luiz Lessa)
@@ -35,8 +35,8 @@ O dia a dia (posts-âncora, grade de rotação, bancos de template) vive só nos
 
 **Cadência:** X e Instagram/Facebook diários (grade de rotação por dia da semana) · LinkedIn 4-5x/semana.
 
-### Fase 1 — Aquecimento (13/09 a 03/10, ~3 semanas)
-Lançamento simultâneo em todos os canais no dia 13/09 (metodologia). Da semana de 15/09 em diante: reação em tempo real a pesquisa nova, destaque de arquitetura/transparência (17/09), gasto digital (19/09), simulação de 2º turno (24/09) e outreach de imprensa (26/09). Última semana (29/09-03/10): contagem regressiva diária + checar carga do site antes do Dia D.
+### Fase 1 — Aquecimento (17/09 a 03/10, ~2,5 semanas)
+Lançamento simultâneo em todos os canais hoje, 17/09 (metodologia). Daqui em diante: reação em tempo real a pesquisa nova, gasto digital (19/09), arquitetura/transparência remarcado pro LinkedIn (23/09), simulação de 2º turno (24/09) e outreach de imprensa (26/09). Última semana (29/09-03/10): contagem regressiva diária + checar carga do site antes do Dia D.
 
 ### Fase 2 — 1º turno (04/10 domingo) e semana seguinte
 Cobertura ao vivo da apuração comparando com a média ponderada — maior potencial de viralização do ano. Dias seguintes: prova social (acerto/erro da média) e virada de chave editorial pro 2º turno.

@@ -1,5 +1,5 @@
 # Calendário de Conteúdo — Comum a todos os canais
-**Período:** 13/09/2026 a 02/11/2026 (relançamento — início original era 10/09, ajustado)
+**Período:** 17/09/2026 a 02/11/2026 (3º início — 10/09 e 13/09 não saíram do papel; hoje é pra valer)
 **Arquivos por rede:** [X](./CALENDARIO-X.md) · [Instagram](./CALENDARIO-INSTAGRAM.md) · [Facebook](./CALENDARIO-FACEBOOK.md) · [LinkedIn](./CALENDARIO-LINKEDIN.md)
 **Baseado em:** [PLANO-DIVULGACAO-REDES-SOCIAIS.md](./PLANO-DIVULGACAO-REDES-SOCIAIS.md)
 
@@ -12,21 +12,21 @@ Convenção usada nos três calendários:
 - **Reativo** = depende de evento do dia (pesquisa nova saiu, resultado de urna). Usa um dos templates do banco daquele canal no dia certo.
 - Todo link vai com UTM: `?utm_source=[x|instagram|linkedin]&utm_medium=social&utm_campaign=eleicoes2026`
 
-## Snapshot ao vivo (puxado do Supabase em 12/09/2026)
+## Snapshot ao vivo (puxado do Supabase em 17/09/2026)
 
-Usar como referência pro post de lançamento (13/09) e pra qualquer `[ATUALIZAR]` que precisar de número antes da próxima atualização. Válido só pra essa data, os cenários mudam a cada pesquisa nova — reconferir antes de 13/09 se der tempo.
+Usar como referência pro post de lançamento de hoje e pra qualquer `[ATUALIZAR]` que precisar de número antes da próxima atualização. Válido só pra essa data, os cenários mudam a cada pesquisa nova.
 
-**Nota:** o snapshot anterior (10/09) tinha número de pesquisas/entrevistas inflado por um bug de duplicação no `ingest-manual.ts` (algumas pesquisas entravam até 53x — ver memória `ingest-manual-loop-duplicacao-polls`), corrigido em 12/09 com índice único no banco. Os números abaixo já são os corrigidos, um pouco menores que os anteriores — isso é o dado ficando mais confiável, não a cobertura encolhendo.
+**Nota:** o snapshot de 10/09 tinha número de pesquisas/entrevistas inflado por um bug de duplicação no `ingest-manual.ts` (algumas pesquisas entravam até 53x — ver memória `ingest-manual-loop-duplicacao-polls`), corrigido em 12/09 com índice único no banco. Os números abaixo já refletem a correção.
 
-- **298** candidatos com bio · **278** pesquisas presidenciais indexadas · **18** institutos cobrindo a presidencial · **637.568** entrevistas somadas (presidencial)
-- **Base completa (todas as eleições):** 714 pesquisas, 25 institutos, 1.309.634 entrevistas
+- **300** candidatos com bio · **317** pesquisas presidenciais indexadas · **18** institutos cobrindo a presidencial · **713.550** entrevistas somadas (presidencial)
+- **Base completa (todas as eleições):** 759 pesquisas, 25 institutos, 1.390.540 entrevistas
 - **1º turno (média ponderada de hoje):** Lula 38,0% (60 pesquisas) · Flávio Bolsonaro 34,8% (60) · Augusto Cury 7,1% · Caiado 3,8% · Renan 3,6% · Marçal 2,2% · Zema 1,5%
 - **2º turno (cenários):** Flávio x Lula segue empate técnico (44,6% x 43,9%, 18 pesquisas). Lula abre vantagem clara contra Zema (45,9% x 38,2%), Caiado (43,7% x 38,3%) e Renan Santos (44,3% x 33,7%)
 - **Acurácia por instituto (confirmada, bate com os posts já escritos):** Datafolha 0,92 · Ipec 0,88 · Quaest 0,85 · PoderData 0,80 · Atlas Intel 0,78
 
 ## Outreach direto (não é post público em nenhum canal)
 
-**Sex 26/09 — 1ª rodada, pré-1º-turno**
+**Sáb 26/09 — 1ª rodada, pré-1º-turno**
 Enviar via e-mail/DM pra 5-10 contatos da lista do PRESS-KIT.md (Núcleo Jornalismo, Tilt UOL, Manual do Usuário são os de maior fit pra esse momento). Usar o **Template de outreach** já pronto no PRESS-KIT.md, seção "Template de e-mail de outreach", adaptando a linha de abertura para mencionar a proximidade do 1º turno.
 
 **Semana de 05/10 — 2ª rodada, pós-1º-turno**
