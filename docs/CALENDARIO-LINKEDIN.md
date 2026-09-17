@@ -30,18 +30,18 @@ Regra geral: nas datas da tabela de exceções no fim deste arquivo já existe p
 ## FASE 1 — Aquecimento (17/09 a 03/10)
 
 **Qui 17/09 (hoje) — Lançamento simultâneo (X + Instagram + Facebook + LinkedIn) — Fixo**
+
+Versão simples, dado-primeiro (o post de apresentação/founder story original virou reserva pra outra semana — dá pra usar em 21-25/09 no slot de founder/bastidor).
 ```
-Faz uns anos que eu acompanho pesquisa eleitoral pelo mesmo lugar que todo mundo: manchete solta. "Datafolha aponta X", "Quaest mostra Y". Cada uma pega um instituto, ignora os outros, e quem lê sai mais confuso do que entrou.
+Duas pesquisas saíram nos últimos dias: Nexus (14/09) mostra Lula 42% x Flávio Bolsonaro 37%. Quaest, no mesmo dia, mostra 37% x 29%.
 
-Esse ano eu resolvi meu próprio problema. Construí o ElectioLab sozinho: um agregador que junta todas as pesquisas eleitorais brasileiras de 2026 numa média ponderada por recência, tamanho de amostra e acurácia histórica de cada instituto contra o resultado real do TSE.
+Institutos diferentes, metodologias diferentes, quase 10 pontos de diferença só no tamanho do gap entre os dois.
 
-Hoje tem cobertura de presidência, 27 governadores e 27 senadores. Dashboard público e média ponderada são gratuitos, sem login. Tem plano Pro pra quem quer histórico completo, API e alertas, mas o essencial pro leitor é de graça. Atualiza sozinho a cada 6h.
+O ElectioLab pondera as duas — e todas as outras pesquisas ativas — pelo histórico de acurácia de cada instituto contra o resultado real do TSE. O resultado de hoje: Lula 38,2% x Flávio Bolsonaro 34,5%.
 
-Não é uma empresa com investimento nem uma redação. É um projeto solo rodando em Next.js e Supabase, feito porque eu queria essa ferramenta e ela não existia.
+Não é mais uma pesquisa. É o cruzamento de todas, atualizado a cada 6h, de graça: electiolab.com
 
-Quem cobre política ou dados no trabalho, dá uma olhada: electiolab.com
-
-O que você acha que falta numa cobertura de pesquisa eleitoral hoje?
+Quem você acha que erra menos, os institutos isolados ou a média ponderada?
 ```
 *(Link vai no primeiro comentário, não no corpo.)*
 

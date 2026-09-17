@@ -58,30 +58,31 @@ Story com enquete simples ("quem você acha que vence em [Estado]?") pra engajam
 
 ## FASE 1 — Aquecimento (17/09 a 03/10)
 
-**Qui 17/09 (hoje) — Lançamento simultâneo (X + Instagram + Facebook + LinkedIn) — Carrossel (6 slides) — Fixo**
+**Qui 17/09 (hoje) — Lançamento simultâneo (X + Instagram + Facebook + LinkedIn) — Imagem única, fundo sólido — Fixo**
 
-Slide 1 (capa): "Nem toda pesquisa eleitoral acerta igual. Aqui está o placar."
-Slide 2: "Datafolha — 92% de acurácia histórica vs. resultado oficial do TSE"
-Slide 3: "Quaest — 85%"
-Slide 4: "Ipec — 88%"
-Slide 5: "Atlas Intel — 78% · Paraná Pesquisas — 70%"
-Slide 6 (fecho): "A gente usa esse histórico pra dar peso maior a quem mais acerta. Método completo no link da bio."
+Versão simples: 1 imagem só (não carrossel), fundo sólido azul-marinho (`#0b1220`, mesma cor do site), sem foto nem ilustração.
+- Número grande, centralizado: **"38,2% x 34,5%"**
+- Abaixo, menor: "Lula x Flávio Bolsonaro — média ponderada de hoje"
+- Rodapé pequeno: "electiolab.com"
 
 **Legenda:**
 ```
-Toda semana sai pesquisa nova e a manchete trata todas como se pesassem igual.
+Duas pesquisas, mesma semana, institutos diferentes.
 
-Não pesam. A gente comparou o resultado de cada instituto com o que realmente aconteceu nas urnas em eleições passadas, e monta uma média ponderada com esse histórico.
+Nexus (14/09): Lula 42% x Flávio Bolsonaro 37%.
+Quaest, no mesmo dia: 37% x 29%.
 
-Quanto mais um instituto costuma acertar, mais peso ele tem na média. Simples assim, e 100% aberto.
+A gente pondera as duas — e todas as outras pesquisas ativas — pelo histórico de acurácia de cada instituto. O resultado de hoje: 38,2% x 34,5%.
 
-Dashboard gratuito, sem login. Site na bio.
+Não é uma pesquisa isolada, é o cruzamento de todas. Atualiza a cada 6h, sem login. Site na bio.
 
 .
 .
 .
-#eleicoes2026 #pesquisaeleitoral #datafolha #quaest #eleicoesbrasil #politicabrasil #jornalismodedados
+#eleicoes2026 #pesquisaeleitoral #lula #eleicoesbrasil #politicabrasil
 ```
+
+*(Carrossel original de institutos guardado como reserva de conteúdo pro banco de templates — pode virar um post de mito/verdade num dia futuro.)*
 
 **Sex 19/09 — Carrossel (5 slides) — Fixo**
 

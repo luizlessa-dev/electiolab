@@ -12,17 +12,18 @@ Convenção usada nos três calendários:
 - **Reativo** = depende de evento do dia (pesquisa nova saiu, resultado de urna). Usa um dos templates do banco daquele canal no dia certo.
 - Todo link vai com UTM: `?utm_source=[x|instagram|linkedin]&utm_medium=social&utm_campaign=eleicoes2026`
 
-## Snapshot ao vivo (puxado do Supabase em 17/09/2026)
+## Snapshot ao vivo (puxado do Supabase em 17/09/2026, pós-correção do cron)
 
 Usar como referência pro post de lançamento de hoje e pra qualquer `[ATUALIZAR]` que precisar de número antes da próxima atualização. Válido só pra essa data, os cenários mudam a cada pesquisa nova.
 
-**Nota:** o snapshot de 10/09 tinha número de pesquisas/entrevistas inflado por um bug de duplicação no `ingest-manual.ts` (algumas pesquisas entravam até 53x — ver memória `ingest-manual-loop-duplicacao-polls`), corrigido em 12/09 com índice único no banco. Os números abaixo já refletem a correção.
+**Nota:** o cron de recálculo da média ponderada estava travado desde 12/09 (bug de `INSERT` colidindo com índice único — ver commit `55d6b31`). Corrigido hoje às 13h52; os números abaixo já são pós-fix, recalculados na hora.
 
 - **300** candidatos com bio · **317** pesquisas presidenciais indexadas · **18** institutos cobrindo a presidencial · **713.550** entrevistas somadas (presidencial)
 - **Base completa (todas as eleições):** 759 pesquisas, 25 institutos, 1.390.540 entrevistas
-- **1º turno (média ponderada de hoje):** Lula 38,0% (60 pesquisas) · Flávio Bolsonaro 34,8% (60) · Augusto Cury 7,1% · Caiado 3,8% · Renan 3,6% · Marçal 2,2% · Zema 1,5%
-- **2º turno (cenários):** Flávio x Lula segue empate técnico (44,6% x 43,9%, 18 pesquisas). Lula abre vantagem clara contra Zema (45,9% x 38,2%), Caiado (43,7% x 38,3%) e Renan Santos (44,3% x 33,7%)
-- **Acurácia por instituto (confirmada, bate com os posts já escritos):** Datafolha 0,92 · Ipec 0,88 · Quaest 0,85 · PoderData 0,80 · Atlas Intel 0,78
+- **1º turno (média ponderada de hoje):** Lula 38,2% (60 pesquisas) · Flávio Bolsonaro 34,5% (60) · Augusto Cury 7,4% · Caiado 3,8% · Renan 3,4% · Zema ~1,5%
+- **2º turno (cenários):** Flávio x Lula segue empate técnico (44,5% x 43,6%, 30 pesquisas). Lula abre vantagem clara contra Zema (45,9% x 38,2%), Caiado (43,7% x 38,3%) e Renan Santos (44,3% x 33,7%)
+- **Última pesquisa publicada (14/09):** Nexus — Lula 42% x Flávio 37% (gap 5). Quaest, mesmo dia — Lula 37% x Flávio 29% (gap 8). Bom exemplo de "cruzamento" pra post: dois institutos, mesma semana, gaps bem diferentes.
+- **Acurácia por instituto (confirmada, bate com os posts já escritos):** Datafolha 0,92 · Ipec 0,88 · Quaest 0,85 · PoderData 0,80 · Atlas Intel 0,78 · Nexus 0,70 (estimado, ainda sem histórico medido — não citar como "comprovado")
 
 ## Outreach direto (não é post público em nenhum canal)
 

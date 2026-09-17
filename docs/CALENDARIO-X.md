@@ -88,18 +88,18 @@ Semana que vem a gente continua, atualizado a cada 6h: electiolab.com [UTM]
 
 ## FASE 1 — Aquecimento (17/09 a 03/10)
 
-**Qui 17/09 (hoje) — Lançamento simultâneo (X + Instagram + Facebook + LinkedIn) — Thread — Fixo**
+**Qui 17/09 (hoje) — Lançamento simultâneo (X + Instagram + Facebook + LinkedIn) — Post único — Fixo**
+
+Versão simples, dado-primeiro, substitui a thread de metodologia original (guardada como reserva de conteúdo pro banco de templates).
 ```
-1/ Por que Datafolha, Quaest e Atlas Intel dão números diferentes pra mesma eleição? Não é porque um está "certo" e o outro "errado". É porque cada um tem um histórico de acurácia diferente contra o resultado real do TSE.
+Nexus (14/09): Lula 42% x Flávio Bolsonaro 37%.
+Quaest, mesmo dia: Lula 37% x Flávio 29%.
 
-2/ A gente mediu isso: Datafolha acerta com desvio médio de 92% vs. resultado oficial. Quaest, 85%. Atlas Intel, 78%. Paraná Pesquisas, 70%.
+Ponderando pelo histórico de acurácia de cada instituto, a média de hoje é 38,2% x 34,5%.
 
-3/ Isso não é opinião, é comparação direta com o que aconteceu nas urnas em eleições passadas.
-
-4/ Por isso a gente não escolhe "qual pesquisa acreditar". A gente pondera todas pelo histórico de acurácia do instituto, recência e tamanho da amostra, e mostra a média resultante.
-
-5/ Método completo e aberto, sem login: electiolab.com/metodologia [link com UTM]
+Atualiza sozinha a cada 6h: electiolab.com [UTM]
 ```
+*(266 caracteres sem o link — cabe no limite gratuito do X.)*
 
 **Semana de 15-21/09 — Cadência**
 Usar Template A sempre que sair pesquisa nova (Datafolha/Quaest/Atlas costumam publicar nessa janela pré-1º-turno). Fora isso, seguir a grade diária normal.
