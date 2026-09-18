@@ -8527,6 +8527,183 @@ const PENDING_POLLS: Array<{
       { candidate_name: "André Marinho",     percentage:  3 },
     ],
   },
+
+  // ─── Curadoria 18/09/2026 ──
+
+  // Datafolha · 15-16 set 2026 · TSE BR-04029/2026 · n=2.002 · presencial · Presidencial nacional
+  // Fonte: https://www.opovo.com.br/noticias/politica/eleicoes/2026/09/17/datafolha-divulga-nova-pesquisa-para-presidente-da-republica.html
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-17",
+    fieldwork_start: "2026-09-15",
+    fieldwork_end: "2026-09-16",
+    sample_size: 2002,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.opovo.com.br/noticias/politica/eleicoes/2026/09/17/datafolha-divulga-nova-pesquisa-para-presidente-da-republica.html",
+    tse_protocolo: "BR040292026",
+    results: [
+      { candidate_name: "Lula",            percentage: 38 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 32 },
+    ],
+  },
+
+  // Atlas Intel · 11-16 set 2026 · TSE PR-02671/2026 · n=1.794 · online · Governador Paraná
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governador-parana-setembro-2026-2/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador Parana 2026",
+    publication_date: "2026-09-17",
+    fieldwork_start: "2026-09-11",
+    fieldwork_end: "2026-09-16",
+    sample_size: 1794,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governador-parana-setembro-2026-2/",
+    tse_protocolo: "PR026712026",
+    results: [
+      { candidate_name: "Sergio Moro",    percentage: 49.1 },
+      { candidate_name: "Requiao Filho",  percentage: 28.2 },
+      { candidate_name: "Sandro Alex",    percentage: 18.6 },
+    ],
+  },
+
+  // Atlas Intel · 11-16 set 2026 · TSE PE-02989/2026 · n=1.793 · online · Governador Pernambuco
+  // Fonte: https://exame.com/brasil/atlasintel-lyra-tem-487-e-campos-456-no-1o-turno-em-pernambuco/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador PE 2026 - 1º Turno",
+    publication_date: "2026-09-17",
+    fieldwork_start: "2026-09-11",
+    fieldwork_end: "2026-09-16",
+    sample_size: 1793,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://exame.com/brasil/atlasintel-lyra-tem-487-e-campos-456-no-1o-turno-em-pernambuco/",
+    tse_protocolo: "PE029892026",
+    results: [
+      { candidate_name: "Raquel Lyra", percentage: 48.7 },
+      { candidate_name: "João Campos", percentage: 45.6 },
+    ],
+  },
+
+  // Real Time Big Data · 14-17 set 2026 · TSE CE-04380/2026 · n=1.600 · telefônica · Governador Ceará
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-ceara-setembro-2026-2/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador CE 2026 - 1º Turno",
+    publication_date: "2026-09-18",
+    fieldwork_start: "2026-09-14",
+    fieldwork_end: "2026-09-17",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-ceara-setembro-2026-2/",
+    tse_protocolo: "CE043802026",
+    results: [
+      { candidate_name: "Elmano de Freitas", percentage: 47 },
+      { candidate_name: "Ciro Gomes",        percentage: 42 },
+    ],
+  },
+
+  // Real Time Big Data · 12-16 set 2026 · TSE SC-00866/2026 · n=1.600 · telefônica · Governador Santa Catarina
+  // Fonte: https://exame.com/brasil/real-time-big-data-mello-lidera-em-santa-catarina-com-34-pontos-de-vantagem/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Santa Catarina 2026",
+    publication_date: "2026-09-17",
+    fieldwork_start: "2026-09-12",
+    fieldwork_end: "2026-09-16",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://exame.com/brasil/real-time-big-data-mello-lidera-em-santa-catarina-com-34-pontos-de-vantagem/",
+    tse_protocolo: "SC008662026",
+    results: [
+      { candidate_name: "Jorginho Mello", percentage: 49 },
+      { candidate_name: "Joao Rodrigues", percentage: 15 },
+      { candidate_name: "Gelson Merisio", percentage:  8 },
+    ],
+  },
+
+  // Real Time Big Data · 10-14 set 2026 · TSE PE-07953/2026 · n=1.600 · telefônica · Governador Pernambuco
+  // Fonte: https://www.brasildefato.com.br/2026/09/15/empate-tecnico-se-mantem-agora-com-joao-campos-numericamente-a-frente-de-raquel-lyra-em-pernambuco-afirma-pesquisa-real-time-big-data/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador PE 2026 - 1º Turno",
+    publication_date: "2026-09-15",
+    fieldwork_start: "2026-09-10",
+    fieldwork_end: "2026-09-14",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.brasildefato.com.br/2026/09/15/empate-tecnico-se-mantem-agora-com-joao-campos-numericamente-a-frente-de-raquel-lyra-em-pernambuco-afirma-pesquisa-real-time-big-data/",
+    tse_protocolo: "PE079532026",
+    results: [
+      { candidate_name: "João Campos", percentage: 44 },
+      { candidate_name: "Raquel Lyra", percentage: 43 },
+    ],
+  },
+
+  // Real Time Big Data · 10-14 set 2026 · TSE PA-00415/2026 · n=1.600 · telefônica · Governador Pará
+  // Fonte: https://www.jornalpassaporte.com.br/2026/09/16/real-time-big-data-divulga-pesquisa-de-intencao-de-voto-para-governo-e-senado-no-para/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador PA 2026 - 1º Turno",
+    publication_date: "2026-09-15",
+    fieldwork_start: "2026-09-10",
+    fieldwork_end: "2026-09-14",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.jornalpassaporte.com.br/2026/09/16/real-time-big-data-divulga-pesquisa-de-intencao-de-voto-para-governo-e-senado-no-para/",
+    tse_protocolo: "PA004152026",
+    results: [
+      { candidate_name: "Hana Ghassan", percentage: 40 },
+      { candidate_name: "Dr Daniel",    percentage: 35 },
+    ],
+  },
+
+  // Real Time Big Data · 9-12 set 2026 · TSE SP-02794/2026 · n=2.000 · telefônica · Governador SP
+  // Fonte: https://exame.com/brasil/real-time-big-data-tarcisio-tem-53-e-haddad-36-no-1o-turno-em-sp/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador SP 2026 - 1º Turno",
+    publication_date: "2026-09-14",
+    fieldwork_start: "2026-09-09",
+    fieldwork_end: "2026-09-12",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://exame.com/brasil/real-time-big-data-tarcisio-tem-53-e-haddad-36-no-1o-turno-em-sp/",
+    tse_protocolo: "SP027942026",
+    results: [
+      { candidate_name: "Tarcísio", percentage: 53 },
+      { candidate_name: "Haddad",   percentage: 36 },
+    ],
+  },
+
+  // Real Time Big Data · 9-12 set 2026 · TSE BR-05824/2026 · n=2.000 · telefônica · recorte SP do
+  // presidencial (mesma amostra do Governador SP acima, par nacional/estadual da mesma coleta)
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/flavio-tem-39-contra-32-de-lula-no-1o-turno-em-sp-diz-pesquisa/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-14",
+    fieldwork_start: "2026-09-09",
+    fieldwork_end: "2026-09-12",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    scope: "SP",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/flavio-tem-39-contra-32-de-lula-no-1o-turno-em-sp-diz-pesquisa/",
+    tse_protocolo: "BR058242026",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 39 },
+      { candidate_name: "Lula",             percentage: 32 },
+    ],
+  },
 ];
 
 async function main() {
