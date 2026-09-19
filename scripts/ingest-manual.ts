@@ -9115,6 +9115,34 @@ const PENDING_POLLS: Array<{
       { candidate_name: "NÃO SABE", percentage: 9.0 },
     ],
   },
+
+  // ─── Real Time Big Data · Senador São Paulo (2 vagas) · 9-12 set 2026 · SP-02794/2026 · n=2.000 · telefônica ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-senador-sao-paulo-setembro-2026/
+  // "Outros" (2%) não decomposto: soma 7 candidatos sem percentual individual divulgado.
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Sao Paulo 2026",
+    publication_date: "2026-09-14",
+    fieldwork_start: "2026-09-09",
+    fieldwork_end: "2026-09-12",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-senador-sao-paulo-setembro-2026/",
+    tse_protocolo: "SP-02794/2026",
+    results: [
+      { candidate_name: "Guilherme Derrite", percentage: 19.0 },
+      { candidate_name: "Simone Tebet", percentage: 17.0 },
+      { candidate_name: "Andre do Prado", percentage: 17.0 },
+      { candidate_name: "Marina Silva", percentage: 13.0 },
+      { candidate_name: "Ricardo Salles", percentage: 10.0 },
+      { candidate_name: "Soninha Francine", percentage: 3.0 },
+      { candidate_name: "Guto Schiavetto", percentage: 2.0 },
+      { candidate_name: "Geraldo Rufino", percentage: 2.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 6.0 },
+      { candidate_name: "NÃO SABE", percentage: 9.0 },
+    ],
+  },
 ];
 
 async function main() {
