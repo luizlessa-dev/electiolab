@@ -35,6 +35,112 @@ function toTseRegistrationFormat(protocolo: string | undefined): string | null {
   return m ? `${m[1]}-${m[2]}/${m[3]}` : protocolo;
 }
 
+// ────────────────────────────────────────────────────
+// PÓS-INGESTÃO: recálculo de médias + revalidação de ISR
+//
+// Sem isso, os dados ficam corretos no banco mas o site não reflete: o cron
+// de recalculate-averages roda a cada 6h, e /candidato/[slug] tem ISR de 7
+// dias — sem disparo manual do webhook, o SEO fica defasado por dias mesmo
+// com a ingestão bem-sucedida (foi o que aconteceu até 2026-09-18, quando
+// isso ainda era um passo manual esquecível).
+// ────────────────────────────────────────────────────
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://electiolab.com";
+
+/** Nunca lança — falha de rede aqui não deve derrubar a ingestão que já aconteceu no banco. */
+async function safeFetch(url: string, init: RequestInit): Promise<{ ok: boolean; status: number; body?: string }> {
+  try {
+    const res = await fetch(url, { ...init, signal: AbortSignal.timeout(30_000) });
+    return { ok: res.ok, status: res.status, body: res.ok ? undefined : await res.text().catch(() => undefined) };
+  } catch (e) {
+    return { ok: false, status: 0, body: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+async function triggerRecalculateAverages(): Promise<void> {
+  const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/recalculate-averages?all=true&keep_history=false`;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!key) {
+    console.log("  ⏭️  recalculate-averages: SUPABASE_SERVICE_ROLE_KEY ausente, pulando");
+    return;
+  }
+  const res = await safeFetch(url, { method: "POST", headers: { Authorization: `Bearer ${key}` } });
+  console.log(res.ok ? "  ✅ recalculate-averages" : `  ❌ recalculate-averages: HTTP ${res.status} ${res.body ?? ""}`);
+}
+
+async function triggerRevalidatePath(p: string, token: string): Promise<boolean> {
+  const res = await safeFetch(`${SITE_URL}/api/revalidate?path=${encodeURIComponent(p)}&token=${token}`, { method: "POST" });
+  return res.ok;
+}
+
+/** Deriva a UF de /pesquisas-senador/[uf] a partir do election_name — best effort, pula se não mapear. */
+const UF_BY_STATE_NAME: Record<string, string> = {
+  "acre": "ac", "alagoas": "al", "amapa": "ap", "amazonas": "am", "bahia": "ba",
+  "ceara": "ce", "distrito federal": "df", "espirito santo": "es", "goias": "go",
+  "maranhao": "ma", "minas gerais": "mg", "mato grosso do sul": "ms", "mato grosso": "mt",
+  "para": "pa", "paraiba": "pb", "parana": "pr", "pernambuco": "pe", "piaui": "pi",
+  "rio de janeiro": "rj", "rio grande do norte": "rn", "rondonia": "ro", "roraima": "rr",
+  "rio grande do sul": "rs", "santa catarina": "sc", "sergipe": "se", "sao paulo": "sp",
+  "tocantins": "to",
+};
+function ufFromSenadorElectionName(electionName: string): string | null {
+  const m = electionName.match(/^Senador\s+(.+?)\s*\d*$/i);
+  if (!m) return null;
+  const norm = m[1]
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .trim()
+    .toLowerCase();
+  return UF_BY_STATE_NAME[norm] ?? null;
+}
+
+/**
+ * Revalida tudo que pode ter mudado nesta rodada: agregadoras (path=ALL),
+ * páginas /pesquisas-senador/[uf] das eleições tocadas, e /candidato/[slug]
+ * de cada candidato que recebeu poll_results novos.
+ */
+async function revalidateAfterIngest(touchedElectionIds: Set<string>, touchedCandidateIds: Set<string>): Promise<void> {
+  const token = process.env.REVALIDATE_TOKEN;
+  if (!token) {
+    console.log("  ⏭️  revalidação: REVALIDATE_TOKEN ausente no .env.local, pulando");
+    return;
+  }
+
+  const allOk = await triggerRevalidatePath("ALL", token);
+  console.log(allOk ? "  ✅ revalidate path=ALL" : "  ❌ revalidate path=ALL falhou");
+
+  if (touchedElectionIds.size > 0) {
+    const { data: elections } = await supabase
+      .from("elections")
+      .select("id, name")
+      .in("id", [...touchedElectionIds]);
+    const ufs = new Set<string>();
+    for (const e of elections ?? []) {
+      const uf = ufFromSenadorElectionName(e.name);
+      if (uf) ufs.add(uf);
+    }
+    let ufOk = 0;
+    for (const uf of ufs) {
+      if (await triggerRevalidatePath(`/pesquisas-senador/${uf}`, token)) ufOk++;
+    }
+    if (ufs.size > 0) console.log(`  ✅ revalidate /pesquisas-senador/[uf]: ${ufOk}/${ufs.size}`);
+  }
+
+  if (touchedCandidateIds.size > 0) {
+    const { data: candidates } = await supabase
+      .from("candidates")
+      .select("slug")
+      .in("id", [...touchedCandidateIds])
+      .not("slug", "is", null);
+    let candOk = 0;
+    const slugs = (candidates ?? []).map((c) => c.slug).filter((s): s is string => !!s);
+    for (const slug of slugs) {
+      if (await triggerRevalidatePath(`/candidato/${slug}`, token)) candOk++;
+    }
+    console.log(`  ✅ revalidate /candidato/[slug]: ${candOk}/${slugs.length}`);
+  }
+}
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   // Service role bypassa RLS para inserções administrativas
@@ -9157,6 +9263,8 @@ async function main() {
   let inserted = 0;
   let skipped = 0;
   let errors = 0;
+  const touchedElectionIds = new Set<string>();
+  const touchedCandidateIds = new Set<string>();
 
   for (const poll of PENDING_POLLS) {
     process.stdout.write(`📊 ${poll.institute_name} ${poll.publication_date}... `);
@@ -9274,6 +9382,7 @@ async function main() {
         continue;
       }
       resultsInserted++;
+      touchedCandidateIds.add(candidate.id);
     }
 
     if (unresolved.length > 0) {
@@ -9284,9 +9393,17 @@ async function main() {
 
     console.log(`✅ inserida (id: ${newPoll.id})`);
     inserted++;
+    touchedElectionIds.add(election.id);
   }
 
   console.log(`\n📋 Resumo: ${inserted} inseridas · ${skipped} duplicadas · ${errors} erros`);
+
+  if (inserted > 0) {
+    console.log(`\n🔄 Pós-ingestão (recálculo + revalidação ISR):`);
+    await triggerRecalculateAverages();
+    await revalidateAfterIngest(touchedElectionIds, touchedCandidateIds);
+  }
+
   await printStatus();
 }
 
