@@ -1,58 +1,57 @@
     # 🎯 TOP 20 Senador — Curadoria Prioritária
 
-**Meta**: Senador 6% → ~18% (3x cobertura)
-**Atualizado**: 2026-09-18
+**Meta original**: Senador 6% → ~18% (3x cobertura)
+**Atualizado**: 2026-09-18 — todas as Datafolha reputadas da rodada resolvidas
 
 ---
 
-## ⭐⭐⭐ DATAFOLHA
+## ⭐⭐⭐ DATAFOLHA — TODAS CONCLUÍDAS ✅
 
-### ✅ DF — CONCLUÍDO
-- Protocolo: DF-06055/2026 · fieldwork 2026-09-08/11
-- Status: **INSERIDO NO BANCO** (15 candidatos)
+| UF/Cargo | Protocolo | Fieldwork | Status |
+|----------|-----------|-----------|--------|
+| Senador DF | DF-06055/2026 | 08-11/09 | ✅ 15 candidatos |
+| Governador + Senador PI | PI-03643/2026 | 14-17/09 | ✅ 10+14 candidatos |
+| Senador MG | MG-01611/2026 | 08-10/09 | ✅ 16 candidatos |
+| Senador RJ | RJ-09217/2026 | 08-10/09 | ✅ 15 candidatos |
+| Senador PE | PE-04411/2026 | 08-10/09 | ✅ 12 candidatos |
+| Governador + Senador CE | CE-01290/2026 | 14-17/09 | ✅ 8+8 candidatos |
+| Presidencial (7 cenários) | BR-01833/2026 | 08-10/09 | ✅ 1º/2º turno completos |
 
-### ✅ Piauí — CONCLUÍDO (bônus, fora do escopo original)
-- Protocolo: PI-03643/2026 · fieldwork 2026-09-14/17
-- Status: **INSERIDO NO BANCO** (Governador 10/10 + Senador 14/14 candidatos)
-
-### ✅ Presidencial 09-11 — CONCLUÍDO (fora do escopo Senador, mas resolvido no caminho)
-- Protocolo: BR-01833/2026 · fieldwork 2026-09-08/10
-- Status: **7 cenários inseridos** (1º turno com/sem Marçal + 5 simulações de 2º turno)
-
-### 🔍 MG — PENDENTE (real, confirmado no banco)
-- Protocolo: MG-01611/2026 · fieldwork 2026-09-08/11
-- **Governador já está inserido** com esse protocolo — falta só a parte de Senador da mesma pesquisa
-- Template pronto em `DATAFOLHA-MG-RJ-PE-TEMPLATES.ts`
-
-### 🔍 RJ — PENDENTE (real, confirmado no banco)
-- Protocolo: RJ-09217/2026 · fieldwork 2026-09-08/11
-- Mesma situação: Governador inserido, falta Senado
-- Template pronto em `DATAFOLHA-MG-RJ-PE-TEMPLATES.ts`
-
-### 🔍 PE — PENDENTE (real, confirmado no banco)
-- Protocolo: PE-04411/2026 · fieldwork 2026-09-08/11
-- Mesma situação: Governador inserido, falta Senado
-- Template pronto em `DATAFOLHA-MG-RJ-PE-TEMPLATES.ts`
-
-### 🔍 Ceará — PENDENTE (divulgado 2026-09-18, ainda não indexado nas buscas)
-- Protocolo: CE-01290/2026 · fieldwork 2026-09-14/17 · Governador + Senador
-- Divulgação: 16h30 (Gov) / 18h (Senado) de 18/09 pelo O Povo
-- Aguardando link da matéria ou dados enviados manualmente
+**Pendência residual**: protocolo BR-03904/2026 (n=1.610, Presidencial 09-11) não foi
+resolvido — não bate com nenhum cenário confirmado nas fontes primárias verificadas
+(todos os cenários da pesquisa de 08-10/09 usam n=2.002). Não especulado de propósito.
 
 ---
 
-## ⭐⭐ QUAEST + REAL TIME
+## ⭐⭐ QUAEST + REAL TIME — próxima rodada
 
-Não verificado nesta rodada — rodar `npx tsx scripts/pending-polls.ts --days 20` pra
-lista atualizada, ou `npx tsx scripts/curator-helper-full.ts` pro checklist completo.
+Fila atual (`npx tsx scripts/pending-polls.ts --days 20`) tem **142 pendências de
+Senador** prontas pra buscar, majoritariamente:
+- Instituto Verita (⚠️ qualidade contestada pela Justiça Eleitoral — avaliar antes de curar)
+- Real Time Big Data (SP, MG, AC — n=1.600/2.000, sem ressalva)
+- Índice Inteligência (PB, AL)
+
+Rodar `npx tsx scripts/curator-helper-full.ts` pra checklist HTML atualizado com todas.
 
 ---
 
-## 🔄 FLUXO
+## 🔄 FLUXO (validado nesta rodada)
 
-1. **Buscar dados** — WebSearch/WebFetch nas matérias de imprensa (institutos são SPAs, scraping direto não funciona — ver histórico de tentativas nos commits removidos)
-2. **Conferir nomes exatos** dos candidatos cadastrados no banco antes de preencher
-   (nome de urna pode divergir do nome jornalístico — ex: "Renan" vs "Renan Santos" conforme a eleição)
-3. **Preencher template** em `scripts/ingest-manual.ts`
-4. **Rodar**: `npx tsx scripts/ingest-manual.ts`
-5. **Validar candidatos não resolvidos** no output — BRANCO/NULO e NÃO SABE nunca resolvem (não são candidatos), mas qualquer outro nome não resolvido precisa de correção manual (poll_results direto ou correção do nome)
+1. **Buscar dados** — WebSearch/WebFetch nas matérias de imprensa. Institutos são SPAs
+   React — scraping direto não funciona (ver histórico de tentativas removido do repo:
+   JSON-LD, regex, tabelas HTML, heurísticas, RSS, Wayback Machine, APIs não documentadas,
+   jsdom — todas malsucedidas sem Playwright/Puppeteer real).
+2. **Cuidado com pesquisas fragmentadas por protocolo**: uma mesma coleta de campo pode
+   gerar VÁRIOS protocolos TSE (um por cenário/pergunta — ex. 1º turno com/sem
+   candidato X, cada simulação de 2º turno). Nem sempre dá pra saber com certeza qual
+   protocolo bate com qual cenário nas fontes públicas — quando incerto, não especular.
+3. **Conferir nomes exatos** dos candidatos cadastrados no banco antes de preencher —
+   nome de urna frequentemente diverge do nome jornalístico (acentos, nome completo vs.
+   abreviado, ex.: "Renan" no 1º turno vs. "Renan Santos" no 2º turno da mesma eleição
+   presidencial — são `elections` diferentes com candidatos cadastrados separadamente).
+4. **Preencher template** em `scripts/ingest-manual.ts` e rodar
+   `npx tsx scripts/ingest-manual.ts`.
+5. **Candidatos não resolvidos** no output: BRANCO/NULO e NÃO SABE nunca resolvem (não
+   são candidatos) — esperado. Qualquer outro nome não resolvido precisa de correção
+   manual (ajustar o nome e rodar de novo, ou inserir o `poll_results` direto pro poll
+   já criado, já que o dedup pula o poll inteiro na segunda tentativa).
