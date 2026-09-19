@@ -9249,6 +9249,47 @@ const PENDING_POLLS: Array<{
       { candidate_name: "NÃO SABE", percentage: 9.0 },
     ],
   },
+
+  // PR · Real Time Big Data · 4-8 set 2026 · TSE PR-08220/2026 · n=1.600 · telefônica · ME: ±2pp
+  // Fonte: https://www.tribunapr.com.br/noticias/parana/moro-abre-10-pontos-vantagem-disputa-governo-parana-pesquisa/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Parana 2026",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-08",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.tribunapr.com.br/noticias/parana/moro-abre-10-pontos-vantagem-disputa-governo-parana-pesquisa/",
+    tse_protocolo: "PR082202026",
+    results: [
+      { candidate_name: "Sergio Moro", percentage: 35.0 },
+      { candidate_name: "Sandro Alex", percentage: 25.0 },
+      { candidate_name: "Requiao Filho", percentage: 21.0 },
+    ],
+  },
+  // PR · Real Time Big Data · 4-8 set 2026 · TSE PR-08220/2026 (mesmo registro do Governador) · n=1.600 · telefônica
+  // Fonte: https://www.tribunapr.com.br/noticias/parana/pesquisa-mostra-disputa-acirrada-pelo-senado-no-parana-por-diferenca-de-2/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Parana 2026",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-08",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.tribunapr.com.br/noticias/parana/pesquisa-mostra-disputa-acirrada-pelo-senado-no-parana-por-diferenca-de-2/",
+    tse_protocolo: "PR082202026",
+    results: [
+      { candidate_name: "Deltan Dallagnol", percentage: 19.0 },
+      { candidate_name: "Alexandre Curi", percentage: 18.0 },
+      { candidate_name: "Filipe Barros", percentage: 18.0 },
+      { candidate_name: "Gleisi Hoffmann", percentage: 16.0 },
+      { candidate_name: "Cristina Graeml", percentage: 14.0 },
+    ],
+  },
 ];
 
 async function main() {
