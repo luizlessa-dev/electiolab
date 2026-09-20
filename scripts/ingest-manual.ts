@@ -9290,6 +9290,404 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Cristina Graeml", percentage: 14.0 },
     ],
   },
+
+  // ─── Curadoria 20/09/2026 — lote 9 (Presidente nacional + recortes estaduais + AL) ──
+
+  // PoderData/Aya · 13-16 set 2026 · TSE BR-00360/2026 · n=3.000 · telefônica · ME: ±1,8pp
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/poderdata-aya-lula-tem-37-no-1o-turno-flavio-36-e-cury-8/
+  {
+    institute_name: "PoderData",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-17",
+    fieldwork_start: "2026-09-13",
+    fieldwork_end: "2026-09-16",
+    sample_size: 3000,
+    margin_of_error: 1.8,
+    methodology: "telefonica",
+    scope: "nacional",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/poderdata-aya-lula-tem-37-no-1o-turno-flavio-36-e-cury-8/",
+    tse_protocolo: "BR003602026",
+    results: [
+      { candidate_name: "Lula", percentage: 37 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 36 },
+      { candidate_name: "Augusto Cury", percentage: 8 },
+    ],
+  },
+  {
+    institute_name: "PoderData",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-17",
+    fieldwork_start: "2026-09-13",
+    fieldwork_end: "2026-09-16",
+    sample_size: 3000,
+    margin_of_error: 1.8,
+    methodology: "telefonica",
+    scope: "nacional",
+    source_url: "https://www.poder360.com.br/poderdata/flavio-tem-45-e-lula-registra-44-no-2o-turno-diz-poderdata-aya/",
+    tse_protocolo: "BR003602026",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 45 },
+      { candidate_name: "Lula", percentage: 44 },
+    ],
+  },
+
+  // GERP Mercadologia · 14-16 set 2026 · TSE BR-00535/2026 · n=2.400 · telefônica · ME: ±2,04pp
+  // Fonte: https://exame.com/brasil/pesquisa-gerp-flavio-bolsonaro-tem-40-e-lula-37-no-1o-turno/
+  {
+    institute_name: "GERP",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-17",
+    fieldwork_start: "2026-09-14",
+    fieldwork_end: "2026-09-16",
+    sample_size: 2400,
+    margin_of_error: 2.04,
+    methodology: "telefonica",
+    scope: "nacional",
+    source_url: "https://exame.com/brasil/pesquisa-gerp-flavio-bolsonaro-tem-40-e-lula-37-no-1o-turno/",
+    tse_protocolo: "BR005352026",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 40 },
+      { candidate_name: "Lula", percentage: 37 },
+    ],
+  },
+  {
+    institute_name: "GERP",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-17",
+    fieldwork_start: "2026-09-14",
+    fieldwork_end: "2026-09-16",
+    sample_size: 2400,
+    margin_of_error: 2.04,
+    methodology: "telefonica",
+    scope: "nacional",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/gerp-flavio-tem-47-das-intencoes-de-voto-no-2o-turno-lula-40/",
+    tse_protocolo: "BR005352026",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 47 },
+      { candidate_name: "Lula", percentage: 40 },
+    ],
+  },
+
+  // Instituto Índice Inteligência (contratante Rádio Nova FM) · 6-8 set 2026 · TSE AL-01011/2026 · n=1.200 · presencial · ME: ±2,83pp
+  // Fonte: https://www.alagoasalerta.com.br/noticia/jhc-lidera-mais-uma-pesquisa-ao-governo-de-alagoas-e-vence-no-1o-turno-marina-jhc-supera-renan
+  {
+    institute_name: "Instituto Índice Inteligência",
+    election_name: "Governador Alagoas 2026",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-06",
+    fieldwork_end: "2026-09-08",
+    sample_size: 1200,
+    margin_of_error: 2.83,
+    methodology: "presencial",
+    source_url: "https://www.alagoasalerta.com.br/noticia/jhc-lidera-mais-uma-pesquisa-ao-governo-de-alagoas-e-vence-no-1o-turno-marina-jhc-supera-renan",
+    tse_protocolo: "AL010112026",
+    results: [
+      { candidate_name: "JHC", percentage: 57.5 },
+      { candidate_name: "Renan Filho", percentage: 40.7 },
+    ],
+  },
+
+  // Datafolha · 14-17 set 2026 · TSE BR-00180/2026 · n=1.204 · presencial · recorte Ceará · ME: ±3pp
+  // Fonte: https://www.opovo.com.br/noticias/politica/eleicoes/2026/09/19/pesquisa-datafolha-ceara-tem-lula-54-e-flavio-bolsonaro-26.html
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-18",
+    fieldwork_start: "2026-09-14",
+    fieldwork_end: "2026-09-17",
+    sample_size: 1204,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    scope: "CE",
+    source_url: "https://www.opovo.com.br/noticias/politica/eleicoes/2026/09/19/pesquisa-datafolha-ceara-tem-lula-54-e-flavio-bolsonaro-26.html",
+    tse_protocolo: "BR001802026",
+    results: [
+      { candidate_name: "Lula", percentage: 54 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 26 },
+    ],
+  },
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-18",
+    fieldwork_start: "2026-09-14",
+    fieldwork_end: "2026-09-17",
+    sample_size: 1204,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    scope: "CE",
+    source_url: "https://www.opovo.com.br/noticias/politica/eleicoes/2026/09/19/pesquisa-datafolha-ceara-tem-lula-54-e-flavio-bolsonaro-26.html",
+    tse_protocolo: "BR001802026",
+    results: [
+      { candidate_name: "Lula", percentage: 60 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 32 },
+    ],
+  },
+
+  // Datafolha · 14-17 set 2026 · TSE BR-09377/2026 · n=826 · presencial · recorte Piauí · ME: ±3pp
+  // Fonte: https://www.portalenoticias.com.br/datafolha-divulga-pesquisa-para-presidente-no-piaui-veja-os-numeros/
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-17",
+    fieldwork_start: "2026-09-14",
+    fieldwork_end: "2026-09-17",
+    sample_size: 826,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    scope: "PI",
+    source_url: "https://www.portalenoticias.com.br/datafolha-divulga-pesquisa-para-presidente-no-piaui-veja-os-numeros/",
+    tse_protocolo: "BR093772026",
+    results: [
+      { candidate_name: "Lula", percentage: 59 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 20 },
+      { candidate_name: "Augusto Cury", percentage: 6 },
+    ],
+  },
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-17",
+    fieldwork_start: "2026-09-14",
+    fieldwork_end: "2026-09-17",
+    sample_size: 826,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    scope: "PI",
+    source_url: "https://www.portalenoticias.com.br/datafolha-divulga-pesquisa-para-presidente-no-piaui-veja-os-numeros/",
+    tse_protocolo: "BR093772026",
+    results: [
+      { candidate_name: "Lula", percentage: 67 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 27 },
+    ],
+  },
+
+  // Datafolha · 8-11 set 2026 · TSE BR-03904/2026 · n=1.610 · presencial · recorte São Paulo · ME: ±2pp
+  // Fonte: https://www.metropoles.com/sao-paulo/datafolha-flavio-tem-35-lula-33-e-cury-7-no-1o-turno-em-sp
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-08",
+    fieldwork_end: "2026-09-11",
+    sample_size: 1610,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    scope: "SP",
+    source_url: "https://www.metropoles.com/sao-paulo/datafolha-flavio-tem-35-lula-33-e-cury-7-no-1o-turno-em-sp",
+    tse_protocolo: "BR039042026",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 35 },
+      { candidate_name: "Lula", percentage: 33 },
+      { candidate_name: "Augusto Cury", percentage: 7 },
+    ],
+  },
+
+  // Datafolha · 8-11 set 2026 · TSE BR-03022/2026 · n=1.204 · presencial · recorte Minas Gerais · ME: ±3pp
+  // Fonte: https://itabiraonline.com.br/2026/09/12/datafolha-mostra-lula-e-flavio-bolsonaro-tecnicamente-empatados-no-1o-turno-em-minas-gerais/
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-08",
+    fieldwork_end: "2026-09-11",
+    sample_size: 1204,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    scope: "MG",
+    source_url: "https://itabiraonline.com.br/2026/09/12/datafolha-mostra-lula-e-flavio-bolsonaro-tecnicamente-empatados-no-1o-turno-em-minas-gerais/",
+    tse_protocolo: "BR030222026",
+    results: [
+      { candidate_name: "Lula", percentage: 37 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 35 },
+    ],
+  },
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-08",
+    fieldwork_end: "2026-09-11",
+    sample_size: 1204,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    scope: "MG",
+    source_url: "https://itabiraonline.com.br/2026/09/12/datafolha-mostra-lula-e-flavio-bolsonaro-tecnicamente-empatados-no-1o-turno-em-minas-gerais/",
+    tse_protocolo: "BR030222026",
+    results: [
+      { candidate_name: "Lula", percentage: 46 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 45 },
+    ],
+  },
+
+  // Datafolha · 8-11 set 2026 · TSE BR-06361/2026 · n=1.204 · presencial · recorte Rio de Janeiro · ME: ±3pp
+  // Fonte: https://www.portalviu.com.br/geral/datafolha-flavio-lidera-cenario-presidencial-no-rio-com-39-lula-tem-35
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-08",
+    fieldwork_end: "2026-09-11",
+    sample_size: 1204,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    scope: "RJ",
+    source_url: "https://www.portalviu.com.br/geral/datafolha-flavio-lidera-cenario-presidencial-no-rio-com-39-lula-tem-35",
+    tse_protocolo: "BR063612026",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 39 },
+      { candidate_name: "Lula", percentage: 35 },
+    ],
+  },
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-08",
+    fieldwork_end: "2026-09-11",
+    sample_size: 1204,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    scope: "RJ",
+    source_url: "https://www.portalviu.com.br/geral/datafolha-flavio-lidera-cenario-presidencial-no-rio-com-39-lula-tem-35",
+    tse_protocolo: "BR063612026",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 49 },
+      { candidate_name: "Lula", percentage: 41 },
+    ],
+  },
+
+  // Datafolha · 8-11 set 2026 · TSE BR-04623/2026 · n=910 · presencial · recorte Distrito Federal · ME: ±3pp
+  // Fonte: https://www.metropoles.com/distrito-federal/datafolha-no-df-flavio-tem-40-e-lula-32-no-1o-turno
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-08",
+    fieldwork_end: "2026-09-11",
+    sample_size: 910,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    scope: "DF",
+    source_url: "https://www.metropoles.com/distrito-federal/datafolha-no-df-flavio-tem-40-e-lula-32-no-1o-turno",
+    tse_protocolo: "BR046232026",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 40 },
+      { candidate_name: "Lula", percentage: 32 },
+      { candidate_name: "Caiado", percentage: 8 },
+    ],
+  },
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-08",
+    fieldwork_end: "2026-09-11",
+    sample_size: 910,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    scope: "DF",
+    source_url: "https://www.metropoles.com/distrito-federal/datafolha-no-df-flavio-tem-40-e-lula-32-no-1o-turno",
+    tse_protocolo: "BR046232026",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 51 },
+      { candidate_name: "Lula", percentage: 39 },
+    ],
+  },
+
+  // Quaest · 4-7 set 2026 · TSE BR-09705/2026 · n=1.302 · telefônica · recorte Rio de Janeiro
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/flavio-tem-34-e-lula-32-no-1o-turno-no-rj-diz-quaest/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-08",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1302,
+    methodology: "telefonica",
+    scope: "RJ",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/flavio-tem-34-e-lula-32-no-1o-turno-no-rj-diz-quaest/",
+    tse_protocolo: "BR097052026",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 34 },
+      { candidate_name: "Lula", percentage: 32 },
+    ],
+  },
+
+  // Quaest · 4-7 set 2026 · TSE BR-02317/2026 · n=1.302 · telefônica · recorte Pernambuco
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/lula-lidera-com-57-contra-26-de-flavio-no-2o-turno-em-pe-diz-quaest/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-08",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1302,
+    methodology: "telefonica",
+    scope: "PE",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/lula-lidera-com-57-contra-26-de-flavio-no-2o-turno-em-pe-diz-quaest/",
+    tse_protocolo: "BR023172026",
+    results: [
+      { candidate_name: "Lula", percentage: 51 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 21 },
+      { candidate_name: "Augusto Cury", percentage: 6 },
+      { candidate_name: "Caiado", percentage: 2 },
+      { candidate_name: "Renan", percentage: 2 },
+    ],
+  },
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-08",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1302,
+    methodology: "telefonica",
+    scope: "PE",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/lula-lidera-com-57-contra-26-de-flavio-no-2o-turno-em-pe-diz-quaest/",
+    tse_protocolo: "BR023172026",
+    results: [
+      { candidate_name: "Lula", percentage: 57 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 26 },
+    ],
+  },
+
+  // Quaest · 4-7 set 2026 · TSE BR-04442/2026 · n=1.104 · telefônica · recorte Distrito Federal
+  // Fonte: https://www.metropoles.com/distrito-federal/quaest-no-df-flavio-tem-31-lula-28-caiado12-e-cury-8
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-08",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1104,
+    methodology: "telefonica",
+    scope: "DF",
+    source_url: "https://www.metropoles.com/distrito-federal/quaest-no-df-flavio-tem-31-lula-28-caiado12-e-cury-8",
+    tse_protocolo: "BR044422026",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 31 },
+      { candidate_name: "Lula", percentage: 28 },
+      { candidate_name: "Caiado", percentage: 12 },
+      { candidate_name: "Augusto Cury", percentage: 8 },
+    ],
+  },
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-08",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-07",
+    sample_size: 1104,
+    methodology: "telefonica",
+    scope: "DF",
+    source_url: "https://www.metropoles.com/distrito-federal/quaest-no-df-flavio-tem-31-lula-28-caiado12-e-cury-8",
+    tse_protocolo: "BR044422026",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 45 },
+      { candidate_name: "Lula", percentage: 38 },
+    ],
+  },
 ];
 
 async function main() {
