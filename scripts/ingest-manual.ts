@@ -9730,6 +9730,31 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Jeronimo Rodrigues", percentage: 39.4 },
     ],
   },
+
+  // ─── Atlas Intel · Senador Ceará (2 vagas) · 15-20 set 2026 · CE-02298/2026 · n=1.815 · online ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governador-senador-ceara-setembro-2026-2/
+  // Governador CE (mesmo protocolo) já coberto por Datafolha — só o Senado faltava.
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Senador Ceara 2026",
+    publication_date: "2026-09-21",
+    fieldwork_start: "2026-09-15",
+    fieldwork_end: "2026-09-20",
+    sample_size: 1815,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governador-senador-ceara-setembro-2026-2/",
+    tse_protocolo: "CE-02298/2026",
+    results: [
+      { candidate_name: "Cid Gomes", percentage: 26.9 },
+      { candidate_name: "Luizianne Lins", percentage: 24.8 },
+      { candidate_name: "Capitão Wagner", percentage: 22.4 },
+      { candidate_name: "Alcides Fernandes", percentage: 17.9 },
+      { candidate_name: "Guilherme Theophilo", percentage: 0.9 },
+      { candidate_name: "BRANCO/NULO", percentage: 3.2 },
+      { candidate_name: "NÃO SABE", percentage: 3.4 },
+    ],
+  },
 ];
 
 async function main() {
