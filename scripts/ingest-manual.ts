@@ -9755,6 +9755,62 @@ const PENDING_POLLS: Array<{
       { candidate_name: "NÃO SABE", percentage: 3.4 },
     ],
   },
+
+  // ─── Real Time Big Data · Senador Minas Gerais (2 vagas) · 16-19 set 2026 · MG-07331/2026 · n=2.000 · telefônica ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-minas-gerais-setembro-2026-2/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Minas Gerais 2026",
+    publication_date: "2026-09-21",
+    fieldwork_start: "2026-09-16",
+    fieldwork_end: "2026-09-19",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-minas-gerais-setembro-2026-2/",
+    tse_protocolo: "MG-07331/2026",
+    results: [
+      { candidate_name: "Marilia Campos", percentage: 18.0 },
+      { candidate_name: "Domingos Savio", percentage: 16.0 },
+      { candidate_name: "Carlos Viana", percentage: 16.0 },
+      { candidate_name: "Aecio Neves", percentage: 13.0 },
+      { candidate_name: "Marcelo Aro", percentage: 12.0 },
+      { candidate_name: "Aurea Carolina", percentage: 7.0 },
+      { candidate_name: "Marco Antônio Superman", percentage: 4.0 },
+      { candidate_name: "Arcanjo Pimenta", percentage: 1.0 },
+      { candidate_name: "Carlin Moura", percentage: 1.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 5.0 },
+      { candidate_name: "NÃO SABE", percentage: 7.0 },
+    ],
+  },
+
+  // ─── Real Time Big Data · Senador São Paulo (2 vagas) · 16-19 set 2026 · SP-07495/2026 · n=2.000 · telefônica ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-senado-sao-paulo-setembro-2026-2/
+  // "Outros" (2%) não decomposto: soma 7 candidatos sem percentual individual divulgado.
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Sao Paulo 2026",
+    publication_date: "2026-09-21",
+    fieldwork_start: "2026-09-16",
+    fieldwork_end: "2026-09-19",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-senado-sao-paulo-setembro-2026-2/",
+    tse_protocolo: "SP-07495/2026",
+    results: [
+      { candidate_name: "Guilherme Derrite", percentage: 20.0 },
+      { candidate_name: "Andre do Prado", percentage: 18.0 },
+      { candidate_name: "Simone Tebet", percentage: 17.0 },
+      { candidate_name: "Marina Silva", percentage: 14.0 },
+      { candidate_name: "Ricardo Salles", percentage: 9.0 },
+      { candidate_name: "Soninha Francine", percentage: 3.0 },
+      { candidate_name: "Guto Schiavetto", percentage: 2.0 },
+      { candidate_name: "Geraldo Rufino", percentage: 2.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 6.0 },
+      { candidate_name: "NÃO SABE", percentage: 7.0 },
+    ],
+  },
 ];
 
 async function main() {
