@@ -9688,6 +9688,48 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Lula", percentage: 38 },
     ],
   },
+  // ─── Curadoria 21/09/2026 — lote pesqele_missing (AtlasIntel CE, Veritá BA) ──
+  // AtlasIntel · 15-20 set 2026 · TSE CE-02298/2026 · n=1.800 · online
+  // Fonte: https://www.opovo.com.br/noticias/politica/eleicoes/2026/09/21/pesquisa-atlasintel-ceara-traz-elmano-485-e-ciro-gomes-48.html
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador CE 2026 - 1º Turno",
+    publication_date: "2026-09-21",
+    fieldwork_start: "2026-09-15",
+    fieldwork_end: "2026-09-20",
+    sample_size: 1800,
+    margin_of_error: 2.0,
+    methodology: "online",
+    scope: "nacional",
+    source_url: "https://www.opovo.com.br/noticias/politica/eleicoes/2026/09/21/pesquisa-atlasintel-ceara-traz-elmano-485-e-ciro-gomes-48.html",
+    tse_protocolo: "CE022982026",
+    results: [
+      { candidate_name: "Elmano de Freitas", percentage: 48.5 },
+      { candidate_name: "Ciro Gomes", percentage: 48.0 },
+    ],
+  },
+  // Instituto Veritá · 10-15 set 2026 · TSE BA-02531/2026 · n=2.020 · telefônica (UARA)
+  // Registro suspenso judicialmente por vício em rodada anterior (BA-03016/2026, não
+  // divulgada com fonte confiável) — esta é uma rodada distinta, com protocolo e
+  // percentuais confirmados em matéria de imprensa própria (cenário "estimado total").
+  // Fonte: https://www.deolhonacidade.net/pesquisa-verita-mostra-acm-neto-com-51-7-e-jeronimo-rodrigues-com-39-4-na-bahia
+  {
+    institute_name: "Veritá",
+    election_name: "Governador BA 2026 - 1º Turno",
+    publication_date: "2026-09-17",
+    fieldwork_start: "2026-09-10",
+    fieldwork_end: "2026-09-15",
+    sample_size: 2020,
+    margin_of_error: 2.5,
+    methodology: "telefonica",
+    scope: "nacional",
+    source_url: "https://www.deolhonacidade.net/pesquisa-verita-mostra-acm-neto-com-51-7-e-jeronimo-rodrigues-com-39-4-na-bahia",
+    tse_protocolo: "BA025312026",
+    results: [
+      { candidate_name: "ACM Neto", percentage: 51.7 },
+      { candidate_name: "Jeronimo Rodrigues", percentage: 39.4 },
+    ],
+  },
 ];
 
 async function main() {
