@@ -9982,6 +9982,65 @@ const PENDING_POLLS: Array<{
       { candidate_name: "NÃO SABE", percentage: 4.0 },
     ],
   },
+
+  // ─── Real Time Big Data · Governador GO · 17-21 set 2026 · TSE GO-04616/2026 · n=1.600 · telefônica ──
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/vilela-lidera-todos-os-cenarios-de-1o-e-2o-turno-em-goias/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador GO 2026 - 1º Turno",
+    publication_date: "2026-09-22",
+    fieldwork_start: "2026-09-17",
+    fieldwork_end: "2026-09-21",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/vilela-lidera-todos-os-cenarios-de-1o-e-2o-turno-em-goias/",
+    tse_protocolo: "GO-04616/2026",
+    results: [
+      { candidate_name: "Daniel Vilela", percentage: 46.0 },
+      { candidate_name: "Wilder Morais", percentage: 19.0 },
+      { candidate_name: "Marconi Perillo", percentage: 18.0 },
+      { candidate_name: "Luis Cesar Bueno", percentage: 8.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 5.0 },
+      { candidate_name: "NÃO SABE", percentage: 4.0 },
+    ],
+  },
+
+  // ─── Nexus/BTG Pactual · Presidencial · 18-20 set 2026 · TSE BR-00485/2026 · n=2.006 · telefônica ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/nexus-btg-pactual-presidente-setembro-2026-2/
+  {
+    institute_name: "Nexus",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-21",
+    fieldwork_start: "2026-09-18",
+    fieldwork_end: "2026-09-20",
+    sample_size: 2006,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/nexus-btg-pactual-presidente-setembro-2026-2/",
+    tse_protocolo: "BR-00485/2026",
+    results: [
+      { candidate_name: "Lula", percentage: 40.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 37.0 },
+    ],
+  },
+  {
+    institute_name: "Nexus",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-21",
+    fieldwork_start: "2026-09-18",
+    fieldwork_end: "2026-09-20",
+    sample_size: 2006,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/nexus-btg-pactual-presidente-setembro-2026-2/",
+    tse_protocolo: "BR-00485/2026",
+    scenario_label: "Lula vs Flavio Bolsonaro",
+    results: [
+      { candidate_name: "Lula", percentage: 46.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 45.0 },
+    ],
+  },
 ];
 
 async function main() {
