@@ -10041,6 +10041,117 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Flávio Bolsonaro", percentage: 45.0 },
     ],
   },
+
+  // ─── Atlas Intel · Governador Piauí · 28 ago-2 set 2026 · PI-03771/2026 · n=1.622 · online ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governador-senador-piaui-setembro-2026/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador Piaui 2026",
+    publication_date: "2026-09-03",
+    fieldwork_start: "2026-08-28",
+    fieldwork_end: "2026-09-02",
+    sample_size: 1622,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governador-senador-piaui-setembro-2026/",
+    tse_protocolo: "PI-03771/2026",
+    results: [
+      { candidate_name: "Rafael Fonteles", percentage: 62.4 },
+      { candidate_name: "Joel Rodrigues", percentage: 20.9 },
+      { candidate_name: "Dra. Lúcia Santos", percentage: 1.5 },
+      { candidate_name: "Lourdes Melo", percentage: 0.8 },
+      { candidate_name: "Elizeu Aguiar", percentage: 0.6 },
+      { candidate_name: "Professor Gisvaldo", percentage: 0.6 },
+      { candidate_name: "Gustavo Henrique", percentage: 0.5 },
+      { candidate_name: "Geraldo Carvalho", percentage: 0.2 },
+      { candidate_name: "Professor Jurity", percentage: 0.2 },
+      { candidate_name: "Santiago Belizário", percentage: 0.2 },
+      { candidate_name: "Ravenna da Inclusão", percentage: 0.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 6.3 },
+      { candidate_name: "NÃO SABE", percentage: 5.7 },
+    ],
+  },
+
+  // ─── Atlas Intel · Senador Piauí (2 vagas) · 28 ago-2 set 2026 · PI-03771/2026 · n=1.622 · online ──
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Senador Piaui 2026",
+    publication_date: "2026-09-03",
+    fieldwork_start: "2026-08-28",
+    fieldwork_end: "2026-09-02",
+    sample_size: 1622,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governador-senador-piaui-setembro-2026/",
+    tse_protocolo: "PI-03771/2026",
+    results: [
+      { candidate_name: "Marcelo Castro", percentage: 22.4 },
+      { candidate_name: "Júlio César", percentage: 17.2 },
+      { candidate_name: "Ciro Nogueira", percentage: 13.3 },
+      { candidate_name: "Tiago Junqueira", percentage: 8.2 },
+      { candidate_name: "Francinaldo Leão", percentage: 2.3 },
+      { candidate_name: "Antônio Barros", percentage: 1.7 },
+      { candidate_name: "Major Paulo Roberto", percentage: 1.2 },
+      { candidate_name: "Jorge Lopes", percentage: 1.0 },
+      { candidate_name: "Dionisio Carvalho", percentage: 0.6 },
+      { candidate_name: "Pastor Sena", percentage: 0.6 },
+      { candidate_name: "Pedro Laurentino", percentage: 0.6 },
+      { candidate_name: "Maria Madalena Nunes", percentage: 0.4 },
+      { candidate_name: "BRANCO/NULO", percentage: 15.1 },
+      { candidate_name: "NÃO SABE", percentage: 15.1 },
+    ],
+  },
+
+  // ─── Atlas Intel · Senador Santa Catarina (2 vagas) · 4-9 set 2026 · SC-02036/2026 · n=1.211 · online ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-senador-santa-catarina-setembro-2026/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Senador Santa Catarina 2026",
+    publication_date: "2026-09-10",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-09",
+    sample_size: 1211,
+    margin_of_error: 3.0,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-senador-santa-catarina-setembro-2026/",
+    tse_protocolo: "SC-02036/2026",
+    results: [
+      { candidate_name: "Carol de Toni", percentage: 28.4 },
+      { candidate_name: "Esperidiao Amin", percentage: 20.2 },
+      { candidate_name: "Carlos Bolsonaro", percentage: 14.9 },
+      { candidate_name: "Decio Lima", percentage: 11.9 },
+      { candidate_name: "Afranio Boppre", percentage: 9.3 },
+      { candidate_name: "Lunelli", percentage: 4.8 },
+      { candidate_name: "Túlio de Amorim Pfuetzenreiter", percentage: 2.4 },
+      { candidate_name: "BRANCO/NULO", percentage: 3.2 },
+      { candidate_name: "NÃO SABE", percentage: 3.2 },
+    ],
+  },
+
+  // ─── Atlas Intel · Governador Paraíba · 28 ago-2 set 2026 · PB-01118/2026 · n=1.207 · online ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governador-paraiba-setembro-2026/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador Paraiba 2026",
+    publication_date: "2026-09-03",
+    fieldwork_start: "2026-08-28",
+    fieldwork_end: "2026-09-02",
+    sample_size: 1207,
+    margin_of_error: 3.0,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governador-paraiba-setembro-2026/",
+    tse_protocolo: "PB-01118/2026",
+    results: [
+      { candidate_name: "Lucas Ribeiro", percentage: 42.4 },
+      { candidate_name: "Efraim Filho", percentage: 30.9 },
+      { candidate_name: "Cicero Lucena", percentage: 19.8 },
+      { candidate_name: "Yuri Ezequiel", percentage: 0.5 },
+      { candidate_name: "Camilo Duarte", percentage: 0.4 },
+      { candidate_name: "Pedro Coutinho", percentage: 0.3 },
+      { candidate_name: "BRANCO/NULO", percentage: 3.8 },
+      { candidate_name: "NÃO SABE", percentage: 1.9 },
+    ],
+  },
 ];
 
 async function main() {
