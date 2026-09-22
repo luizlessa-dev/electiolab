@@ -35,6 +35,47 @@ function toTseRegistrationFormat(protocolo: string | undefined): string | null {
   return m ? `${m[1]}-${m[2]}/${m[3]}` : protocolo;
 }
 
+/** Chave de conteúdo de uma pesquisa: conjunto (candidate_id, percentage), ordem-independente.
+ *  percentage vem da coluna numeric(5,2) — o client do Supabase devolve isso como string
+ *  ("40.00"), então normaliza os dois lados com Number().toFixed(2) antes de comparar. Usado
+ *  pro dedup em vez de scope/scenario_label como texto solto — ver auditoria de 2026-09-22
+ *  em [[ingest-manual-loop-duplicacao-polls]]: scope='nacional' por engano e scenario_label
+ *  escrito diferente ("Lula vs Flávio Bolsonaro" vs "Lula vs Flávio") deixavam a mesma
+ *  pesquisa passar pelo índice único como se fosse outra, mas o conteúdo era idêntico. */
+function resultSetKey(results: { candidate_id: string; percentage: number | string }[]): string {
+  return results
+    .map((r) => `${r.candidate_id}:${Number(r.percentage).toFixed(2)}`)
+    .sort()
+    .join("|");
+}
+
+/** Aviso pré-voo (antes de tocar o banco): mesma pesquisa em PENDING_POLLS aparecendo com
+ *  scope='nacional' (ou omitido) E com um scope de UF — o padrão "scope-fantasma" que gerou
+ *  9 dos 41 pares duplicados da auditoria de 2026-09-22 (alguém esqueceu de preencher `scope`
+ *  numa entrada estadual, caindo no default 'nacional'). Agrupa por institute_name+
+ *  election_name+fieldwork_end — mesma chave que o dedup por conteúdo usa, sem scope/
+ *  scenario_label. Não bloqueia a ingestão (pode ser coincidência legítima, ex. o mesmo
+ *  instituto lançando um número nacional e um recorte estadual na mesma janela de campo),
+ *  só sinaliza pra revisão manual do PENDING_POLLS antes de rodar. */
+function warnScopeFantasma(polls: typeof PENDING_POLLS): void {
+  const byKey = new Map<string, typeof PENDING_POLLS>();
+  for (const p of polls) {
+    const key = `${p.institute_name}|${p.election_name}|${p.fieldwork_end}`;
+    const list = byKey.get(key) ?? [];
+    list.push(p);
+    byKey.set(key, list);
+  }
+  for (const [key, group] of byKey) {
+    if (group.length < 2) continue;
+    const scopes = new Set(group.map((p) => p.scope ?? "nacional"));
+    if (scopes.has("nacional") && [...scopes].some((s) => s !== "nacional")) {
+      console.log(
+        `⚠️  possível scope-fantasma em PENDING_POLLS: "${key}" aparece com scopes [${[...scopes].join(", ")}] — confira se não é a mesma pesquisa com 'scope' esquecido em alguma entrada.`
+      );
+    }
+  }
+}
+
 // ────────────────────────────────────────────────────
 // PÓS-INGESTÃO: recálculo de médias + revalidação de ISR
 //
@@ -10163,6 +10204,8 @@ async function main() {
     return;
   }
 
+  warnScopeFantasma(PENDING_POLLS);
+
   let inserted = 0;
   let skipped = 0;
   let errors = 0;
@@ -10187,36 +10230,98 @@ async function main() {
       .single();
     if (!institute) { console.log("❌ instituto não encontrado"); errors++; continue; }
 
-    // Deduplicar
-    // Inclui scope: duas pesquisas do mesmo instituto/eleição/data podem ser
-    // recortes de UFs diferentes (ex.: Real Time Big Data roda a mesma pergunta
-    // presidencial em vários estados na mesma semana, campo terminando no mesmo dia).
-    // Inclui scenario_label: numa eleição de 2º turno, o mesmo instituto/data pode
-    // testar vários adversários hipotéticos na mesma rodada — sem isso, o 2º cenário
-    // em diante seria descartado como duplicata do 1º.
-    let dedupQuery = supabase
+    // Resolver candidatos dos resultados ANTES do dedup, pra poder comparar por
+    // CONTEÚDO (candidate_id + percentage) em vez de confiar em scope/scenario_label
+    // como texto solto. .maybeSingle() falha (data: null, error preenchido) tanto
+    // quando NENHUM candidato bate com o nome quanto quando MAIS DE UM bate (ex.:
+    // nome de urna do TSE difere do nome jornalístico usado em PENDING_POLLS, ou
+    // dois candidatos ambíguos no mesmo momento) — checar o erro evita tratar os
+    // dois casos como "não encontrado" e perder o resultado sem log.
+    const resolvedResults: { candidate_id: string; candidate_name: string; percentage: number }[] = [];
+    const unresolved: string[] = [];
+    for (const r of poll.results) {
+      // is_active=true: candidatos excluídos/duplicados na revisão de 2026-09
+      // (mesmo nome ainda casa por ilike, mas não é mais candidato real ao cargo)
+      // não podem voltar a receber poll_results silenciosamente. Se a pesquisa
+      // citar um deles, cai em "candidatos não resolvidos" pra revisão manual.
+      const { data: candidate, error: candidateError } = await supabase
+        .from("candidates")
+        .select("id")
+        .eq("election_id", election.id)
+        .eq("is_active", true)
+        .ilike("name", r.candidate_name)
+        .maybeSingle();
+      if (candidateError || !candidate) {
+        unresolved.push(
+          candidateError
+            ? `${r.candidate_name} (${candidateError.message})`
+            : r.candidate_name
+        );
+        continue;
+      }
+      resolvedResults.push({ candidate_id: candidate.id, candidate_name: r.candidate_name, percentage: r.percentage });
+    }
+
+    // Deduplicar por CONTEÚDO: mesmo election_id+institute_id+fieldwork_end e
+    // exatamente o mesmo conjunto de (candidate_id, percentage) já registrado.
+    // scope e scenario_label continuam gravados na tabela (úteis pra exibição e
+    // pro índice único em (scope, scenario_label) como rede de segurança), mas
+    // não são mais a fonte de verdade do "já existe": uma pesquisa estadual
+    // inserida 2x — uma com o scope certo, outra com scope='nacional' por
+    // engano — ou um cenário de 2º turno reinserido com scenario_label escrito
+    // diferente ("Lula vs Flávio Bolsonaro" vs "Lula vs Flávio") têm CONTEÚDO
+    // idêntico mesmo com texto de scope/scenario_label diferente — foi assim
+    // que a auditoria de 2026-09-22 confirmou os 41 pares que o índice único
+    // deixou passar. Ver [[ingest-manual-loop-duplicacao-polls]].
+    const { data: candidatePolls, error: candidatePollsError } = await supabase
       .from("polls")
-      .select("id")
+      .select("id, scope, scenario_label")
       .eq("election_id", election.id)
       .eq("institute_id", institute.id)
-      .eq("fieldwork_end", poll.fieldwork_end)
-      .eq("scope", poll.scope ?? "nacional");
-    dedupQuery = poll.scenario_label
-      ? dedupQuery.eq("scenario_label", poll.scenario_label)
-      : dedupQuery.is("scenario_label", null);
-    // .maybeSingle() lança erro (data: null) se já existir MAIS DE UMA linha
-    // batendo a mesma chave de dedup. Tratar isso como "não achei" faria o
-    // script inserir mais uma cópia a cada execução — um loop de duplicação
-    // que só piora sozinho (foi o que gerou 53 cópias do GERP 21/05/2026).
-    // Em vez disso, contar as linhas e tratar 1+ sempre como "já existe".
-    const { data: existingRows, error: dedupError } = await dedupQuery;
-    if (dedupError) { console.log(`❌ dedup: ${dedupError.message}`); errors++; continue; }
-    if (existingRows && existingRows.length > 0) {
-      if (existingRows.length > 1) {
-        console.log(`⏭️  já existe (⚠️  ${existingRows.length} linhas duplicadas — limpar manualmente: ${existingRows.map((r) => r.id).join(", ")})`);
-      } else {
-        console.log("⏭️  já existe");
+      .eq("fieldwork_end", poll.fieldwork_end);
+    if (candidatePollsError) { console.log(`❌ dedup: ${candidatePollsError.message}`); errors++; continue; }
+
+    let duplicateOf: { id: string; scope: string | null; scenario_label: string | null } | null = null;
+    if (candidatePolls && candidatePolls.length > 0 && resolvedResults.length > 0) {
+      const { data: existingResults, error: existingResultsError } = await supabase
+        .from("poll_results")
+        .select("poll_id, candidate_id, percentage")
+        .in("poll_id", candidatePolls.map((p) => p.id));
+      if (existingResultsError) { console.log(`❌ dedup: ${existingResultsError.message}`); errors++; continue; }
+
+      const byPoll = new Map<string, { candidate_id: string; percentage: number | string }[]>();
+      for (const row of existingResults ?? []) {
+        const list = byPoll.get(row.poll_id) ?? [];
+        list.push({ candidate_id: row.candidate_id, percentage: row.percentage });
+        byPoll.set(row.poll_id, list);
       }
+
+      const newKey = resultSetKey(resolvedResults);
+      for (const p of candidatePolls) {
+        const existing = byPoll.get(p.id) ?? [];
+        // Só considera duplicata se AMBOS os lados tiverem resultados — um poll
+        // existente sem poll_results (ainda não resolvido) não deve "engolir"
+        // uma pesquisa nova só porque as duas têm conjunto vazio.
+        if (existing.length === 0) continue;
+        if (resultSetKey(existing) === newKey) {
+          duplicateOf = p;
+          break;
+        }
+      }
+    } else if (candidatePolls && candidatePolls.length > 0 && resolvedResults.length === 0) {
+      // Nenhum candidato resolveu (ex.: nome de urna divergente, candidato ainda não
+      // cadastrado) — não há conteúdo pra comparar. Cai de volta na chave antiga
+      // (scope + scenario_label exatos) só pra não reinserir o mesmo poll "vazio" a
+      // cada execução enquanto os candidatos não são resolvidos manualmente.
+      duplicateOf = candidatePolls.find(
+        (p) =>
+          (p.scope ?? "nacional") === (poll.scope ?? "nacional") &&
+          (p.scenario_label ?? null) === (poll.scenario_label ?? null)
+      ) ?? null;
+    }
+
+    if (duplicateOf) {
+      console.log(`⏭️  já existe (duplicata de conteúdo — poll ${duplicateOf.id}, scope="${duplicateOf.scope ?? "nacional"}" scenario_label="${duplicateOf.scenario_label ?? "—"}")`);
       skipped++;
       continue;
     }
@@ -10246,38 +10351,12 @@ async function main() {
 
     if (error || !newPoll) { console.log(`❌ ${error?.message}`); errors++; continue; }
 
-    // Inserir resultados
-    // .maybeSingle() falha (data: null, error preenchido) tanto quando NENHUM
-    // candidato bate com o nome quanto quando MAIS DE UM bate (ex.: nome de
-    // urna do TSE difere do nome jornalístico usado em PENDING_POLLS, ou dois
-    // candidatos ambíguos no mesmo momento). Sem checar o erro, os dois casos
-    // eram tratados como "não encontrado" e o resultado sumia sem log.
+    // Inserir resultados — candidatos já resolvidos acima, antes do dedup.
     let resultsInserted = 0;
-    const unresolved: string[] = [];
-    for (const r of poll.results) {
-      // is_active=true: candidatos excluídos/duplicados na revisão de
-      // 2026-09 (mesmo nome ainda casa por ilike, mas não é mais candidato
-      // real ao cargo) não podem voltar a receber poll_results silenciosamente.
-      // Se a pesquisa citar um deles, cai em "candidatos não resolvidos" pra
-      // revisão manual em vez de reativar o erro que já foi corrigido.
-      const { data: candidate, error: candidateError } = await supabase
-        .from("candidates")
-        .select("id")
-        .eq("election_id", election.id)
-        .eq("is_active", true)
-        .ilike("name", r.candidate_name)
-        .maybeSingle();
-      if (candidateError || !candidate) {
-        unresolved.push(
-          candidateError
-            ? `${r.candidate_name} (${candidateError.message})`
-            : r.candidate_name
-        );
-        continue;
-      }
+    for (const r of resolvedResults) {
       const { error: resultError } = await supabase.from("poll_results").insert({
         poll_id: newPoll.id,
-        candidate_id: candidate.id,
+        candidate_id: r.candidate_id,
         percentage: r.percentage,
       });
       if (resultError) {
@@ -10285,7 +10364,7 @@ async function main() {
         continue;
       }
       resultsInserted++;
-      touchedCandidateIds.add(candidate.id);
+      touchedCandidateIds.add(r.candidate_id);
     }
 
     if (unresolved.length > 0) {
