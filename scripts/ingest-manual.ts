@@ -9811,6 +9811,56 @@ const PENDING_POLLS: Array<{
       { candidate_name: "NÃO SABE", percentage: 7.0 },
     ],
   },
+
+  // ─── Real Time Big Data · Governador Acre · 16-19 set 2026 · AC-01699/2026 · n=1.600 · telefônica ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-acre-setembro-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Acre 2026",
+    publication_date: "2026-09-21",
+    fieldwork_start: "2026-09-16",
+    fieldwork_end: "2026-09-19",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-acre-setembro-2026/",
+    tse_protocolo: "AC-01699/2026",
+    results: [
+      { candidate_name: "Mailza Assis", percentage: 36.0 },
+      { candidate_name: "Alan Rick", percentage: 33.0 },
+      { candidate_name: "Tiao Bocalom", percentage: 15.0 },
+      { candidate_name: "Thor Dantas", percentage: 9.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 4.0 },
+      { candidate_name: "NÃO SABE", percentage: 3.0 },
+    ],
+  },
+
+  // ─── Real Time Big Data · Senador Acre (2 vagas) · 16-19 set 2026 · AC-01699/2026 · n=1.600 · telefônica ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-acre-setembro-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Acre 2026",
+    publication_date: "2026-09-21",
+    fieldwork_start: "2026-09-16",
+    fieldwork_end: "2026-09-19",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-acre-setembro-2026/",
+    tse_protocolo: "AC-01699/2026",
+    results: [
+      { candidate_name: "Gladson Cameli", percentage: 24.0 },
+      { candidate_name: "Marcio Bittar", percentage: 21.0 },
+      { candidate_name: "Mara Rocha", percentage: 15.0 },
+      { candidate_name: "Jorge Viana", percentage: 15.0 },
+      { candidate_name: "Eduardo Velloso", percentage: 6.0 },
+      { candidate_name: "Sérgio Petecão", percentage: 5.0 },
+      { candidate_name: "Professor Inacio Moreira", percentage: 4.0 },
+      { candidate_name: "Dr. Junior Feitosa", percentage: 1.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 4.0 },
+      { candidate_name: "NÃO SABE", percentage: 5.0 },
+    ],
+  },
 ];
 
 async function main() {
