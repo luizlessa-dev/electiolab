@@ -10307,6 +10307,80 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Flávio Bolsonaro", percentage: 51 },
     ],
   },
+
+  // ─── Atlas Intel · Governador Alagoas · 4-9 set 2026 · AL-00447/2026 · n=1.208 · online ──
+  // Fonte: https://www.metropoles.com/brasil/atlasintel-jhc-tem-493-e-renan-filho-464-no-1o-turno-em-alagoas
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador Alagoas 2026",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-09",
+    sample_size: 1208,
+    margin_of_error: 3.0,
+    methodology: "online",
+    source_url: "https://www.metropoles.com/brasil/atlasintel-jhc-tem-493-e-renan-filho-464-no-1o-turno-em-alagoas",
+    tse_protocolo: "AL-00447/2026",
+    results: [
+      { candidate_name: "JHC", percentage: 49.3 },
+      { candidate_name: "Renan Filho", percentage: 46.4 },
+      { candidate_name: "Márcio Jambo", percentage: 1.2 },
+      { candidate_name: "Lenilda Luna", percentage: 0.2 },
+      { candidate_name: "BRANCO/NULO", percentage: 1.3 },
+      { candidate_name: "NÃO SABE", percentage: 1.5 },
+    ],
+  },
+
+  // ─── Atlas Intel · Governador Mato Grosso · 4-9 set 2026 · MT-02766/2026 · n=1.209 · online ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governador-mato-grosso-setembro-2026/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador Mato Grosso 2026",
+    publication_date: "2026-09-11",
+    fieldwork_start: "2026-09-04",
+    fieldwork_end: "2026-09-09",
+    sample_size: 1209,
+    margin_of_error: 3.0,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governador-mato-grosso-setembro-2026/",
+    tse_protocolo: "MT-02766/2026",
+    results: [
+      { candidate_name: "Wellington Fagundes", percentage: 34.4 },
+      { candidate_name: "Otaviano Pivetta", percentage: 30.8 },
+      { candidate_name: "Natasha Slhessarenko", percentage: 23.2 },
+      { candidate_name: "Rafaell Milas", percentage: 3.5 },
+      { candidate_name: "Mauricio Coelho", percentage: 1.3 },
+      { candidate_name: "Sargento Laudicério", percentage: 0.7 },
+      { candidate_name: "BRANCO/NULO", percentage: 1.9 },
+      { candidate_name: "NÃO SABE", percentage: 4.3 },
+    ],
+  },
+
+  // ─── Atlas Intel · Governador Mato Grosso do Sul · 27 ago-1 set 2026 · MS-02047/2026 · n=1.204 · online ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governador-mato-grosso-do-sul-setembro-2026/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador MS 2026 - 1º Turno",
+    publication_date: "2026-09-03",
+    fieldwork_start: "2026-08-27",
+    fieldwork_end: "2026-09-01",
+    sample_size: 1204,
+    margin_of_error: 3.0,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governador-mato-grosso-do-sul-setembro-2026/",
+    tse_protocolo: "MS-02047/2026",
+    results: [
+      { candidate_name: "Eduardo Riedel", percentage: 49.0 },
+      { candidate_name: "Fabio Trad", percentage: 26.0 },
+      { candidate_name: "Catan", percentage: 12.4 },
+      { candidate_name: "Economista Renato Gomes", percentage: 0.5 },
+      { candidate_name: "Delcidio Amaral", percentage: 0.3 },
+      { candidate_name: "Lucien Rezende", percentage: 0.3 },
+      { candidate_name: "Daniel Lemes", percentage: 0.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 5.0 },
+      { candidate_name: "NÃO SABE", percentage: 6.5 },
+    ],
+  },
 ];
 
 async function main() {
