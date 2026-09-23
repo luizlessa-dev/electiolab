@@ -1,0 +1,80 @@
+name: Ingest TSE Eleitorado (monthly)
+
+# Perfil do eleitorado por município — dataset "Eleitorado - Atual" do TSE
+# (scripts/ingest-eleitorado.ts). Mensal porque o TSE atualiza esse dataset
+# esporadicamente (alistamento/transferência contínuos, não diário).
+
+on:
+  schedule:
+    - cron: "0 14 1 * *" # dia 1 de cada mês, 14:00 UTC (11:00 BRT)
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Ingest eleitorado por município TSE
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npx tsx scripts/ingest-eleitorado.ts --apply
+
+      - name: Open issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const today = new Date().toISOString().slice(0, 10);
+            const title = `🚨 Cron TSE Eleitorado falhou — ${today}`;
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              labels: "cron-failure",
+              per_page: 50,
+            });
+            const existing = issues.find((i) => i.title.includes("Cron TSE Eleitorado falhou"));
+            const body = [
+              `Workflow **Ingest TSE Eleitorado (monthly)** falhou.`,
+              ``,
+              `**Run:** ${runUrl}`,
+              `**Quando:** ${new Date().toISOString()}`,
+              `**Disparo:** ${context.eventName}`,
+              ``,
+              `Rodar manual:`,
+              `\`\`\`bash`,
+              `gh workflow run ingest-eleitorado.yml`,
+              `\`\`\``,
+            ].join("\n");
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body: `Nova falha — ${runUrl}`,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ["cron-failure", "automated"],
+              });
+            }
