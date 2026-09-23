@@ -10381,6 +10381,32 @@ const PENDING_POLLS: Array<{
       { candidate_name: "NÃO SABE", percentage: 6.5 },
     ],
   },
+
+  // ─── Atlas Intel · Governador Amazonas · 29 ago-3 set 2026 · AM-04939/2026 · n=1.185 · online ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governador-amazonas-setembro-2026/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador Amazonas 2026",
+    publication_date: "2026-09-04",
+    fieldwork_start: "2026-08-29",
+    fieldwork_end: "2026-09-03",
+    sample_size: 1185,
+    margin_of_error: 3.0,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governador-amazonas-setembro-2026/",
+    tse_protocolo: "AM-04939/2026",
+    results: [
+      { candidate_name: "Omar Aziz", percentage: 31.0 },
+      { candidate_name: "Maria do Carmo Seffair", percentage: 27.4 },
+      { candidate_name: "Roberto Cidade", percentage: 18.8 },
+      { candidate_name: "David Almeida", percentage: 8.7 },
+      { candidate_name: "Cabo Daciolo", percentage: 6.3 },
+      { candidate_name: "Isael Munduruku", percentage: 1.2 },
+      { candidate_name: "Gilberto Vasconcelos", percentage: 0.1 },
+      { candidate_name: "BRANCO/NULO", percentage: 2.5 },
+      { candidate_name: "NÃO SABE", percentage: 3.9 },
+    ],
+  },
 ];
 
 async function main() {
