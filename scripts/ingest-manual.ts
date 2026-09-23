@@ -10193,6 +10193,120 @@ const PENDING_POLLS: Array<{
       { candidate_name: "NÃO SABE", percentage: 1.9 },
     ],
   },
+
+  // ─── Atlas Intel · Governador Pernambuco · 15-20 set 2026 · PE-02023/2026 · n=1.836 · online ──
+  // Fonte: https://www.moneytimes.com.br/atlasintel-raquel-lyra-e-joao-campos-tem-empate-tecnico-em-pernambuco-lula-lidera-com-folga-gaep/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador PE 2026 - 1º Turno",
+    publication_date: "2026-09-22",
+    fieldwork_start: "2026-09-15",
+    fieldwork_end: "2026-09-20",
+    sample_size: 1836,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://www.moneytimes.com.br/atlasintel-raquel-lyra-e-joao-campos-tem-empate-tecnico-em-pernambuco-lula-lidera-com-folga-gaep/",
+    tse_protocolo: "PE-02023/2026",
+    results: [
+      { candidate_name: "Raquel Lyra", percentage: 48.6 },
+      { candidate_name: "João Campos", percentage: 47.4 },
+    ],
+  },
+
+  // ─── Atlas Intel · Presidencial (recorte PE) · 15-20 set 2026 · BR-09256/2026 · n=1.836 · online ──
+  // Fonte: https://www.moneytimes.com.br/atlasintel-raquel-lyra-e-joao-campos-tem-empate-tecnico-em-pernambuco-lula-lidera-com-folga-gaep/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-22",
+    fieldwork_start: "2026-09-15",
+    fieldwork_end: "2026-09-20",
+    sample_size: 1836,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://www.moneytimes.com.br/atlasintel-raquel-lyra-e-joao-campos-tem-empate-tecnico-em-pernambuco-lula-lidera-com-folga-gaep/",
+    tse_protocolo: "BR-09256/2026",
+    scope: "PE",
+    results: [
+      { candidate_name: "Lula", percentage: 58.3 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 29.9 },
+    ],
+  },
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-22",
+    fieldwork_start: "2026-09-15",
+    fieldwork_end: "2026-09-20",
+    sample_size: 1836,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://www.moneytimes.com.br/atlasintel-raquel-lyra-e-joao-campos-tem-empate-tecnico-em-pernambuco-lula-lidera-com-folga-gaep/",
+    tse_protocolo: "BR-09256/2026",
+    scope: "PE",
+    results: [
+      { candidate_name: "Lula", percentage: 60.5 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 32.7 },
+    ],
+  },
+
+  // ─── Real Time Big Data · Governador Paraná · 11-15 set 2026 · PR-00532/2026 · n=1.600 · telefônica ──
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/moro-a-frente-na-disputa-ao-governo-do-parana-diz-real-time-big-data/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Parana 2026",
+    publication_date: "2026-09-21",
+    fieldwork_start: "2026-09-11",
+    fieldwork_end: "2026-09-15",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/moro-a-frente-na-disputa-ao-governo-do-parana-diz-real-time-big-data/",
+    tse_protocolo: "PR-00532/2026",
+    results: [
+      { candidate_name: "Sergio Moro", percentage: 35 },
+      { candidate_name: "Sandro Alex", percentage: 27 },
+      { candidate_name: "Requiao Filho", percentage: 22 },
+    ],
+  },
+
+  // ─── Real Time Big Data · Presidencial (recorte SP) · 16-19 set 2026 · BR-09702/2026 · n=2.000 · telefônica ──
+  // Fonte 1º turno: https://www.spagora.com.br/politica/eleicoes/real-time-big-data-flavio-lula-presidente-sao-paulo/
+  // Fonte 2º turno: https://www.poder360.com.br/poder-eleicoes-2026/flavio-tem-51-contra-45-de-lula-no-2o-turno-em-sp-diz-pesquisa/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-21",
+    fieldwork_start: "2026-09-16",
+    fieldwork_end: "2026-09-19",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.spagora.com.br/politica/eleicoes/real-time-big-data-flavio-lula-presidente-sao-paulo/",
+    tse_protocolo: "BR-09702/2026",
+    scope: "SP",
+    results: [
+      { candidate_name: "Lula", percentage: 35 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 41 },
+    ],
+  },
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-21",
+    fieldwork_start: "2026-09-16",
+    fieldwork_end: "2026-09-19",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/flavio-tem-51-contra-45-de-lula-no-2o-turno-em-sp-diz-pesquisa/",
+    tse_protocolo: "BR-09702/2026",
+    scope: "SP",
+    results: [
+      { candidate_name: "Lula", percentage: 45 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 51 },
+    ],
+  },
 ];
 
 async function main() {
