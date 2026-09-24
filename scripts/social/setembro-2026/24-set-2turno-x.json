@@ -5,12 +5,11 @@
     "x"
   ],
   "modo": "comparacao",
-  "eyebrow": "2º turno · e se fosse hoje?",
-  "titulo": "[ATUALIZAR]% x [ATUALIZAR]%",
-  "linha_fina": "O 1º turno decide quem disputa — o 2º turno é outro jogo. Simulação de hoje pro confronto mais citado entre os líderes.",
-  "fonte": "ElectioLab · média ponderada por recência, amostra e acurácia histórica do instituto · metodologia em electiolab.com/metodologia",
+  "eyebrow": "Cenário 2º turno · Lula x Flávio Bolsonaro",
+  "titulo": "45,4% x 45,0%",
+  "linha_fina": "O 1º turno decide quem disputa — o 2º turno é outro jogo. Simulação de hoje pro confronto mais citado entre os líderes: empate técnico.",
+  "fonte": "ElectioLab · média ponderada por recência, amostra e acurácia histórica do instituto · cenário conferido em 24/09/2026 (29 pesquisas, 82.651 entrevistas) · metodologia em electiolab.com/metodologia",
   "url": "https://electiolab.com/quem-vence-no-segundo-turno-presidencia-2026",
-  "precisa_dado_fresco": true,
-  "nota_checagem": "Não havia texto de X escrito no CALENDARIO-X.md original pra 24/09 (o doc só diz 'tem âncora'). Decisão registrada em 23-24/09/2026: espelhar o ângulo do carrossel de Instagram e do post de LinkedIn do mesmo dia, em vez da rotação normal de quinta (mito/verdade). Puxar o cenário de 2º turno mais relevante hoje em quem-vence-no-segundo-turno-presidencia-2026 antes de publicar.",
-  "legenda": "O 1º turno decide quem disputa. O 2º turno é outro jogo — [ATUALIZAR]% x [ATUALIZAR]% no cenário mais citado, com os dados de hoje.\n\nTodos os cenários simulados e atualizados: electiolab.com/quem-vence-no-segundo-turno-presidencia-2026"
+  "precisa_dado_fresco": false,
+  "legenda": "O 1º turno decide quem disputa. O 2º turno é outro jogo — Lula 45,4% x Flávio Bolsonaro 45,0% no cenário mais citado, com os dados de hoje (29 pesquisas, 82.651 entrevistas). Empate técnico.\n\nTodos os cenários simulados e atualizados: electiolab.com/quem-vence-no-segundo-turno-presidencia-2026"
 }

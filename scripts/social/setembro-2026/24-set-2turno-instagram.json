@@ -6,12 +6,11 @@
     "instagram-story"
   ],
   "modo": "comparacao",
-  "eyebrow": "2º turno · e se fosse hoje?",
-  "titulo": "[ATUALIZAR]% x [ATUALIZAR]%",
-  "linha_fina": "O 1º turno decide quem disputa, mas o 2º turno é outro jogo. A gente simula os principais confrontos possíveis com os dados de hoje.",
-  "fonte": "ElectioLab · média ponderada por recência, amostra e acurácia histórica do instituto · metodologia em electiolab.com/metodologia",
+  "eyebrow": "Cenário 2º turno · Lula x Flávio Bolsonaro",
+  "titulo": "45,4% x 45,0%",
+  "linha_fina": "O 1º turno decide quem disputa, mas o 2º turno é outro jogo. No cenário mais citado hoje, entre os dois líderes, segue empate técnico.",
+  "fonte": "ElectioLab · média ponderada por recência, amostra e acurácia histórica do instituto · cenário conferido em 24/09/2026 (29 pesquisas, 82.651 entrevistas) · metodologia em electiolab.com/metodologia",
   "url": "https://electiolab.com/quem-vence-no-segundo-turno-presidencia-2026",
-  "precisa_dado_fresco": true,
-  "nota_checagem": "Carrossel original tem 5 slides (CALENDARIO-INSTAGRAM.md, Qui 24/09) — o script gera só 1 card representativo, como já foi feito em 07-out-virada-segundo-turno.json. Puxar o cenário mais relevante em quem-vence-no-segundo-turno-presidencia-2026 antes de publicar.",
-  "legenda": "O 1º turno decide quem disputa, mas o 2º turno é outro jogo.\n\nA gente simula os principais confrontos possíveis com os dados de hoje. Alguns são empate técnico, outros têm folga clara.\n\nSite tem todos os cenários atualizados, sem esperar boato de WhatsApp. Link na bio.\n\n.\n.\n.\n#eleicoes2026 #segundoturno #eleicoespresidenciais #politicabrasil"
+  "precisa_dado_fresco": false,
+  "legenda": "O 1º turno decide quem disputa, mas o 2º turno é outro jogo.\n\nNo cenário mais citado, com os dados de hoje: Lula 45,4% x Flávio Bolsonaro 45,0% — empate técnico (29 pesquisas, 82.651 entrevistas). A gente simula os outros confrontos possíveis também.\n\nSite tem todos os cenários atualizados, sem esperar boato de WhatsApp. Link na bio.\n\n.\n.\n.\n#eleicoes2026 #segundoturno #eleicoespresidenciais #politicabrasil"
 }

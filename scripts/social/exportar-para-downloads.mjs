@@ -150,7 +150,13 @@ for (const campanha of campanhas) {
 
   for (const arquivo of readdirSync(dirCampanha).filter((f) => f.endsWith('.json')).sort()) {
     const base = arquivo.replace(/\.json$/, '');
-    if (somente && base !== somente) continue;
+    // IMPORTANTE: `--somente` NÃO filtra aqui. Uma pasta pode juntar vários
+    // JSONs (ex.: 24-09-qui-2turno tem x + instagram + linkedin, 3 arquivos).
+    // Se filtrasse aqui, forçar só um arquivo reescreveria o LEIA.txt da
+    // pasta com a checklist incompleta, perdendo as linhas dos arquivos
+    // irmãos (bug encontrado em 24/09/2026 — corrigido antes de ir pro ar).
+    // O grupo sempre nasce completo; `--somente` só decide, lá na hora de
+    // escrever, quais pastas merecem ser tocadas nesta rodada.
 
     const cfg = JSON.parse(readFileSync(path.join(dirCampanha, arquivo), 'utf8'));
     if (!cfg.publicar_em) {
@@ -199,6 +205,7 @@ for (const campanha of campanhas) {
         grupo.notas.push(`[${plataformas.join('+')}] ${cfg.nota_checagem}`);
       }
       grupo.chaves = [...(grupo.chaves ?? []), chaveMemoria];
+      grupo.bases = [...(grupo.bases ?? []), base];
     }
   }
 }
@@ -207,6 +214,11 @@ let exportadas = 0;
 const jaExistem = [];
 
 for (const [nomePasta, grupo] of grupos) {
+  // `--somente=<base>` toca só as pastas que tem aquele arquivo entre os que
+  // a compoem — mas SEMPRE escreve a pasta inteira (todos os arquivos do
+  // grupo), nunca um subconjunto. Ver comentario acima, na montagem do grupo.
+  if (somente && !grupo.bases.includes(somente)) continue;
+
   const todasJaExportadas = grupo.chaves.every((c) => jaExportadas.has(c));
   const pasta = path.join(DESTINO, nomePasta);
   if ((existsSync(pasta) || todasJaExportadas) && !forcar) {
