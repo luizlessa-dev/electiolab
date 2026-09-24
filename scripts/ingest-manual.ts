@@ -10407,6 +10407,169 @@ const PENDING_POLLS: Array<{
       { candidate_name: "NÃO SABE", percentage: 3.9 },
     ],
   },
+
+  // ─── Quaest · Governador São Paulo · 19-22 set 2026 · SP-02456/2026 · n=1.800 · telefônica ──
+  // Fonte: https://ncnews.com.br/2026/09/23/quaest-em-sp-tarcisio-tem-44-e-haddad-27-na-disputa-pelo-governo/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador SP 2026 - 1º Turno",
+    publication_date: "2026-09-23",
+    fieldwork_start: "2026-09-19",
+    fieldwork_end: "2026-09-22",
+    sample_size: 1800,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://ncnews.com.br/2026/09/23/quaest-em-sp-tarcisio-tem-44-e-haddad-27-na-disputa-pelo-governo/",
+    tse_protocolo: "SP-02456/2026",
+    results: [
+      { candidate_name: "Tarcísio", percentage: 44.0 },
+      { candidate_name: "Haddad", percentage: 27.0 },
+      { candidate_name: "Policial Edjane", percentage: 1.0 },
+      { candidate_name: "Carlos Machado", percentage: 1.0 },
+      { candidate_name: "Vera Lúcia", percentage: 1.0 },
+      { candidate_name: "Izadora Dias", percentage: 1.0 },
+      { candidate_name: "Vivian Mendes", percentage: 0.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 11.0 },
+      { candidate_name: "NÃO SABE", percentage: 14.0 },
+    ],
+  },
+
+  // ─── Quaest · Governador Rio de Janeiro (com Garotinho) · 19-22 set 2026 · RJ-04982/2026 · n=1.302 · telefônica ──
+  // Fonte: https://ncnews.com.br/2026/09/23/quaest-no-rj-paes-tem-36-douglas-ruas-23-e-garotinho-8-para-o-governo/
+  // Anthony Garotinho (8%) não cadastrado como candidato ativo nessa eleição — fica como não resolvido.
+  {
+    institute_name: "Quaest",
+    election_name: "Governador RJ 2026 - 1º Turno",
+    publication_date: "2026-09-23",
+    fieldwork_start: "2026-09-19",
+    fieldwork_end: "2026-09-22",
+    sample_size: 1302,
+    margin_of_error: 3.0,
+    methodology: "telefonica",
+    source_url: "https://ncnews.com.br/2026/09/23/quaest-no-rj-paes-tem-36-douglas-ruas-23-e-garotinho-8-para-o-governo/",
+    tse_protocolo: "RJ-04982/2026",
+    results: [
+      { candidate_name: "Eduardo Paes", percentage: 36.0 },
+      { candidate_name: "Douglas Ruas", percentage: 23.0 },
+      { candidate_name: "Anthony Garotinho", percentage: 8.0 },
+      { candidate_name: "André Marinho", percentage: 1.0 },
+      { candidate_name: "Coronel Busnello", percentage: 1.0 },
+      { candidate_name: "Cyro Garcia", percentage: 1.0 },
+      { candidate_name: "Juliete Pantoja", percentage: 1.0 },
+      { candidate_name: "William Siri", percentage: 1.0 },
+      { candidate_name: "Luan Monteiro", percentage: 0.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 12.0 },
+      { candidate_name: "NÃO SABE", percentage: 16.0 },
+    ],
+  },
+
+  // ─── Quaest · Governador Pernambuco · 22-24 set 2026 · PE-05671/2026 · n=1.302 · telefônica ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-pernambuco-setembro-2026-2/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador PE 2026 - 1º Turno",
+    publication_date: "2026-09-23",
+    fieldwork_start: "2026-09-22",
+    fieldwork_end: "2026-09-24",
+    sample_size: 1302,
+    margin_of_error: 3.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-pernambuco-setembro-2026-2/",
+    tse_protocolo: "PE-05671/2026",
+    results: [
+      { candidate_name: "Raquel Lyra", percentage: 41.0 },
+      { candidate_name: "João Campos", percentage: 39.0 },
+      { candidate_name: "Ivan Moraes", percentage: 1.0 },
+      { candidate_name: "Renan", percentage: 1.0 },
+      { candidate_name: "Professora Camila", percentage: 0.0 },
+      { candidate_name: "Victor Assis", percentage: 0.0 },
+      { candidate_name: "Guilherme Fonseca", percentage: 0.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 6.0 },
+      { candidate_name: "NÃO SABE", percentage: 12.0 },
+    ],
+  },
+
+  // ─── Quaest · Governador Minas Gerais · 19-22 set 2026 · MG-03276/2026 · n=1.506 · telefônica ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-minas-gerais-setembro-2026-2/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador MG 2026 - 1º Turno",
+    publication_date: "2026-09-23",
+    fieldwork_start: "2026-09-19",
+    fieldwork_end: "2026-09-22",
+    sample_size: 1506,
+    margin_of_error: 3.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-minas-gerais-setembro-2026-2/",
+    tse_protocolo: "MG-03276/2026",
+    results: [
+      { candidate_name: "Cleitinho", percentage: 37.0 },
+      { candidate_name: "Patrus Ananias", percentage: 16.0 },
+      { candidate_name: "Alexandre Kalil", percentage: 8.0 },
+      { candidate_name: "Mateus Simões", percentage: 7.0 },
+      { candidate_name: "Flávio Roscoe", percentage: 5.0 },
+      { candidate_name: "Gabriel Azevedo", percentage: 2.0 },
+      { candidate_name: "Ben Mendes", percentage: 1.0 },
+      { candidate_name: "Túlio Lopes", percentage: 1.0 },
+      { candidate_name: "Indira Xavier", percentage: 0.0 },
+      { candidate_name: "Henrique Áreas", percentage: 0.0 },
+      { candidate_name: "Rafael Duda", percentage: 0.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 7.0 },
+      { candidate_name: "NÃO SABE", percentage: 16.0 },
+    ],
+  },
+
+  // ─── Quaest · Governador Ceará · 19-22 set 2026 · CE-08268/2026 · n=900 · telefônica ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-ceara-setembro-2026-2/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador CE 2026 - 1º Turno",
+    publication_date: "2026-09-23",
+    fieldwork_start: "2026-09-19",
+    fieldwork_end: "2026-09-22",
+    sample_size: 900,
+    margin_of_error: 3.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-ceara-setembro-2026-2/",
+    tse_protocolo: "CE-08268/2026",
+    results: [
+      { candidate_name: "Ciro Gomes", percentage: 43.0 },
+      { candidate_name: "Elmano de Freitas", percentage: 41.0 },
+      { candidate_name: "Delegado Huggo", percentage: 1.0 },
+      { candidate_name: "Vera Lúcia", percentage: 1.0 },
+      { candidate_name: "Zé Batista", percentage: 0.0 },
+      { candidate_name: "Danilo Soares", percentage: 0.0 },
+      { candidate_name: "Ieri Braga", percentage: 0.0 },
+      { candidate_name: "Serley Leal", percentage: 0.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 6.0 },
+      { candidate_name: "NÃO SABE", percentage: 8.0 },
+    ],
+  },
+
+  // ─── Quaest · Governador Paraíba · 18-21 set 2026 · PB-01325/2026 · n=804 · telefônica ──
+  // Fonte: https://www.cartacapital.com.br/politica/quaest-lucas-ribeiro-lidera-disputa-pelo-governo-da-paraiba/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador Paraiba 2026",
+    publication_date: "2026-09-22",
+    fieldwork_start: "2026-09-18",
+    fieldwork_end: "2026-09-21",
+    sample_size: 804,
+    margin_of_error: 3.0,
+    methodology: "telefonica",
+    source_url: "https://www.cartacapital.com.br/politica/quaest-lucas-ribeiro-lidera-disputa-pelo-governo-da-paraiba/",
+    tse_protocolo: "PB-01325/2026",
+    results: [
+      { candidate_name: "Lucas Ribeiro", percentage: 49.0 },
+      { candidate_name: "Efraim Filho", percentage: 16.0 },
+      { candidate_name: "Cicero Lucena", percentage: 15.0 },
+      { candidate_name: "Pedro Coutinho", percentage: 1.0 },
+      { candidate_name: "Camilo Duarte", percentage: 0.0 },
+      { candidate_name: "Yuri Ezequiel", percentage: 0.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 7.0 },
+      { candidate_name: "NÃO SABE", percentage: 12.0 },
+    ],
+  },
 ];
 
 async function main() {
