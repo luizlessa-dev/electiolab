@@ -10570,6 +10570,97 @@ const PENDING_POLLS: Array<{
       { candidate_name: "NÃO SABE", percentage: 12.0 },
     ],
   },
+
+  // ─── Curadoria 24/09/2026 — lote pesqele_missing (AtlasIntel/Estadão MG, SP, RJ, RS) ──
+  // AtlasIntel · 15-20 set 2026 · TSE MG-03290/2026 · n=1.800 · online
+  // Fonte: https://exame.com/brasil/atlasintel-cleitinho-tem-393-e-patrus-31-no-1o-turno-em-minas-gerais/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador MG 2026 - 1º Turno",
+    publication_date: "2026-09-23",
+    fieldwork_start: "2026-09-15",
+    fieldwork_end: "2026-09-20",
+    sample_size: 1800,
+    margin_of_error: 2.0,
+    methodology: "online",
+    scope: "nacional",
+    source_url: "https://exame.com/brasil/atlasintel-cleitinho-tem-393-e-patrus-31-no-1o-turno-em-minas-gerais/",
+    tse_protocolo: "MG-03290/2026",
+    results: [
+      { candidate_name: "Cleitinho", percentage: 39.3 },
+      { candidate_name: "Patrus Ananias", percentage: 31.0 },
+      { candidate_name: "Alexandre Kalil", percentage: 8.3 },
+      { candidate_name: "Flávio Roscoe", percentage: 7.3 },
+      { candidate_name: "Mateus Simões", percentage: 5.6 },
+      { candidate_name: "Gabriel Azevedo", percentage: 2.7 },
+    ],
+  },
+  // AtlasIntel · 15-20 set 2026 · TSE SP-02676/2026 · n=1.800 · online
+  // Fonte: https://exame.com/brasil/pesquisa-atlasintel-tarcisio-cresce-e-chega-a-552-no-1o-turno-haddad-tem-41/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador SP 2026 - 1º Turno",
+    publication_date: "2026-09-23",
+    fieldwork_start: "2026-09-15",
+    fieldwork_end: "2026-09-20",
+    sample_size: 1800,
+    margin_of_error: 2.0,
+    methodology: "online",
+    scope: "nacional",
+    source_url: "https://exame.com/brasil/pesquisa-atlasintel-tarcisio-cresce-e-chega-a-552-no-1o-turno-haddad-tem-41/",
+    tse_protocolo: "SP-02676/2026",
+    results: [
+      { candidate_name: "Tarcísio", percentage: 55.2 },
+      { candidate_name: "Haddad", percentage: 41.0 },
+      { candidate_name: "Vivian Mendes", percentage: 0.4 },
+      { candidate_name: "Carlos Machado", percentage: 0.1 },
+    ],
+  },
+  // AtlasIntel/Estadão · 15-20 set 2026 · TSE RJ-01150/2026 · n=1.800 · online
+  // Fonte: https://exame.com/brasil/pesquisa-atlasintel-paes-tem-457-e-ruas-324-no-1o-turno-no-rio-de-janeiro/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador RJ 2026 - 1º Turno",
+    publication_date: "2026-09-23",
+    fieldwork_start: "2026-09-15",
+    fieldwork_end: "2026-09-20",
+    sample_size: 1800,
+    margin_of_error: 2.0,
+    methodology: "online",
+    scope: "nacional",
+    source_url: "https://exame.com/brasil/pesquisa-atlasintel-paes-tem-457-e-ruas-324-no-1o-turno-no-rio-de-janeiro/",
+    tse_protocolo: "RJ-01150/2026",
+    results: [
+      { candidate_name: "Eduardo Paes", percentage: 45.7 },
+      { candidate_name: "Douglas Ruas", percentage: 32.4 },
+      { candidate_name: "Anthony Garotinho", percentage: 8.9 },
+      { candidate_name: "Coronel Busnello", percentage: 3.1 },
+      { candidate_name: "William Siri", percentage: 2.0 },
+      { candidate_name: "André Marinho", percentage: 1.6 },
+    ],
+  },
+  // AtlasIntel · 15-20 set 2026 · TSE RS-00981/2026 · n=1.800 · online
+  // Fonte: https://www.jornaldocomercio.com/politica/2026/09/1264394-zucco-tem-416-e-juliana-brizola-361-mostra-pesquisa-atlasintel.html
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador RS 2026 - 1º Turno",
+    publication_date: "2026-09-23",
+    fieldwork_start: "2026-09-15",
+    fieldwork_end: "2026-09-20",
+    sample_size: 1800,
+    margin_of_error: 2.0,
+    methodology: "online",
+    scope: "nacional",
+    source_url: "https://www.jornaldocomercio.com/politica/2026/09/1264394-zucco-tem-416-e-juliana-brizola-361-mostra-pesquisa-atlasintel.html",
+    tse_protocolo: "RS-00981/2026",
+    results: [
+      { candidate_name: "Luciano Zucco", percentage: 41.6 },
+      { candidate_name: "Juliana Brizola", percentage: 36.1 },
+      { candidate_name: "Gabriel Souza", percentage: 13.5 },
+      { candidate_name: "Marcelo Maranata", percentage: 0.8 },
+      { candidate_name: "Priscila Voigt", percentage: 0.1 },
+    ],
+  },
 ];
 
 async function main() {
