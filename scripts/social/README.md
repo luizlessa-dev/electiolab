@@ -71,7 +71,8 @@ Gera, para cada plataforma pedida (todas por padrão, ou as listadas em
 | `precisa_dado_fresco` | `true`/`false` — sinaliza pro humano que o valor no JSON é placeholder ou está desatualizado e precisa de checagem antes de virar imagem final (ver regra editorial) |
 | `nota_checagem` | só quando `precisa_dado_fresco: true` — o que exatamente puxar e de onde, antes de publicar |
 | `legenda` | texto pronto pra legenda/post, quando já existia no calendário original |
-| `publicar_em` | data ISO planejada (documentação — o script não usa esse campo) |
+| `publicar_em` | data ISO planejada (documentação — `gerar-peca.py` não usa esse campo; `exportar-para-downloads.mjs` usa) |
+| `repetir_em` | lista de datas ISO adicionais, quando a mesma peça (mesma imagem, mesma legenda) vale pra vários dias — ex.: a âncora "virada de chave pro 2º turno" vale de 07 a 10/10, mas só existe um JSON (`07-out-virada-segundo-turno.json`) com `publicar_em: "2026-10-07"` e `repetir_em: ["2026-10-08", "2026-10-09", "2026-10-10"]`. Só `exportar-para-downloads.mjs` lê esse campo, `gerar-peca.py` ignora |
 | `saida` | prefixo dos arquivos gerados |
 
 ## Por que script e não template de Canva

@@ -1,0 +1,24 @@
+{
+  "saida": "11-out-recap-semana",
+  "publicar_em": "2026-10-11",
+  "plataformas": [
+    "instagram-post",
+    "instagram-story",
+    "x"
+  ],
+  "modo": "numero",
+  "eyebrow": "Recap da semana",
+  "numeros": [
+    [
+      "Pesquisas novas",
+      "[ATUALIZAR]",
+      "indexadas nos\núltimos 7 dias"
+    ]
+  ],
+  "linha_fina": "Resumo da semana: [ATUALIZAR — 1-2 movimentos relevantes: pesquisa nova, mudança de posição na média, etc.]",
+  "fonte": "ElectioLab · média ponderada por recência, amostra e acurácia histórica do instituto · metodologia em electiolab.com/metodologia",
+  "url": "https://electiolab.com",
+  "precisa_dado_fresco": true,
+  "nota_checagem": "Puxar contagem de pesquisas novas da semana e o movimento mais relevante do dashboard antes de publicar. Dia órfão entre a janela de virada de chave (07-10/10) e a semana de cadência normal (12-18/10) — nenhum dos dois calendários originais cobria 11/10 explicitamente; mesma estrutura de 18-out-recap-semana.json (o outro domingo de recap do mês), só a data muda.",
+  "legenda": "Resumo da semana: [ATUALIZAR — 1-2 movimentos relevantes: pesquisa nova, mudança de posição na média, etc.]\n\nSemana que vem a gente continua, atualizado a cada 6h: electiolab.com"
+}

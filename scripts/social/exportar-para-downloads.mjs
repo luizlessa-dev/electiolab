@@ -153,41 +153,53 @@ for (const campanha of campanhas) {
     if (somente && base !== somente) continue;
 
     const cfg = JSON.parse(readFileSync(path.join(dirCampanha, arquivo), 'utf8'));
-    const data = cfg.publicar_em;
-    if (!data) {
+    if (!cfg.publicar_em) {
       semData.push(`${campanha}/${base}`);
       continue;
     }
-    if (soPendentes && data < hoje) continue;
+
+    // `repetir_em`: a mesma peça (mesma imagem, mesma legenda) republicada em
+    // dias adicionais sem virar JSON novo — caso de uma âncora que vale por
+    // vários dias (ex.: "virada de chave pro 2º turno", 07 a 10/10). A data
+    // principal usa a chave de memória de sempre; cada data extra ganha
+    // sufixo `@data` pra ser rastreada e pulada independentemente.
+    const datasEfetivas = [
+      { data: cfg.publicar_em, chaveMemoria: `${campanha}/${base}` },
+      ...(cfg.repetir_em ?? []).map((data) => ({ data, chaveMemoria: `${campanha}/${base}@${data}` })),
+    ];
 
     const plataformas = cfg.plataformas ?? ['instagram-post', 'instagram-story', 'x'];
-    const chaveMemoria = `${campanha}/${base}`;
     const assunto = assuntoDoArquivo(base, plataformas).replace(/^\d{2}-(set|out)-/, '');
-    const [, mes, dia] = data.split('-');
-    const ddd = DIAS_SEMANA[new Date(`${data}T12:00:00-03:00`).getDay()];
-    const nomePasta = `${dia}-${mes}-${ddd}-${assunto}`;
 
-    if (!grupos.has(nomePasta)) {
-      grupos.set(nomePasta, { data, url: cfg.url, pecas: [], notas: [] });
-    }
-    const grupo = grupos.get(nomePasta);
+    for (const { data, chaveMemoria } of datasEfetivas) {
+      if (soPendentes && data < hoje) continue;
 
-    let faltouPeca = false;
-    for (const plataforma of plataformas) {
-      const info = REDES[plataforma];
-      if (!info) continue;
-      const pecaPath = path.join(dirPecas, `${base}-${info.pecaSufixo}.jpg`);
-      if (!existsSync(pecaPath)) {
-        faltouPeca = true;
-        continue;
+      const [, mes, dia] = data.split('-');
+      const ddd = DIAS_SEMANA[new Date(`${data}T12:00:00-03:00`).getDay()];
+      const nomePasta = `${dia}-${mes}-${ddd}-${assunto}`;
+
+      if (!grupos.has(nomePasta)) {
+        grupos.set(nomePasta, { data, url: cfg.url, pecas: [], notas: [] });
       }
-      grupo.pecas.push({ pecaPath, imgDestino: info.imgDestino, legendaDestino: info.legendaDestino, legenda: cfg.legenda, chaveMemoria });
+      const grupo = grupos.get(nomePasta);
+
+      let faltouPeca = false;
+      for (const plataforma of plataformas) {
+        const info = REDES[plataforma];
+        if (!info) continue;
+        const pecaPath = path.join(dirPecas, `${base}-${info.pecaSufixo}.jpg`);
+        if (!existsSync(pecaPath)) {
+          faltouPeca = true;
+          continue;
+        }
+        grupo.pecas.push({ pecaPath, imgDestino: info.imgDestino, legendaDestino: info.legendaDestino, legenda: cfg.legenda, chaveMemoria });
+      }
+      if (faltouPeca) semPeca.push(`${data}  ${chaveMemoria}`);
+      if (cfg.precisa_dado_fresco && cfg.nota_checagem) {
+        grupo.notas.push(`[${plataformas.join('+')}] ${cfg.nota_checagem}`);
+      }
+      grupo.chaves = [...(grupo.chaves ?? []), chaveMemoria];
     }
-    if (faltouPeca) semPeca.push(`${data}  ${chaveMemoria}`);
-    if (cfg.precisa_dado_fresco && cfg.nota_checagem) {
-      grupo.notas.push(`[${plataformas.join('+')}] ${cfg.nota_checagem}`);
-    }
-    grupo.chaves = [...(grupo.chaves ?? []), chaveMemoria];
   }
 }
 

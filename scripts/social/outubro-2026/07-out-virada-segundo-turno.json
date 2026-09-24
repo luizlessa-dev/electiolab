@@ -1,6 +1,11 @@
 {
   "saida": "07-out-virada-segundo-turno",
   "publicar_em": "2026-10-07",
+  "repetir_em": [
+    "2026-10-08",
+    "2026-10-09",
+    "2026-10-10"
+  ],
   "plataformas": [
     "x",
     "instagram-post",
