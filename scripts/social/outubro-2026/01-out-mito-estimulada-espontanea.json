@@ -1,0 +1,16 @@
+{
+  "saida": "01-out-mito-estimulada-espontanea",
+  "publicar_em": "2026-10-01",
+  "plataformas": [
+    "instagram-post",
+    "instagram-story"
+  ],
+  "modo": "citacao",
+  "eyebrow": "Mito ou verdade · pesquisa eleitoral",
+  "titulo": "Pesquisa estimulada e pesquisa espontânea não medem a mesma coisa — e comparar as duas como se fossem intercambiáveis é o erro mais comum ao ler uma pesquisa eleitoral.",
+  "linha_fina": "Na estimulada, o entrevistado escolhe entre nomes lidos por quem aplica. Na espontânea, ele precisa lembrar sozinho. Candidato menos conhecido sempre rende mais na estimulada.",
+  "fonte": "ElectioLab · electiolab.com/pesquisa-estimulada-vs-espontanea",
+  "url": "https://electiolab.com/pesquisa-estimulada-vs-espontanea",
+  "legenda": "\"Pesquisa estimulada\" e \"pesquisa espontânea\" não medem a mesma coisa.\n\nNa estimulada, o entrevistado escolhe entre nomes que o entrevistador lê. Na espontânea, ele precisa lembrar sozinho, sem ajuda.\n\nUm candidato menos conhecido quase sempre rende mais pontos na estimulada — não é fraude, é como o método funciona.\n\nExplicação completa: electiolab.com/pesquisa-estimulada-vs-espontanea",
+  "precisa_dado_fresco": false
+}

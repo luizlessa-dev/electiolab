@@ -1,0 +1,24 @@
+{
+  "saida": "14-out-gasto-caiado",
+  "publicar_em": "2026-10-14",
+  "plataformas": [
+    "instagram-post",
+    "instagram-story",
+    "x"
+  ],
+  "modo": "numero",
+  "eyebrow": "Gasto digital · Caiado",
+  "numeros": [
+    [
+      "Google Ads + Meta",
+      "[ATUALIZAR]",
+      "declarado nesta campanha,\ndado oficial das plataformas"
+    ]
+  ],
+  "linha_fina": "Google Transparency Center e Meta Ad Library publicam gasto por anunciante político — a gente cruza isso com o perfil de cada candidato.",
+  "fonte": "Google Transparency Center + Meta Ad Library, via electiolab.com/candidato/ronaldo-caiado",
+  "url": "https://electiolab.com/candidato/ronaldo-caiado",
+  "precisa_dado_fresco": true,
+  "nota_checagem": "Puxar gasto declarado atualizado (Google Ads + Meta) do perfil do candidato antes de publicar.",
+  "legenda": "Quanto Ronaldo Caiado já declarou em propaganda digital (Google Ads + Meta) nessa campanha? [ATUALIZAR]\n\nDado oficial, direto da fonte: electiolab.com/candidato/ronaldo-caiado"
+}

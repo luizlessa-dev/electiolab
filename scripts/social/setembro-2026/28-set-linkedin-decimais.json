@@ -1,0 +1,16 @@
+{
+  "saida": "28-set-linkedin-decimais",
+  "publicar_em": "2026-09-28",
+  "plataformas": [
+    "linkedin"
+  ],
+  "modo": "citacao",
+  "eyebrow": "Metodologia · founder",
+  "titulo": "\"Erro de 2,347 pontos percentuais\" soa mais preciso que \"erro de 2,3 pontos\" — e é exatamente por isso que eu trunco na primeira casa decimal.",
+  "linha_fina": "— Luiz Lessa, fundador do ElectioLab",
+  "fonte": "ElectioLab · electiolab.com/metodologia",
+  "url": "https://electiolab.com/metodologia",
+  "precisa_dado_fresco": false,
+  "nota_checagem": "TEXTO NOVO, não veio de nenhum calendário anterior — o CALENDARIO-LINKEDIN.md só tinha o TEMA definido ('Por que não uso casas decimais além da 1ª no indicador de erro', linha 22), sem copy escrita. Revisar tom e conferir se a afirmação sobre o método (truncar em 1 casa decimal) ainda reflete o que o site faz antes de publicar.",
+  "legenda": "Uma decisão pequena que gera pergunta toda semana: por que o indicador de erro do ElectioLab mostra só uma casa decimal, tipo \"2,3 pontos\", em vez de \"2,347\"?\n\nNão é falta de precisão no cálculo — é falta de precisão no que está sendo medido. Uma pesquisa eleitoral já carrega margem de erro amostral (normalmente ±2 a ±3 pontos) antes mesmo de comparar com o resultado real. Mostrar três casas decimais no erro final passa a impressão de uma exatidão que a pesquisa de origem nunca teve.\n\nO mesmo vale pra média ponderada: ela pondera dado que já carrega incerteza. Fingir precisão além do que a amostra suporta é o tipo de coisa que faz pesquisa perder credibilidade quando erra.\n\nPrefiro um número mais honesto sobre o que a gente realmente sabe do que um número mais bonito.\n\nComo você lida com essa tensão entre precisão aparente e precisão real nos seus próprios dados?"
+}

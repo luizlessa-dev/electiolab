@@ -1,0 +1,17 @@
+{
+  "saida": "29-set-estado-mg",
+  "publicar_em": "2026-09-29",
+  "plataformas": [
+    "instagram-post",
+    "instagram-story"
+  ],
+  "modo": "comparacao",
+  "eyebrow": "Estado em foco · Governador MG",
+  "titulo": "[ATUALIZAR]% x [ATUALIZAR]%",
+  "linha_fina": "Como está a disputa de governador em Minas Gerais, na média ponderada de hoje?",
+  "fonte": "ElectioLab · electiolab.com/eleicoes-governador-mg-2026",
+  "url": "https://electiolab.com/eleicoes-governador-mg-2026",
+  "precisa_dado_fresco": true,
+  "nota_checagem": "Puxar média ponderada atual do governador MG no dashboard regional antes de publicar — mesma situação de 06-out-estado-rs.json e 13-out-estado-ba.json (não achei dado de pesquisa regional pronto no repo durante a exploração). Só Instagram: X está em modo contagem regressiva (D-5) nesse dia, sem rotação de Estado.",
+  "legenda": "Como está a disputa de governador em Minas Gerais?\n\nMédia ponderada atual: [ATUALIZAR — puxar do dashboard do estado]\n\nCobertura completa: electiolab.com/eleicoes-governador-mg-2026"
+}

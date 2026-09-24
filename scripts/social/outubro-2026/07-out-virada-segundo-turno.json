@@ -1,0 +1,29 @@
+{
+  "saida": "07-out-virada-segundo-turno",
+  "publicar_em": "2026-10-07",
+  "plataformas": [
+    "x",
+    "instagram-post",
+    "instagram-story",
+    "linkedin"
+  ],
+  "modo": "comparacao",
+  "eyebrow": "2º turno definido",
+  "titulo": "[CANDIDATO A] x [CANDIDATO B]",
+  "linha_fina": "O 1º turno acabou. A partir de agora, o ElectioLab foca no 2º turno — mesma metodologia, mesmo peso por acurácia histórica do instituto, só os candidatos mudam.",
+  "campos": [
+    [
+      "Vigora",
+      "07 a 24/10/2026"
+    ],
+    [
+      "2º turno",
+      "25/10/2026"
+    ]
+  ],
+  "fonte": "ElectioLab · média ponderada por recência, amostra e acurácia histórica do instituto · metodologia em electiolab.com/metodologia",
+  "url": "https://electiolab.com",
+  "precisa_dado_fresco": true,
+  "nota_checagem": "Só pode ser preenchida depois de confirmados os 2 candidatos do 2º turno pelo TSE (04/10). Cobre a janela 07-10/10 (virada de chave) — pode servir de base pra um carrossel de 3-4 posts nesses dias.",
+  "legenda": "O 1º turno acabou. A partir de agora, o ElectioLab foca no 2º turno: [ATUALIZAR candidatos remanescentes]. Média ponderada atualizada a cada 6h: electiolab.com"
+}

@@ -1,0 +1,16 @@
+{
+  "saida": "30-set-contagem-d4",
+  "publicar_em": "2026-09-30",
+  "plataformas": [
+    "x"
+  ],
+  "modo": "contagem",
+  "eyebrow": "Faltam 4 dias pro 1º turno",
+  "titulo": "4 DIAS",
+  "linha_fina": "[ATUALIZAR: destaque de alguma mudança relevante na média da semana, se houver]",
+  "fonte": "ElectioLab · média ponderada por recência, amostra e acurácia histórica do instituto · metodologia em electiolab.com/metodologia",
+  "url": "https://electiolab.com",
+  "precisa_dado_fresco": true,
+  "nota_checagem": "Puxar a média ponderada e checar se houve movimento relevante na semana antes de publicar. Ver CALENDARIO-X.md, D-4 (30/09).",
+  "legenda": "4 dias.\n\n[ATUALIZAR: destaque de alguma mudança relevante na média da semana, se houver]\n\nAcompanha em tempo real, de graça: electiolab.com"
+}

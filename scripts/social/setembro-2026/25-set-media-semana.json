@@ -1,0 +1,28 @@
+{
+  "saida": "25-set-media-semana",
+  "publicar_em": "2026-09-25",
+  "plataformas": [
+    "x",
+    "instagram-post",
+    "instagram-story"
+  ],
+  "modo": "comparacao",
+  "eyebrow": "Fechando a semana",
+  "titulo": "[ATUALIZAR]% x [ATUALIZAR]%",
+  "linha_fina": "Média ponderada presidencial, top 2 — conforme apurado em 17/09/2026 (CALENDARIO-COMUM.md) — CONFERIR número atualizado no dashboard antes de publicar.",
+  "campos": [
+    [
+      "Referência 17/09",
+      "Lula 38,2% · Flávio Bolsonaro 34,5%"
+    ],
+    [
+      "Base",
+      "60 pesquisas · 18 institutos"
+    ]
+  ],
+  "fonte": "ElectioLab · média ponderada por recência, amostra e acurácia histórica do instituto · metodologia em electiolab.com/metodologia",
+  "url": "https://electiolab.com",
+  "precisa_dado_fresco": true,
+  "nota_checagem": "Puxar média ponderada presidencial (top 2-3 candidatos) e contagem de pesquisas/institutos do dia no Supabase antes de publicar. Diferente de 02-out-media-semana.json (mesmo conceito, semana seguinte): 25/09 não cai numa janela de âncora, então X também roda a rotação normal de sexta (no dia 02/10 o X está em modo contagem regressiva D-2, por isso aquela peça é só Instagram).",
+  "legenda": "Fechando a semana: a média ponderada presidencial está em [ATUALIZAR: top 2-3 candidatos e %].\n\nCalculada com [ATUALIZAR] pesquisas de [ATUALIZAR] institutos diferentes, ponderadas por acurácia.\n\nelectiolab.com"
+}

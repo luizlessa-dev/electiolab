@@ -1,0 +1,18 @@
+{
+  "saida": "17-out-2turno-lula-renan",
+  "publicar_em": "2026-10-17",
+  "plataformas": [
+    "instagram-post",
+    "instagram-story",
+    "x"
+  ],
+  "modo": "comparacao",
+  "eyebrow": "Cenário 2º turno · Lula x Renan Santos",
+  "titulo": "[ATUALIZAR]% x [ATUALIZAR]%",
+  "linha_fina": "Simulação de 2º turno com os dados de hoje — conforme apurado em 17/09/2026 (CALENDARIO-COMUM.md) — referência: Lula 44,3% x Renan Santos 33,7%, CONFERIR número atualizado no dashboard antes de publicar.",
+  "fonte": "ElectioLab · média ponderada por recência, amostra e acurácia histórica do instituto · metodologia em electiolab.com/metodologia",
+  "url": "https://electiolab.com/quem-vence-no-segundo-turno-presidencia-2026",
+  "precisa_dado_fresco": true,
+  "nota_checagem": "Confirmar se Lula x Renan Santos ainda é um cenário relevante nesta altura da campanha (depende de quem passou no 1º turno em 04/10) antes de gerar a peça — o 2º turno real pode ser outro confronto.",
+  "legenda": "Se a eleição fosse hoje, Lula x Renan Santos no 2º turno estaria assim: [ATUALIZAR]\n\nTodos os cenários simulados e atualizados: electiolab.com/quem-vence-no-segundo-turno-presidencia-2026"
+}

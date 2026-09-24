@@ -1,0 +1,22 @@
+{
+  "saida": "27-set-recap-semana",
+  "publicar_em": "2026-09-27",
+  "plataformas": [
+    "x"
+  ],
+  "modo": "numero",
+  "eyebrow": "Recap da semana",
+  "numeros": [
+    [
+      "Pesquisas novas",
+      "[ATUALIZAR]",
+      "indexadas nos\núltimos 7 dias"
+    ]
+  ],
+  "linha_fina": "Resumo da semana: [ATUALIZAR — 1-2 movimentos relevantes: pesquisa nova, mudança de posição na média, etc.]",
+  "fonte": "ElectioLab · média ponderada por recência, amostra e acurácia histórica do instituto · metodologia em electiolab.com/metodologia",
+  "url": "https://electiolab.com",
+  "precisa_dado_fresco": true,
+  "nota_checagem": "Puxar contagem de pesquisas novas da semana e o movimento mais relevante do dashboard antes de publicar. Ver CALENDARIO-X.md, template de domingo. O Instagram desse dia não tem card equivalente — é story com enquete (ex.: 'quem você acha que vence em [Estado]?'), fora do pipeline de imagem do gerar-peca.py, precisa ser montado manual no app.",
+  "legenda": "Resumo da semana: [ATUALIZAR — 1-2 movimentos relevantes: pesquisa nova, mudança de posição na média, etc.]\n\nSemana que vem a gente continua, atualizado a cada 6h: electiolab.com"
+}

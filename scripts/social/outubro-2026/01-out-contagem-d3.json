@@ -1,0 +1,16 @@
+{
+  "saida": "01-out-contagem-d3",
+  "publicar_em": "2026-10-01",
+  "plataformas": [
+    "x"
+  ],
+  "modo": "contagem",
+  "eyebrow": "Faltam 3 dias pro 1º turno",
+  "titulo": "3 DIAS",
+  "linha_fina": "Enquanto isso, [ATUALIZAR: gancho do dia — pesquisa nova ou movimento relevante da semana].",
+  "fonte": "ElectioLab · média ponderada por recência, amostra e acurácia histórica do instituto · metodologia em electiolab.com/metodologia",
+  "url": "https://electiolab.com",
+  "precisa_dado_fresco": true,
+  "nota_checagem": "Puxar do dashboard o gancho do dia (pesquisa publicada nas últimas 24h) antes de publicar. Ver CALENDARIO-X.md, D-3 (01/10).",
+  "legenda": "3 dias pro 1º turno.\n\nEnquanto isso, [ATUALIZAR: gancho do dia, ex.: instituto X publicou pesquisa nova hoje].\n\nContexto completo: electiolab.com"
+}

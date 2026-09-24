@@ -1,0 +1,17 @@
+{
+  "saida": "24-set-2turno-instagram",
+  "publicar_em": "2026-09-24",
+  "plataformas": [
+    "instagram-post",
+    "instagram-story"
+  ],
+  "modo": "comparacao",
+  "eyebrow": "2º turno · e se fosse hoje?",
+  "titulo": "[ATUALIZAR]% x [ATUALIZAR]%",
+  "linha_fina": "O 1º turno decide quem disputa, mas o 2º turno é outro jogo. A gente simula os principais confrontos possíveis com os dados de hoje.",
+  "fonte": "ElectioLab · média ponderada por recência, amostra e acurácia histórica do instituto · metodologia em electiolab.com/metodologia",
+  "url": "https://electiolab.com/quem-vence-no-segundo-turno-presidencia-2026",
+  "precisa_dado_fresco": true,
+  "nota_checagem": "Carrossel original tem 5 slides (CALENDARIO-INSTAGRAM.md, Qui 24/09) — o script gera só 1 card representativo, como já foi feito em 07-out-virada-segundo-turno.json. Puxar o cenário mais relevante em quem-vence-no-segundo-turno-presidencia-2026 antes de publicar.",
+  "legenda": "O 1º turno decide quem disputa, mas o 2º turno é outro jogo.\n\nA gente simula os principais confrontos possíveis com os dados de hoje. Alguns são empate técnico, outros têm folga clara.\n\nSite tem todos os cenários atualizados, sem esperar boato de WhatsApp. Link na bio.\n\n.\n.\n.\n#eleicoes2026 #segundoturno #eleicoespresidenciais #politicabrasil"
+}

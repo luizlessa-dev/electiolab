@@ -1,0 +1,15 @@
+{
+  "saida": "02-out-tamanho-amostra",
+  "publicar_em": "2026-10-02",
+  "plataformas": [
+    "linkedin"
+  ],
+  "modo": "citacao",
+  "eyebrow": "Opinião · metodologia",
+  "titulo": "Uma pesquisa de 2.000 pessoas não é uma opinião de 2.000 pessoas sobre um país de 150 milhões de eleitores. É uma amostra probabilística — e o que garante que ela representa o total não é o tamanho, é o desenho amostral.",
+  "linha_fina": "— Luiz Lessa, fundador do ElectioLab",
+  "fonte": "ElectioLab · electiolab.com/margem-de-erro-pesquisa-eleitoral",
+  "url": "https://electiolab.com/margem-de-erro-pesquisa-eleitoral",
+  "legenda": "Toda campanha alguém repete a mesma objeção: \"como 2.000 pessoas representam um país de 150 milhões de eleitores?\"\n\nO tamanho da amostra não é o que garante representatividade — é o desenho amostral (estratificação por região, idade, renda, escolaridade) e a taxa de resposta. 2.000 entrevistas bem desenhadas erram menos que 20.000 mal distribuídas.\n\nIsso não significa que toda pesquisa está certa. Significa que o argumento \"a amostra é pequena demais\" quase sempre erra o alvo.\n\nO que você acha que mais derruba a confiança do público em pesquisa — o tamanho da amostra ou os erros de 2018 e 2022?",
+  "precisa_dado_fresco": false
+}

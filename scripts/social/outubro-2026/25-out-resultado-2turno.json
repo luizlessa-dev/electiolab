@@ -1,0 +1,25 @@
+{
+  "saida": "25-out-resultado-2turno",
+  "publicar_em": "2026-10-25",
+  "plataformas": [
+    "x",
+    "instagram-post",
+    "instagram-story",
+    "linkedin"
+  ],
+  "modo": "comparacao",
+  "eyebrow": "2º turno apurado",
+  "titulo": "[ATUALIZAR] x [ATUALIZAR]",
+  "linha_fina": "A média ponderada projetava [ATUALIZAR]. O resultado oficial do TSE foi [ATUALIZAR].",
+  "campos": [
+    [
+      "Diferença",
+      "[ATUALIZAR — pontos percentuais entre projeção e resultado oficial]"
+    ]
+  ],
+  "fonte": "ElectioLab · comparação com o resultado oficial do TSE, apuração de 25/10/2026",
+  "url": "https://electiolab.com/relatorio",
+  "precisa_dado_fresco": true,
+  "nota_checagem": "Só pode ser preenchida DEPOIS da apuração oficial do TSE em 25/10/2026. É o resultado final da eleição — checagem redobrada antes de publicar.",
+  "legenda": "2º turno apurado.\n\nA média ponderada projetava [ATUALIZAR]. O resultado oficial foi [ATUALIZAR].\n\nDiferença: [ATUALIZAR — se pequena, é a prova de que ponderar por acurácia funciona; se grande, ser direto sobre isso também]\n\nRelatório completo com detalhe por instituto: electiolab.com/relatorio/[semana]"
+}

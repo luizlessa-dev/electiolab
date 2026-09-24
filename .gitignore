@@ -55,3 +55,7 @@ data/planos/
 
 # Cache de idioma do Tesseract (tesseract.js baixa pra cwd se não configurado)
 *.traineddata
+
+# Cache do Python (scripts/social/gerar-peca.py e afins)
+__pycache__/
+*.pyc

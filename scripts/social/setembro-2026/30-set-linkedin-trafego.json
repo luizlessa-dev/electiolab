@@ -1,0 +1,16 @@
+{
+  "saida": "30-set-linkedin-trafego",
+  "publicar_em": "2026-09-30",
+  "plataformas": [
+    "linkedin"
+  ],
+  "modo": "citacao",
+  "eyebrow": "Bastidor técnico · founder",
+  "titulo": "Não sei se o site aguenta o pico de tráfego do dia da apuração. E tudo bem admitir isso em público.",
+  "linha_fina": "— Luiz Lessa, fundador do ElectioLab",
+  "fonte": "ElectioLab · electiolab.com",
+  "url": "https://electiolab.com",
+  "precisa_dado_fresco": true,
+  "nota_checagem": "TEXTO NOVO, não veio de nenhum calendário anterior — o CALENDARIO-LINKEDIN.md só tinha o TEMA definido ('Como o site aguenta o pico de tráfego do dia da apuração (ou não)', linha 22), sem copy escrita. CALENDARIO-COMUM.md lista uma tarefa técnica separada ('Testar a carga do site antes de 03/10') — conferir se esse teste já rodou antes de publicar, porque o texto abaixo assume que ainda não rodou (afirmação real só em 30/09, pode já estar desatualizada no dia de publicar).",
+  "legenda": "Faltam poucos dias pro 1º turno, e a pergunta técnica que mais me tira o sono não é sobre pesquisa — é sobre infraestrutura.\n\nO ElectioLab roda em cima de Next.js + Supabase + Vercel, recalculando a média ponderada a cada 6 horas. Isso segura tráfego normal sem esforço. O problema é o pico de domingo: milhares de pessoas atualizando a mesma página de apuração ao mesmo tempo, torcendo pra ver o número mudar.\n\nFiz o que dava pra fazer sozinho até aqui: cache nas rotas mais pesadas, otimização de query no Supabase, monitoramento ativo pro dia. Não fiz teste de carga de verdade ainda — não tive tempo nem orçamento pra simular volume real.\n\nSe cair, vai cair em público, e eu vou contar aqui o que quebrou e por quê.\n\nJá passou por um pico de tráfego que testou um sistema que você construiu sozinho? O que você aprendeu com o que quebrou?"
+}

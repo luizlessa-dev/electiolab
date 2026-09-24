@@ -1,0 +1,23 @@
+{
+  "saida": "30-set-gasto-zema",
+  "publicar_em": "2026-09-30",
+  "plataformas": [
+    "instagram-post",
+    "instagram-story"
+  ],
+  "modo": "numero",
+  "eyebrow": "Gasto digital · Zema",
+  "numeros": [
+    [
+      "Google Ads + Meta",
+      "[ATUALIZAR]",
+      "declarado nesta campanha,\ndado oficial das plataformas"
+    ]
+  ],
+  "linha_fina": "Google Transparency Center e Meta Ad Library publicam gasto por anunciante político — a gente cruza isso com o perfil de cada candidato.",
+  "fonte": "Google Transparency Center + Meta Ad Library, via electiolab.com/candidato/zema",
+  "url": "https://electiolab.com/candidato/zema",
+  "precisa_dado_fresco": true,
+  "nota_checagem": "Puxar gasto declarado atualizado (Google Ads + Meta) do perfil do candidato antes de publicar. Só Instagram: X está em modo contagem regressiva (D-4) nesse dia, sem rotação de gasto digital.",
+  "legenda": "Quanto Zema já declarou em propaganda digital (Google Ads + Meta) nessa campanha? [ATUALIZAR]\n\nDado oficial, direto da fonte: electiolab.com/candidato/zema"
+}

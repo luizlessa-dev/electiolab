@@ -1,0 +1,13 @@
+{
+  "modo": "comparacao",
+  "eyebrow": "Média ponderada de hoje",
+  "titulo": "38,2% x 34,5%",
+  "linha_fina": "Lula x Flávio Bolsonaro — ponderada por recência, amostra e acurácia histórica do instituto.",
+  "campos": [
+    ["Base", "60 pesquisas presidenciais"],
+    ["Institutos", "18 ativos na ponderação"]
+  ],
+  "fonte": "Datafolha, Quaest, Nexus, Ipec e demais institutos ativos · média recalculada a cada 6h · electiolab.com/metodologia",
+  "url": "https://electiolab.com",
+  "saida": "exemplo-lancamento"
+}

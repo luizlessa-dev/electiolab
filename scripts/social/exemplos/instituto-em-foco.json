@@ -1,0 +1,12 @@
+{
+  "modo": "numero",
+  "eyebrow": "Instituto em foco · Datafolha",
+  "numeros": [
+    ["Acurácia histórica", "92%", "contra o resultado oficial\ndo TSE em eleições passadas"],
+    ["Peso na média", "1º", "lugar entre os institutos\nque entram na ponderação"]
+  ],
+  "linha_fina": "Quanto mais um instituto costuma acertar, mais ele pesa na média ponderada do ElectioLab.",
+  "fonte": "ElectioLab · metodologia de acurácia por instituto vs. resultado oficial do TSE · electiolab.com/instituto-mais-acurado-eleicoes-brasil",
+  "plataformas": ["instagram-post"],
+  "saida": "exemplo-instituto"
+}

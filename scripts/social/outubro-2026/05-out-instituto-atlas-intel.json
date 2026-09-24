@@ -1,0 +1,24 @@
+{
+  "saida": "05-out-instituto-atlas-intel",
+  "publicar_em": "2026-10-05",
+  "plataformas": [
+    "instagram-post",
+    "instagram-story",
+    "x"
+  ],
+  "modo": "numero",
+  "eyebrow": "Instituto em foco · Atlas Intel",
+  "numeros": [
+    [
+      "Acurácia histórica",
+      "78%",
+      "contra o resultado oficial\ndo TSE em eleições passadas"
+    ]
+  ],
+  "linha_fina": "É esse histórico que define o peso do Atlas Intel na nossa média ponderada: quanto mais um instituto costuma acertar, mais ele pesa no cálculo.",
+  "fonte": "ElectioLab · metodologia de acurácia por instituto vs. resultado oficial do TSE (PRESS-KIT.md, abril/2026 — conferir valor atualizado)",
+  "url": "https://electiolab.com/instituto-mais-acurado-eleicoes-brasil",
+  "legenda": "Atlas Intel tem 78% de acurácia histórica contra o resultado oficial do TSE, calculado com base nas pesquisas anteriores do instituto.\n\nÉ esse histórico que define o peso dele na nossa média ponderada: quanto mais um instituto costuma acertar, mais ele pesa no cálculo.\n\nRanking completo: electiolab.com/instituto-mais-acurado-eleicoes-brasil",
+  "precisa_dado_fresco": true,
+  "nota_checagem": "Número (78%) confirmado igual ao live no banco (institutes.reliability_score) em 23/09/2026, mas institute_accuracy_observations está zerada — ainda não há eleição de 2026 apurada pra recalcular. Conferir se o score mudou no dashboard antes de publicar, e se ainda é o valor de abril/2026, avisar que é histórico pré-2026 (não atualizado pelo ciclo atual)."
+}

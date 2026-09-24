@@ -1,0 +1,16 @@
+{
+  "saida": "26-out-retrospectiva-linkedin",
+  "publicar_em": "2026-10-26",
+  "plataformas": [
+    "linkedin"
+  ],
+  "modo": "citacao",
+  "eyebrow": "Retrospectiva · founder",
+  "titulo": "Não teve investimento, não teve equipe. Foi um projeto solo pra resolver um problema que eu tinha como leitor de notícia política.",
+  "linha_fina": "— Luiz Lessa, fundador do ElectioLab, ao fim da temporada eleitoral 2026",
+  "fonte": "ElectioLab · electiolab.com",
+  "url": "https://electiolab.com",
+  "precisa_dado_fresco": true,
+  "nota_checagem": "Completar com os números finais reais da temporada (pesquisas, institutos, entrevistas, erro 1T/2T, instituto mais acurado) antes de publicar — ver legenda completa em docs/CALENDARIO-LINKEDIN.md, Fase 4.",
+  "legenda": "A eleição de 2026 acabou. Um balanço de quem construiu o ElectioLab sozinho durante a campanha inteira:\n\n[ATUALIZAR: X] pesquisas indexadas, [ATUALIZAR: Y] institutos cobertos, [ATUALIZAR: Z] entrevistas somadas ao longo do ano.\n\nA média ponderada por acurácia histórica errou por [ATUALIZAR] pontos percentuais no 1º turno e [ATUALIZAR] no 2º, sempre comparado ao resultado oficial do TSE.\n\nO instituto que mais acertou a temporada inteira: [ATUALIZAR].\n\nNão teve investimento, não teve equipe. Foi um projeto solo pra resolver um problema que eu tinha como leitor de notícia política.\n\nSe você cobriu ou acompanhou eleição esse ano, queria saber: o que faltou numa cobertura de pesquisa que ainda não existe?"
+}

@@ -1,0 +1,18 @@
+{
+  "saida": "06-out-estado-rs",
+  "publicar_em": "2026-10-06",
+  "plataformas": [
+    "instagram-post",
+    "instagram-story",
+    "x"
+  ],
+  "modo": "comparacao",
+  "eyebrow": "Estado em foco · Governador RS",
+  "titulo": "[ATUALIZAR]% x [ATUALIZAR]%",
+  "linha_fina": "Como está a disputa de governador no Rio Grande do Sul, na média ponderada de hoje?",
+  "fonte": "ElectioLab · electiolab.com/eleicoes-governador-rs-2026",
+  "url": "https://electiolab.com/eleicoes-governador-rs-2026",
+  "precisa_dado_fresco": true,
+  "nota_checagem": "Puxar média ponderada atual do governador RS no dashboard regional antes de publicar.",
+  "legenda": "Como está a disputa de governador no Rio Grande do Sul?\n\nMédia ponderada atual: [ATUALIZAR — puxar do dashboard do estado]\n\nCobertura completa: electiolab.com/eleicoes-governador-rs-2026"
+}

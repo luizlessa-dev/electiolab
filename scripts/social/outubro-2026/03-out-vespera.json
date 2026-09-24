@@ -1,0 +1,17 @@
+{
+  "saida": "03-out-vespera",
+  "publicar_em": "2026-10-03",
+  "plataformas": [
+    "x",
+    "instagram-post",
+    "instagram-story"
+  ],
+  "modo": "contagem",
+  "eyebrow": "Véspera do 1º turno",
+  "titulo": "AMANHÃ É O DIA",
+  "linha_fina": "A gente vai comentar a apuração em tempo real, comparando com a média ponderada que rodou a campanha inteira.",
+  "fonte": "ElectioLab · média ponderada por recência, amostra e acurácia histórica do instituto · metodologia em electiolab.com/metodologia",
+  "url": "https://electiolab.com",
+  "legenda": "Amanhã é o dia.\n\nA gente vai comentar a apuração em tempo real, comparando com a média ponderada que rodou a campanha inteira.\n\nAté amanhã: electiolab.com",
+  "precisa_dado_fresco": false
+}

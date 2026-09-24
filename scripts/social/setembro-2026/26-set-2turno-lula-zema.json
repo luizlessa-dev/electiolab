@@ -1,0 +1,18 @@
+{
+  "saida": "26-set-2turno-lula-zema",
+  "publicar_em": "2026-09-26",
+  "plataformas": [
+    "x",
+    "instagram-post",
+    "instagram-story"
+  ],
+  "modo": "comparacao",
+  "eyebrow": "Cenário 2º turno · Lula x Zema",
+  "titulo": "[ATUALIZAR]% x [ATUALIZAR]%",
+  "linha_fina": "Simulação de 2º turno com os dados de hoje — conforme apurado em 17/09/2026 (CALENDARIO-COMUM.md) — referência: Lula 45,9% x Zema 38,2%, CONFERIR número atualizado no dashboard antes de publicar.",
+  "fonte": "ElectioLab · média ponderada por recência, amostra e acurácia histórica do instituto · metodologia em electiolab.com/metodologia",
+  "url": "https://electiolab.com/quem-vence-no-segundo-turno-presidencia-2026",
+  "precisa_dado_fresco": true,
+  "nota_checagem": "Puxar cenário Lula x Zema atualizado em quem-vence-no-segundo-turno-presidencia-2026 antes de publicar.",
+  "legenda": "Se a eleição fosse hoje, Lula x Zema no 2º turno estaria assim: [ATUALIZAR]\n\nTodos os cenários simulados e atualizados: electiolab.com/quem-vence-no-segundo-turno-presidencia-2026"
+}

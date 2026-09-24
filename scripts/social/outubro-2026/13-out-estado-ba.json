@@ -1,0 +1,18 @@
+{
+  "saida": "13-out-estado-ba",
+  "publicar_em": "2026-10-13",
+  "plataformas": [
+    "instagram-post",
+    "instagram-story",
+    "x"
+  ],
+  "modo": "comparacao",
+  "eyebrow": "Estado em foco · Governador BA",
+  "titulo": "[ATUALIZAR]% x [ATUALIZAR]%",
+  "linha_fina": "Como está a disputa de governador na Bahia, na média ponderada de hoje?",
+  "fonte": "ElectioLab · electiolab.com/eleicoes-governador-ba-2026",
+  "url": "https://electiolab.com/eleicoes-governador-ba-2026",
+  "precisa_dado_fresco": true,
+  "nota_checagem": "Puxar média ponderada atual do governador BA no dashboard regional antes de publicar.",
+  "legenda": "Como está a disputa de governador na Bahia?\n\nMédia ponderada atual: [ATUALIZAR — puxar do dashboard do estado]\n\nCobertura completa: electiolab.com/eleicoes-governador-ba-2026"
+}

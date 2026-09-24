@@ -1,0 +1,15 @@
+{
+  "saida": "16-out-recalculo-instituto",
+  "publicar_em": "2026-10-16",
+  "plataformas": [
+    "linkedin"
+  ],
+  "modo": "citacao",
+  "eyebrow": "Arquitetura · dado",
+  "titulo": "A média ponderada não trava quando um instituto para de publicar. Ela recalcula sozinha com quem sobrou — e o peso de quem ficou de fora simplesmente some do cálculo até a próxima pesquisa dele.",
+  "linha_fina": "— Luiz Lessa, fundador do ElectioLab",
+  "fonte": "ElectioLab · electiolab.com/metodologia",
+  "url": "https://electiolab.com/metodologia",
+  "legenda": "Uma pergunta que recebo: \"o que acontece com a média quando um instituto some por semanas?\"\n\nNada de especial — e essa é a resposta chata que importa. A média ponderada recalcula a cada 6h com quem publicou pesquisa dentro da janela de recência. Instituto que não publica nada simplesmente para de contribuir pro cálculo até a próxima pesquisa dele.\n\nNão tem trava manual, não tem \"último valor conhecido\" congelado. É recalculo automático, cron rodando sozinho.\n\nQuem trabalha com dado que atualiza sozinho sabe: o difícil não é calcular quando tudo chega certinho, é decidir o que fazer quando falta pedaço.",
+  "precisa_dado_fresco": false
+}

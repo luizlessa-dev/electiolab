@@ -1,0 +1,22 @@
+{
+  "saida": "05-out-acerto-erro",
+  "publicar_em": "2026-10-05",
+  "plataformas": [
+    "x"
+  ],
+  "modo": "numero",
+  "eyebrow": "Prova social · pós 1º turno",
+  "numeros": [
+    [
+      "Erro da média ponderada",
+      "[ATUALIZAR]pp",
+      "em relação ao resultado\noficial do TSE"
+    ]
+  ],
+  "linha_fina": "Isso é o que dá pra esperar de um método que pondera pelo histórico de acurácia em vez de tratar toda pesquisa como igual.",
+  "fonte": "ElectioLab · comparação com o resultado oficial do TSE, 1º turno 2026",
+  "url": "https://electiolab.com/relatorio",
+  "precisa_dado_fresco": true,
+  "nota_checagem": "Depende do resultado oficial de 04/10. Calcular erro absoluto da média ponderada final vs. resultado do TSE antes de publicar.",
+  "legenda": "1/ A média ponderada do ElectioLab errou por [ATUALIZAR: X] pontos percentuais em relação ao resultado oficial do 1º turno.\n\n2/ Pra comparar: [ATUALIZAR: erro médio das pesquisas individuais, se disponível] ponto(s) percentual(is).\n\n3/ Isso é o que dá pra esperar de um método que pondera pelo histórico de acurácia em vez de tratar toda pesquisa como igual.\n\n4/ Detalhe completo, instituto por instituto: electiolab.com/relatorio/[semana]"
+}
