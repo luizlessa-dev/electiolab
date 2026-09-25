@@ -11304,6 +11304,78 @@ const PENDING_POLLS: Array<{
       { candidate_name: "NÃO SABE", percentage: 3.0 },
     ],
   },
+
+  // ─── Real Time Big Data · Governador Alagoas · 21-24 set 2026 · AL-06597/2026 · n=1.600 · presencial ──
+  // Fonte: https://www.dgabc.com.br/Noticia/4349105/tecnicamente-empatados-em-al-renan-filho-tem-47-e-jhc-44-mostra-real-time-big-data
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Alagoas 2026",
+    publication_date: "2026-09-25",
+    fieldwork_start: "2026-09-21",
+    fieldwork_end: "2026-09-24",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.dgabc.com.br/Noticia/4349105/tecnicamente-empatados-em-al-renan-filho-tem-47-e-jhc-44-mostra-real-time-big-data",
+    tse_protocolo: "AL-06597/2026",
+    results: [
+      { candidate_name: "Renan Filho", percentage: 47.0 },
+      { candidate_name: "JHC", percentage: 44.0 },
+      { candidate_name: "Lenilda Luna", percentage: 0.0 },
+      { candidate_name: "Márcio Jambo", percentage: 0.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 5.0 },
+      { candidate_name: "NÃO SABE", percentage: 3.0 },
+    ],
+  },
+
+  // ─── Real Time Big Data · Senador Alagoas (2 vagas) · 21-24 set 2026 · AL-06597/2026 · n=1.600 · presencial ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-alagoas-setembro-2026-2/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Alagoas 2026",
+    publication_date: "2026-09-25",
+    fieldwork_start: "2026-09-21",
+    fieldwork_end: "2026-09-24",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-alagoas-setembro-2026-2/",
+    tse_protocolo: "AL-06597/2026",
+    results: [
+      { candidate_name: "Marina Jhc", percentage: 23.0 },
+      { candidate_name: "Renan", percentage: 22.0 },
+      { candidate_name: "Arthur Lira", percentage: 20.0 },
+      { candidate_name: "Davi Davino Filho", percentage: 17.0 },
+      { candidate_name: "Dr. Wanderley", percentage: 6.0 },
+      { candidate_name: "Alexandre Fleming", percentage: 1.0 },
+      { candidate_name: "Mariedson", percentage: 0.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 5.0 },
+      { candidate_name: "NÃO SABE", percentage: 6.0 },
+    ],
+  },
+
+  // ─── Datafolha · Governador Ceará · 22-24 set 2026 · CE-00198/2026 · n=1.204 · presencial ──
+  // Fonte: https://www.opovo.com.br/noticias/politica/eleicoes/2026/09/25/pesquisa-datafolha-ceara-tem-ciro-e-elmano-em-empate-tecnico.html
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador CE 2026 - 1º Turno",
+    publication_date: "2026-09-25",
+    fieldwork_start: "2026-09-22",
+    fieldwork_end: "2026-09-24",
+    sample_size: 1204,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.opovo.com.br/noticias/politica/eleicoes/2026/09/25/pesquisa-datafolha-ceara-tem-ciro-e-elmano-em-empate-tecnico.html",
+    tse_protocolo: "CE-00198/2026",
+    results: [
+      { candidate_name: "Ciro Gomes", percentage: 44.0 },
+      { candidate_name: "Elmano de Freitas", percentage: 43.0 },
+      { candidate_name: "Vera Lúcia", percentage: 1.0 },
+      { candidate_name: "Delegado Huggo", percentage: 1.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 6.0 },
+      { candidate_name: "NÃO SABE", percentage: 5.0 },
+    ],
+  },
 ];
 
 async function main() {
