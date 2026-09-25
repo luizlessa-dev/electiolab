@@ -9,8 +9,8 @@
 -- origem do plano em cada api_keys.
 
 ALTER TABLE api_keys
-  ADD COLUMN plan_source TEXT NOT NULL DEFAULT 'stripe'
-  CONSTRAINT api_keys_plan_source_check CHECK (plan_source IN ('stripe', 'manual'));
+  ADD COLUMN IF NOT EXISTS plan_source TEXT NOT NULL DEFAULT 'stripe'
+  CHECK (plan_source IN ('stripe', 'manual'));
 
 COMMENT ON COLUMN api_keys.plan_source IS
   'stripe = tier sincronizado pelo webhook do Stripe (src/app/api/webhooks/stripe/route.ts). '
