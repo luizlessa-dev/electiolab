@@ -10884,6 +10884,163 @@ const PENDING_POLLS: Array<{
       { candidate_name: "NÃO SABE", percentage: 4.0 },
     ],
   },
+
+  // ─── Quaest · Governador Goiás · 20-23 set 2026 · GO-01667/2026 · n=804 · presencial ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-goias-setembro-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador GO 2026 - 1º Turno",
+    publication_date: "2026-09-24",
+    fieldwork_start: "2026-09-20",
+    fieldwork_end: "2026-09-23",
+    sample_size: 804,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-goias-setembro-2026/",
+    tse_protocolo: "GO-01667/2026",
+    results: [
+      { candidate_name: "Daniel Vilela", percentage: 42.0 },
+      { candidate_name: "Marconi Perillo", percentage: 19.0 },
+      { candidate_name: "Wilder Morais", percentage: 15.0 },
+    ],
+  },
+
+  // ─── Quaest · Governador Bahia · 20-23 set 2026 · BA-01850/2026 · n=900 · presencial ──
+  // Fonte: https://bahia.ba/politica/quaest-acm-neto-tem-42-e-jeronimo-rodrigues-40-no-1o-turno/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador BA 2026 - 1º Turno",
+    publication_date: "2026-09-24",
+    fieldwork_start: "2026-09-20",
+    fieldwork_end: "2026-09-23",
+    sample_size: 900,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://bahia.ba/politica/quaest-acm-neto-tem-42-e-jeronimo-rodrigues-40-no-1o-turno/",
+    tse_protocolo: "BA-01850/2026",
+    results: [
+      { candidate_name: "ACM Neto", percentage: 42.0 },
+      { candidate_name: "Jeronimo Rodrigues", percentage: 40.0 },
+    ],
+  },
+
+  // ─── Quaest · Governador Paraná · 20-23 set 2026 · PR-02802/2026 · n=804 · presencial ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-parana-setembro-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador Parana 2026",
+    publication_date: "2026-09-24",
+    fieldwork_start: "2026-09-20",
+    fieldwork_end: "2026-09-23",
+    sample_size: 804,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-parana-setembro-2026/",
+    tse_protocolo: "PR-02802/2026",
+    results: [
+      { candidate_name: "Sergio Moro", percentage: 36.0 },
+      { candidate_name: "Requiao Filho", percentage: 20.0 },
+      { candidate_name: "Sandro Alex", percentage: 20.0 },
+    ],
+  },
+
+  // ─── Quaest · Governador Rio Grande do Sul · 20-23 set 2026 · RS-01390/2026 · n=900 · presencial ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-rio-grande-do-sul-setembro-2026/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador RS 2026 - 1º Turno",
+    publication_date: "2026-09-24",
+    fieldwork_start: "2026-09-20",
+    fieldwork_end: "2026-09-23",
+    sample_size: 900,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-rio-grande-do-sul-setembro-2026/",
+    tse_protocolo: "RS-01390/2026",
+    results: [
+      { candidate_name: "Luciano Zucco", percentage: 29.0 },
+      { candidate_name: "Juliana Brizola", percentage: 23.0 },
+    ],
+  },
+
+  // ─── Quaest · Governador Santa Catarina · 20-23 set 2026 · SC-04783/2026 · n=804 · presencial ──
+  // Fonte: https://www.band.com.br/politica/eleicoes/jorginho-sobe-para-54-e-pode-ser-reeleito-no-1o-turno-em-sc-diz-quaest
+  {
+    institute_name: "Quaest",
+    election_name: "Governador Santa Catarina 2026",
+    publication_date: "2026-09-24",
+    fieldwork_start: "2026-09-20",
+    fieldwork_end: "2026-09-23",
+    sample_size: 804,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.band.com.br/politica/eleicoes/jorginho-sobe-para-54-e-pode-ser-reeleito-no-1o-turno-em-sc-diz-quaest",
+    tse_protocolo: "SC-04783/2026",
+    results: [
+      { candidate_name: "Jorginho Mello", percentage: 54.0 },
+      { candidate_name: "Joao Rodrigues", percentage: 13.0 },
+      { candidate_name: "Gelson Merisio", percentage: 10.0 },
+    ],
+  },
+
+  // ─── AtlasIntel · Governador Paraná · 15-20 set 2026 · PR-08465/2026 · n=1.800 · online ──
+  // Fonte: https://www.metropoles.com/brasil/atlasintel-sergio-moro-tem-491-e-requiao-filho-282-ao-governo-do-pr
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador Parana 2026",
+    publication_date: "2026-09-21",
+    fieldwork_start: "2026-09-15",
+    fieldwork_end: "2026-09-20",
+    sample_size: 1800,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://www.metropoles.com/brasil/atlasintel-sergio-moro-tem-491-e-requiao-filho-282-ao-governo-do-pr",
+    tse_protocolo: "PR-08465/2026",
+    results: [
+      { candidate_name: "Sergio Moro", percentage: 49.1 },
+      { candidate_name: "Requiao Filho", percentage: 28.2 },
+      { candidate_name: "Sandro Alex", percentage: 18.6 },
+    ],
+  },
+
+  // ─── Índice Inteligência · Governador Paraná · 19-21 set 2026 · PR-06638/2026 · n=1.200 · presencial ──
+  // Fonte: https://opopularpr.com.br/pesquisa-indice-inteligencia-traz-moro-com-35-e-sandro-alex-com-32-na-disputa-pelo-governo-do-parana/
+  {
+    institute_name: "Instituto Índice Inteligência",
+    election_name: "Governador Parana 2026",
+    publication_date: "2026-09-24",
+    fieldwork_start: "2026-09-19",
+    fieldwork_end: "2026-09-21",
+    sample_size: 1200,
+    margin_of_error: 2.83,
+    methodology: "presencial",
+    source_url: "https://opopularpr.com.br/pesquisa-indice-inteligencia-traz-moro-com-35-e-sandro-alex-com-32-na-disputa-pelo-governo-do-parana/",
+    tse_protocolo: "PR-06638/2026",
+    results: [
+      { candidate_name: "Sergio Moro", percentage: 35.0 },
+      { candidate_name: "Sandro Alex", percentage: 32.0 },
+      { candidate_name: "Requiao Filho", percentage: 20.0 },
+    ],
+  },
+
+  // ─── Vox Brasil · Governador São Paulo · 20-22 set 2026 · SP-07745/2026 · n=1.480 · presencial ──
+  // Fonte: https://exame.com/brasil/pesquisa-vox-brasil-tarcisio-tem-565-e-haddad-334-no-1o-turno-em-sp/
+  {
+    institute_name: "Vox Brasil Pesquisas",
+    election_name: "Governador SP 2026 - 1º Turno",
+    publication_date: "2026-09-25",
+    fieldwork_start: "2026-09-20",
+    fieldwork_end: "2026-09-22",
+    sample_size: 1480,
+    margin_of_error: 2.55,
+    methodology: "presencial",
+    source_url: "https://exame.com/brasil/pesquisa-vox-brasil-tarcisio-tem-565-e-haddad-334-no-1o-turno-em-sp/",
+    tse_protocolo: "SP-07745/2026",
+    results: [
+      { candidate_name: "Tarcísio", percentage: 56.5 },
+      { candidate_name: "Haddad", percentage: 33.4 },
+    ],
+  },
 ];
 
 async function main() {
