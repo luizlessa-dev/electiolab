@@ -127,7 +127,7 @@ Após deploy, acessíveis em `/dashboard/admin/`:
 | Cron job não dispara | Verificar GitHub Actions → quota-alerts-daily.yml → "Run" |
 | Alertas não enviados | Verificar CRON_JOB_TOKEN correto em GitHub Secrets |
 | Emails não chegam | Verificar RESEND_API_KEY em Vercel + email "noreply@electiolab.com" em allowlist |
-| Custom quotas retorna 401 | User precisa ter `user.is_admin = true` no auth.users |
+| Custom quotas retorna 401 | User precisa ter `app_metadata.is_admin = true` no auth.users (setar via service_role, nunca via `user_metadata`) |
 | Webhook Stripe não sincroniza | Verificar STRIPE_WEBHOOK_SECRET + endpoint `/api/webhooks/stripe` ativo |
 
 ---
