@@ -49,6 +49,16 @@ function resultSetKey(results: { candidate_id: string; percentage: number | stri
     .join("|");
 }
 
+/** `a` ⊆ `b` como conjuntos de (candidate_id, percentage) — cada item de `a` aparece em `b`. */
+function isSubsetOf(
+  a: { candidate_id: string; percentage: number | string }[],
+  b: { candidate_id: string; percentage: number | string }[]
+): boolean {
+  if (a.length === 0) return false;
+  const bKeys = new Set(b.map((r) => `${r.candidate_id}:${Number(r.percentage).toFixed(2)}`));
+  return a.every((r) => bKeys.has(`${r.candidate_id}:${Number(r.percentage).toFixed(2)}`));
+}
+
 /** Aviso pré-voo (antes de tocar o banco): mesma pesquisa em PENDING_POLLS aparecendo com
  *  scope='nacional' (ou omitido) E com um scope de UF — o padrão "scope-fantasma" que gerou
  *  9 dos 41 pares duplicados da auditoria de 2026-09-22 (alguém esqueceu de preencher `scope`
@@ -11145,16 +11155,51 @@ async function main() {
       }
 
       const newKey = resultSetKey(resolvedResults);
+      // Auditoria de 2026-09-23 ([[ingest-manual-85-erros-unique-constraint]]): dos 85
+      // erros de unique constraint, 50 eram só isso — resolved é subconjunto EXATO de um
+      // poll já completo no banco, porque hoje algum nome de PENDING_POLLS não resolve
+      // mais (candidato desativado numa fusão, ou nome divergente tipo "Renan Santos"
+      // vs "Renan"). Comparar por subconjunto em vez de igualdade exata resolve a
+      // maioria sem tocar em dado de produção — só pula a reinserção.
+      let supersetOf: { id: string; scope: string | null; scenario_label: string | null } | null = null;
+      let conflictWith: { id: string; scope: string | null; scenario_label: string | null } | null = null;
       for (const p of candidatePolls) {
         const existing = byPoll.get(p.id) ?? [];
-        // Só considera duplicata se AMBOS os lados tiverem resultados — um poll
-        // existente sem poll_results (ainda não resolvido) não deve "engolir"
-        // uma pesquisa nova só porque as duas têm conjunto vazio.
         if (existing.length === 0) continue;
         if (resultSetKey(existing) === newKey) {
           duplicateOf = p;
           break;
         }
+        if (isSubsetOf(resolvedResults, existing)) {
+          // Categoria 1: o que resolveu hoje já está inteiro lá dentro — duplicata segura.
+          duplicateOf = p;
+          break;
+        }
+        const sameKey = (p.scope ?? "nacional") === (poll.scope ?? "nacional") && (p.scenario_label ?? null) === (poll.scenario_label ?? null);
+        if (!sameKey) continue;
+        if (isSubsetOf(existing, resolvedResults)) {
+          // Categoria 2: o poll já existente tem MENOS candidatos que o resolvido hoje —
+          // não é duplicata pra pular nem pra inserir como linha nova (mesma chave única
+          // scope+scenario_label). Precisa de backfill manual dos poll_results faltantes
+          // no poll já existente — não automatizo escrita em produção aqui.
+          supersetOf = p;
+        } else {
+          // Categoria 3: mesma chave (scope+scenario_label), conteúdo genuinamente
+          // diferente e sem relação de subconjunto — inserir bateria no índice único.
+          // Não é um "já existe" limpo; sinaliza pra revisão manual em vez de deixar
+          // estourar o erro cru do Postgres.
+          conflictWith = p;
+        }
+      }
+      if (!duplicateOf && supersetOf) {
+        console.log(`⚠️  poll ${supersetOf.id} já existe mas está INCOMPLETO (tem menos candidatos que esta entrada) — precisa backfill manual dos poll_results faltantes, não reinserindo`);
+        skipped++;
+        continue;
+      }
+      if (!duplicateOf && conflictWith) {
+        console.log(`⚠️  poll ${conflictWith.id} já existe com mesmo scope/scenario_label mas conteúdo DIFERENTE (não é subconjunto em nenhuma direção) — revisão manual necessária, não inserindo`);
+        skipped++;
+        continue;
       }
     } else if (candidatePolls && candidatePolls.length > 0 && resolvedResults.length === 0) {
       // Nenhum candidato resolveu (ex.: nome de urna divergente, candidato ainda não
