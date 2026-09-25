@@ -14,6 +14,7 @@
 
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { Resend } from "resend";
 
 const resend = process.env.RESEND_API_KEY
@@ -35,9 +36,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Verificar se é admin (simplificado: checa auth.users.user_metadata.is_admin)
+    // Verificar se é admin (app_metadata: só service_role pode alterar, ao contrário de user_metadata)
     const { data: userData } = await supabase.auth.admin.getUserById(user.id);
-    const isAdmin = userData?.user?.user_metadata?.is_admin === true;
+    const isAdmin = userData?.user?.app_metadata?.is_admin === true;
 
     if (!isAdmin) {
       return NextResponse.json({ error: "Forbidden: admin role required" }, { status: 403 });
@@ -71,8 +72,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "API key not found" }, { status: 404 });
     }
 
-    // Chamar função Supabase para upsert custom quota
-    const { data: result, error: rpcError } = await supabase.rpc(
+    // Chamar função Supabase para upsert custom quota (EXECUTE revogado de anon/authenticated)
+    const { data: result, error: rpcError } = await supabaseAdmin.rpc(
       "set_custom_quota" as any,
       {
         p_api_key_id: api_key_id,
@@ -188,7 +189,7 @@ export async function GET(request: Request) {
 
     // Verificar admin
     const { data: userData } = await supabase.auth.admin.getUserById(user.id);
-    const isAdmin = userData?.user?.user_metadata?.is_admin === true;
+    const isAdmin = userData?.user?.app_metadata?.is_admin === true;
 
     if (!isAdmin) {
       return NextResponse.json({ error: "Forbidden: admin role required" }, { status: 403 });
@@ -231,7 +232,7 @@ export async function DELETE(request: Request) {
 
     // Verificar admin
     const { data: userData } = await supabase.auth.admin.getUserById(user.id);
-    const isAdmin = userData?.user?.user_metadata?.is_admin === true;
+    const isAdmin = userData?.user?.app_metadata?.is_admin === true;
 
     if (!isAdmin) {
       return NextResponse.json({ error: "Forbidden: admin role required" }, { status: 403 });
