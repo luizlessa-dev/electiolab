@@ -53,9 +53,19 @@ Página-mãe: https://www.tse.jus.br/eleicoes/informacoes-tecnicas-sobre-a-divul
 - Presidente (eleição federal): município `and=f` quando `snt=0`; UF quando `snt=0`; Brasil quando houver totalização final.
 - Governador/Senador/Deputados (eleição estadual): município quando `snt=0`; UF quando houver totalização final; Brasil quando todas as UFs tiverem totalização final.
 
+## Verificada em 26/09/2026 contra amostras reais do simulado
+- **Códigos de cargo** em `ele-c.json`: 1 Presidente, 3 Governador, 5 Senador, 6 Dep. Federal, 7 Dep. Estadual, 8 Dep. Distrital (eleição estadual 21272) e 25 Conselheiro Distrital (eleição própria 21274, `tp=3`). Nos arquivos: `c` + código com 4 dígitos (`c0001`, `c0003` baixados com 200; `c0005`–`c0008` seguem a mesma regra, sem GET).
+- **IDG**: campo `idg` no topo de todos os arquivos (ele-c, mun-cm, EA14, EA20), string de 9 dígitos, junto de `dg`/`hg` (geração).
+- **Padrão de URL** confirmado (200) para: `ele-c`, `mun-e021270-cm`, `br-e021270-ab`, `br-c0001-e021270-u`, `mg-c0003-e021272-u`. Nome do arquivo usa a eleição com zero à esquerda (`e021270`).
+- **ETag/Last-Modified/304** funcionam (304 confirmado em `ele-c.json`). `cache-control: max-age` entre 21 e 55 s. Headers do CDN anunciam `x-ratelimit-limit: 2000/s` — a documentação diz 100/s; seguimos o documentado.
+- Exterior existe como UF **`zz`** no EA12 (184 "municípios") e no EA14 federal.
+- Detalhes em `docs/arquitetura.md` → "Mapa de campos".
+
 ## A verificar
-- Códigos de cargo (`c0001`, `c0003`, `c0005`…) contra `ele-c.json` 2026.
-- Nome e posição do IDG em cada arquivo.
+- **Specs em PDF (EA10/11/12/14/15/20 e "Instruções para download") não baixadas**: www.tse.jus.br responde 403 Akamai a `curl` (26/09/2026). Baixar no navegador e salvar em `docs/specs/` (gitignored). Sem elas, os campos marcados **[?]** no mapa ficam sem confirmação.
+- EA15 (acompanhamento por UF), EA14 da eleição estadual (21272), EA20 de Senador/Dep. Federal/Estadual/Distrital e EA10 (nome do arquivo e estrutura): **sem amostra**.
+- Valores de `and` além de `f`; valor de `cand.st` para eleito; campos `sup`, `dv`, `tf`, `esae`, `mnae`, `sa/sna`, `vscv`, `vnt`, `tvtn/tvan`, `agr.vag`.
+- Códigos de eleição do ambiente oficial (`6257/6259/6261`) contra o `ele-c.json` oficial (na véspera).
 - Intervalo de polling recomendado (TSE disse que definiria após os simulados).
 - Pós-eleição: BU/RDV e Portal de Dados Abertos (https://dadosabertos.tse.jus.br/) — fora do escopo da noite.
 
