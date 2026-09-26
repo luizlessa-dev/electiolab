@@ -1,0 +1,36 @@
+-- Corrige o statement timeout (Postgres 57014) que quebrava o build da
+-- Vercel ao pré-renderizar /(marketing)/eleicao-2018/[uf] e
+-- /(marketing)/eleicao-2022/[uf] (ex.: /eleicao-2018/ac).
+--
+-- Causa (confirmada via EXPLAIN, MCP do Supabase, somente leitura):
+-- getHistoricElectionData (src/lib/queries/historic-elections.ts) faz
+--   SELECT ... FROM prior_election_results WHERE year = ? AND round = 1 AND state = ?
+-- prior_election_results tem 2.889.455 linhas no total; year=2018 sozinho já
+-- são 1.033.718 linhas (35% da tabela) e year=2022 são 1.855.737 (64%) — as
+-- duas eleições juntas são praticamente a tabela inteira. O único índice
+-- existente que toca essas colunas é idx_prior_year (year desc), então o
+-- plano faz:
+--   Parallel Index Scan using idx_prior_year (Index Cond: year = 2018)
+--   Filter: (round = 1) AND (state = 'AC')
+-- ou seja: busca ~1M linhas pelo índice de year e só DEPOIS filtra por
+-- round/state via fetch de heap — para retornar ~1.6k-2.4k linhas (ver
+-- contagem real por estado, ex. AC/2018/round=1 = 1.584 linhas). Isso roda
+-- por UF (27x) e por página de .range() dentro de getHistoricElectionData,
+-- e no build antigo (generateStaticParams retornava as 27 UFs) rodava tudo
+-- de uma vez — daí o timeout. As páginas passaram a usar
+-- generateStaticParams() => [] + ISR (revalidate=86400) para tirar isso do
+-- caminho do build; este índice corrige a causa raiz pra também não pesar
+-- no primeiro acesso (on-demand) de cada UF.
+--
+-- CONCURRENTLY porque a tabela tem ~2.9M linhas e recebe escrita via
+-- ingestão do TSE — não queremos lockar leituras/escritas durante o build
+-- do índice. CONCURRENTLY não pode rodar dentro de um bloco de transação;
+-- rodando manualmente uma instrução por vez no SQL Editor do painel (como
+-- de praxe neste projeto — ver CLAUDE.md) isso não é problema.
+--
+-- idx_prior_year (year) fica redundante depois deste índice (todo prefixo
+-- válido dele já é coberto por este), mas não a removemos aqui — é uma
+-- limpeza separada, opcional, sem relação com o bug.
+
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_prior_election_results_year_round_state
+  ON prior_election_results (year, round, state);

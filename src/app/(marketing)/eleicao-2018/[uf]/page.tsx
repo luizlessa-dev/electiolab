@@ -4,12 +4,16 @@ import { getHistoricElectionData } from "@/lib/queries/historic-elections";
 import { HistoricElectionPage, buildJsonLd, UF_NAMES } from "@/components/historic-election/page-template";
 
 export const revalidate = 86400; // 24h
-export const dynamicParams = false;
+export const dynamicParams = true;
 
-const UFS = ["ac","al","am","ap","ba","ce","df","es","go","ma","mg","ms","mt","pa","pb","pe","pi","pr","rj","rn","ro","rr","rs","sc","se","sp","to"];
-
+// generateStaticParams vazio de propósito: a query em getHistoricElectionData
+// escaneia prior_election_results sem índice (year, round, state) — com ~1M
+// linhas só para year=2018, pré-renderizar as 27 UFs no build estourava o
+// statement_timeout do Postgres (57014) e quebrava o deploy (ver migration
+// idx_prior_election_results_year_round_state). Cada UF agora gera sob
+// demanda no primeiro acesso e fica em cache por `revalidate` (ISR).
 export async function generateStaticParams() {
-  return UFS.map((uf) => ({ uf }));
+  return [];
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ uf: string }> }): Promise<Metadata> {
