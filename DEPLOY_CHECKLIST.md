@@ -6,11 +6,12 @@
 
 ## 📋 **PASSO 1: Monitorar Deploy Vercel**
 
-1. Acesse: https://vercel.com/dashboard → electiolab
-2. Aguarde build completar (2-3 minutos)
-3. Verifique:
+1. **Antes do merge**: aplique manualmente as migrations novas de `supabase/migrations/` no SQL Editor do painel do Supabase (Luiz). Não há integração automática — nem Vercel, nem GitHub Actions aplicam migrations neste projeto. O arquivo `.sql` no repo é o registro do que foi aplicado, não o mecanismo que aplica.
+2. Acesse: https://vercel.com/dashboard → electiolab
+3. Aguarde build completar (2-3 minutos)
+4. Verifique:
    - ✅ Build logs: sucesso
-   - ✅ Migrations Supabase: aplicadas automaticamente
+   - ✅ Migrations Supabase: já aplicadas manualmente no passo 1 (confirme em Table Editor / `supabase_migrations.schema_migrations`)
    - ✅ URL em produção
 
 **Status esperado:** Deployments verde com "Production"

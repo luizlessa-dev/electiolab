@@ -2,7 +2,7 @@ import { getStripe } from "@/lib/stripe/config";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { syncSubscription, logPaymentFailure } from "@/lib/stripe/sync-subscription";
+import { syncSubscription, logPaymentFailure, isManualOverrideActive } from "@/lib/stripe/sync-subscription";
 
 let _admin: SupabaseClient | null = null;
 function getAdmin() {
@@ -56,6 +56,13 @@ export async function POST(request: Request) {
 
         if (!userId) {
           console.warn("[stripe webhook] checkout.session.completed sem user_id");
+          break;
+        }
+
+        if (await isManualOverrideActive(getAdmin(), userId)) {
+          console.warn(
+            `[stripe webhook] ignorando checkout.session.completed para ${userId}: plano manual (plan_source='manual') ativo`
+          );
           break;
         }
 
@@ -122,6 +129,13 @@ export async function POST(request: Request) {
           break;
         }
 
+        if (await isManualOverrideActive(getAdmin(), userId)) {
+          console.warn(
+            `[stripe webhook] ignorando subscription.updated para ${userId}: plano manual (plan_source='manual') ativo`
+          );
+          break;
+        }
+
         // Se ativo ou trialing: sincronizar tier e rate_limit
         if (sub.status === "active" || sub.status === "trialing") {
           const result = await syncSubscription(getAdmin(), {
@@ -158,6 +172,13 @@ export async function POST(request: Request) {
         const sub = event.data.object;
         const userId = sub.metadata?.user_id;
         if (userId) {
+          if (await isManualOverrideActive(getAdmin(), userId)) {
+            console.warn(
+              `[stripe webhook] ignorando subscription.deleted para ${userId}: plano manual (plan_source='manual') ativo`
+            );
+            break;
+          }
+
           await getAdmin()
             .from("api_keys")
             .update({ is_active: false })

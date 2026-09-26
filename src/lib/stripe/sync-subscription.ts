@@ -9,11 +9,16 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 export interface SubscriptionSyncInput {
   userId: string;
-  stripeSubscriptionId: string;
+  stripeSubscriptionId: string | null;
   tier: "pro" | "business" | "enterprise";
   currentPeriodEnd?: Date;
   trigger: "checkout" | "subscription.updated" | "subscription.deleted" | "manual";
   changedBy?: string;
+  /** Texto livre para subscription_changes.notes; default é "Stripe webhook: <trigger>". */
+  notes?: string;
+  /** Só usado quando ainda não existe api_keys para o user (key_hash é NOT NULL). */
+  apiKeyHash?: string;
+  apiKeyName?: string;
 }
 
 const TIER_LIMITS = {
@@ -33,9 +38,16 @@ export async function syncSubscription(
     currentPeriodEnd,
     trigger,
     changedBy,
+    notes,
+    apiKeyHash,
+    apiKeyName,
   } = input;
 
   const newRateLimit = TIER_LIMITS[tier];
+  // "manual" = atribuído via scripts/grant-manual-plan.ts, fora do fluxo do
+  // Stripe — o webhook (src/app/api/webhooks/stripe/route.ts) checa esse
+  // campo e não sobrescreve contas marcadas como manual.
+  const planSource = trigger === "manual" ? "manual" : "stripe";
 
   try {
     // 1. Buscar api_keys atual para comparar
@@ -63,6 +75,10 @@ export async function syncSubscription(
         stripe_subscription_id: stripeSubscriptionId,
         billing_cycle_end: currentPeriodEnd?.toISOString() || null,
         is_active: true,
+        plan_source: planSource,
+        // Só entra no payload se veio preenchido (primeira key do user);
+        // em update (ON CONFLICT), key_hash/name existentes não são tocados.
+        ...(apiKeyHash ? { key_hash: apiKeyHash, name: apiKeyName ?? `${tier} key` } : {}),
       },
       { onConflict: "user_id" }
     );
@@ -71,8 +87,10 @@ export async function syncSubscription(
       throw new Error(`upsert api_keys failed: ${upsertError.message}`);
     }
 
-    // 3. Registrar mudança em subscription_changes (se houver mudança real)
-    if (oldTier !== tier || oldRateLimit !== newRateLimit) {
+    // 3. Registrar mudança em subscription_changes. Para trigger "manual"
+    // sempre loga (mesmo sem mudança de tier/limite), já que o motivo/quem
+    // autorizou é o que importa para auditoria de acesso gratuito.
+    if (trigger === "manual" || oldTier !== tier || oldRateLimit !== newRateLimit) {
       const { error: auditError } = await admin
         .from("subscription_changes")
         .insert({
@@ -84,7 +102,7 @@ export async function syncSubscription(
           new_rate_limit: newRateLimit,
           trigger,
           changed_by: changedBy || null,
-          notes: `Stripe webhook: ${trigger}`,
+          notes: notes ?? `Stripe webhook: ${trigger}`,
         });
 
       if (auditError) {
@@ -102,6 +120,29 @@ export async function syncSubscription(
     console.error(`[sync-subscription] error:`, msg);
     return { success: false, error: msg };
   }
+}
+
+/**
+ * True se o plano do usuário foi atribuído manualmente (scripts/grant-manual-plan.ts),
+ * ou seja, sem assinatura Stripe por trás. Usado pelo webhook do Stripe para
+ * nunca sobrescrever/desativar essas contas.
+ */
+export async function isManualOverrideActive(
+  admin: SupabaseClient,
+  userId: string
+): Promise<boolean> {
+  const { data, error } = await admin
+    .from("api_keys")
+    .select("plan_source")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error) {
+    console.warn(`[sync-subscription] isManualOverrideActive check failed: ${error.message}`);
+    return false;
+  }
+
+  return data?.plan_source === "manual";
 }
 
 export async function logPaymentFailure(
