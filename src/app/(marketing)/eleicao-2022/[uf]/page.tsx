@@ -4,12 +4,16 @@ import { getHistoricElectionData } from "@/lib/queries/historic-elections";
 import { HistoricElectionPage, buildJsonLd, UF_NAMES } from "@/components/historic-election/page-template";
 
 export const revalidate = 86400; // 24h
-export const dynamicParams = false;
+export const dynamicParams = true;
 
-const UFS = ["ac","al","am","ap","ba","ce","df","es","go","ma","mg","ms","mt","pa","pb","pe","pi","pr","rj","rn","ro","rr","rs","sc","se","sp","to"];
-
+// generateStaticParams vazio de propósito: mesma causa do timeout de build
+// da página /eleicao-2018 — ver src/app/(marketing)/eleicao-2018/[uf]/page.tsx
+// e a migration idx_prior_election_results_year_round_state. year=2022 tem
+// ~1.85M linhas em prior_election_results, sem índice pra (year, round,
+// state); pré-renderizar as 27 UFs no build também estourava o
+// statement_timeout. Cada UF agora gera sob demanda e fica em cache (ISR).
 export async function generateStaticParams() {
-  return UFS.map((uf) => ({ uf }));
+  return [];
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ uf: string }> }): Promise<Metadata> {
