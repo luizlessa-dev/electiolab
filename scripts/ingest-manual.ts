@@ -11646,6 +11646,51 @@ const PENDING_POLLS: Array<{
       { candidate_name: "NÃO SABE", percentage: 4.0 },
     ],
   },
+
+  // ─── Quaest · DF Gov (com Arruda) + Senado · 19-22 set 2026 · DF-02596/2026 · n=1.104 · presencial ──
+  // Senado: só os 4 líderes (demais ≤1% omitidos)
+  {
+    institute_name: "Quaest",
+    election_name: "Governador Distrito Federal 2026",
+    publication_date: "2026-09-23",
+    fieldwork_start: "2026-09-19",
+    fieldwork_end: "2026-09-22",
+    sample_size: 1104,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-distrito-federal-setembro-2026-2/",
+    tse_protocolo: "DF-02596/2026",
+    results: [
+      { candidate_name: "Celina Leao", percentage: 33.0 },
+      { candidate_name: "Leandro Grass", percentage: 21.0 },
+      { candidate_name: "Arruda", percentage: 17.0 },
+      { candidate_name: "Paula Belmonte", percentage: 5.0 },
+      { candidate_name: "Ricardo Cappelli", percentage: 2.0 },
+      { candidate_name: "Kiko Caputo", percentage: 2.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 8.0 },
+      { candidate_name: "NÃO SABE", percentage: 12.0 },
+    ],
+  },
+  {
+    institute_name: "Quaest",
+    election_name: "Senador Distrito Federal 2026",
+    publication_date: "2026-09-23",
+    fieldwork_start: "2026-09-19",
+    fieldwork_end: "2026-09-22",
+    sample_size: 1104,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-distrito-federal-setembro-2026-2/",
+    tse_protocolo: "DF-02596/2026",
+    results: [
+      { candidate_name: "Michelle Bolsonaro", percentage: 26.0 },
+      { candidate_name: "Leila Barros", percentage: 19.0 },
+      { candidate_name: "Bia Kicis", percentage: 15.0 },
+      { candidate_name: "Érika Kokay", percentage: 15.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 9.0 },
+      { candidate_name: "NÃO SABE", percentage: 11.0 },
+    ],
+  },
 ];
 
 async function main() {
