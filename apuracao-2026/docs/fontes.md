@@ -17,7 +17,7 @@ Página-mãe: https://www.tse.jus.br/eleicoes/informacoes-tecnicas-sobre-a-divul
 - 04/10/2026 — Pleito **3220** (1º turno)
   - **6257** — Eleição Geral Federal (Presidente)
   - **6259** — Eleições Gerais Estaduais 2026 (Governador, Senador, Deputados)
-  - **6261** — Eleição Conselho Distrital 2026
+  - **6261** — Eleição Conselho Distrital 2026 (**fora do escopo** — decisão 26/09/2026; Conselho Distrital de Fernando de Noronha)
 - `[ciclo]`, `e<ELEICAO>` e `p<PLEITO>` devem ser lidos do `ele-c.json` oficial (a verificar na véspera).
 - App web do TSE para conferência: https://resultados.tse.jus.br/oficial/app/index.html
 
@@ -56,15 +56,18 @@ Página-mãe: https://www.tse.jus.br/eleicoes/informacoes-tecnicas-sobre-a-divul
 ## Verificada em 26/09/2026 contra amostras reais do simulado
 - **Códigos de cargo** em `ele-c.json`: 1 Presidente, 3 Governador, 5 Senador, 6 Dep. Federal, 7 Dep. Estadual, 8 Dep. Distrital (eleição estadual 21272) e 25 Conselheiro Distrital (eleição própria 21274, `tp=3`). Nos arquivos: `c` + código com 4 dígitos (`c0001`, `c0003` baixados com 200; `c0005`–`c0008` seguem a mesma regra, sem GET).
 - **IDG**: campo `idg` no topo de todos os arquivos (ele-c, mun-cm, EA14, EA20), string de 9 dígitos, junto de `dg`/`hg` (geração).
-- **Padrão de URL** confirmado (200) para: `ele-c`, `mun-e021270-cm`, `br-e021270-ab`, `br-c0001-e021270-u`, `mg-c0003-e021272-u`. Nome do arquivo usa a eleição com zero à esquerda (`e021270`).
+- **Padrão de URL** confirmado (200) para: `ele-c`, `mun-e021270-cm`, EA14 (`br-e021270-ab`, `br-e021272-ab`), EA15 (`ac-e021270-ab`, `ac-e021272-ab`), EA20 (`br-c0001-e021270-u`, `mg-c0003-e021272-u`, `ac-c0005/c0006/c0007-e021272-u`, `df-c0008-e021272-u`). Nome do arquivo usa a eleição com zero à esquerda (`e021270`). Códigos de cargo 5–8 confirmados por GET.
+- **Estrutura proporcional** (Dep. Federal/Estadual/Distrital) amostrada: votos de legenda (`vl`, `tvtl`, `tval`), federações, `qe` (quociente eleitoral oficial do TSE), `vag` por agrupamento. Senador: `nv=2`, suplentes `s1/s2`.
+- Exterior (`zz`) só na eleição **federal** (EA14 21270); o EA14 estadual tem `br` + 27 UFs.
 - **ETag/Last-Modified/304** funcionam (304 confirmado em `ele-c.json`). `cache-control: max-age` entre 21 e 55 s. Headers do CDN anunciam `x-ratelimit-limit: 2000/s` — a documentação diz 100/s; seguimos o documentado.
 - Exterior existe como UF **`zz`** no EA12 (184 "municípios") e no EA14 federal.
 - Detalhes em `docs/arquitetura.md` → "Mapa de campos".
 
 ## A verificar
-- **Specs em PDF (EA10/11/12/14/15/20 e "Instruções para download") não baixadas**: www.tse.jus.br responde 403 Akamai a `curl` (26/09/2026). Baixar no navegador e salvar em `docs/specs/` (gitignored). Sem elas, os campos marcados **[?]** no mapa ficam sem confirmação.
-- EA15 (acompanhamento por UF), EA14 da eleição estadual (21272), EA20 de Senador/Dep. Federal/Estadual/Distrital e EA10 (nome do arquivo e estrutura): **sem amostra**.
-- Valores de `and` além de `f`; valor de `cand.st` para eleito; campos `sup`, `dv`, `tf`, `esae`, `mnae`, `sa/sna`, `vscv`, `vnt`, `tvtn/tvan`, `agr.vag`.
+- **Specs em PDF (EA10/11/12/14/15/20 e "Instruções para download")**: www.tse.jus.br responde 403 Akamai a `curl` (26/09/2026); o Luiz baixa pelo navegador e salva em `docs/specs/` (gitignored). Depois, reconciliar os **[?]** do mapa. Sem elas, os campos marcados **[?]** no mapa ficam sem confirmação.
+- EA10 (nome do arquivo e estrutura): **sem amostra** (só após 1ª totalização final; não pedir antes). EA20 por município e `mun-e021272-cm.json`: sem GET.
+- Valor de `st` para eleito por quociente partidário (só vimos `Eleito` e `Eleito por média`).
+- Valores de `and` além de `f`; campos `sup`, `dv`, `tf`, `esae`, `mnae`, `sa/sna`, `vscv`, `subs[]`, `cdpr`, `dtlim`.
 - Códigos de eleição do ambiente oficial (`6257/6259/6261`) contra o `ele-c.json` oficial (na véspera).
 - Intervalo de polling recomendado (TSE disse que definiria após os simulados).
 - Pós-eleição: BU/RDV e Portal de Dados Abertos (https://dadosabertos.tse.jus.br/) — fora do escopo da noite.

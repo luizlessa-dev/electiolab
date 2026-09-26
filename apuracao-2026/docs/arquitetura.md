@@ -30,7 +30,7 @@ Intervalo mínimo de 5 min e atraso sob carga. Serve para o Radar FAB (diário),
 - Normalização reprocessável a partir do bruto.
 
 ## Mapa de campos
-Fonte: **amostras reais do simulado**, baixadas em 26/09/2026 (`amostras/`, gitignored). Os PDFs de especificação **não foram obtidos** (www.tse.jus.br responde 403 Akamai a `curl`; ver "Fase 0 — status"). Portanto, abaixo: **[V]** = verificado nas amostras (estrutura ou aritmética), **[?]** = significado inferido, confirmar na spec.
+Fonte: **amostras reais do simulado**, baixadas em 26/09/2026 (`amostras/`, gitignored): 12 arquivos EA11/12/14/15/20. Os PDFs de especificação **ainda não estão em `docs/specs/`** (www.tse.jus.br responde 403 a `curl`; Luiz baixa pelo navegador). Quando chegarem: reconciliar os campos **[?]**. Legenda: **[V]** = verificado nas amostras (estrutura ou aritmética), **[?]** = significado inferido, confirmar na spec.
 
 Convenções gerais **[V]**
 - Todo valor é **string**, inclusive números (`"528951"`). Percentuais vêm com vírgula decimal: `"7,53"` (2 casas) e a variante `…n` com 9 casas (`"7,527528669"`, também com vírgula). Ao normalizar: vírgula→ponto, sem arredondar; guardar o bruto intacto (regra 1 do CLAUDE.md).
@@ -46,13 +46,13 @@ Convenções gerais **[V]**
 - `pl[].e[]` (eleições): `cd` (código da eleição), `cdt2` (código da eleição do **2º turno**; vazio no municipal), `sqele`, `nm`, `t` (turno), `tp` (`8` federal, `1` estadual, `3` municipal) **[V]**, `abr[]` → `{cd:"br", cp:[{cd,ds,tp}]}` com a lista de **cargos** (`cp.tp`: `1` majoritário, `2` proporcional).
 - **Simulado**: 21270 Federal (cargo 1 Presidente) · 21272 Estadual (3 Governador, 5 Senador, 6 Dep. Federal, 7 Dep. Estadual, 8 Dep. Distrital) · 21274 Municipal (cargo 25 Conselheiro Distrital). 2º turno: 21271 / 21273. **[V]**
 - **Confirma o item 4**: cargos = `1,3,5,6,7,8` (+ `25` Conselheiro Distrital) e o arquivo usa `c` + código com 4 dígitos (`c0001`, `c0003`). **Sem UF na config**: `abr` traz só `br`; as UFs vêm de EA12/EA14.
-- **Atenção ao PROMPT_INICIAL**: ele diz "Conselheiro Distrital (DF, eleição 6261)". No simulado o cargo 25 fica numa eleição própria (21274, `tp=3`) e a config não diz UF. Meu entendimento (não verificado) é que o Conselho Distrital é o de **Fernando de Noronha (PE)**, não do DF. Fora do escopo do coletor até decisão sua.
+- **Conselheiro Distrital: fora do escopo (decisão 26/09/2026).** No simulado o cargo 25 fica numa eleição própria (21274, `tp=3`); a config não traz UF. Entendimento do Luiz: é o Conselho Distrital de **Fernando de Noronha (PE)**, não do DF. O PROMPT_INICIAL foi corrigido.
 
 ### `mun-e021270-cm.json` (EA12) — `ele2026/21270/config/`  · 534 KB
 `{dg,hg,idg,f, abr[]}` → `abr[].{cd, ds, mu[]}` → `mu[].{cd, cdi, nm, c, z[]}`
 - `abr[].cd` = UF minúscula; **28 entradas = 27 UFs + `zz` (Exterior, 184 "municípios")**. **[V]**
 - `mu[].cd` = **código TSE de 5 dígitos** (string, zeros à esquerda; `"01120"` = Acrelândia/AC; BH = `41238`, SP = `71072`, Brasília = `97012`); `cdi` = código **IBGE 7 dígitos**, **vazio no Exterior**; `c` = capital (`"s"`: 27 no total); `z[]` = zonas eleitorais. **5.755 municípios**, sem `cd` repetido. **[V]**
-- O mesmo arquivo serve federal e estadual (config de municípios do 21270; conferir se 21272 tem o seu — **não baixado**).
+- O arquivo baixado é o de `21270`; `mun-e021272-cm.json` **não foi baixado** (a config de 21272 lista `cm` no mesmo padrão). Códigos de `cdabr` do EA15 batem com `mu[].cd` daqui (AC: 22).
 
 ### `br-e021270-ab.json` (EA14) — `ele2026/21270/dados/br/`  · 29 KB
 `{ele,t,f,dg,hg,idg, abr[]}` → **29 abrangências: 1 `br` + 27 UFs + `zz`**. Cada uma:
@@ -62,42 +62,56 @@ Convenções gerais **[V]**
 - UF: `munnr`, `munpt`, `munf` (municípios com resultado: não recebido / parcial / final **[?]**) e percentuais.
 - BR: `ufsnr`, `ufspt`, `ufsf` (idem, contando UFs; `ufsf=28` = todas final) e percentuais.
 - **Mapeia para** `apuracao.acompanhamento` (draft): `secoes_totalizadas=s.st`, `secoes_total=s.ts`, `pct_totalizado=s.pstn`, `andamento=and`, `data_hora_total=dt+ht`. **[V]**
-- EA14 é **por eleição** (`ele`): o do 21270 só cobre Presidente. O do estadual (`br-e021272-ab.json`, mesmo padrão) **não foi baixado**.
+- EA14 é **por eleição** (`ele`): o do 21270 só cobre Presidente; o do estadual (21272) foi amostrado (ver abaixo).
 
-### `br-c0001-e021270-u.json` / `mg-c0003-e021272-u.json` (EA20) — `dados/<uf>/`  · ~10 KB cada
-Cabeçalho: `ele, t, f, sup` (`"n"` **[?]**), `tpabr`/`cdabr` (`br`/`br`, `uf`/`mg`), `dg,hg,idg`, `dt,ht` (totalização), `dv`, `tf` (`"s"` **[?]**), **`and`**, `esae` (`"n"`), `mnae` (`[]`) **[?]**.
-- `carg[]` (1 por arquivo; o array existe porque o formato é genérico): `cd` (código do cargo, **string** `"1"`), `nmn`/`nmm`/`nmf` (nome neutro/masc./fem.: `"Governador"`/`"Governadora"`), **`nv` = nº de vagas** (`"1"`). **[V]** O PROMPT cita "`vag=2`" para senador: no arquivo, as vagas do cargo estão em **`carg.nv`**; `agr[].vag` (só no MG, `"0"`) parece ser **vagas obtidas pelo agrupamento** **[?]** — confirmar com o EA20 de Senador/Dep. Federal.
+### EA20 — `br-c0001-e021270-u` · `mg-c0003-e021272-u` · `ac-c0005/6/7-e021272-u` · `df-c0008-e021272-u`
+Cabeçalho: `ele, t, f, sup` (`"n"` **[?]**), `tpabr`/`cdabr` (`br`/`br`, `uf`/`mg`), `dg,hg,idg`, `dt,ht` (totalização), `dv`, `tf` (`"s"` **[?]**), **`and`** (só `f` visto), `esae` (`"n"`), `mnae` (`[]`) **[?]**. Todos os 8 arquivos: 1 elemento em `carg[]`.
+- `carg[]`: `cd` (código do cargo, **string**), `nmn`/`nmm`/`nmf` (neutro/masc./fem.: `Governador`/`Governadora`), **`nv` = nº de vagas** **[V]**: Presidente 1, Governador 1, **Senador 2**, Dep. Federal AC 8, Dep. Estadual AC 24, Dep. Distrital DF 28. Só nos proporcionais: **`qe`** (quociente eleitoral **fornecido pelo TSE**: AC federal 66697, AC estadual 25352, DF 61457; confere com `round(vv / nv)` — usar só como sanity check, nunca recalcular como dado oficial).
 - `carg[].fed[]` federações: `n` (101/102…), `sg`, `nm`, `com`, `npar[]` (números dos partidos).
-- `carg[].agr[]` **agrupamentos** (hierarquia real): `agr` → `par[]` → `cand[]`.
-  - `agr`: `n` (id do agrupamento, 8 dígitos), `nm`, `com` (composição: `"P 9984 / P 9992"`), **`tp`**: `i` partido isolado · `c` coligação · `f` federação **[V]**; `tvtn`, `tvan` **[?]**; `vag` (às vezes).
-  - `par`: `n` (nº do partido, 2 dígitos), `sg`, `nm`, `nfed` (nº da federação, `""` se não), `tvtn`, `tvan`.
-  - `cand`: `n` (nº de urna), **`sqcand`** (sequencial), `nm`, `nmu` (nome de urna), `dt` (nascimento), **`dvt`** (destinação do voto: `"Válido"`, `"Anulado"`, `"Anulado sub judice"`), `seq` (**posição/ordem de votação**: 1 = mais votado; **não** é o sequencial do candidato), `e` (`s`/`n`), `st` (situação: `"Não eleito"`, `"2º turno"`; valor de eleito **não observado**), **`vap`** (votos apurados do candidato), `pvap`/`pvapn` (%), `vs[]` (**vice**: `{tp:"v", sqcand, nm, nmu, sgp}`; para senador espera-se suplentes **[?]**).
-- `s{}` e `e{}`: mesma estrutura do EA14, agora por cargo/abrangência.
-- `v{}` votos **[V aritmético]** — identidades que valem nas duas amostras (bom para a validação de schema do coletor):
-  - `tv = vvc + vb + tvn` (total de votos)
-  - `vvc = vv + van + vansj` · `tvn = vn + vnt` (nulos) · `e.c = v.tv` (comparecimento = total de votos)
-  - `vv = vnom` (só nominais; em proporcional deve aparecer legenda — **não observado**)
-  - `Σ cand.vap = vv + vansj + (van − vsan)` (`vsan` = parcela de `van` sem candidato listado; no MG `van = vsan`)
-  - `pvv = vv/vvc`, `pvvc = vvc/tv`, `pvb = vb/tv`, e **`cand.pvap = vap / Σ cand.vap`** — **o denominador do % do candidato NÃO é `vv`** (votos válidos): inclui anulados. Ex.: candidato 60 = 9.075.260 / 120.560.949 = 7,5275%.
-  - Significados: `tv` total, `vvc` válidos+anulados, `vv` válidos, `vnom` nominais, `van` anulados, `vansj` anulados sub judice, `vb` brancos, `tvn`/`vn`/`vnt` nulos (`vnt` **[?]**), `vscv` **[?]**; percentuais `p…`/`p…n`.
+- Hierarquia real: **`agr[]` → `par[]` → `cand[]`**.
+  - `agr`: `n` (id do agrupamento, 8 dígitos), `nm`, `com` (`"P 9984 / P 9992"`), **`tp`**: `i` partido isolado · `c` coligação (só majoritário) · `f` federação **[V]**. **`vag`** = vagas obtidas pelo agrupamento (proporcional): `Σ agr.vag = carg.nv` nos 3 arquivos proporcionais **[V]**; no Senado vem `0` em todos mesmo com 2 eleitos (não usar `vag` em majoritário). Totais só em `f`/`c` (e sempre no proporcional): `tvtn`, `tvan`, `tvtl`, `tval`; para federação valem a soma dos partidos **[V]**.
+  - `par`: `n` (nº do partido), `sg`, `nm`, `nfed` (nº da federação ou `""`), `tvtn`, `tvan` e, no proporcional, `dvt` (`"Válido (legenda)"`), `tvtl`, `tval`.
+  - `cand`: `n` (nº de urna), **`sqcand`** (sequencial; 8 dígitos no simulado), `nm`, `nmu`, `dt` (nascimento), **`dvt`** (`"Válido"`, `"Válido (legenda)"`, `"Anulado"`, `"Anulado sub judice"`), `seq` (posição na lista de resultado, única por arquivo; **majoritário: ordem decrescente de `vap`; proporcional: não é ordem pura de `vap`** **[V]**), `e` (`s`/`n`), `st`, **`vap`**, `pvap`/`pvapn`.
+    - `st` observados: `Eleito` (majoritário), `Eleito por média` (proporcional, **todos** os eleitos do simulado), `2º turno`, `Suplente`, `Não eleito`. `e = "s"` ⇔ `st` começa com `Eleit` **[V]**, e o nº de `e="s"` = `nv` em todos. **Não observado**: `Eleito por QP` (ou equivalente) — confirmar na spec.
+    - `vs[]` (opcional): majoritário `{tp:"v"}` = vice (Pres./Gov.); Senado `{tp:"s1"|"s2"}` = 1º/2º suplente. `subs[]` (opcional; 1 caso no Senado AC e 1 em Dep. Estadual AC = os cenários de substituição do simulado): `{nm, nmu, sgp}`, **sem `sqcand`** — significado provável: candidato substituído **[?]**.
+    - Candidato com `dvt="Válido (legenda)"` (1 no Dep. Federal AC): seus votos contam como legenda do partido.
+- `s{}` e `e{}`: mesma estrutura do EA14, por cargo/abrangência.
+- `v{}` votos — **identidades que valem nos 6 EA20 amostrados [V aritmético]** (base para a validação de schema do coletor; se falhar, erro explícito):
+  - `tv = vvc + vb + tvn` · `tvn = vn + vnt` · `e.c = v.tv`
+  - `vvc = vv + van + vansj`
+  - majoritário: `vv = vnom`. **Proporcional (tem `vl`, `pvl`, `pvln`): `vv = vnom + vl`.**
+  - `Σ par.tvtn = vnom` · `Σ par.tvtl = vl` · `tvtl − tval` = votos de candidatos com `dvt="Válido (legenda)"` · `par.tvan = Σ cand.vap` do partido.
+  - `vvc = Σ cand.vap + Σ par.tval + vsan` (nos 6 arquivos; `vsan` = parcela de `van` sem candidato listado: 143.627 no Presidente, `= van` no MG, 0 nos demais).
+  - **`cand.pvap = 100 · vap / (vvc − vsan)`** (erro < 1e-9 nos 6 arquivos). **O denominador do TSE NÃO é `vv`** (votos válidos): inclui anulados (e, no proporcional, legenda). Ex.: Presidente, cand. 60 = 9.075.260 / 120.560.949 = 7,5275%; Dep. Federal AC, cand. 6202 = 2.939 / 605.918 (`vvc`) = 0,485%.
+  - `pvv = vv/vvc`, `pvvc = vvc/tv`, `pvb = vb/tv` (percentuais globais).
+  - Significados: `tv` total, `vvc` válidos+anulados, `vv` válidos, `vnom` nominais, `vl` legenda, `van` anulados, `vansj` anulados sub judice, `vb` brancos, `tvn` nulos (`vn` + `vnt` **técnicos** — `vnt` = 1.264 no Dep. Estadual AC), `vscv` **[?]** (sempre 0).
 
-### Estimativa de tamanho / cadência **[V]**
-- Amostras majoritárias: 9–10 KB (12–13 candidatos). Deputados: **não amostrado**.
+### EA15 — `ac-e021270-ab.json` · `ac-e021272-ab.json`  · 19 KB
+Mesmo envelope do EA14 (`ele,t,f,dg,hg,idg,abr[]`). Para o AC: **23 abrangências = 22 `mun` + 1 `uf`** (22 = nº de municípios do AC no EA12 ✓). Entrada `mun`: `and`, `tpabr:"mun"`, `cdabr` = **código TSE de 5 dígitos**, `dt`/`ht`, `s{}`, `e{}` (sem `munnr…`). Entrada `uf`: idem + `munnr/munpt/munf`. **Um EA15 por eleição e por UF**: os do 21270 e 21272 têm `idg` e `ht` diferentes (mesmo município, `ht` 14:00:33 vs 14:00:09). **[V]**
+
+### EA14 estadual — `br-e021272-ab.json`  · 28 KB
+**28 abrangências = `br` + 27 UFs, sem `zz`** (o exterior só aparece na eleição federal) **[V]**; só `and="f"`. Estrutura igual ao EA14 federal.
+
+### Tamanho / cadência **[V]**
+- Majoritários: 9–17 KB (12–24 candidatos). Proporcionais (AC): Dep. Federal **51 KB** (176 cand.), Dep. Estadual **117 KB** (455), Dep. Distrital (DF) **184 KB** (728) → ~0,26 KB/candidato. Extrapolação para 2026 (20.238 candidatos): ~5,3 MB por varredura completa dos EA20 de candidatos. EA14 ≈ 28–29 KB, EA15 (AC) ≈ 19 KB, EA12 ≈ 534 KB.
 - `cache-control: max-age` de 21–55 s por arquivo (CDN Akamai), `ETag` + `Last-Modified` presentes; **304 confirmado** em teste condicional (`If-None-Match` em `ele-c.json`). Polling < ~20 s não traz dado novo.
-- Os headers do CDN anunciam `x-ratelimit-limit: 2000, 2000;w=1` — **2.000/s**, contra os **100/s** da documentação. Seguir o número documentado (e o padrão de 5 req/s).
+- Os headers do CDN anunciam `x-ratelimit-limit: 2000, 2000;w=1` — 2.000/s, contra os **100/s** da documentação. **Decisão 26/09/2026: seguir o documentado; nosso teto continua em 5 req/s.**
 
 ### Padrão de URL (item 4) — ver `docs/fontes.md`
-`{base}/{ambiente}/{ciclo}/comum/config/ele-c.json` · `…/{ciclo}/{ele}/config/mun-e0{ele}-cm.json` · `…/{ciclo}/{ele}/dados/{uf}/{uf}-e0{ele}-ab.json` (EA14/15) · `…/dados/{uf}/{uf}-c{cargo:04d}-e0{ele}-u.json` (EA20 UF/BR) · `…/dados/{uf}/{uf}{mun5}-c{cargo:04d}-e0{ele}-u.json` (EA20 município). O nome usa o código da eleição com **zero à esquerda** (`e021270`). Baixados com sucesso (200): ele-c, mun-cm, `br-…-ab`, `br-c0001-…-u`, `mg-c0003-…-u`. **Não verificados por GET** (só pelos exemplos de `fontes.md`/templates): EA15 (`ac-e021270-ab`), `c0005`–`c0008`, EA10 (`tp:"e"`; nome do arquivo não documentado nos materiais que tenho).
+`{base}/{ambiente}/{ciclo}/comum/config/ele-c.json` · `…/{ciclo}/{ele}/config/mun-e0{ele}-cm.json` · `…/{ciclo}/{ele}/dados/{uf}/{uf}-e0{ele}-ab.json` (EA14 com `uf=br`; EA15 com UF) · `…/dados/{uf}/{uf}-c{cargo:04d}-e0{ele}-u.json` (EA20 UF/BR) · `…/dados/{uf}/{uf}{mun5}-c{cargo:04d}-e0{ele}-u.json` (EA20 município). O nome usa o código da eleição com **zero à esquerda** (`e021270`).
+
+**Confirmados com 200** (todos construídos a partir de `ele-c.json`/EA12; nenhum 404): ele-c, mun-e021270-cm, `br-e021270-ab`, `br-e021272-ab`, `ac-e021270-ab`, `ac-e021272-ab`, `br-c0001-e021270-u`, `mg-c0003-e021272-u`, `ac-c0005/c0006/c0007-e021272-u`, `df-c0008-e021272-u`. A abrangência de `ab` é `br` ou UF (`ac`); o `<uf>` do diretório e do nome é o mesmo. **Ainda sem GET**: EA20 por município (`ac01120-c0005-…`, só exemplo de `fontes.md`), EA10 (`tp:"e"`; nome do arquivo não documentado nos materiais que tenho — esperar a spec e a 1ª totalização final antes de pedir, regra 4).
 
 ### Consequências para a Fase 1 (o que o rascunho `0001_apuracao.sql` não cobre)
-1. **`sqcand` não casa com `candidates.tse_id`** no simulado: 8 dígitos (`41592494`) e candidatos fictícios (`CANDIDATO 9995`), contra 12 dígitos no cadastro (`280002539826`). O FK opcional por `tse_id` **só é testável no oficial**; no simulado só dá para testar a lógica do casamento por número+UF+cargo (item 6.5).
-2. `votacao_candidato` precisa de: `sqcand text`, `posicao` (`seq`), `agrupamento_n`/`tipo_agrupamento` (`i/c/f`), `votos_apurados` (vap) e **`destinacao` estruturada** (`dvt`); e uma tabela/coluna para **vice/suplentes** (`vs[]`).
-3. `totalizacao.votos_validos` é ambíguo: TSE tem `vv`, `vvc` e `tv`. Criar colunas explícitas (`votos_validos`, `votos_validos_com_anulados`, `anulados`, `anulados_sub_judice`, `votos_sem_candidato`, `nulos`, `nulos_tecnicos`, `brancos`, `total_votos`). Faltam `vansj`/`van`/`vsan`.
-4. `pct_validos numeric(7,4)` no rascunho passa a impressão de "% sobre válidos", mas o `pvap` do TSE tem outro denominador. Guardar `pvapn` como veio (`pct_tse_apurados`, numeric(12,9)) e, se formos mostrar % sobre válidos, calcular à parte e rotular "cálculo Electiolab" (relevante para o erro de pesquisa da Fase 4).
-5. `matematicamente_definida boolean` **não tem campo de origem visto**; provavelmente sai de `and` (valor ainda não observado) e/ou `cand.st`. Decidir depois de ler a spec do EA20 / ver `and ≠ f` no ensaio.
-6. `acompanhamento` ok, mas falta guardar `dt`+`ht` **por abrangência** (já previsto) e `munf/munpt/munnr`, `ufsf…`. `municipio.codigo_ibge` deve ser `null` (não `''`) no Exterior; `uf` precisa aceitar `zz`.
-7. Chave de idempotência: `arquivo_bruto` único por (url, idg) ✓; guardar também `etag` ✓ (já existe) e o header `cache-control` não é necessário.
-8. `eleicao`: `codigo_pleito` ✓, adicionar `codigo_eleicao_2t` (`cdt2`), `tipo` (`tp`), `sqele`. `cargo.codigo` deve ser `integer` vindo de string; adicionar `tipo` (majoritário/proporcional) e `vagas` (`nv`).
+1. **`sqcand` × `candidates.tse_id` — decisão 26/09/2026: FK anulável; casamento na Fase 2, contra o oficial.** No simulado `sqcand` tem 8 dígitos (`41592494`) e os candidatos são fictícios (`CANDIDATO 9995`), contra 12 dígitos no cadastro (`280002539826`). Na Fase 1: `votacao_candidato.candidate_id uuid null references public.candidates(id)` (ou o tipo real da PK) **sem** constraint de casamento; guardar `sqcand text` sempre. A lógica de casamento (número + UF + cargo, item 6.5) só é validada quando houver `ele-c`/EA20 oficiais.
+2. `votacao_candidato` precisa de: `sqcand text`, `posicao` (`seq`), `agrupamento_n` + `agrupamento_tipo` (`i/c/f`), `partido_n`, `votos_apurados` (`vap`), `pvap` (bruto, ver 4), `destinacao` (`dvt`: `Válido`, `Válido (legenda)`, `Anulado`, `Anulado sub judice`), `situacao` (`st`) e `eleito boolean` (`e`). Mais uma tabela filha para **vice / suplentes** (`vs[]`: `tp` = `v`, `s1`, `s2`) e outra (ou jsonb) para **substituídos** (`subs[]`: só `nm/nmu/sgp`, sem `sqcand`).
+3. `votacao_partido`: além de `tvtn` (nominais válidos) e `tvtl` (legenda total), guardar `tval` (legenda pura) e `tvan` (apurados nominais); e o mesmo por agrupamento/federação (`agr.tvtn/tvtl/tval/tvan/vag`). `vag` (vagas obtidas) só é significativo em proporcional.
+4. **pvap — decisão 26/09/2026:** guardar `pvap`/`pvapn` **como vieram do TSE** (coluna `pct_tse` `numeric(12,9)` a partir de `pvapn`; `pvap` texto fica no bruto). O denominador do TSE é `vvc − vsan` (ver identidades), **não** os votos válidos (`vv`). Para a Fase 4 (erro de pesquisa sobre votos válidos) calcular em **coluna/tabela separada**, `pct_validos_calc_electiolab`, sempre rotulada "cálculo Electiolab" na UI. Nunca sobrescrever a coluna do TSE. O `pct_validos numeric(7,4)` do rascunho sai.
+5. `totalizacao.votos_validos` é ambíguo (TSE tem `vv`, `vvc`, `tv`). Colunas explícitas: `total_votos` (`tv`), `votos_validos_com_anulados` (`vvc`), `votos_validos` (`vv`), `votos_nominais` (`vnom`), `votos_legenda` (`vl`, só proporcional), `anulados` (`van`), `anulados_sub_judice` (`vansj`), `votos_sem_candidato` (`vsan`), `brancos` (`vb`), `nulos` (`tvn`), `nulos_diretos` (`vn`), `nulos_tecnicos` (`vnt`), `vscv`. Em `cargo`/`totalizacao`: `vagas` (`nv`) e **`quociente_eleitoral` (`carg.qe`, valor oficial do TSE; só proporcional; guardar como veio, regra 8)**.
+6. `matematicamente_definida boolean` **não tem campo de origem visto**; `and` só apareceu como `f`. Para eleitos há `cand.e`/`cand.st` (`Eleito`, `Eleito por média`, `2º turno`, `Suplente`, `Não eleito`). Decidir depois de ler a spec do EA20 e de ver `and ≠ f` no ensaio; não inventar o campo.
+7. `acompanhamento`: guardar `dt`+`ht` **por abrangência** e por eleição, mais `munnr/munpt/munf` (UF) e `ufsnr/ufspt/ufsf` (BR); EA15 tem também abrangência `mun` (`cdabr` de 5 dígitos). `municipio.codigo_ibge` deve ser `null` (não `''`) no Exterior; `uf` precisa aceitar `zz`.
+8. Idempotência: `arquivo_bruto` único por (url, idg) ✓ (etag já existe). **Volume**: ~0,26 KB/candidato em proporcional → os 20.238 candidatos de 2026 ≈ 5,3 MB por varredura completa e ~20 mil linhas em `votacao_candidato` se tudo mudar. Não gravar linha nova em `votacao_candidato` quando IDG/ETag não mudou (304), e considerar normalizar só o **último** snapshot por (cargo, abrangência) mantendo o histórico no bruto.
+9. `eleicao`: `codigo_pleito` ✓, adicionar `codigo_eleicao_2t` (`cdt2`), `tipo` (`tp`), `sqele`. `cargo.codigo` `integer` vindo de string; adicionar `tipo` (majoritário/proporcional, de `cp.tp`) e `vagas`. Conselheiro Distrital (cargo 25) **fora do escopo** (decisão 26/09/2026).
 
 ### Integração com o Electiolab (item 6, verificado via Supabase MCP em 26/09/2026)
 Projeto Supabase: **ElectioLab** (`xoxztzologqeqbajlhya`).
@@ -123,17 +137,19 @@ Projeto Supabase: **ElectioLab** (`xoxztzologqeqbajlhya`).
 - `prior_election_results` (2.881.843 linhas) e `election_results` (0 linhas) existem mas são de eleições passadas / resultado final consolidado — fora do escopo da apuração ao vivo, mencionados aqui só por completude.
 - **Vínculo `apuracao.eleicao` ↔ `elections` — aprovado em 26/09/2026**: por `(tipo, UF, ano, turno)`, não por `tse_id` (que está null em todas as linhas de 2026). Detalhar na Fase 1 o mapeamento de `apuracao.cargo.codigo` (numérico, do TSE) para `elections.type` (texto: `presidente`, `governador`, `senador`, `deputado_federal`, `deputado_estadual`, `deputado_distrital`).
 
-## Fase 0 — status (26/09/2026)
+## Fase 0 — status (26/09/2026, atualizado após aprovação)
 | Item | Estado |
 |---|---|
-| 1. Amostras do simulado (5 arquivos) | feito — `amostras/` (+ `*.headers.txt` com ETag/Last-Modified), 1 GET por URL, 1 s entre pedidos, todos 200 |
-| 2. PDFs de especificação | **bloqueado** — 403 Akamai em www.tse.jus.br; nada salvo em `docs/specs/` |
-| 3. Mapa de campos | feito com as amostras; itens **[?]** dependem dos PDFs ou de amostras adicionais |
-| 4. Padrão de URL e códigos de cargo | confirmado contra `ele-c.json` (ver mapa) |
+| 1. Amostras do simulado | feito — 5 arquivos pedidos + 7 autorizados (EA20 AC senador/dep. federal/dep. estadual, DF dep. distrital, EA15 AC ×2, EA14 estadual BR), em `amostras/` com `*.headers.txt`. 1 GET por URL, 1 s entre pedidos, todos 200, 0 × 404 |
+| 2. PDFs de especificação | **pendente com o Luiz**: baixar no navegador para `docs/specs/`. Depois: reconciliar os campos **[?]** do mapa |
+| 3. Mapa de campos | feito com as 12 amostras; **[?]** = depende dos PDFs |
+| 4. Padrão de URL e códigos de cargo | confirmado por GET (ver mapa) |
 | 5. Status em `fontes.md` | atualizado |
-| 6. Integração Electiolab | feito antes (seção acima) |
+| 6. Integração Electiolab | feito (seção abaixo) |
 
-Requisições feitas ao TSE nesta rodada: 6 no host de resultados (5 GETs + 1 GET condicional → 304), 0 × 404; 7 GETs + 1 HEAD ao www.tse.jus.br (todos 403).
+Decisões de 26/09/2026: (a) `pvap` guardado como veio; % sobre votos válidos = coluna separada "cálculo Electiolab" (Fase 4); (b) FK `sqcand`→`candidates.tse_id` anulável, casamento na Fase 2 contra o oficial; (c) vagas em `carg[].nv`; Conselheiro Distrital fora do escopo; (d) rate limit documentado (100 req/s), teto nosso 5 req/s; (e) vínculo `apuracao.eleicao` ↔ `elections` por (tipo, UF, ano, turno).
+
+Requisições ao host de resultados (rodadas 1+2): 18 GETs (17 × 200 + 1 × 304), 0 × 404. Ao www.tse.jus.br: 7 GETs + 1 HEAD, todos 403.
 
 ## Riscos
 | Risco | Mitigação |
