@@ -38,6 +38,7 @@ Prazo real: 1º turno em **4/10/2026**. Simulado extra do TSE (arquivos mudando 
    Deputados são eleição **proporcional**: arquivos grandes (centenas de candidatos por UF), votos de legenda, federações e destinações "válido (legenda)" / "anulado sub judice". **Não calcular quociente eleitoral nem distribuição de vagas por conta própria na noite** — eleitos vêm do TSE (situação no EA20 e EA10). Qualquer projeção de bancada é "cálculo Electiolab", separada e rotulada.
 5. Grava snapshot bruto (`apuracao.arquivo_bruto`) e normalizado (`apuracao.totalizacao`, `apuracao.votacao_candidato`).
 6. EA10 só depois de totalização final em alguma UF.
+6.5. **Preencher `candidates.tse_id` faltantes** (achado da Fase 0: 100 candidatos de governador/senador/presidente de 2026 ainda sem `tse_id` — ver `docs/arquitetura.md`). Casar pelo sequencial do candidato no EA20 por **número de urna + UF + cargo** (não por nome). Gerar relatório (candidato, `election_id`, `tse_id` proposto, base do casamento) e **mostrar para minha revisão antes de gravar** — nada de UPDATE automático em `candidates` sem aprovação.
 7. Rota `src/app/api/cron/apuracao/route.ts` protegida por `CRON_SECRET`, cabendo em 60s (limite do `vercel.json`); registro de cada execução em `apuracao.coletor_execucao`. Entrada nova no `vercel.json` a cada minuto — só ativar no dia (flag `APURACAO_ATIVA`).
 8. Script `scripts/apuracao-coletar.ts` (rodar com `npx tsx`) com `--ambiente=simulado --uma-vez` para testes locais.
 
