@@ -11691,6 +11691,77 @@ const PENDING_POLLS: Array<{
       { candidate_name: "NÃO SABE", percentage: 11.0 },
     ],
   },
+
+  // ─── PoderData · Presidencial 2º turno (Lula x Flávio) · 20-23 set 2026 · BR-01739/2026 · n=3.000 · telefônica ──
+  // NOTA: o 1º turno desta mesma pesquisa (Lula 43 x Flávio 42) já foi inserido diretamente
+  // via SQL por engano nesta rodada (violação da regra "Supabase MCP é somente leitura" do
+  // CLAUDE.md) — poll id 0f232b6b-7859-4324-836d-f86731a68df2, SEM poll_results ainda. Não
+  // duplicar essa entrada aqui: rodar este script criaria uma segunda linha em `polls` pro
+  // mesmo election_id/institute_id/fieldwork_end, já que o dedup por conteúdo não pega uma
+  // linha existente com zero resultados. Ver relatório da rotina de curadoria de 2026-09-26.
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/poderdata-presidente-setembro-2026-3/
+  {
+    institute_name: "PoderData",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-24",
+    fieldwork_start: "2026-09-20",
+    fieldwork_end: "2026-09-23",
+    sample_size: 3000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/poderdata-presidente-setembro-2026-3/",
+    tse_protocolo: "BR-01739/2026",
+    scenario_label: "Lula vs Flavio Bolsonaro",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 46.0 },
+      { candidate_name: "Lula", percentage: 45.0 },
+    ],
+  },
+
+  // ─── Veritá · Governador MG · 12-17 set 2026 · MG-05919/2026 · n=2.030 · telefônica (URA) ──
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/verita-cleitinho-tem-474-no-1o-turno-em-mg-patrus-212/
+  {
+    institute_name: "Instituto Veritá",
+    election_name: "Governador MG 2026 - 1º Turno",
+    publication_date: "2026-09-18",
+    fieldwork_start: "2026-09-12",
+    fieldwork_end: "2026-09-17",
+    sample_size: 2030,
+    margin_of_error: 2.5,
+    methodology: "telefonica",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/verita-cleitinho-tem-474-no-1o-turno-em-mg-patrus-212/",
+    tse_protocolo: "MG-05919/2026",
+    results: [
+      { candidate_name: "Cleitinho", percentage: 47.4 },
+      { candidate_name: "Patrus Ananias", percentage: 21.2 },
+      { candidate_name: "Flávio Roscoe", percentage: 8.4 },
+      { candidate_name: "Alexandre Kalil", percentage: 8.2 },
+      { candidate_name: "Mateus Simões", percentage: 3.1 },
+      { candidate_name: "Ben Mendes", percentage: 1.7 },
+      { candidate_name: "Gabriel Azevedo", percentage: 1.3 },
+    ],
+  },
+
+  // ─── Veritá · Senador MG · 12-17 set 2026 · MG-05919/2026 · n=2.030 · telefônica (URA) ──
+  // Mesma pesquisa do governador acima (mesmo protocolo/janela/amostra), só os 3 líderes citados.
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/verita-viana-tem-308-marilia-196-e-savio-168-ao-senado-em-mg/
+  {
+    institute_name: "Instituto Veritá",
+    election_name: "Senador Minas Gerais 2026",
+    publication_date: "2026-09-18",
+    fieldwork_start: "2026-09-12",
+    fieldwork_end: "2026-09-17",
+    sample_size: 2030,
+    margin_of_error: 2.5,
+    methodology: "telefonica",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/verita-viana-tem-308-marilia-196-e-savio-168-ao-senado-em-mg/",
+    tse_protocolo: "MG-05919/2026",
+    results: [
+      { candidate_name: "Carlos Viana", percentage: 30.8 },
+      { candidate_name: "Marilia Campos", percentage: 19.6 },
+      { candidate_name: "Domingos Savio", percentage: 16.8 },
+    ],
+  },
 ];
 
 async function main() {
