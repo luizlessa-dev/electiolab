@@ -430,12 +430,8 @@ begin
 end $$;
 
 -- ---------------------------------------------------------------------------
--- Expor o schema `apuracao` na API (PostgREST)
+-- Exposição do schema `apuracao` na API (PostgREST)
 -- ---------------------------------------------------------------------------
--- Equivale a Dashboard > Settings > API > Exposed schemas. O valor atual não aparece em
--- pg_roles (vem da configuração da plataforma); nenhum outro schema customizado existe no
--- projeto, então a lista é public + graphql_public (padrão) + apuracao. Conferir no painel
--- depois de aplicar.
-alter role authenticator set pgrst.db_schemas = 'public, graphql_public, apuracao';
-notify pgrst, 'reload config';
-notify pgrst, 'reload schema';
+-- NÃO é feita por SQL. Depois de aplicar esta migration, o Luiz expõe o schema pelo
+-- painel: Settings > API > Exposed schemas (adicionar `apuracao`, mantendo os atuais).
+-- Sem isso, o schema existe e as policies valem, mas a API REST/supabase-js não o enxerga.
