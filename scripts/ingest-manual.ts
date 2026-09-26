@@ -11620,6 +11620,32 @@ const PENDING_POLLS: Array<{
       { candidate_name: "NÃO SABE", percentage: 16.0 },
     ],
   },
+
+  // ─── Real Time Big Data · Governador Minas Gerais · 16-19 set 2026 · MG-07331/2026 · n=2.000 · telefônica ──
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador MG 2026 - 1º Turno",
+    publication_date: "2026-09-21",
+    fieldwork_start: "2026-09-16",
+    fieldwork_end: "2026-09-19",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senado-minas-gerais-setembro-2026-2/",
+    tse_protocolo: "MG-07331/2026",
+    results: [
+      { candidate_name: "Cleitinho", percentage: 35.0 },
+      { candidate_name: "Patrus Ananias", percentage: 19.0 },
+      { candidate_name: "Alexandre Kalil", percentage: 10.0 },
+      { candidate_name: "Mateus Simões", percentage: 10.0 },
+      { candidate_name: "Flávio Roscoe", percentage: 8.0 },
+      { candidate_name: "Gabriel Azevedo", percentage: 6.0 },
+      { candidate_name: "Ben Mendes", percentage: 2.0 },
+      { candidate_name: "Indira Xavier", percentage: 1.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 4.0 },
+      { candidate_name: "NÃO SABE", percentage: 4.0 },
+    ],
+  },
 ];
 
 async function main() {
