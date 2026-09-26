@@ -1,16 +1,12 @@
 import type { Metadata } from "next";
-import { getHistoricElectionData } from "@/lib/queries/historic-elections";
+import { getHistoricElectionSummary } from "@/lib/queries/historic-elections";
 import { HistoricElectionPage, buildJsonLd } from "@/components/historic-election/page-template";
 
-// force-dynamic: mesma causa do timeout de build das páginas /[uf] (ver
-// esse diretório) — esta página chama getHistoricElectionData(2018) SEM
-// filtro de estado, ou seja, pagina ~1.03M linhas de prior_election_results
-// inteiras a cada build. Achado ao investigar o timeout original: teria o
-// mesmo risco de estourar o statement_timeout no build, só que não tinha
-// aparecido ainda no log porque o build já parava antes, na primeira
-// página de UF que falhava. Sem generateStaticParams (rota sem segmento
-// dinâmico), a única forma de tirar isso do build é marcar como dinâmica.
-export const dynamic = "force-dynamic";
+// Lê de historic_election_state_summary (materialized view, já agregada)
+// em vez de paginar prior_election_results inteira — ver migration
+// 20260926110000_historic_election_state_summary_view.sql. Isso libera
+// voltar pra ISR normal (era force-dynamic).
+export const revalidate = 86400; // 24h
 
 export const metadata: Metadata = {
   title: "Eleição 2018 — Resultados Completos do TSE",
@@ -27,7 +23,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const data = await getHistoricElectionData(2018);
+  const data = await getHistoricElectionSummary(2018);
   return (
     <>
       <script
