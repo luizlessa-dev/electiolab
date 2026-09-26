@@ -1,4 +1,5 @@
--- 0001_apuracao.sql — RASCUNHO (revisar na Fase 1 com o mapa de campos real)
+-- 0001_apuracao.sql — RASCUNHO HISTÓRICO. SUBSTITUÍDO em 26/09/2026 por
+-- supabase/migrations/20260927120000_apuracao_schema.sql (Fase 1). Não usar.
 -- Destino: Supabase do Electiolab. Na Fase 1 vira supabase/migrations/20260927xxxxxx_apuracao_schema.sql.
 
 create schema if not exists apuracao;
