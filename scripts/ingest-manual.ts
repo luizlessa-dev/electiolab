@@ -11202,6 +11202,180 @@ const PENDING_POLLS: Array<{
       { candidate_name: "NÃO SABE", percentage: 10.0 },
     ],
   },
+
+  // ─── Real Time Big Data · Governador Espírito Santo · 21-24 set 2026 · ES-00877/2026 · n=1.600 · telefônica ──
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/ferraco-lidera-disputa-pelo-governo-do-es-com-44-diz-pesquisa/
+  // Candidatos menores (Helder Salomão, Breno Barcelos, Rafael Demuner) só divulgados em
+  // votos válidos, não decompostos em votos totais — não especulado.
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Espirito Santo 2026",
+    publication_date: "2026-09-25",
+    fieldwork_start: "2026-09-21",
+    fieldwork_end: "2026-09-24",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/ferraco-lidera-disputa-pelo-governo-do-es-com-44-diz-pesquisa/",
+    tse_protocolo: "ES-00877/2026",
+    results: [
+      { candidate_name: "Ricardo Ferraco", percentage: 44.0 },
+      { candidate_name: "Lorenzo Pazolini", percentage: 35.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 4.0 },
+      { candidate_name: "NÃO SABE", percentage: 2.0 },
+    ],
+  },
+
+  // ─── Real Time Big Data · Senador Espírito Santo (2 vagas) · 21-24 set 2026 · ES-00877/2026 · n=1.600 · telefônica ──
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Espirito Santo 2026",
+    publication_date: "2026-09-25",
+    fieldwork_start: "2026-09-21",
+    fieldwork_end: "2026-09-24",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-espirito-santo-setembro-2026/",
+    tse_protocolo: "ES-00877/2026",
+    results: [
+      { candidate_name: "Renato Casagrande", percentage: 29.0 },
+      { candidate_name: "Sergio Meneguelli", percentage: 13.0 },
+      { candidate_name: "Fabiano Contarato", percentage: 11.0 },
+      { candidate_name: "Evair de Melo", percentage: 10.0 },
+      { candidate_name: "Maguinha Malta", percentage: 10.0 },
+      { candidate_name: "Rose de Freitas", percentage: 9.0 },
+      { candidate_name: "Marcos do Val", percentage: 4.0 },
+      { candidate_name: "Leonardo Monjardim", percentage: 2.0 },
+      { candidate_name: "Professor Fabian", percentage: 2.0 },
+      { candidate_name: "Rodney Miranda", percentage: 2.0 },
+      { candidate_name: "Wellington Callegari", percentage: 0.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 4.0 },
+      { candidate_name: "NÃO SABE", percentage: 4.0 },
+    ],
+  },
+
+  // ─── Real Time Big Data · Governador Tocantins · 21-24 set 2026 · TO-04340/2026 · n=1.600 · telefônica ──
+  // Fonte: https://www.cartacapital.com.br/politica/real-time-em-tocantins-dorinha-lidera-em-1o-turno-e-empata-com-vicentinho-no-2o/
+  // Candidatos menores (Laurez Moreira, Ataídes, Witer Naves, Luiz Carlos, Du Pereira) só
+  // divulgados em votos válidos, não decompostos em votos totais — não especulado.
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Tocantins 2026",
+    publication_date: "2026-09-25",
+    fieldwork_start: "2026-09-21",
+    fieldwork_end: "2026-09-24",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.cartacapital.com.br/politica/real-time-em-tocantins-dorinha-lidera-em-1o-turno-e-empata-com-vicentinho-no-2o/",
+    tse_protocolo: "TO-04340/2026",
+    results: [
+      { candidate_name: "Professora Dorinha", percentage: 40.0 },
+      { candidate_name: "Vicentinho Junior", percentage: 33.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 6.0 },
+      { candidate_name: "NÃO SABE", percentage: 7.0 },
+    ],
+  },
+
+  // ─── Real Time Big Data · Senador Tocantins (2 vagas) · 21-24 set 2026 · TO-04340/2026 · n=1.600 · telefônica ──
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Tocantins 2026",
+    publication_date: "2026-09-25",
+    fieldwork_start: "2026-09-21",
+    fieldwork_end: "2026-09-24",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-tocantins-setembro-2026/",
+    tse_protocolo: "TO-04340/2026",
+    results: [
+      { candidate_name: "Eduardo Gomes", percentage: 25.0 },
+      { candidate_name: "Alexandre Guimarães", percentage: 16.0 },
+      { candidate_name: "Carlos Gaguim", percentage: 16.0 },
+      { candidate_name: "Paulo Mourão", percentage: 11.0 },
+      { candidate_name: "Vanderlei Luxemburgo", percentage: 10.0 },
+      { candidate_name: "Ronaldo Dimas", percentage: 9.0 },
+      { candidate_name: "Eli Borges", percentage: 6.0 },
+      { candidate_name: "Professor Osvaldo", percentage: 1.0 },
+      { candidate_name: "Fábio Ribeiro", percentage: 1.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 2.0 },
+      { candidate_name: "NÃO SABE", percentage: 3.0 },
+    ],
+  },
+
+  // ─── Real Time Big Data · Governador Alagoas · 21-24 set 2026 · AL-06597/2026 · n=1.600 · presencial ──
+  // Fonte: https://www.dgabc.com.br/Noticia/4349105/tecnicamente-empatados-em-al-renan-filho-tem-47-e-jhc-44-mostra-real-time-big-data
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Alagoas 2026",
+    publication_date: "2026-09-25",
+    fieldwork_start: "2026-09-21",
+    fieldwork_end: "2026-09-24",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.dgabc.com.br/Noticia/4349105/tecnicamente-empatados-em-al-renan-filho-tem-47-e-jhc-44-mostra-real-time-big-data",
+    tse_protocolo: "AL-06597/2026",
+    results: [
+      { candidate_name: "Renan Filho", percentage: 47.0 },
+      { candidate_name: "JHC", percentage: 44.0 },
+      { candidate_name: "Lenilda Luna", percentage: 0.0 },
+      { candidate_name: "Márcio Jambo", percentage: 0.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 5.0 },
+      { candidate_name: "NÃO SABE", percentage: 3.0 },
+    ],
+  },
+
+  // ─── Real Time Big Data · Senador Alagoas (2 vagas) · 21-24 set 2026 · AL-06597/2026 · n=1.600 · presencial ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-alagoas-setembro-2026-2/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Senador Alagoas 2026",
+    publication_date: "2026-09-25",
+    fieldwork_start: "2026-09-21",
+    fieldwork_end: "2026-09-24",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-governador-senador-alagoas-setembro-2026-2/",
+    tse_protocolo: "AL-06597/2026",
+    results: [
+      { candidate_name: "Marina Jhc", percentage: 23.0 },
+      { candidate_name: "Renan", percentage: 22.0 },
+      { candidate_name: "Arthur Lira", percentage: 20.0 },
+      { candidate_name: "Davi Davino Filho", percentage: 17.0 },
+      { candidate_name: "Dr. Wanderley", percentage: 6.0 },
+      { candidate_name: "Alexandre Fleming", percentage: 1.0 },
+      { candidate_name: "Mariedson", percentage: 0.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 5.0 },
+      { candidate_name: "NÃO SABE", percentage: 6.0 },
+    ],
+  },
+
+  // ─── Datafolha · Governador Ceará · 22-24 set 2026 · CE-00198/2026 · n=1.204 · presencial ──
+  // Fonte: https://www.opovo.com.br/noticias/politica/eleicoes/2026/09/25/pesquisa-datafolha-ceara-tem-ciro-e-elmano-em-empate-tecnico.html
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador CE 2026 - 1º Turno",
+    publication_date: "2026-09-25",
+    fieldwork_start: "2026-09-22",
+    fieldwork_end: "2026-09-24",
+    sample_size: 1204,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.opovo.com.br/noticias/politica/eleicoes/2026/09/25/pesquisa-datafolha-ceara-tem-ciro-e-elmano-em-empate-tecnico.html",
+    tse_protocolo: "CE-00198/2026",
+    results: [
+      { candidate_name: "Ciro Gomes", percentage: 44.0 },
+      { candidate_name: "Elmano de Freitas", percentage: 43.0 },
+      { candidate_name: "Vera Lúcia", percentage: 1.0 },
+      { candidate_name: "Delegado Huggo", percentage: 1.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 6.0 },
+      { candidate_name: "NÃO SABE", percentage: 5.0 },
+    ],
+  },
 ];
 
 async function main() {
