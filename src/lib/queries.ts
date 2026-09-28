@@ -205,12 +205,13 @@ function mesmaPessoa(a: IdentidadePessoa, b: IdentidadePessoa): boolean {
 async function resolveCandidateRowsBySlug(slug: string) {
   const SELECT = "id, tse_id, cpf, is_active, election:elections(id, name, type, state, year, round)";
 
-  let { data: rows, error } = await supabase
+  const ativas = await supabase
     .from("candidates")
     .select(SELECT)
     .eq("slug", slug)
     .eq("is_active", true);
-  if (error) throw error;
+  if (ativas.error) throw ativas.error;
+  let rows = ativas.data;
 
   if (!rows?.length) {
     // fallback: histórico (ex.: Bolsonaro pai inativo em 2026 mas registros 2022 ativos)
