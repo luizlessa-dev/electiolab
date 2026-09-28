@@ -3177,7 +3177,7 @@ const PENDING_POLLS: Array<{
     results: [
       { candidate_name: "Arthur Lira",        percentage: 36.28 },
       { candidate_name: "Marina Jhc",         percentage: 31.42 },
-      { candidate_name: "Renan Calheiros",    percentage: 28.65 },
+      { candidate_name: "Renan",              percentage: 28.65 },
       { candidate_name: "Davi Davino Filho",  percentage: 20.45 },
       { candidate_name: "Dr. Wanderley",      percentage: 12.20 },
       { candidate_name: "Mariedson",          percentage:  2.25 },
