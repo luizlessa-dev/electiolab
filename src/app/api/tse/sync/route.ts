@@ -3,6 +3,8 @@
  *
  * Synchronizes candidate registry with TSE official database.
  * Triggers validation, logs discrepancies, and enriches poll data.
+ * Uses service_role (upsert/insert/update/delete) and calls the TSE — requires
+ * Authorization: Bearer $CRON_SECRET (same pattern as /api/agents/run-agent-1).
  *
  * Query parameters:
  * - position: governador|senador (default: governador)
@@ -16,7 +18,16 @@ import { tseValidator } from '@/lib/tse/tse-validator';
 
 export const maxDuration = 300; // 5 minutes for sync operations
 
+function isAuthorized(req: NextRequest): boolean {
+  const token = (req.headers.get('authorization') ?? '').replace('Bearer ', '').trim();
+  const secret = process.env.CRON_SECRET;
+  return Boolean(secret) && token === secret;
+}
+
 export async function POST(request: NextRequest) {
+  if (!isAuthorized(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const searchParams = request.nextUrl.searchParams;
     const position = (searchParams.get('position') || 'governador') as 'governador' | 'senador';

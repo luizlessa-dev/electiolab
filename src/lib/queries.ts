@@ -15,46 +15,58 @@ const supabase = createClient<Database>(
   { auth: { persistSession: false } }
 );
 
+// PGRST116 = "no rows" do .single() — not-found legítimo, não falha
+// transiente. Só esse código deve virar `null`; qualquer outro erro (timeout,
+// conexão) precisa de throw pra não virar página vazia cacheada (ver P0-4 em
+// docs/auditoria-pre-eleicao-2026-09.md).
+function isNotFound(error: { code?: string } | null): boolean {
+  return error?.code === "PGRST116";
+}
+
 export async function getActiveElection() {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("elections")
     .select("*")
     .eq("is_active", true)
     .order("year", { ascending: false })
     .limit(1)
     .single();
+  if (error && !isNotFound(error)) throw error;
   return data;
 }
 
 export async function getElections() {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("elections")
     .select("*")
     .order("year", { ascending: false });
+  if (error) throw error;
   return data ?? [];
 }
 
 export async function getElectionById(id: string) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("elections")
     .select("*")
     .eq("id", id)
     .single();
+  if (error && !isNotFound(error)) throw error;
   return data;
 }
 
 export async function getCandidates(electionId: string) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("candidates")
     .select("*")
     .eq("election_id", electionId)
     .eq("is_active", true)
     .order("name");
+  if (error) throw error;
   return data ?? [];
 }
 
 export async function getPolls(electionId: string) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("polls")
     .select(`
       *,
@@ -65,26 +77,29 @@ export async function getPolls(electionId: string) {
     .is("results.excluded_reason", null)
     .or(PROVENIENCIA_PUBLICA)
     .order("publication_date", { ascending: false });
+  if (error) throw error;
   return data ?? [];
 }
 
 export async function getInstitutes() {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("institutes")
     .select(`
       *,
       accuracy:institute_accuracy(election_id, mean_absolute_error)
     `)
     .order("reliability_score", { ascending: false });
+  if (error) throw error;
   return data ?? [];
 }
 
 export async function getElectionResults(electionId: string) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("election_results")
     .select("*, candidate:candidates(id, name, party, color, number)")
     .eq("election_id", electionId)
     .order("percentage", { ascending: false });
+  if (error) throw error;
   return data ?? [];
 }
 
@@ -102,16 +117,18 @@ export async function getEconomicIndicators(
   if (startDate) query = query.gte("reference_date", startDate);
   if (endDate) query = query.lte("reference_date", endDate);
 
-  const { data } = await query;
+  const { data, error } = await query;
+  if (error) throw error;
   return data ?? [];
 }
 
 export async function getCampaignFinances(electionId: string) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("campaign_finances")
     .select("*, candidate:candidates(id, name, party, color)")
     .eq("election_id", electionId)
     .order("total_received", { ascending: false });
+  if (error) throw error;
   return data ?? [];
 }
 
@@ -188,15 +205,17 @@ function mesmaPessoa(a: IdentidadePessoa, b: IdentidadePessoa): boolean {
 async function resolveCandidateRowsBySlug(slug: string) {
   const SELECT = "id, tse_id, cpf, is_active, election:elections(id, name, type, state, year, round)";
 
-  let { data: rows } = await supabase
+  let { data: rows, error } = await supabase
     .from("candidates")
     .select(SELECT)
     .eq("slug", slug)
     .eq("is_active", true);
+  if (error) throw error;
 
   if (!rows?.length) {
     // fallback: histórico (ex.: Bolsonaro pai inativo em 2026 mas registros 2022 ativos)
     const fb = await supabase.from("candidates").select(SELECT).eq("slug", slug);
+    if (fb.error) throw fb.error;
     rows = fb.data;
     if (!rows?.length) return [];
   }
@@ -314,7 +333,8 @@ export async function getCandidateElections(slug: string): Promise<CandidateElec
     let q = supabase.from("candidates").select(IRMAS_SELECT).in("tse_id", tseIds);
     if (primary.isActive) q = q.eq("is_active", true);
 
-    const { data: irmas } = await q;
+    const { data: irmas, error } = await q;
+    if (error) throw error;
     for (const c of irmas ?? []) {
       const id = c.id as string;
       if (porId.has(id)) continue;
@@ -333,7 +353,8 @@ export async function getCandidateElections(slug: string): Promise<CandidateElec
 
     // Match direto por cpf já É a identidade da pessoa — sem barreira extra,
     // ao contrário do laço por tse_id acima.
-    const { data: irmas } = await q;
+    const { data: irmas, error } = await q;
+    if (error) throw error;
     for (const c of irmas ?? []) {
       const id = c.id as string;
       if (porId.has(id)) continue;
@@ -369,7 +390,7 @@ export async function getCandidateElections(slug: string): Promise<CandidateElec
  * rendam exatamente o mesmo shape.
  */
 async function fetchCandidateDetail(candidateId: string) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("candidates")
     .select(`
       *,
@@ -389,6 +410,7 @@ async function fetchCandidateDetail(candidateId: string) {
     .is("poll_results.excluded_reason", null)
     .order("publication_date", { foreignTable: "poll_results.poll", ascending: false })
     .maybeSingle();
+  if (error) throw error; // maybeSingle() só erra em falha real (>1 row já seria bug de dado)
   return data;
 }
 
@@ -416,48 +438,52 @@ export async function getCandidateBySlugAndSegment(slug: string, segment: string
  * a RLS já restringe a leitura pública a isso, o filtro aqui só documenta.
  */
 export async function getNewsForCandidate(candidateId: string) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("news_item_links")
     .select("news_item:news_items(id, title, source_name, source_url, published_at, summary)")
     .eq("candidate_id", candidateId)
     .eq("news_item.status", "published")
     .order("published_at", { foreignTable: "news_items", ascending: false })
     .limit(5);
+  if (error) throw error;
   return (data ?? []).map((r) => r.news_item).filter((n): n is NonNullable<typeof n> => n !== null);
 }
 
 export async function getNewsForElection(electionId: string) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("news_item_links")
     .select("news_item:news_items(id, title, source_name, source_url, published_at, summary)")
     .eq("election_id", electionId)
     .eq("news_item.status", "published")
     .order("published_at", { foreignTable: "news_items", ascending: false })
     .limit(8);
+  if (error) throw error;
   return (data ?? []).map((r) => r.news_item).filter((n): n is NonNullable<typeof n> => n !== null);
 }
 
 export async function getCandidatesWithBio() {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("candidates")
     .select("id, name, slug, party, color, current_position, election:elections(state, type, year)")
     .not("bio", "is", null)
     .eq("is_active", true)
     .order("name");
+  if (error) throw error;
   return data ?? [];
 }
 
 export async function getPartyFunds() {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("party_fund_transfers")
     .select("*")
     .order("reference_year", { ascending: false })
     .order("amount", { ascending: false });
+  if (error) throw error;
   return data ?? [];
 }
 
 export async function getDigitalAdsAggregate() {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("digital_ads")
     .select(`
       id,
@@ -472,5 +498,6 @@ export async function getDigitalAdsAggregate() {
       election:elections(id, name, type, state)
     `)
     .order("spend_upper", { ascending: false, nullsFirst: false });
+  if (error) throw error;
   return data ?? [];
 }
