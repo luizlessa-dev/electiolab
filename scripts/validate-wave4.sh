@@ -14,6 +14,14 @@ BASE_URL="${BASE_URL:-http://localhost:3000}"
 SCORE=0
 TOTAL=0
 
+# /api/admin/notifications/test e /api/alerts/anomaly agora exigem
+# Authorization: Bearer $CRON_SECRET (fix P0-7/P1-6 da auditoria pré-eleição —
+# ver docs/auditoria-pre-eleicao-2026-09.md). Sem isso as duas voltam 401 em
+# vez do 200/202 esperado.
+if [ -z "${CRON_SECRET:-}" ]; then
+    echo -e "\033[1;33m⚠ CRON_SECRET não definido — Test Notifications e Send Anomaly Alert vão falhar com 401\033[0m"
+fi
+
 # Color codes
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -29,10 +37,16 @@ test_endpoint() {
 
     TOTAL=$((TOTAL + 1))
 
+    local auth_header=()
+    if [ -n "${CRON_SECRET:-}" ]; then
+        auth_header=(-H "Authorization: Bearer $CRON_SECRET")
+    fi
+
     if [ "$method" == "GET" ]; then
-        response=$(curl -s -w "\n%{http_code}" "$BASE_URL$endpoint")
+        response=$(curl -s -w "\n%{http_code}" "${auth_header[@]}" "$BASE_URL$endpoint")
     else
         response=$(curl -s -w "\n%{http_code}" -X "$method" \
+            "${auth_header[@]}" \
             -H "Content-Type: application/json" \
             -d "$data" \
             "$BASE_URL$endpoint")
