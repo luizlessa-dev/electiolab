@@ -35,6 +35,8 @@ const ESTADUAL: EleicaoConfig = {
     { id: 30, codigo: 3, nome: "Governador", tipoDisputa: "majoritario" },
     { id: 50, codigo: 5, nome: "Senador", tipoDisputa: "majoritario" },
     { id: 60, codigo: 6, nome: "Deputado Federal", tipoDisputa: "proporcional" },
+    { id: 70, codigo: 7, nome: "Deputado Estadual", tipoDisputa: "proporcional" },
+    { id: 80, codigo: 8, nome: "Deputado Distrital", tipoDisputa: "proporcional" },
   ],
 };
 
@@ -228,7 +230,7 @@ describe("coletarAcompanhamento — EA15", () => {
 
 describe("alvosEA20", () => {
   function acompanhamentos(): AcompanhamentoEleicao[] {
-    const ufs = ["ac", "mg", "sp"];
+    const ufs = ["ac", "mg", "sp", "df"];
     const abrangencias = [
       { abrangencia: "br", tipoAbrangencia: "br" as const, uf: null, municipioCodigo: null, andamento: "f", pctSecoesTotalizadas: 100 },
       ...ufs.map((uf) => ({
@@ -250,14 +252,14 @@ describe("alvosEA20", () => {
     const alvos = alvosEA20(config([FEDERAL, ESTADUAL]), acompanhamentos(), { cargos: [1, 3, 5] });
 
     const presidente = alvos.filter((a) => a.cargo.codigo === 1);
-    expect(presidente.map((a) => a.abrangencia)).toEqual(["br", "ac", "mg", "sp"]);
+    expect(presidente.map((a) => a.abrangencia)).toEqual(["br", "ac", "mg", "sp", "df"]);
 
     // Governador/Senador não existem na abrangência BR: nenhuma URL é montada para lá.
     for (const cargo of [3, 5]) {
       const doCargo = alvos.filter((a) => a.cargo.codigo === cargo);
-      expect(doCargo.map((a) => a.abrangencia)).toEqual(["ac", "mg", "sp"]);
+      expect(doCargo.map((a) => a.abrangencia)).toEqual(["ac", "mg", "sp", "df"]);
     }
-    expect(alvos).toHaveLength(4 + 3 + 3);
+    expect(alvos).toHaveLength(5 + 4 + 4);
   });
 
   it("não inclui cargo fora da onda", () => {
@@ -265,7 +267,24 @@ describe("alvosEA20", () => {
     expect(alvos.some((a) => a.cargo.codigo === 6)).toBe(false);
 
     const onda2 = alvosEA20(config([FEDERAL, ESTADUAL]), acompanhamentos(), { cargos: [6] });
-    expect(onda2.map((a) => a.abrangencia)).toEqual(["ac", "mg", "sp"]);
+    expect(onda2.map((a) => a.abrangencia)).toEqual(["ac", "mg", "sp", "df"]);
+  });
+
+  it("onda 2: Deputado Distrital só no DF, Deputado Estadual em todas as UFs menos o DF", () => {
+    // Regra do domínio, não do ele-c.json (que lista os dois cargos juntos, sem UF):
+    // no DF a Câmara Legislativa ocupa o lugar da Assembleia. Sem este filtro o
+    // coletor pediria df-c0007 e c0008 das outras UFs — 404 por descuido (regra 3).
+    const alvos = alvosEA20(config([FEDERAL, ESTADUAL]), acompanhamentos(), { cargos: [6, 7, 8] });
+
+    const federal = alvos.filter((a) => a.cargo.codigo === 6);
+    expect(federal.map((a) => a.abrangencia).sort()).toEqual(["ac", "df", "mg", "sp"]);
+
+    const estadual = alvos.filter((a) => a.cargo.codigo === 7);
+    expect(estadual.map((a) => a.abrangencia).sort()).toEqual(["ac", "mg", "sp"]);
+    expect(estadual.some((a) => a.abrangencia === "df")).toBe(false);
+
+    const distrital = alvos.filter((a) => a.cargo.codigo === 8);
+    expect(distrital.map((a) => a.abrangencia)).toEqual(["df"]);
   });
 
   it("monta URL pelo padrão da config, com a UF no diretório e no nome", () => {

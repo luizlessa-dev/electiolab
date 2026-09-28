@@ -272,6 +272,17 @@ export interface AlvoEA20 {
   url: string;
 }
 
+/**
+ * Deputado Distrital só existe no DF (lá a Câmara Legislativa ocupa o lugar da
+ * Assembleia); Deputado Estadual não existe no DF. O `ele-c.json` não distingue isso —
+ * os dois cargos aparecem juntos, sem UF, na mesma abrangência `br` (ver
+ * `docs/arquitetura.md` → mapa de campos do EA11). Sem este filtro, a onda 2 pediria
+ * `df-c0007` e `c0008` das outras 26 UFs, todos 404 (regra 3 do CLAUDE.md: zero 404 por
+ * descuido).
+ */
+const CARGO_DEPUTADO_ESTADUAL = 7;
+const CARGO_DEPUTADO_DISTRITAL = 8;
+
 export interface OpcoesAlvos {
   /** Códigos de cargo a coletar (onda 1: `[1, 3, 5]`). */
   cargos: number[];
@@ -302,6 +313,8 @@ export function alvosEA20(
       }
       for (const a of abrangencias) {
         if (a.tipoAbrangencia !== "uf") continue;
+        if (cargo.codigo === CARGO_DEPUTADO_DISTRITAL && a.abrangencia !== "df") continue;
+        if (cargo.codigo === CARGO_DEPUTADO_ESTADUAL && a.abrangencia === "df") continue;
         escopos.push({ abrangencia: a.abrangencia, tipo: "uf", uf: a.abrangencia });
       }
 

@@ -229,6 +229,45 @@ Conferência banco × arquivo bruto, nas 83 disputas: **1.216 candidatos, zero d
 `mg-c0001-e021270-u` (Presidente por UF) · `zz-c0001-e021270-u` e `zz-e021270-ab` (Exterior tem EA20 e EA15) · `df-c0003-e021272-u` (DF elege Governador) · `sp-c0005-e021272-u` · `mun-e021272-cm` (EA12 da estadual).
 Com isso a onda 1 tem **140 requisições por ciclo**: 2 EA14 + 55 EA15 (27 UFs × 2 eleições + `zz`) + 83 EA20 (29 Presidente + 27 Governador + 27 Senador). A ~5 req/s dá ~28 s de ciclo.
 
+## Fase 2 — coletor, onda 2 (28/09/2026, tarde)
+
+Onda 2 = **Deputado Federal (27 UFs), Deputado Estadual (26 UFs) e Deputado Distrital (DF)** → cargos 6, 7, 8. Reaproveita os mesmos módulos da onda 1 (`alvosEA20`, `identidades.ts`, `resultados.ts`); nenhum deles é específico de cargo, exceto o ponto abaixo.
+
+### Bug achado antes de rodar contra o simulado (e corrigido)
+**Deputado Estadual × Deputado Distrital não são intercambiáveis por UF, e o `ele-c.json` não avisa isso.** Os dois cargos (7 e 8) aparecem juntos, sem UF, na mesma `abr[].cp[]` (`cd:"br"`) — assim como todos os outros cargos. Mas no mundo real: o DF tem Câmara Legislativa (deputado **distrital**) no lugar da Assembleia (deputado **estadual**); as outras 26 UFs são o oposto. `alvosEA20` (que cruza cargo × abrangências vistas no EA14) não sabia disso e montaria uma URL por UF para os dois cargos igualmente — ou seja, pediria `df-c0007-…` (não existe) e `c0008` das outras 26 UFs (não existem): 27 × 404 por descuido, direto contra a regra 3 do CLAUDE.md.
+Corrigido em `src/lib/apuracao/acompanhamento.ts` (`CARGO_DEPUTADO_ESTADUAL`/`CARGO_DEPUTADO_DISTRITAL`, hardcoded — é regra de mundo real, não do arquivo de config): cargo 8 só gera alvo para `abrangencia === "df"`; cargo 7 exclui `"df"`. Teste novo em `acompanhamento.test.ts` (108 testes no total). Confirmado depois contra o simulado: **0 × 404** nos 54 alvos da onda 2 (27 + 26 + 1).
+
+### Coleta real (28/09/2026, tarde, simulado estático — mesma limitação de sempre: `and=f`/100% em tudo)
+| Cenário | Alvos | Requisições | 200 | 304 | 404 | Duração |
+|---|---|---|---|---|---|---|
+| Onda 2 sozinha, banco vazio (`--cargos=6,7,8`) | 54 | 83 | 54 | 29 | 0 | 60,7 s |
+| Onda 1+2, regime (tudo já coletado, só condicional) | 137 | 195 | 0 | 195 | 0 | 54,9 s |
+| Onda 1+2, escrita completa (`--reprocessar`) | 137 | 195 | 137 | 58 | 0 | **115,1 s** |
+
+**Decide o ensaio: onda 1+2 junto fica muito acima do `maxDuration` de 60 s da Vercel mesmo no melhor caso** (regime, só 304, já em 54,9 s — sem folga) **e bem acima no pior caso de escrita real (115,1 s, quase o dobro)**. Isso bate com a pendência já registrada na Fase 2 (decisão 6: função `apuracao.gravar_ea20(jsonb)` para cortar as ~7 idas ao PostgREST por EA20), que fica para amanhã junto da rota da Vercel — sem ela, onda 2 sozinha (60,7 s) já estoura o limite numa noite de eleição real. **O ensaio de hoje (28–29/09, 14h–16h) roda só com a onda 1** (cargos 1,3,5); onda 2 fica para validar de novo depois que `gravar_ea20` existir.
+
+### Conferência banco × bruto (Dep. Federal AC, Dep. Estadual MG, Dep. Distrital DF)
+Comparado direto contra o `arquivo_bruto` da própria coleta (não contra `amostras/`, que estava desatualizado). **Zero divergência** nos três:
+
+| | Dep. Federal AC | Dep. Estadual MG | Dep. Distrital DF |
+|---|---|---|---|
+| Candidatos (bruto × banco) | 176 = 176 | 1.694 = 1.694 | 728 = 728 |
+| Σ `vap` (bruto × banco) | 530.135 = 530.135 | 14.283.710 = 14.283.710 | 1.784.559 = 1.784.559 |
+| `Válido (legenda)` (bruto × banco) | 1 = 1 | 0 = 0 | 0 = 0 |
+| Σ legenda (`tvtl`, bruto × banco) | 78.804 = 78.804 | 219.002 = 219.002 | 73.322 = 73.322 |
+| Federações (bruto × banco) | 2 = 2 | 3 = 3 | 3 = 3 |
+| Σ `agr.vag` = `nv` (vagas por agrupamento) | 8 = 8 | 77 = 77 | 28 = 28 |
+| `qe` oficial (bruto × banco, guardado como veio) | 66.697 | 154.615 | 61.457 |
+| Eleitos (bruto `e="s"` × banco `eleito`) | 8 = 8 | 77 = 77 | 28 = 28 |
+
+**Não observado ainda**: valores de `and` antes de final, nem candidato `Eleito` antes de 100% — este simulado está estático e `and="f"`/100% em todas as 54 disputas de onda 2 (e nas de onda 1). Só o simulado extra ao vivo (28–29/09, 14h–16h) pode mostrar isso; registrar durante o ensaio, não antes.
+
+### Comando do ensaio (28–29/09, 14h–16h)
+```
+npx tsx scripts/apuracao-coletar.ts --ambiente=simulado --cargos=1,3,5 --loop=60 --sem-ea15
+```
+Só onda 1 (decisão acima). `--sem-ea15` por decisão de hoje (economiza ~28 requisições/ciclo; os municípios não entram no escopo ainda). `--loop=60` replica a cadência real do cron (1×/min). Ctrl+C fecha o ciclo em andamento e o log em `coletor_execucao` antes de sair.
+
 ## Riscos
 | Risco | Mitigação |
 |---|---|
