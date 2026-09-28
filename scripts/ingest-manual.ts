@@ -439,7 +439,7 @@ const PENDING_POLLS: Array<{
   // MS · Real Time Big Data · 9-11 mai 2026 · TSE MS-06412/2026 · n=1.600 · telefônica
   {
     institute_name: "Real Time Big Data",
-    election_name: "Governador Mato Grosso do Sul 2026",
+    election_name: "Governador MS 2026 - 1º Turno",
     publication_date: "2026-05-12",
     fieldwork_start: "2026-05-09",
     fieldwork_end: "2026-05-11",
@@ -1948,7 +1948,7 @@ const PENDING_POLLS: Array<{
   // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-mato-grosso-sul-agosto-2026/
   {
     institute_name: "Quaest",
-    election_name: "Governador Mato Grosso do Sul 2026",
+    election_name: "Governador MS 2026 - 1º Turno",
     publication_date: "2026-08-25",
     fieldwork_start: "2026-08-21",
     fieldwork_end: "2026-08-24",
@@ -2202,7 +2202,7 @@ const PENDING_POLLS: Array<{
   // Fonte: https://veja.abril.com.br/brasil/governador-e-favorito-a-reeleicao-no-mato-grosso-do-sul-diz-pesquisa-real-time-big-data/
   {
     institute_name: "Real Time Big Data",
-    election_name: "Governador Mato Grosso do Sul 2026",
+    election_name: "Governador MS 2026 - 1º Turno",
     publication_date: "2026-08-06",
     fieldwork_start: "2026-08-01",
     fieldwork_end: "2026-08-05",
@@ -7641,7 +7641,7 @@ const PENDING_POLLS: Array<{
   },
   {
     institute_name: "Real Time Big Data",
-    election_name: "Governador Mato Grosso do Sul 2026 - 1º Turno",
+    election_name: "Governador MS 2026 - 1º Turno",
     publication_date: "2026-09-10",
     fieldwork_start: "2026-09-05",
     fieldwork_end: "2026-09-09",
@@ -7674,7 +7674,7 @@ const PENDING_POLLS: Array<{
   },
   {
     institute_name: "Real Time Big Data",
-    election_name: "Governador Rio Grande do Norte 2026 - 1º Turno",
+    election_name: "Governador RN 2026 - 1º Turno",
     publication_date: "2026-09-10",
     fieldwork_start: "2026-09-05",
     fieldwork_end: "2026-09-09",
