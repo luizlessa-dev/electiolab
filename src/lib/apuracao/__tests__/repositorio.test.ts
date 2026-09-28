@@ -9,11 +9,17 @@ function supabaseEspiao(dados: Record<string, unknown>[] = []) {
   const consultas: {
     tabela: string;
     colunas?: string;
+    payload?: unknown;
     filtros: { op: string; coluna: string; valor: unknown }[];
   }[] = [];
 
   const construtor = (tabela: string) => {
-    const atual = { tabela, colunas: undefined as string | undefined, filtros: [] as { op: string; coluna: string; valor: unknown }[] };
+    const atual = {
+      tabela,
+      colunas: undefined as string | undefined,
+      payload: undefined as unknown,
+      filtros: [] as { op: string; coluna: string; valor: unknown }[],
+    };
     consultas.push(atual);
     const q: Record<string, unknown> = {
       select(colunas: string) {
@@ -27,6 +33,17 @@ function supabaseEspiao(dados: Record<string, unknown>[] = []) {
       in(coluna: string, valor: unknown) {
         atual.filtros.push({ op: "in", coluna, valor });
         return q;
+      },
+      upsert(payload: unknown) {
+        atual.payload = payload;
+        return q;
+      },
+      single() {
+        return {
+          then(resolve: (v: unknown) => void) {
+            resolve({ data: dados[0] ?? null, error: null });
+          },
+        };
       },
       order() {
         return q;
@@ -116,5 +133,27 @@ describe("mapaCargoTipo", () => {
 
     expect(mapa.get(1)).toBe("presidente");
     expect(mapa.get(5)).toBe("senador");
+  });
+});
+
+describe("upsertDisputa", () => {
+  // Regressão: `vagas`/`quociente_eleitoral` vêm do EA20, lido depois. O ciclo abre
+  // gravando a disputa para conseguir o id do ETag; se mandasse essas colunas como null,
+  // apagaria o que o ciclo anterior gravou (foi o que aconteceu: `vagas` virou null no
+  // 2º ciclo real). O upsert do PostgREST só escreve as colunas do payload, então elas
+  // ficam de fora quando ainda não se sabe o valor.
+  it("aceita payload sem vagas nem quociente_eleitoral", async () => {
+    const { sb } = supabaseEspiao([{ id: 7 }]);
+    const repo = new RepositorioApuracao(sb, sb);
+    const id = await repo.upsertDisputa({
+      eleicao_id: 1,
+      cargo_id: 2,
+      abrangencia: "mg",
+      tipo_abrangencia: "uf",
+      uf: "mg",
+      municipio_codigo: null,
+      election_id: null,
+    });
+    expect(id).toBe(7);
   });
 });

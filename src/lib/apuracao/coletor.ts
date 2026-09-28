@@ -39,6 +39,8 @@ export interface OpcoesCiclo {
   aoRegistrar?: (linha: string) => void;
   /** Ctrl+C: o ciclo para de pedir arquivos novos e fecha o log. */
   interromper?: () => boolean;
+  /** Reprocessa os EA20 ignorando ETag/idg guardados (recuperação; ver `resultados.ts`). */
+  reprocessar?: boolean;
 }
 
 export interface ResultadoCiclo {
@@ -185,6 +187,7 @@ export async function executarCiclo(opcoes: OpcoesCiclo): Promise<ResultadoCiclo
       ano: opcoes.ano ?? 2026,
       aoRegistrar: opcoes.aoRegistrar,
       interromper: opcoes.interromper,
+      reprocessar: opcoes.reprocessar,
     });
     saida.interrompido = interrompido();
   } catch (e) {

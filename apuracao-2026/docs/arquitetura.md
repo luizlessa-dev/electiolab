@@ -207,6 +207,24 @@ Onda 2 (Dep. Federal/Estadual/Distrital) usa os mesmos módulos, trocando `--car
 6. **Atomicidade do "último snapshot".** O PostgREST não dá transação entre chamadas. Em vez de apagar por lista de chaves, cada linha de `votacao_*` leva o `totalizacao_id` da versão; grava-se com a marca nova e depois apaga-se, na disputa, tudo que não tem essa marca. Leitor que filtra pela versão corrente não vê mistura. **Pendência para a rota da Vercel:** uma função `apuracao.gravar_ea20(jsonb)` que faça isso numa transação e numa só ida ao banco — hoje são ~7 chamadas por EA20, o que também é o principal risco de estourar os 60s do `maxDuration`.
 7. **Fixtures versionadas.** `apuracao-2026/amostras/` é gitignored, então as 10 amostras usadas nos testes foram copiadas para `src/lib/apuracao/__tests__/fixtures/` (180 KB, dados públicos, sem edição). `npm test` roda sem rede e sem banco.
 
+### Bugs achados na coleta real (e o que eles ensinam)
+Os dois só apareceram **no 2º ciclo** — um ciclo isolado passava limpo. Vale rodar `--loop` por alguns ciclos antes de confiar.
+1. **Lista de abrangências truncada pelo PostgREST.** `acompanhamento` guarda também os municípios (que vêm de carona no EA15): ~5.700 linhas por eleição. As consultas não filtravam por tipo e o PostgREST corta em 1.000 linhas, devolvendo uma amostra quase toda `mun`. Como é dessa lista que sai a lista de alvos quando o EA14 responde 304, o 2º ciclo montou **28 alvos em vez de 83, sem erro nenhum** — e as UFs que sobraram vieram sem ETag. Corrigido com `tipo_abrangencia in ('br','uf')` nas duas consultas. **Quando o resultado municipal entrar no escopo, a lista de alvos de município precisa de consulta paginada própria.**
+2. **`vagas`/`quociente_eleitoral` apagados a cada ciclo.** O ciclo grava a disputa antes de ler o EA20 (precisa do id para achar o ETag) e mandava essas duas colunas como `null`, apagando o que o ciclo anterior havia gravado. Corrigido deixando-as **fora do payload** quando o valor ainda não é conhecido — o upsert do PostgREST só escreve as colunas presentes.
+
+Daí saiu `--reprocessar`: depois de corrigir a normalização, o arquivo do TSE pode não mudar por horas e o dado errado ficaria no banco até a próxima versão. A flag ignora o ETag/idg guardados dos EA20 e normaliza de novo, mantendo o limitador e uma única requisição por URL. Entra no runbook da Fase 5.
+
+### Medições reais (28/09/2026, manhã, simulado estático)
+| Ciclo | Requisições | 200 | 304 | 404 | Duração |
+|---|---|---|---|---|---|
+| 1º (banco vazio, com EA12) | 143 | 143 | 0 | 0 | 101,3 s |
+| 2º (tudo já coletado) | 141 | 0 | 141 | 0 | 43,0 s |
+| 3º (`--reprocessar`) | 141 | 83 | 58 | 0 | 85,4 s |
+
+Zero 404 em **todos** os ciclos (`url_quarentena` vazia). O ciclo em regime (só 304) fica em **43 s**, contra ~28 s de piso do limitador a 5 req/s: o resto é ida e volta ao Supabase. O 1º ciclo a 101 s mostra o custo de escrever — ~7 chamadas ao PostgREST por EA20. **Isso é o que precisa cair antes da rota da Vercel** (`maxDuration` 60 s): a função `apuracao.gravar_ea20(jsonb)` da decisão 6.
+
+Conferência banco × arquivo bruto, nas 83 disputas: **1.216 candidatos, zero divergência** em votos, percentual (`pvapn` de 9 casas), nome de urna, número, destinação, situação, eleito, posição, partido, tipo de agrupamento, nº de vinculados e versão. Nenhum órfão nas duas direções, e as 83 `totalizacao` passam nas identidades reconferidas em SQL. Situação derivada: 20 eleito · 54 segundo_turno · 9 sem_eleito.
+
 ### URLs confirmadas nesta fase (28/09/2026, 1 GET cada, todas 200, **zero 404**)
 `mg-c0001-e021270-u` (Presidente por UF) · `zz-c0001-e021270-u` e `zz-e021270-ab` (Exterior tem EA20 e EA15) · `df-c0003-e021272-u` (DF elege Governador) · `sp-c0005-e021272-u` · `mun-e021272-cm` (EA12 da estadual).
 Com isso a onda 1 tem **140 requisições por ciclo**: 2 EA14 + 55 EA15 (27 UFs × 2 eleições + `zz`) + 83 EA20 (29 Presidente + 27 Governador + 27 Senador). A ~5 req/s dá ~28 s de ciclo.

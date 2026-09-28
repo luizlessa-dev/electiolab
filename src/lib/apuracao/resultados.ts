@@ -133,6 +133,13 @@ export interface OpcoesResultados {
   aoRegistrar?: (linha: string) => void;
   /** Ctrl+C: para de pedir arquivos novos e devolve o que já coletou. */
   interromper?: () => boolean;
+  /**
+   * Ignora o ETag/idg guardados e normaliza de novo o que vier. Para recuperação:
+   * depois de corrigir um bug de normalização, o arquivo do TSE pode não mudar por
+   * horas, e sem isso o dado errado fica no banco até a próxima versão. A requisição
+   * continua sendo feita uma única vez por URL, com o mesmo limitador.
+   */
+  reprocessar?: boolean;
 }
 
 /** Chave de `public.elections`: presidente é nacional (`state` nulo); os demais, por UF. */
@@ -173,9 +180,8 @@ export async function coletarResultados(
       tipo_abrangencia: alvo.tipoAbrangencia,
       uf: alvo.uf,
       municipio_codigo: null,
-      // `vagas` e `quociente_eleitoral` vêm do próprio EA20; ficam nulos até a 1ª coleta.
-      vagas: null,
-      quociente_eleitoral: null,
+      // `vagas` e `quociente_eleitoral` vêm do EA20, que ainda não foi lido: ficam FORA
+      // do payload. Mandá-los como null apagaria o que o ciclo anterior gravou.
       election_id: electionId,
     });
     disputaPorAlvo.set(alvo, id);
@@ -190,10 +196,10 @@ export async function coletarResultados(
     const disputaId = disputaPorAlvo.get(alvo)!;
     const estado = estados.get(disputaId) ?? { idg: null, etag: null, lastModified: null };
 
-    const resposta = await cliente.buscar(alvo.url, {
-      etag: estado.etag,
-      lastModified: estado.lastModified,
-    });
+    const resposta = await cliente.buscar(
+      alvo.url,
+      opcoes.reprocessar ? {} : { etag: estado.etag, lastModified: estado.lastModified },
+    );
 
     if (resposta.resultado === "304") {
       resumos.push({ alvo, situacao: "sem-mudanca" });
@@ -214,7 +220,7 @@ export async function coletarResultados(
 
     const arquivo = resposta.corpo as ArquivoResultado;
 
-    if (estado.idg && estado.idg === arquivo.idg) {
+    if (!opcoes.reprocessar && estado.idg && estado.idg === arquivo.idg) {
       resumos.push({ alvo, situacao: "mesma-versao", idg: arquivo.idg });
       continue;
     }

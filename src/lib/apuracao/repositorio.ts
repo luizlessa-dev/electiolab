@@ -328,6 +328,11 @@ export class RepositorioApuracao {
 
   // --- disputa / totalização --------------------------------------------
 
+  /**
+   * `vagas` e `quociente_eleitoral` são **opcionais de propósito**: vêm do EA20, que só é
+   * lido depois. O upsert do PostgREST só escreve as colunas presentes no payload, então
+   * omiti-las preserva o valor gravado pelo ciclo anterior — passar `null` apagaria.
+   */
   async upsertDisputa(linha: {
     eleicao_id: number;
     cargo_id: number;
@@ -335,8 +340,8 @@ export class RepositorioApuracao {
     tipo_abrangencia: "br" | "uf" | "mun";
     uf: string | null;
     municipio_codigo: string | null;
-    vagas: number | null;
-    quociente_eleitoral: number | null;
+    vagas?: number | null;
+    quociente_eleitoral?: number | null;
     election_id: string | null;
   }): Promise<number> {
     const { data, error } = await this.sb

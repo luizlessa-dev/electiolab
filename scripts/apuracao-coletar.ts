@@ -14,6 +14,10 @@
  *   --cargos=1,3,5                códigos de cargo (padrão: onda 1 = 1,3,5)
  *   --onda=1|2                    atalho para os cargos da onda
  *   --sem-ea15                    não baixa o EA15 (economiza ~1 requisição por UF)
+ *   --reprocessar                 ignora o ETag/idg guardados e normaliza de novo os
+ *                                 EA20. Use depois de corrigir a normalização, quando o
+ *                                 arquivo do TSE não vai mudar logo. Não desliga a
+ *                                 requisição condicional do EA14/EA15 nem o limitador.
  *   --municipios                  carrega a config de municípios (EA12) se faltar
  *   --silencioso                  só o resumo de cada ciclo
  *
@@ -58,6 +62,7 @@ interface Argumentos {
   ea15: boolean;
   municipios: boolean;
   silencioso: boolean;
+  reprocessar: boolean;
 }
 
 function lerArgumentos(argv: string[]): Argumentos {
@@ -110,6 +115,7 @@ function lerArgumentos(argv: string[]): Argumentos {
     ea15: !mapa.has("sem-ea15"),
     municipios: mapa.has("municipios"),
     silencioso: mapa.has("silencioso"),
+    reprocessar: mapa.has("reprocessar"),
   };
 }
 
@@ -165,6 +171,7 @@ async function main(): Promise<void> {
   console.log(
     `coletor da apuração · ambiente=${args.ambiente} · cargos=${args.cargos.join(",")} · ` +
       `EA15=${args.ea15 ? "sim" : "não"}` +
+      (args.reprocessar ? " · REPROCESSANDO" : "") +
       (args.loopSegundos ? ` · loop=${args.loopSegundos}s` : " · uma vez"),
   );
 
@@ -180,6 +187,7 @@ async function main(): Promise<void> {
       cargos: args.cargos,
       ea15: args.ea15,
       municipios: args.municipios,
+      reprocessar: args.reprocessar,
       aoRegistrar: args.silencioso ? undefined : (l) => console.log(`  ${l}`),
       interromper: () => pararPedido,
     });
