@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Send Quota Alerts
         run: |
-          curl -X GET \
+          curl --fail-with-body -X GET \
             "https://electiolab.com/api/admin/send-quota-alerts?token=${{ secrets.CRON_JOB_TOKEN }}" \
             -H "Content-Type: application/json" \
             -w "\nStatus: %{http_code}\n"

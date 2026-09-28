@@ -2,22 +2,28 @@
  * POST /api/alerts/anomaly
  *
  * Send anomaly alerts via configured channels (Slack, Email, etc)
- * Automatically creates discrepancy if deviation is significant
- *
- * Optional authentication (recommended for production)
+ * Automatically creates discrepancy if deviation is significant. Writes to
+ * `discrepancies` with service_role, so this must never be open to the
+ * public — requires Authorization: Bearer $CRON_SECRET (same pattern as
+ * /api/agents/run-agent-1). The old WAVE4_API_KEY check failed OPEN when
+ * that env var was unset (never configured in Vercel), so anyone could POST.
  */
 
 import { NextRequest } from 'next/server';
 import { AnomalyAlertSchema } from '@/lib/validation/wave4';
 import { handleError, successResponse } from '@/lib/utils/error-handler';
-import { validateApiKey, checkRateLimit, getClientIdentifier } from '@/lib/middleware/auth';
+import { checkRateLimit, getClientIdentifier } from '@/lib/middleware/auth';
 import { getOrchestrator } from '@/lib/services/wave4-orchestrator';
+
+function isAuthorized(req: NextRequest): boolean {
+  const token = (req.headers.get('authorization') ?? '').replace('Bearer ', '').trim();
+  const secret = process.env.CRON_SECRET;
+  return Boolean(secret) && token === secret;
+}
 
 export async function POST(request: NextRequest) {
   try {
-    // Auth check (optional if key not configured)
-    const isAuthed = validateApiKey(request);
-    if (!isAuthed && process.env.WAVE4_API_KEY) {
+    if (!isAuthorized(request)) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401 }

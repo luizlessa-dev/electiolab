@@ -1,7 +1,9 @@
 /**
  * GET /api/admin/notifications/test
  *
- * Test notification integrations
+ * Test notification integrations. Triggers a real Slack test message when
+ * configured and reveals integration config to the caller, so this requires
+ * Authorization: Bearer $CRON_SECRET — previously had no auth check at all.
  *
  * Query:
  * - channel: slack|email|all (default: all)
@@ -10,6 +12,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { slackNotifier } from '@/lib/notifications/slack-notifier';
 import { emailNotifier } from '@/lib/notifications/email-notifier';
+
+function isAuthorized(req: NextRequest): boolean {
+  const token = (req.headers.get('authorization') ?? '').replace('Bearer ', '').trim();
+  const secret = process.env.CRON_SECRET;
+  return Boolean(secret) && token === secret;
+}
 
 interface SlackTestResult {
   status?: string;
@@ -35,6 +43,9 @@ interface NotificationTestResults {
 }
 
 export async function GET(request: NextRequest) {
+  if (!isAuthorized(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const channel = request.nextUrl.searchParams.get('channel') || 'all';
 
