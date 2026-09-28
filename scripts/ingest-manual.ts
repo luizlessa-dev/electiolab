@@ -9683,6 +9683,42 @@ const PENDING_POLLS: Array<{
     ],
   },
 
+  // ─── Nexus/BTG · Presidencial · 25-27 set 2026 · TSE BR-07557/2026 · n=2.000 · telefônica ──
+  // Fonte: https://veja.abril.com.br/politica/a-nova-pesquisa-btg-nexus-sobre-a-disputa-entre-lula-e-flavio-a-uma-semana-da-eleicao/
+  {
+    institute_name: "Nexus",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-28",
+    fieldwork_start: "2026-09-25",
+    fieldwork_end: "2026-09-27",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://veja.abril.com.br/politica/a-nova-pesquisa-btg-nexus-sobre-a-disputa-entre-lula-e-flavio-a-uma-semana-da-eleicao/",
+    tse_protocolo: "BR-07557/2026",
+    results: [
+      { candidate_name: "Lula", percentage: 42.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 37.0 },
+    ],
+  },
+  {
+    institute_name: "Nexus",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-28",
+    fieldwork_start: "2026-09-25",
+    fieldwork_end: "2026-09-27",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://veja.abril.com.br/politica/a-nova-pesquisa-btg-nexus-sobre-a-disputa-entre-lula-e-flavio-a-uma-semana-da-eleicao/",
+    tse_protocolo: "BR-07557/2026",
+    scenario_label: "Lula vs Flavio Bolsonaro",
+    results: [
+      { candidate_name: "Lula", percentage: 46.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 44.0 },
+    ],
+  },
+
   // ─── Atlas Intel · Governador Piauí · 28 ago-2 set 2026 · PI-03771/2026 · n=1.622 · online ──
   // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-governador-senador-piaui-setembro-2026/
   {
