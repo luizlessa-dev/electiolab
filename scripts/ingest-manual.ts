@@ -11352,6 +11352,50 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Domingos Savio", percentage: 16.8 },
     ],
   },
+
+  // ─── Quaest · Presidencial · 24-27 set 2026 · TSE BR-06520/2026 · n=2.004 · presencial · ME: ±2pp ──
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/quaest-lula-tem-39-das-intencoes-de-voto-no-1o-turno-flavio-34/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-28",
+    fieldwork_start: "2026-09-24",
+    fieldwork_end: "2026-09-27",
+    sample_size: 2004,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/quaest-lula-tem-39-das-intencoes-de-voto-no-1o-turno-flavio-34/",
+    tse_protocolo: "BR-06520/2026",
+    results: [
+      { candidate_name: "Lula",             percentage: 39 },
+      { candidate_name: "Flávio Bolsonaro",  percentage: 34 },
+      { candidate_name: "Augusto Cury",      percentage:  4 },
+      { candidate_name: "Caiado",            percentage:  4 },
+      { candidate_name: "Renan Santos",      percentage:  3 },
+      { candidate_name: "Zema",              percentage:  1 },
+    ],
+  },
+
+  // Quaest · 24-27 set 2026 · TSE BR-06520/2026 · n=2.004 · presencial · ME: ±2pp
+  // Mesma pesquisa, cenário de 2º turno Lula x Flávio (empate técnico em 42%).
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/quaest-lula-e-flavio-empatam-com-42-no-2o-turno/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-28",
+    fieldwork_start: "2026-09-24",
+    fieldwork_end: "2026-09-27",
+    sample_size: 2004,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/quaest-lula-e-flavio-empatam-com-42-no-2o-turno/",
+    tse_protocolo: "BR-06520/2026",
+    scenario_label: "Lula vs Flavio Bolsonaro",
+    results: [
+      { candidate_name: "Lula",            percentage: 42 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 42 },
+    ],
+  },
 ];
 
 async function main() {
