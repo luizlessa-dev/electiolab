@@ -270,12 +270,20 @@ export class RepositorioApuracao {
 
   // --- acompanhamento ----------------------------------------------------
 
-  /** Estado por abrangência, para a requisição condicional do EA14/EA15. */
+  /**
+   * Estado por abrangência, para a requisição condicional do EA14/EA15.
+   *
+   * Só `br` e `uf`: são as únicas abrangências que identificam um arquivo (e portanto
+   * carregam ETag). As linhas `mun` vêm de carona no EA15 e são ~5.700 por eleição — sem
+   * este filtro a consulta bate no teto de linhas do PostgREST (1.000) e devolve uma
+   * amostra arbitrária, sem os ETags de que o ciclo depende.
+   */
   async estadosAcompanhamento(eleicaoId: number): Promise<Map<string, EstadoArquivo>> {
     const { data, error } = await this.sb
       .from("acompanhamento")
       .select("abrangencia, idg, etag, url_origem")
-      .eq("eleicao_id", eleicaoId);
+      .eq("eleicao_id", eleicaoId)
+      .in("tipo_abrangencia", ["br", "uf"]);
     erro("lendo acompanhamento", error);
     const mapa = new Map<string, EstadoArquivo>();
     for (const l of data ?? []) {
@@ -288,14 +296,22 @@ export class RepositorioApuracao {
     return mapa;
   }
 
-  /** Abrangências já gravadas de uma eleição — usada quando o EA14 responde 304. */
+  /**
+   * Abrangências já gravadas de uma eleição — usada quando o EA14 responde 304.
+   *
+   * Mesmo filtro de `estadosAcompanhamento`, e pela mesma razão: é desta lista que sai a
+   * lista de alvos EA20. Truncada, o ciclo deixaria de pedir a maioria das UFs **sem
+   * nenhum erro aparente**. Quando o resultado municipal entrar no escopo, a lista de
+   * alvos de município precisa de consulta própria, paginada.
+   */
   async abrangenciasConhecidas(eleicaoId: number): Promise<Record<string, unknown>[]> {
     const { data, error } = await this.sb
       .from("acompanhamento")
       .select(
         "abrangencia, tipo_abrangencia, uf, municipio_codigo, andamento, pct_secoes_totalizadas",
       )
-      .eq("eleicao_id", eleicaoId);
+      .eq("eleicao_id", eleicaoId)
+      .in("tipo_abrangencia", ["br", "uf"]);
     erro("lendo abrangências de acompanhamento", error);
     return (data ?? []) as Record<string, unknown>[];
   }
