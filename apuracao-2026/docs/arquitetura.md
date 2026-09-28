@@ -244,7 +244,7 @@ Corrigido em `src/lib/apuracao/acompanhamento.ts` (`CARGO_DEPUTADO_ESTADUAL`/`CA
 | Onda 1+2, regime (tudo já coletado, só condicional) | 137 | 195 | 0 | 195 | 0 | 54,9 s |
 | Onda 1+2, escrita completa (`--reprocessar`) | 137 | 195 | 137 | 58 | 0 | **115,1 s** |
 
-**Decide o ensaio: onda 1+2 junto fica muito acima do `maxDuration` de 60 s da Vercel mesmo no melhor caso** (regime, só 304, já em 54,9 s — sem folga) **e bem acima no pior caso de escrita real (115,1 s, quase o dobro)**. Isso bate com a pendência já registrada na Fase 2 (decisão 6: função `apuracao.gravar_ea20(jsonb)` para cortar as ~7 idas ao PostgREST por EA20), que fica para amanhã junto da rota da Vercel — sem ela, onda 2 sozinha (60,7 s) já estoura o limite numa noite de eleição real. **O ensaio de hoje (28–29/09, 14h–16h) roda só com a onda 1** (cargos 1,3,5); onda 2 fica para validar de novo depois que `gravar_ea20` existir.
+**Correção (28/09/2026, tarde):** o teto de 60 s é do `maxDuration` da rota da Vercel — não existe rodando o script no Mac (`npx tsx scripts/apuracao-coletar.ts`, sem deploy). Essa conclusão inicial estava errada. Os 115,1 s de escrita real continuam sendo o número que importa para a rota da Vercel de amanhã (mostra que `gravar_ea20` — decisão 6 da Fase 2 — é obrigatória antes de ligar o cron), mas **não bloqueia o ensaio de hoje**: o ensaio roda com **todos os cargos** (`--cargos=1,3,5,6,7,8 --sem-ea15`); um ciclo de ~115 s é aceitável para testar correção contra o simulado extra ao vivo.
 
 ### Conferência banco × bruto (Dep. Federal AC, Dep. Estadual MG, Dep. Distrital DF)
 Comparado direto contra o `arquivo_bruto` da própria coleta (não contra `amostras/`, que estava desatualizado). **Zero divergência** nos três:
@@ -264,9 +264,9 @@ Comparado direto contra o `arquivo_bruto` da própria coleta (não contra `amost
 
 ### Comando do ensaio (28–29/09, 14h–16h)
 ```
-npx tsx scripts/apuracao-coletar.ts --ambiente=simulado --cargos=1,3,5 --loop=60 --sem-ea15
+npx tsx scripts/apuracao-coletar.ts --ambiente=simulado --cargos=1,3,5,6,7,8 --loop=60 --sem-ea15
 ```
-Só onda 1 (decisão acima). `--sem-ea15` por decisão de hoje (economiza ~28 requisições/ciclo; os municípios não entram no escopo ainda). `--loop=60` replica a cadência real do cron (1×/min). Ctrl+C fecha o ciclo em andamento e o log em `coletor_execucao` antes de sair.
+Todos os cargos — sem deploy na Vercel, o teto de 60 s não se aplica ao script rodando no Mac (correção acima). `--sem-ea15` por decisão de hoje (economiza requisições/ciclo; os municípios não entram no escopo ainda). `--loop=60` replica a cadência real do cron (1×/min); um ciclo pode passar de 60 s (medido: até 115 s em escrita real) — o próximo só começa quando o anterior terminar. Ctrl+C fecha o ciclo em andamento e o log em `coletor_execucao` antes de sair.
 
 ## Riscos
 | Risco | Mitigação |
