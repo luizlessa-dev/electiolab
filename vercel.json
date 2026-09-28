@@ -1,10 +1,6 @@
 {
   "crons": [
     {
-      "path": "/api/agents/run-agent-1",
-      "schedule": "0 8 * * *"
-    },
-    {
       "path": "/api/cron/check-polls",
       "schedule": "7 12 * * 1"
     }
