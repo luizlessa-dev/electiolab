@@ -72,17 +72,18 @@ Cabeçalho: `ele, t, f, sup` (`"n"` **[?]**), `tpabr`/`cdabr` (`br`/`br`, `uf`/`
   - `agr`: `n` (id do agrupamento, 8 dígitos), `nm`, `com` (`"P 9984 / P 9992"`), **`tp`**: `i` partido isolado · `c` coligação (só majoritário) · `f` federação **[V]**. **`vag`** = vagas obtidas pelo agrupamento (proporcional): `Σ agr.vag = carg.nv` nos 3 arquivos proporcionais **[V]**; no Senado vem `0` em todos mesmo com 2 eleitos (não usar `vag` em majoritário). Totais só em `f`/`c` (e sempre no proporcional): `tvtn`, `tvan`, `tvtl`, `tval`; para federação valem a soma dos partidos **[V]**.
   - `par`: `n` (nº do partido), `sg`, `nm`, `nfed` (nº da federação ou `""`), `tvtn`, `tvan` e, no proporcional, `dvt` (`"Válido (legenda)"`), `tvtl`, `tval`.
   - `cand`: `n` (nº de urna), **`sqcand`** (sequencial; 8 dígitos no simulado), `nm`, `nmu`, `dt` (nascimento), **`dvt`** (`"Válido"`, `"Válido (legenda)"`, `"Anulado"`, `"Anulado sub judice"`), `seq` (posição na lista de resultado, única por arquivo; **majoritário: ordem decrescente de `vap`; proporcional: não é ordem pura de `vap`** **[V]**), `e` (`s`/`n`), `st`, **`vap`**, `pvap`/`pvapn`.
-    - `st` observados: `Eleito` (majoritário), `Eleito por média` (proporcional, **todos** os eleitos do simulado), `2º turno`, `Suplente`, `Não eleito`. `e = "s"` ⇔ `st` começa com `Eleit` **[V]**, e o nº de `e="s"` = `nv` em todos. **Não observado**: `Eleito por QP` (ou equivalente) — confirmar na spec.
+    - `st` observados: `Eleito` (majoritário), `Eleito por média` (proporcional, **todos** os eleitos do simulado), `2º turno`, `Suplente`, `Não eleito`. **Corrigido em 28/09/2026:** nem `e = "s"` ⇔ `st` começa com `Eleit`, nem o nº de `e="s"` = `nv`. As duas falham nas amostras: em BR/MA/MG há **2** candidatos com `e="s"` e `st="2º turno"` para `nv=1`, e no AP não há nenhum (`esae="s"`). Ou seja, `e="s"` significa "segue" (eleito **ou** classificado para o 2º turno), e a contagem de eleitos só fecha com `nv` num resultado definido sem 2º turno. Nenhuma das duas é usada como identidade no coletor. **Não observado**: `Eleito por QP` (ou equivalente) — confirmar na spec.
     - `vs[]` (opcional): majoritário `{tp:"v"}` = vice (Pres./Gov.); Senado `{tp:"s1"|"s2"}` = 1º/2º suplente. `subs[]` (opcional; Gov. MA, Sen. AC e Dep. Est. AC = exatamente os cenários de substituição do simulado): `{nm, nmu, sgp}`, **sem `sqcand` e sem votos**. No MA aparece no candidato 69 (`2º turno`), com nome **diferente** do vice (`vs` `v`), então não é o vice: é o **candidato que foi substituído por este** (lista, pode ter mais de um) **[V pelos cenários; direção da relação confirmar na spec]**. Guardado como `votacao_candidato.substituidos jsonb`.
     - Candidato com `dvt="Válido (legenda)"` (1 no Dep. Federal AC): seus votos contam como legenda do partido.
 - `s{}` e `e{}`: mesma estrutura do EA14, por cargo/abrangência.
-- `v{}` votos — **identidades que valem nos 6 EA20 amostrados [V aritmético]** (base para a validação de schema do coletor; se falhar, erro explícito):
-  - `tv = vvc + vb + tvn` · `tvn = vn + vnt` · `e.c = v.tv`
+- `v{}` votos — **identidades que valem nos 9 EA20 amostrados [V aritmético]** (base para a validação de schema do coletor; se falhar, erro explícito):
+  - `tv = vvc + vb + tvn` · `tvn = vn + vnt`
+  - **`tv = e.c × nv` no majoritário · `tv = e.c` no proporcional** — corrigido em 28/09/2026. A redação anterior (`e.c = v.tv`) só valia por acidente, para cargo de 1 vaga: **falha no Senador**, onde cada eleitor deposita 2 votos (AC: `tv` 1.224.356 = 2 × `c` 612.178). No proporcional é sempre 1 voto por eleitor, independentemente de `nv` (Dep. Federal AC, `nv=8`: `tv` = `c` = 612.178). Conferido nas 9 amostras EA20.
   - `vvc = vv + van + vansj`
   - majoritário: `vv = vnom`. **Proporcional (tem `vl`, `pvl`, `pvln`): `vv = vnom + vl`.**
   - `Σ par.tvtn = vnom` · `Σ par.tvtl = vl` · `tvtl − tval` = votos de candidatos com `dvt="Válido (legenda)"` · `par.tvan = Σ cand.vap` do partido.
-  - `vvc = Σ cand.vap + Σ par.tval + vsan` (nos 6 arquivos; `vsan` = parcela de `van` sem candidato listado: 143.627 no Presidente, `= van` no MG, 0 nos demais).
-  - **`cand.pvap = 100 · vap / (vvc − vsan)`** (erro < 1e-9 nos 6 arquivos). **O denominador do TSE NÃO é `vv`** (votos válidos): inclui anulados (e, no proporcional, legenda). Ex.: Presidente, cand. 60 = 9.075.260 / 120.560.949 = 7,5275%; Dep. Federal AC, cand. 6202 = 2.939 / 605.918 (`vvc`) = 0,485%.
+  - `vvc = Σ cand.vap + Σ par.tval + vsan` (nos 9 arquivos; `vsan` = parcela de `van` sem candidato listado: 143.627 no Presidente, `= van` no MG, 0 nos demais).
+  - **`cand.pvap = 100 · vap / (vvc − vsan)`** (erro < 1e-9 nos 9 arquivos). **O denominador do TSE NÃO é `vv`** (votos válidos): inclui anulados (e, no proporcional, legenda). Ex.: Presidente, cand. 60 = 9.075.260 / 120.560.949 = 7,5275%; Dep. Federal AC, cand. 6202 = 2.939 / 605.918 (`vvc`) = 0,485%.
   - `pvv = vv/vvc`, `pvvc = vvc/tv`, `pvb = vb/tv` (percentuais globais).
   - Significados: `tv` total, `vvc` válidos+anulados, `vv` válidos, `vnom` nominais, `vl` legenda, `van` anulados, `vansj` anulados sub judice, `vb` brancos, `tvn` nulos (`vn` + `vnt` **técnicos** — `vnt` = 1.264 no Dep. Estadual AC), `vscv` **[?]** (sempre 0).
 
@@ -176,6 +177,39 @@ Volume esperado: 20.238 candidatos → `votacao_candidato` estável em ~20 mil l
 - `eleito` (EA10) é **provisória**: sem amostra nem spec; o que mudar entra como migration de ajuste.
 - **Exposição do schema: pelo painel, não por SQL** (decisão 26/09/2026). Depois de aplicar a migration, adicionar `apuracao` em Settings → API → Exposed schemas, mantendo os schemas já listados. A migration só deixa um comentário sobre isso.
 - **Grants em migrations futuras:** o `grant all on all tables/sequences in schema apuracao to service_role` da migration de 27/09 cobre **só as tabelas e sequences que existiam naquele momento**. Toda migration futura que criar tabela (ou sequence) em `apuracao` precisa repetir o grant ao `service_role` e, se for tabela de exibição, `enable row level security` + policy de leitura + `grant select ... to anon, authenticated`. Sem o grant o coletor falha com `permission denied`.
+
+## Fase 2 — coletor, onda 1 (28/09/2026)
+
+Onda 1 = **Presidente (BR + 27 UFs + Exterior), Governador e Senador (27 UFs)** → cargos 1, 3, 5.
+Onda 2 (Dep. Federal/Estadual/Distrital) usa os mesmos módulos, trocando `--cargos`.
+
+### Módulos (`src/lib/apuracao/`)
+| Arquivo | Papel |
+|---|---|
+| `tipos.ts` | interfaces dos JSON do TSE (tudo string, como vem) |
+| `valores.ts` | string→número/data; vírgula→ponto sem arredondar; Brasília→UTC |
+| `urls.ts` | URLs **só** a partir dos templates de `arq[].dir`; falha se sobrar placeholder |
+| `tse-cliente.ts` | condicional (ETag/If-Modified-Since), timeout, limitador global, backoff 429/5xx, circuit breaker de 404 |
+| `identidades.ts` | validação aritmética por EA20, separada em bloqueante × aviso |
+| `repositorio.ts` | escrita no schema `apuracao` (service_role) |
+| `config.ts` | `ele-c.json` → `eleicao`/`cargo`; `mun-cm` → `municipio` |
+| `acompanhamento.ts` | EA14/EA15 → `acompanhamento`; monta a lista de alvos EA20 |
+| `resultados.ts` | EA20 → `arquivo_bruto` + `totalizacao` + `votacao_*` |
+| `coletor.ts` | um ciclo, com log em `coletor_execucao` |
+| `scripts/apuracao-coletar.ts` | CLI (`--uma-vez`, `--loop=N`, `--cargos`, `--sem-ea15`) |
+
+### Decisões desta fase
+1. **Escopo por código de cargo, nunca por código de eleição.** Os códigos de eleição mudam entre simulado (21270/21272) e oficial (6257/6259) e saem do `ele-c.json`; o coletor só descarta a eleição que não tem nenhum cargo da onda (evita pedir o EA14 da municipal do simulado).
+2. **Nome do arquivo: `e` + código da eleição preenchido até 6 dígitos** (`21270` → `e021270`, `6257` → `e006257`). Regra generalizada a partir do padrão do simulado; **reconferir contra o `ele-c.json` oficial** no checklist da Fase 5.
+3. **O que mudou se decide por ETag/idg, jamais por data.** A requisição condicional responde 304 (nada a fazer) ou 200; no 200, `idg` igual ao já gravado também dispensa normalização. `dt`/`ht` continuam gravados, mas só para exibição — o mapa de campos já registra que `ht` pode ser posterior a `hg`.
+4. **`idg`/`etag` de uma abrangência de UF pertencem ao arquivo que a identifica.** A UF aparece no EA14 e no EA15; se os dois gravassem `etag` na mesma linha, um apagaria o ETag do outro e a requisição condicional do ciclo seguinte viria completa. O EA14 grava `etag`/`idg` só na linha `br`, o EA15 só na linha da própria UF; as demais entram sem essas colunas.
+5. **Identidades bloqueantes × avisos.** Bloqueiam a normalização as decomposições internas dos blocos `v`/`s`/`e` e as somas de `agr → par → cand` (valem em qualquer percentual). Ficam como aviso `e.c + e.a = e.esi` (não sabemos o comportamento de `esi` abaixo de 100% — todas as amostras estão em `and='f'`), `cand.pvapn` (depende de uma escolha de denominador do TSE, e o valor é gravado como veio de todo modo) e `Σ agr.vag = nv` (propriedade de resultado fechado). Numa falha bloqueante o **bruto é guardado como prova** e a normalização é pulada.
+6. **Atomicidade do "último snapshot".** O PostgREST não dá transação entre chamadas. Em vez de apagar por lista de chaves, cada linha de `votacao_*` leva o `totalizacao_id` da versão; grava-se com a marca nova e depois apaga-se, na disputa, tudo que não tem essa marca. Leitor que filtra pela versão corrente não vê mistura. **Pendência para a rota da Vercel:** uma função `apuracao.gravar_ea20(jsonb)` que faça isso numa transação e numa só ida ao banco — hoje são ~7 chamadas por EA20, o que também é o principal risco de estourar os 60s do `maxDuration`.
+7. **Fixtures versionadas.** `apuracao-2026/amostras/` é gitignored, então as 10 amostras usadas nos testes foram copiadas para `src/lib/apuracao/__tests__/fixtures/` (180 KB, dados públicos, sem edição). `npm test` roda sem rede e sem banco.
+
+### URLs confirmadas nesta fase (28/09/2026, 1 GET cada, todas 200, **zero 404**)
+`mg-c0001-e021270-u` (Presidente por UF) · `zz-c0001-e021270-u` e `zz-e021270-ab` (Exterior tem EA20 e EA15) · `df-c0003-e021272-u` (DF elege Governador) · `sp-c0005-e021272-u` · `mun-e021272-cm` (EA12 da estadual).
+Com isso a onda 1 tem **140 requisições por ciclo**: 2 EA14 + 55 EA15 (27 UFs × 2 eleições + `zz`) + 83 EA20 (29 Presidente + 27 Governador + 27 Senador). A ~5 req/s dá ~28 s de ciclo.
 
 ## Riscos
 | Risco | Mitigação |
