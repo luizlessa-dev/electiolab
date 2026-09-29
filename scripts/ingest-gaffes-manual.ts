@@ -79,11 +79,12 @@ async function main() {
   for (const gaffe of gaffes) {
     try {
       // 1. Find candidate by slug
-      const { data: candidate, error: candidateError } = await supabase
+      const { data: candidates, error: candidateError } = await supabase
         .from('candidates')
         .select('id')
-        .eq('slug', gaffe.candidate_slug)
-        .single();
+        .eq('slug', gaffe.candidate_slug);
+
+      const candidate = candidates?.[0];
 
       if (candidateError || !candidate) {
         console.log(`❌ Candidato não encontrado: ${gaffe.candidate_slug}`);
