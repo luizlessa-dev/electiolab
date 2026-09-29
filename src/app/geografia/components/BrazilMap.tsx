@@ -133,9 +133,8 @@ export function BrazilMap({
                 stroke="#1f2937"
                 strokeWidth="1.5"
                 opacity={isSelected ? 1 : isHovered ? 0.8 : 0.7}
-                className={`transition-all duration-200 ${
-                  isHovered || isSelected ? 'cursor-pointer' : ''
-                }`}
+                style={{ pointerEvents: 'auto', cursor: 'pointer' }}
+                className="transition-all duration-200"
                 onClick={() => onStateClick(sigla)}
                 onMouseEnter={() => onStateHover(sigla)}
                 onMouseLeave={() => onStateHover(null)}

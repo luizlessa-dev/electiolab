@@ -5,7 +5,7 @@ create table if not exists candidate_gaffes (
   id uuid primary key default gen_random_uuid(),
 
   -- Reference to candidate
-  candidate_id bigint not null references candidates(id) on delete cascade,
+  candidate_id uuid not null references candidates(id) on delete cascade,
 
   -- Gaffe details
   title text not null,
