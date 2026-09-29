@@ -49,7 +49,7 @@ export const PollIngestionSchema = z.object({
 // Stripe webhook
 export const StripeWebhookSchema = z.object({
   type: z.string(),
-  data: z.record(z.unknown()),
+  data: z.record(z.string(), z.unknown()),
   id: z.string(),
 });
 

@@ -1,191 +1,185 @@
-# Guia: Coleta Manual de Poder360 — Deputado Federal
+# 📋 Guia: Adicionar Pesquisas de Deputado Federal do Poder360
 
-**Objetivo:** Encontrar e adicionar pesquisas de Deputado Federal do Poder360 de forma segura e rastreada.
+## 🎯 Objetivo
 
----
-
-## 📍 Onde Procurar
-
-### 1. **Poder360 — Pesquisas**
-- URL: https://www.poder360.com.br/poder-pesquisas-hoje/
-- Filtrar por: "Deputado Federal" + estado
-- Formato típico: "PT 15% | PL 12% | MDB 8% | Outros 65%"
-
-### 2. **Search Strategy**
-```
-site:poder360.com.br "deputado federal" "SP" 2026
-site:poder360.com.br "deputado federal" "RJ" 2026
-site:poder360.com.br "deputado federal" "MG" 2026
-```
-
-### 3. **Sinais de Pesquisa Confiável**
-- ✅ Instituto Tier 1 (Datafolha, IPEC, Quaest, AtlasIntel, etc)
-- ✅ Fieldwork de ago-set 2026
-- ✅ Sample size 1000+
-- ✅ Data exata de publicação
-- ✅ Margem de erro informada
+Adicionar pesquisas reais de Deputado Federal do Poder360 ao banco de dados de forma manual e confiável.
 
 ---
 
-## 📋 Template de Extração
+## 🔍 Onde Procurar
 
-Quando encontrar uma pesquisa, preencher:
+1. **Poder360 Pesquisas:**
+   - https://www.poder360.com.br/poder-pesquisas-hoje/
+   - https://www.poder360.com.br/poder-eleicoes/
 
-```json
+2. **Buscar por:** "Deputado Federal", "Câmara", "Deputies"
+
+3. **Verificar:** 
+   - Instituto reputado? (Datafolha, Ipsos, AtlasIntel, etc.)
+   - Tem amostra e margem de erro?
+   - Tem data de coleta?
+
+---
+
+## 📝 Template de Captura
+
+Quando encontrar uma pesquisa, preencha:
+
+```
+Instituto:           [ex: Datafolha]
+Estado/Scope:        [ex: SP, RJ, ou BR para nacional]
+Fieldwork Start:     [YYYY-MM-DD]
+Fieldwork End:       [YYYY-MM-DD]
+Publication Date:    [YYYY-MM-DD]
+Amostra:             [ex: 1610]
+Margem de erro:      [ex: 2.44]
+Candidatos/Votos:    [PT 40%, PL 35%, etc]
+URL:                 [link direto da reportagem]
+```
+
+---
+
+## ✍️ Como Adicionar
+
+### Step 1: Preparar Dados
+
+Copie os dados do Poder360 no formato acima.
+
+**Exemplo:**
+```
+Instituto: Datafolha
+Estado: SP
+Fieldwork Start: 2026-10-01
+Fieldwork End: 2026-10-05
+Publication Date: 2026-10-08
+Amostra: 1500
+Margem de erro: 2.58
+Candidatos: PT 42%, PL 38%, Ciro 8%, Outros 12%
+URL: https://www.poder360.com.br/...
+```
+
+### Step 2: Editar `scripts/ingest-manual.ts`
+
+Abra `scripts/ingest-manual.ts` e encontre a seção:
+
+```typescript
+const DEPUTADO_FEDERAL_MANUAL = [
+  // Adicione aqui
+];
+```
+
+Adicione um novo objeto:
+
+```typescript
 {
-  "institute": "Datafolha",
-  "position": "DEPUTADO_FEDERAL",
-  "state": "SP",
-  "fieldwork_start": "2026-09-15",
-  "fieldwork_end": "2026-09-18",
-  "publication_date": "2026-09-20",
-  "sample_size": 1600,
-  "margin_of_error": 2.4,
-  "poll_name": "Datafolha — Deputado Federal São Paulo",
-  "source_url": "https://www.poder360.com.br/...",
-  "tse_register": "SP-XXXXX/2026",
-  "poll_type": "estimulada",
-  "results": [
-    {"name": "PT", "pct": 15.2},
-    {"name": "PL", "pct": 12.8},
-    {"name": "MDB", "pct": 8.5},
-    {"name": "Outros", "pct": 63.5}
-  ],
-  "notes": "Pesquisa agregada por partido (não candidatos específicos)"
+  institute: "Datafolha",
+  state: "SP",
+  office: "deputado",
+  fieldwork_start: "2026-10-01",
+  fieldwork_end: "2026-10-05",
+  publication_date: "2026-10-08",
+  sample_size: 1500,
+  margin_of_error: 2.58,
+  notes: "PT 42%, PL 38%, Ciro 8%, Outros 12%",
+  source_url: "https://www.poder360.com.br/...",
+  source_kind: "poder360-manual"
 }
 ```
 
----
-
-## 🔧 Como Adicionar ao ElectioLab
-
-### Opção A: Via `ingest-manual.ts` (Recomendado)
-
-1. **Abrir arquivo:**
-   ```bash
-   vim scripts/ingest-manual.ts
-   ```
-
-2. **Procurar por seção `DEPUTADO_FEDERAL`:**
-   ```typescript
-   // 🟢 DEPUTADO FEDERAL (2026)
-   // Pesquisas por estado/partido (agregadas, não candidatos)
-   
-   const deputadoPolls = [
-     // Adicionar aqui
-   ];
-   ```
-
-3. **Adicionar entrada:**
-   ```typescript
-   {
-     election_id: '...', // UUID da election (deputado_federal + estado)
-     institute_name: 'Datafolha',
-     candidate: 'PT',  // Usar party como candidate
-     candidate_slug: 'pt',
-     office: 'deputado',
-     scope: 'SP',
-     percentage: 15.2,
-     fieldwork_end: '2026-09-18',
-     publication_date: '2026-09-20',
-     sample_size: 1600,
-     margin_of_error: 2.4,
-     methodology: 'presencial',
-     tse_registration: 'SP-XXXXX/2026',
-     source_url: 'https://poder360.com.br/...',
-     notes: 'Agregado por partido'
-   },
-   ```
-
-4. **Rodar:**
-   ```bash
-   npx tsx scripts/ingest-manual.ts --dry-run
-   npx tsx scripts/ingest-manual.ts --apply
-   ```
-
----
-
-### Opção B: Via SQL Direto (Para Tier 1 Rápido)
-
-Se já validou e quer rapidez:
-
-```sql
-INSERT INTO polls (
-  institute_name, candidate, candidate_slug,
-  office, scope, percentage, margin_of_error,
-  publication_date, fieldwork_end, sample_size,
-  methodology, tse_registration, source_url
-) VALUES (
-  'Datafolha', 'PT', 'pt',
-  'deputado', 'SP', 15.2, 2.4,
-  '2026-09-20', '2026-09-18', 1600,
-  'presencial', 'SP-XXXXX/2026',
-  'https://poder360.com.br/...'
-)
-ON CONFLICT DO NOTHING;
-```
-
----
-
-## ✅ Checklist de Validação
-
-Antes de adicionar, verificar:
-
-- [ ] Instituto é Tier 1 ou 2 reputado?
-- [ ] Fieldwork entre ago-set 2026?
-- [ ] Sample size entre 800-3000?
-- [ ] Margem de erro entre 2-4%?
-- [ ] URL do Poder360 (ou fonte clara)?
-- [ ] Dados agregados por partido (não específico por candidato)?
-- [ ] TSE registro disponível?
-- [ ] Conflito com pesquisa mais recente? (dedup)
-
----
-
-## 📊 Frequência de Atualização
-
-- **Tier 1:** Quando encontrar (raro — 1-2x por mês)
-- **Automatização futura:** Scraper diário (Phase 3.2)
-
----
-
-## 🔍 Monitoramento
-
-Checklist semanal de Poder360:
+### Step 3: Validar e Aplicar
 
 ```bash
-# Salvar semanalmente:
-curl -s "https://www.poder360.com.br/poder-pesquisas-hoje/" \
-  | grep -i "deputado federal" \
-  > /tmp/poder360-deputy-check-$(date +%Y-%m-%d).html
+# Validar (dry-run)
+npx tsx scripts/ingest-manual.ts --dry-run
 
-# Revisar manualmente
+# Aplicar (se tudo certo)
+npx tsx scripts/ingest-manual.ts --apply
 ```
 
 ---
 
-## ⚠️ O que NÃO fazer
+## ⚠️ Checklist de Validação
 
-- ❌ Não adicionar pesquisas de institutos desconhecidos
-- ❌ Não misturar candidatos específicos com dados agregados
-- ❌ Não usar dados de jul-ago (muito antigos)
-- ❌ Não duplicar (sempre verificar pesquisa recente)
-- ❌ Não scraping automático (respeitar ToS do Poder360)
+Antes de adicionar, verifique:
 
----
-
-## 📌 Referência Rápida
-
-| Campo | Valor |
-|-------|-------|
-| `office` | `'deputado'` |
-| `candidate` | Nome do partido (ex: `'PT'`, `'PL'`) |
-| `candidate_slug` | Partido em slug (ex: `'pt'`, `'pl'`) |
-| `scope` | Sigla UF (ex: `'SP'`, `'RJ'`) |
-| `source_kind` | `'poder360-manual'` (opcional) |
-| `status` (draft) | `'approved'` (Tier 1) ou `'pending'` (validar) |
+- [ ] Instituto é reputado (Tier 1)?
+- [ ] Tem amostra (N >= 1000)?
+- [ ] Tem margem de erro?
+- [ ] Tem data de coleta?
+- [ ] Candidatos somam ~100%?
+- [ ] URL é válida?
+- [ ] Estado é válido (SP, RJ, etc)?
+- [ ] Data é válida (YYYY-MM-DD)?
 
 ---
 
-**Última atualização:** 2026-09-29  
-**Responsável:** ElectioLab Team
+## 🔗 Formato dos Candidatos (notes)
+
+O campo `notes` segue este padrão:
+
+```
+[Candidato/Coligação] [X]%, [Candidato/Coligação] [Y]%
+```
+
+**Exemplos válidos:**
+- `PT 42%, PL 38%, Outros 20%`
+- `Lula 42%, Bolsonaro 38%, Branco 12%, Nulo 8%`
+- `PT-Aliados 42%, PL-Aliados 38%, Centro 20%`
+
+---
+
+## 🐛 Troubleshooting
+
+### Erro: "Institute not found"
+```
+Solução: Verificar se instituto existe no banco
+→ Adicionar institute primeiro em admin panel ou via:
+  INSERT INTO institutes (name, tier) VALUES ('NovoInstituto', 1);
+```
+
+### Erro: "Duplicate poll"
+```
+Solução: Mesma pesquisa já existe
+→ Verificar com:
+  SELECT * FROM poll_drafts 
+  WHERE institute_name = 'Datafolha' 
+  AND scope = 'SP' 
+  AND fieldwork_end = '2026-10-05';
+```
+
+### Erro: "Invalid date format"
+```
+Solução: Data deve ser YYYY-MM-DD
+→ Corrigir para: "2026-10-08" (não "08/10/2026")
+```
+
+---
+
+## 📊 Frequência Recomendada
+
+- **Semanal**: Rodar monitor (`npx tsx scripts/monitor-poder360-deputado.ts`)
+- **Mensal**: Pelo menos 1-2 pesquisas adicionadas
+- **Trimestral**: Review de cobertura por estado
+
+---
+
+## 🎯 Objetivo
+
+Após seguir este guia, você terá:
+
+✅ Pesquisa real de Deputado Federal no banco  
+✅ Rastreada como `source_kind='poder360-manual'`  
+✅ Com todos os metadados (amostra, margem, data)  
+✅ Visível no frontend com label "Poder360"
+
+---
+
+## 📞 Suporte
+
+**Dúvida sobre o processo?**
+- Ler comentários em `scripts/ingest-manual.ts`
+- Verificar exemplos em `data/pesqele_deputado_import.json`
+
+**Problema técnico?**
+- Checar seção Troubleshooting acima
+- Verificar logs: `npx tsx scripts/ingest-manual.ts --dry-run`

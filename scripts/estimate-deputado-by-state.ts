@@ -1,184 +1,108 @@
-#!/usr/bin/env npx tsx
-/**
- * Gera estimativas de Deputado Federal para todos os estados
- * usando simulação Bayesiana a partir de pesquisas presidenciais.
- *
- * Inserir como poll_drafts com source_kind='simulated' e status='approved'.
- *
- * Uso:
- *   npx tsx scripts/estimate-deputado-by-state.ts --dry-run
- *   npx tsx scripts/estimate-deputado-by-state.ts --apply
- *   npx tsx scripts/estimate-deputado-by-state.ts --apply --state=SP
- */
-
+import * as fs from "fs";
+import * as path from "path";
 import { createClient } from "@supabase/supabase-js";
-import {
-  estimateDeputyForState,
-  simulationToPollDraft,
-} from "../src/lib/simulador-deputado";
+import { simulateDeputyIntention } from "../src/lib/simulador-deputado";
 
-const APPLY = process.argv.includes("--apply");
-const DRY_RUN = process.argv.includes("--dry-run") || !APPLY;
-const FILTER_STATE = process.argv
-  .find((a) => a.startsWith("--state="))
-  ?.split("=")[1];
-
-const STATES = [
-  "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA",
-  "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN",
-  "RS", "RO", "RR", "SC", "SP", "SE", "TO",
-];
-
-const sb = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-interface EstimateResult {
-  state: string;
-  coalitions: number;
-  inserted: number;
-  skipped: number;
-  error?: string;
+const envFile = path.join(process.cwd(), ".env.local");
+for (const line of fs.readFileSync(envFile, "utf-8").split("\n")) {
+  const idx = line.indexOf("=");
+  if (idx > 0) {
+    const k = line.slice(0, idx).trim();
+    const v = line.slice(idx + 1).trim().replace(/^"|"$/g, "");
+    if (k && !process.env[k]) process.env[k] = v;
+  }
 }
 
-async function estimateAllStates() {
+const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+
+const STATES = ["SP", "RJ", "MG", "BA", "SC", "RS", "PE", "CE", "GO", "DF", "PR", "PA", "MA", "ES", "PB", "RN", "AL", "PI", "MS", "MT", "RO", "AC", "AM", "AP", "RR", "TO"];
+const DRY_RUN = process.argv.includes("--dry-run");
+const APPLY = process.argv.includes("--apply");
+const SINGLE_STATE = process.argv.find(a => a.startsWith("--state="))?.split("=")[1];
+
+async function main() {
   console.log(`\n📊 Simulador Dinâmico — Deputado Federal\n`);
-  console.log(`Mode: ${DRY_RUN ? "🔍 DRY-RUN" : "✍️  APPLY"}\n`);
+  console.log(`Mode: ${DRY_RUN ? "🔍 DRY-RUN" : APPLY ? "✍️  APPLY" : "ℹ️  INFO"}\n`);
 
-  const statesToProcess = FILTER_STATE ? [FILTER_STATE] : STATES;
+  const { data: elections } = await sb
+    .from("elections")
+    .select("id")
+    .eq("type", "presidente")
+    .eq("year", 2026)
+    .limit(1);
 
-  const results: EstimateResult[] = [];
+  if (!elections?.length) {
+    console.error("❌ No presidential election found");
+    return;
+  }
+
+  const electionId = elections[0].id;
+  const statesToProcess = SINGLE_STATE ? [SINGLE_STATE] : STATES;
+  let totalCreated = 0;
 
   for (const state of statesToProcess) {
     try {
-      console.log(`Processing ${state}...`);
+      const { data: presPolls } = await sb
+        .from("poll_drafts")
+        .select("results, fieldwork_end")
+        .eq("source_kind", "tier2-presidencial")
+        .order("fieldwork_end", { ascending: false })
+        .limit(1);
 
-      // 1. Find election
-      const electionRes = await sb
-        .from("elections")
-        .select("id")
-        .eq("type", "deputado_federal")
-        .eq("state", state)
-        .eq("year", 2026)
-        .single();
+      if (!presPolls?.length) continue;
 
-      if (electionRes.error) {
-        console.warn(`   ⚠️  No election found for ${state}`);
-        results.push({
-          state,
-          coalitions: 0,
-          inserted: 0,
-          skipped: 1,
-          error: "No election",
-        });
-        continue;
-      }
+      const poll = presPolls[0];
+      if (!Array.isArray(poll.results)) continue;
 
-      const electionId = electionRes.data.id;
+      const presidentialData = poll.results.map((r: any) => ({
+        candidate: r.name,
+        percentage: r.pct,
+        candidate_slug: r.name.toLowerCase().replace(/\s+/g, "-"),
+        fieldwork_end: poll.fieldwork_end
+      }));
 
-      // 2. Generate estimates
-      const estimates = await estimateDeputyForState(state, sb);
+      const estimates = simulateDeputyIntention(presidentialData, state);
 
-      if (!estimates || estimates.length === 0) {
-        console.warn(`   ⚠️  No presidential polls for ${state} (skipped)`);
-        results.push({
-          state,
-          coalitions: 0,
-          inserted: 0,
-          skipped: 1,
-          error: "No presidential polls",
-        });
-        continue;
-      }
+      if (estimates.length === 0) continue;
 
-      // 3. Convert to poll_drafts
-      const pollDrafts = estimates.map((est) =>
-        simulationToPollDraft(
-          est,
-          state,
-          electionId,
-          new Date().toISOString().split("T")[0]
-        )
-      );
+      const pollsToInsert = estimates.map(est => ({
+        election_id: electionId,
+        institute_name: "ElectioLab Simulador",
+        fieldwork_start: poll.fieldwork_end,
+        fieldwork_end: poll.fieldwork_end,
+        publication_date: new Date().toISOString().split("T")[0],
+        sample_size: 10000,
+        margin_of_error: (est.upper_bound - est.lower_bound) / 3.92,
+        methodology: "simulacao-bayesiana",
+        scope: state,
+        round: 1,
+        results: [{ name: est.coalition, pct: est.percentage }],
+        source_url: "https://electiolab.com/simulador",
+        source_kind: "simulated",
+        status: "approved"
+      }));
 
       if (DRY_RUN) {
-        console.log(`   ✓ Would create ${pollDrafts.length} coalitions:`);
-        estimates.forEach((est) => {
-          console.log(
-            `     • ${est.coalition}: ${est.percentage}% (${est.lower_bound}-${est.upper_bound}%)`
-          );
+        console.log(`✓ ${state}: ${estimates.length} coalitions`);
+        estimates.forEach(e => {
+          console.log(`     • ${e.coalition}: ${e.percentage.toFixed(1)}% (${e.lower_bound.toFixed(1)}-${e.upper_bound.toFixed(1)}%)`);
         });
-      } else {
-        // Insert
-        const insertRes = await sb.from("poll_drafts").insert(pollDrafts);
-
-        if (insertRes.error) {
-          console.error(`   ❌ Error: ${insertRes.error.message}`);
-          results.push({
-            state,
-            coalitions: pollDrafts.length,
-            inserted: 0,
-            skipped: pollDrafts.length,
-            error: insertRes.error.message,
-          });
+      } else if (APPLY) {
+        const { error } = await sb.from("poll_drafts").insert(pollsToInsert);
+        if (error) {
+          console.log(`❌ ${state}: ${error.message}`);
         } else {
-          console.log(`   ✓ Inserted ${pollDrafts.length} coalitions`);
-          results.push({
-            state,
-            coalitions: pollDrafts.length,
-            inserted: pollDrafts.length,
-            skipped: 0,
-          });
+          totalCreated += pollsToInsert.length;
+          console.log(`✓ ${state}: ${pollsToInsert.length} polls`);
         }
       }
     } catch (err) {
-      console.error(`   ❌ Exception: ${err}`);
-      results.push({
-        state,
-        coalitions: 0,
-        inserted: 0,
-        skipped: 1,
-        error: String(err),
-      });
+      console.log(`❌ ${state}: ${err}`);
     }
-
-    console.log();
   }
 
-  // Summary
-  const totalCoalitions = results.reduce((a, r) => a + r.coalitions, 0);
-  const totalInserted = results.reduce((a, r) => a + r.inserted, 0);
-  const totalSkipped = results.reduce((a, r) => a + r.skipped, 0);
-
-  console.log(`${"═".repeat(60)}`);
-  console.log(`📊 Summary`);
-  console.log(`${"═".repeat(60)}`);
-  console.log(`States processed:  ${results.length}`);
-  console.log(`Total coalitions:  ${totalCoalitions}`);
-  console.log(`Inserted:          ${totalInserted}`);
-  console.log(`Skipped:           ${totalSkipped}`);
-
-  if (results.some((r) => r.error)) {
-    console.log(`\n⚠️  Errors:`);
-    results
-      .filter((r) => r.error)
-      .forEach((r) => {
-        console.log(`   ${r.state}: ${r.error}`);
-      });
-  }
-
-  if (DRY_RUN) {
-    console.log(
-      `\n🔍 This was a dry-run. Use --apply to actually insert.`
-    );
-  } else if (totalInserted > 0) {
-    console.log(
-      `\n✅ Successfully created simulated polls for ${results.filter((r) => r.inserted > 0).length} states!`
-    );
-  }
-
-  console.log();
+  console.log(`\n📊 Summary: ${totalCreated} polls created`);
+  if (DRY_RUN) console.log(`🔍 Use --apply to insert`);
 }
 
-estimateAllStates().catch(console.error);
+main().catch(console.error);

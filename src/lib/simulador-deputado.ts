@@ -62,7 +62,7 @@ const COALITION_MAPPING: Record<string, string> = {
 
   // Variações
   bolsonaro: "PL-Aliados",
-  lula da silva: "PT-Aliados",
+  "lula da silva": "PT-Aliados",
 };
 
 /**
@@ -151,7 +151,7 @@ export function simulateDeputyIntention(
       // Ruído regional
       const noise = gaussianRandom() * (volatility / 100);
 
-      const simulated = Math.max(0, Math.min(100, cohesiveVote + pulverizacao + noise));
+      const simulated = Math.max(0, Math.min(100, cohesiveVote + pulverizado + noise));
       coalitionVotes[coalition].push(simulated);
     }
   }
@@ -219,10 +219,10 @@ export async function estimateDeputyForState(
 
   // Usa apenas a pesquisa mais recente por data de fieldwork
   const latestFieldwork = Math.max(
-    ...presidentialPolls.map((p) => new Date(p.fieldwork_end).getTime())
+    ...presidentialPolls.map((p: any) => new Date(p.fieldwork_end).getTime())
   );
   const latestPoll = presidentialPolls.filter(
-    (p) => new Date(p.fieldwork_end).getTime() === latestFieldwork
+    (p: any) => new Date(p.fieldwork_end).getTime() === latestFieldwork
   );
 
   return simulateDeputyIntention(latestPoll, state);

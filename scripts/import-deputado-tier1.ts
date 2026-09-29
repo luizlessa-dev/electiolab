@@ -81,7 +81,7 @@ async function importTierPolicies() {
   const institutesRes = await sb
     .from("institutes")
     .select("id, name")
-    .in("name", ["Datafolha", "AtlasIntel", "Paraná Pesquisas"]);
+    .in("name", ["Datafolha", "Atlas Intel", "Paraná Pesquisas"]);
 
   const institutesMap = new Map(
     (institutesRes.data || []).map((i) => [i.name.toUpperCase(), i.id])
@@ -143,7 +143,7 @@ async function importTierPolicies() {
         sample_size: poll.sample_size,
         margin_of_error: poll.margin_of_error,
         methodology: "presencial", // TSE data suggests this
-        tse_protocolo: poll.tse_register,
+        tse_protocolo: null, // Será preenchido depois
         source_url: poll.source_url,
         source_kind: "tier1-manual",
         status: "approved", // Tier 1 auto-approved
