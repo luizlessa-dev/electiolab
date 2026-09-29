@@ -16,10 +16,33 @@
  * (às vezes dias entre uma pesquisa e outra), então um limiar fixo geraria
  * falso positivo fora de época de pesquisa. A idade ainda é reportada, só
  * não derruba o health check.
+ *
+ * Autenticação: Requer HEALTH_CHECK_KEY (API key opcional).
+ * Se não configurada, o endpoint é público.
  */
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+
+function isAuthorized(request: NextRequest): boolean {
+  const apiKey = process.env.HEALTH_CHECK_KEY;
+  if (!apiKey) {
+    return true; // Se não configurado, permite acesso público
+  }
+
+  const authHeader = request.headers.get("authorization");
+  if (authHeader?.startsWith("Bearer ")) {
+    const token = authHeader.slice(7);
+    return token === apiKey;
+  }
+
+  const apiKeyHeader = request.headers.get("x-api-key");
+  if (apiKeyHeader) {
+    return apiKeyHeader === apiKey;
+  }
+
+  return false;
+}
 
 interface HealthResponse {
   ok: boolean;
@@ -51,7 +74,14 @@ function ageHours(iso: string | null): number | null {
   return (Date.now() - new Date(iso).getTime()) / 3_600_000;
 }
 
-export async function GET(): Promise<NextResponse> {
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  if (!isAuthorized(request)) {
+    return NextResponse.json(
+      { error: "Unauthorized: Invalid or missing API key" },
+      { status: 401 }
+    );
+  }
+
   const timestamp = new Date().toISOString();
   const response: HealthResponse = {
     ok: true,
