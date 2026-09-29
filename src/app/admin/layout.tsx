@@ -26,5 +26,11 @@ export default async function AdminLayout({
     redirect(`/auth/login?next=${encodeURIComponent(pathname)}`);
   }
 
+  // Verificar se usuário é admin
+  const isAdmin = user.user_metadata?.role === "admin";
+  if (!isAdmin) {
+    redirect("/");
+  }
+
   return children;
 }
