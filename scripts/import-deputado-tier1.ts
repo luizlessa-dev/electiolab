@@ -14,6 +14,17 @@ import { createClient } from "@supabase/supabase-js";
 import * as fs from "fs";
 import * as path from "path";
 
+// Load .env.local
+const envFile = path.join(process.cwd(), ".env.local");
+for (const line of fs.readFileSync(envFile, "utf-8").split("\n")) {
+  const idx = line.indexOf("=");
+  if (idx > 0) {
+    const k = line.slice(0, idx).trim();
+    const v = line.slice(idx + 1).trim().replace(/^"|"$/g, "");
+    if (k && !process.env[k]) process.env[k] = v;
+  }
+}
+
 const APPLY = process.argv.includes("--apply");
 const DRY_RUN = process.argv.includes("--dry-run") || !APPLY;
 

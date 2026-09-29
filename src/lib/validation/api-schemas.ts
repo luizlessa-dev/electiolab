@@ -59,3 +59,35 @@ export const TseSyncParamsSchema = z.object({
   state: z.string().length(2).optional(),
   detailed: z.enum(["true", "false"]).transform((v) => v === "true").default(false),
 });
+
+// Public API v1 - Polls
+export const PollsQuerySchema = z.object({
+  election_id: z.string().uuid().optional(),
+  format: z.enum(["json", "csv"]).default("json"),
+  limit: z.coerce.number().min(1).max(100).default(50),
+});
+
+// Public API v1 - Averages
+export const AveragesQuerySchema = z.object({
+  election_id: z.string().uuid().optional(),
+  scenario: z.enum(["all", "null"]).or(z.string()).optional().default("null"),
+});
+
+// Public API v1 - Candidates Search
+export const CandidatesSearchSchema = z.object({
+  query: z.string().min(1).max(100),
+  limit: z.coerce.number().min(1).max(50).default(10),
+  state: z.string().length(2).optional(),
+});
+
+// Public API v1 - Drift
+export const DriftQuerySchema = z.object({
+  url: z.string().url(),
+  baseline: z.enum(["first", "latest"]).default("latest"),
+});
+
+// Public API v1 - Elections
+export const ElectionsQuerySchema = z.object({
+  year: z.coerce.number().int().min(2018).max(2100).optional(),
+  active: z.enum(["true", "false"]).transform((v) => v === "true").optional(),
+});

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { authenticate, applyRateLimitHeaders } from "@/lib/api-auth";
+import { CandidatesSearchSchema } from "@/lib/validation/api-schemas";
+import { z } from "zod";
 
 /**
  * GET /api/v1/candidates-search?q=silva&limit=50
@@ -15,8 +17,23 @@ export async function GET(request: Request) {
   if (!auth.ok) return auth.response;
 
   const url = new URL(request.url);
-  const q = (url.searchParams.get("q") ?? "").trim();
-  const limit = Math.min(50, Math.max(1, parseInt(url.searchParams.get("limit") ?? "50", 10) || 50));
+
+  // Validar query parameters com Zod
+  let params: z.infer<typeof CandidatesSearchSchema>;
+  try {
+    params = CandidatesSearchSchema.parse({
+      query: url.searchParams.get("q"),
+      limit: url.searchParams.get("limit"),
+      state: url.searchParams.get("state"),
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Invalid query parameters", details: error instanceof z.ZodError ? error.issues : [] },
+      { status: 400 }
+    );
+  }
+
+  const { query: q, limit, state } = params;
 
   const sb = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
