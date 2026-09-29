@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { authenticate, applyRateLimitHeaders } from "@/lib/api-auth";
 import { CandidatesSearchSchema } from "@/lib/validation/api-schemas";
+import { checkDistributedRateLimit, getRateLimitIdentifier } from "@/lib/middleware/distributed-rate-limit";
 import { z } from "zod";
 
 /**
@@ -15,6 +16,22 @@ import { z } from "zod";
 export async function GET(request: Request) {
   const auth = await authenticate(request);
   if (!auth.ok) return auth.response;
+
+  // Rate limiting: 100 requests per minute (search is lighter than polls/averages)
+  const identifier = getRateLimitIdentifier(request);
+  const rateLimit = await checkDistributedRateLimit(identifier, 100, 60);
+
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: "Rate limit exceeded", retryAfter: rateLimit.retryAfter },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(rateLimit.retryAfter),
+        }
+      }
+    );
+  }
 
   const url = new URL(request.url);
 

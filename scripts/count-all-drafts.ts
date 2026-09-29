@@ -15,9 +15,9 @@ for (const line of fs.readFileSync(envFile, 'utf-8').split('\n')) {
 const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
 (async () => {
-  const { data } = await sb.from('polls').select().limit(1);
-  if (data?.length) {
-    console.log('polls columns:');
-    Object.keys(data[0]).forEach(c => console.log(`  - ${c}`));
+  const { data, count } = await sb.from('poll_drafts').select('id', { count: 'exact' });
+  console.log(`Total rows in poll_drafts: ${count || data?.length || 0}`);
+  if (data && data.length > 0) {
+    console.log('First IDs:', data.slice(0, 3).map(d => d.id));
   }
 })();
