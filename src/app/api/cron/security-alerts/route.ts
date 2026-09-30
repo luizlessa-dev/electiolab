@@ -19,12 +19,11 @@ async function checkAuthFailures(): Promise<AlertEvent[]> {
   const alerts: AlertEvent[] = [];
 
   // Check for 5+ failures in last 15 minutes
+  const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000).toISOString();
   const { data, error } = await supabase
     .from('auth_failure_logs')
-    .select('ip_address, COUNT(*) as count')
-    .gt('timestamp', new Date(Date.now() - 15 * 60 * 1000).toISOString())
-    .group('ip_address')
-    .gte('count', 5);
+    .select('ip_address')
+    .gt('timestamp', fifteenMinutesAgo);
 
   if (error) {
     console.error('Error checking auth failures:', error);
@@ -32,15 +31,22 @@ async function checkAuthFailures(): Promise<AlertEvent[]> {
   }
 
   if (data && Array.isArray(data) && data.length > 0) {
+    // Group by IP address and count failures
+    const failuresByIp: Record<string, number> = {};
     for (const entry of data) {
-      const count = (entry as unknown as { count: number }).count;
+      const ip = (entry as unknown as { ip_address: string }).ip_address || 'unknown';
+      failuresByIp[ip] = (failuresByIp[ip] || 0) + 1;
+    }
+
+    // Alert on IPs with 5+ failures
+    for (const [ip, count] of Object.entries(failuresByIp)) {
       if (count >= 5) {
         alerts.push({
           type: 'auth_failures',
           severity: count >= 10 ? 'critical' : 'warning',
-          ip: entry.ip_address || 'unknown',
+          ip,
           count,
-          message: `🚨 Auth brute force detected: ${entry.ip_address} (${count} failures in 15min)`,
+          message: `🚨 Auth brute force detected: ${ip} (${count} failures in 15min)`,
           timestamp: new Date().toISOString(),
         });
       }
