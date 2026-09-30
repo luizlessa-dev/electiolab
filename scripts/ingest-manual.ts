@@ -11432,6 +11432,207 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Flávio Bolsonaro", percentage: 42 },
     ],
   },
+
+  // ─── Quaest · Governador São Paulo · 25-28 set 2026 · SP-01590/2026 · n=1.800 · presencial ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-sao-paulo-setembro-2026-3/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador SP 2026 - 1º Turno",
+    publication_date: "2026-09-29",
+    fieldwork_start: "2026-09-25",
+    fieldwork_end: "2026-09-28",
+    sample_size: 1800,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-sao-paulo-setembro-2026-3/",
+    tse_protocolo: "SP-01590/2026",
+    results: [
+      { candidate_name: "Tarcísio", percentage: 44.0 },
+      { candidate_name: "Haddad", percentage: 24.0 },
+    ],
+  },
+
+  // ─── Quaest · Governador Distrito Federal · 25-28 set 2026 · DF-02515/2026 · n=1.104 · presencial ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-distrito-federal-setembro-2026-3/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador Distrito Federal 2026",
+    publication_date: "2026-09-29",
+    fieldwork_start: "2026-09-25",
+    fieldwork_end: "2026-09-28",
+    sample_size: 1104,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-distrito-federal-setembro-2026-3/",
+    tse_protocolo: "DF-02515/2026",
+    results: [
+      { candidate_name: "Celina Leao", percentage: 36.0 },
+      { candidate_name: "Leandro Grass", percentage: 22.0 },
+    ],
+  },
+
+  // ─── Quaest · Governador Rio de Janeiro (com Garotinho) · 25-28 set 2026 · RJ-04419/2026 · n=1.302 · presencial ──
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/paes-tem-34-e-douglas-ruas-25-no-1o-turno-no-rj-diz-quaest/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador RJ 2026 - 1º Turno",
+    publication_date: "2026-09-29",
+    fieldwork_start: "2026-09-25",
+    fieldwork_end: "2026-09-28",
+    sample_size: 1302,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/paes-tem-34-e-douglas-ruas-25-no-1o-turno-no-rj-diz-quaest/",
+    tse_protocolo: "RJ-04419/2026",
+    results: [
+      { candidate_name: "Eduardo Paes", percentage: 34.0 },
+      { candidate_name: "Douglas Ruas", percentage: 25.0 },
+      { candidate_name: "Anthony Garotinho", percentage: 9.0 },
+    ],
+  },
+
+  // ─── Quaest · Governador Pernambuco · 25-28 set 2026 · PE-00324/2026 · n=1.302 · presencial ──
+  // Fonte: https://www.metropoles.com/brasil/quaest-raquel-lyra-e-joao-campos-empatam-com-42-em-pernambuco
+  {
+    institute_name: "Quaest",
+    election_name: "Governador PE 2026 - 1º Turno",
+    publication_date: "2026-09-29",
+    fieldwork_start: "2026-09-25",
+    fieldwork_end: "2026-09-28",
+    sample_size: 1302,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.metropoles.com/brasil/quaest-raquel-lyra-e-joao-campos-empatam-com-42-em-pernambuco",
+    tse_protocolo: "PE-00324/2026",
+    results: [
+      { candidate_name: "João Campos", percentage: 42.0 },
+      { candidate_name: "Raquel Lyra", percentage: 42.0 },
+    ],
+  },
+
+  // ─── Quaest · Governador Minas Gerais · 25-28 set 2026 · MG-02019/2026 · n=1.506 · presencial ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-minas-gerais-setembro-2026-3/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador MG 2026 - 1º Turno",
+    publication_date: "2026-09-29",
+    fieldwork_start: "2026-09-25",
+    fieldwork_end: "2026-09-28",
+    sample_size: 1506,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/quaest-governador-senador-minas-gerais-setembro-2026-3/",
+    tse_protocolo: "MG-02019/2026",
+    results: [
+      { candidate_name: "Cleitinho", percentage: 37.0 },
+      { candidate_name: "Patrus Ananias", percentage: 18.0 },
+      { candidate_name: "Alexandre Kalil", percentage: 9.0 },
+      { candidate_name: "Mateus Simões", percentage: 6.0 },
+    ],
+  },
+
+  // ─── AtlasIntel · Governador Bahia · 24-29 set 2026 · BA-02425/2026 · n=2.000 · online (Atlas RDR) ──
+  // Fonte: https://www.portalsalvadorfm.com.br/politica/atlasintel-aponta-jeronimo-na-lideranca-com-507-acm-neto-tem-475/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador BA 2026 - 1º Turno",
+    publication_date: "2026-09-30",
+    fieldwork_start: "2026-09-24",
+    fieldwork_end: "2026-09-29",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://www.portalsalvadorfm.com.br/politica/atlasintel-aponta-jeronimo-na-lideranca-com-507-acm-neto-tem-475/",
+    tse_protocolo: "BA-02425/2026",
+    results: [
+      { candidate_name: "Jeronimo Rodrigues", percentage: 49.0 },
+      { candidate_name: "ACM Neto", percentage: 45.9 },
+    ],
+  },
+
+  // ─── AtlasIntel · Governador Ceará · 23-28 set 2026 · CE-01709/2026 · n=1.800 · online (Atlas RDR) ──
+  // Fonte: https://atlasintel.org/poll/brazil-ceara-pesquisa-atlasfocus-2026-09-29
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador CE 2026 - 1º Turno",
+    publication_date: "2026-09-29",
+    fieldwork_start: "2026-09-23",
+    fieldwork_end: "2026-09-28",
+    sample_size: 1800,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://atlasintel.org/poll/brazil-ceara-pesquisa-atlasfocus-2026-09-29",
+    tse_protocolo: "CE-01709/2026",
+    results: [
+      { candidate_name: "Elmano de Freitas", percentage: 49.0 },
+      { candidate_name: "Ciro Gomes", percentage: 47.6 },
+    ],
+  },
+
+  // ─── AtlasIntel · Governador São Paulo · 22-27 set 2026 · SP-01486/2026 · n=1.800 · online (Atlas RDR) ──
+  // Fonte: https://www.band.com.br/politica/eleicoes/atlasintel-tarcisio-lidera-disputa-em-sp-com-533-haddad-registra-401
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador SP 2026 - 1º Turno",
+    publication_date: "2026-09-29",
+    fieldwork_start: "2026-09-22",
+    fieldwork_end: "2026-09-27",
+    sample_size: 1800,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://www.band.com.br/politica/eleicoes/atlasintel-tarcisio-lidera-disputa-em-sp-com-533-haddad-registra-401",
+    tse_protocolo: "SP-01486/2026",
+    results: [
+      { candidate_name: "Tarcísio", percentage: 53.3 },
+      { candidate_name: "Haddad", percentage: 40.1 },
+    ],
+  },
+
+  // ─── AtlasIntel · Governador Rio de Janeiro (com Garotinho) · 22-27 set 2026 · RJ-09456/2026 · n=1.800 · online (Atlas RDR) ──
+  // Fonte: https://www.moneytimes.com.br/eduardo-paes-tem-441-no-rio-de-janeiro-contra-357-de-ruas-diz-pesquisa-atlasintel-gaep/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador RJ 2026 - 1º Turno",
+    publication_date: "2026-09-29",
+    fieldwork_start: "2026-09-22",
+    fieldwork_end: "2026-09-27",
+    sample_size: 1800,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://www.moneytimes.com.br/eduardo-paes-tem-441-no-rio-de-janeiro-contra-357-de-ruas-diz-pesquisa-atlasintel-gaep/",
+    tse_protocolo: "RJ-09456/2026",
+    results: [
+      { candidate_name: "Eduardo Paes", percentage: 44.1 },
+      { candidate_name: "Douglas Ruas", percentage: 35.7 },
+      { candidate_name: "Anthony Garotinho", percentage: 6.3 },
+    ],
+  },
+
+  // ─── AtlasIntel · Governador Minas Gerais · 22-27 set 2026 · MG-04294/2026 · n=1.800 · online (Atlas RDR) ──
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/cleitinho-tem-418-e-patrus-336-em-mg-diz-atlasintel/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador MG 2026 - 1º Turno",
+    publication_date: "2026-09-29",
+    fieldwork_start: "2026-09-22",
+    fieldwork_end: "2026-09-27",
+    sample_size: 1800,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/cleitinho-tem-418-e-patrus-336-em-mg-diz-atlasintel/",
+    tse_protocolo: "MG-04294/2026",
+    results: [
+      { candidate_name: "Cleitinho", percentage: 41.8 },
+      { candidate_name: "Patrus Ananias", percentage: 33.6 },
+      { candidate_name: "Mateus Simões", percentage: 6.2 },
+      { candidate_name: "Alexandre Kalil", percentage: 5.0 },
+      { candidate_name: "Flávio Roscoe", percentage: 4.9 },
+      { candidate_name: "Gabriel Azevedo", percentage: 2.1 },
+      { candidate_name: "Ben Mendes", percentage: 2.0 },
+      { candidate_name: "Túlio Lopes", percentage: 0.7 },
+      { candidate_name: "Indira Xavier", percentage: 0.2 },
+    ],
+  },
 ];
 
 async function main() {
