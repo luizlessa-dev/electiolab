@@ -25,8 +25,7 @@ ALTER TABLE security_alerts ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "security_alerts_service_role_write"
   ON security_alerts
   FOR INSERT
-  WITH CHECK (true)
-  USING (
+  WITH CHECK (
     (auth.jwt() ->> 'role') = 'service_role'
     OR auth.role() = 'service_role'
   );
