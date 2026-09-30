@@ -1,0 +1,27 @@
+import * as fs from 'fs';
+import * as path from 'path';
+import { createClient } from '@supabase/supabase-js';
+
+const envFile = path.join(process.cwd(), '.env.local');
+for (const line of fs.readFileSync(envFile, 'utf-8').split('\n')) {
+  const idx = line.indexOf('=');
+  if (idx > 0) {
+    const k = line.slice(0, idx).trim();
+    const v = line.slice(idx + 1).trim().replace(/^"|"$/g, '');
+    if (k && !process.env[k]) process.env[k] = v;
+  }
+}
+
+const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+
+(async () => {
+  console.log('Checking institutes...');
+  const { data: inst } = await sb.from('institutes').select('name').limit(5);
+  console.log(`Institutes: ${inst?.length || 0}`);
+  if (inst?.length) inst.forEach(i => console.log(`  - ${i.name}`));
+  
+  console.log('\nChecking elections...');
+  const { data: elec } = await sb.from('elections').select('type, state, year').limit(5);
+  console.log(`Elections: ${elec?.length || 0}`);
+  if (elec?.length) elec.forEach(e => console.log(`  - ${e.type} ${e.state} ${e.year}`));
+})();

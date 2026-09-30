@@ -3,10 +3,33 @@
  *
  * Individual agent health — last run, uptime, error rate
  * Agents: agent-1-tse, agent-2-institutos, agent-3-validacao
+ *
+ * Autenticação: Requer HEALTH_CHECK_KEY (API key opcional).
+ * Se não configurada, o endpoint é público.
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+
+function isAuthorized(request: NextRequest): boolean {
+  const apiKey = process.env.HEALTH_CHECK_KEY;
+  if (!apiKey) {
+    return true; // Se não configurado, permite acesso público
+  }
+
+  const authHeader = request.headers.get("authorization");
+  if (authHeader?.startsWith("Bearer ")) {
+    const token = authHeader.slice(7);
+    return token === apiKey;
+  }
+
+  const apiKeyHeader = request.headers.get("x-api-key");
+  if (apiKeyHeader) {
+    return apiKeyHeader === apiKey;
+  }
+
+  return false;
+}
 
 interface AgentHealthResponse {
   ok: boolean;
@@ -31,6 +54,13 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ agent: string }> }
 ): Promise<NextResponse> {
+  if (!isAuthorized(req)) {
+    return NextResponse.json(
+      { error: "Unauthorized: Invalid or missing API key" },
+      { status: 401 }
+    );
+  }
+
   const { agent } = await params;
   const timestamp = new Date().toISOString();
 
