@@ -21,10 +21,13 @@ interface TestConfig {
   requestsToMake: number;
 }
 
+const port = process.env.PORT || "3001";
+const baseUrl = `http://localhost:${port}`;
+
 const endpoints = {
-  polls: { limit: 50, url: "http://localhost:3000/api/v1/polls?limit=1" },
-  averages: { limit: 50, url: "http://localhost:3000/api/v1/averages?election_id=invalid" },
-  "candidates-search": { limit: 100, url: "http://localhost:3000/api/v1/candidates-search?q=silva&limit=1" },
+  polls: { limit: 50, url: `${baseUrl}/api/v1/polls?limit=1` },
+  averages: { limit: 50, url: `${baseUrl}/api/v1/averages?election_id=invalid` },
+  "candidates-search": { limit: 100, url: `${baseUrl}/api/v1/candidates-search?q=silva&limit=1` },
 };
 
 async function testRateLimit(config: TestConfig) {
