@@ -62,17 +62,20 @@ export function CandidateGaffes({
         );
 
         // First get the candidate ID
-        const { data: candidate, error: candidateError } = await supabase
+        const { data: candidates, error: candidateError } = await supabase
           .from('candidates')
           .select('id')
           .eq('slug', candidateSlug)
-          .single();
+          .limit(1);
 
-        if (candidateError || !candidate) {
-          setError('Candidato não encontrado');
+        if (candidateError || !candidates || candidates.length === 0) {
+          console.error('Candidato error:', { candidateError, candidates });
+          setError(`Candidato não encontrado${candidateError ? ': ' + candidateError.message : ''}`);
           setLoading(false);
           return;
         }
+
+        const candidate = candidates[0];
 
         // Then fetch gaffes
         const { data, error: gaffesError } = await supabase

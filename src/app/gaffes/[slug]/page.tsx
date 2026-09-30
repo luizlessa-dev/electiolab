@@ -17,13 +17,13 @@ async function getCandidateInfo(slug: string) {
     .from('candidates')
     .select('name, slug, party_id, party_name')
     .eq('slug', slug)
-    .single();
+    .limit(1);
 
-  if (error || !data) {
+  if (error || !data || data.length === 0) {
     return null;
   }
 
-  return data;
+  return data[0];
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -74,7 +74,7 @@ export default async function GaffesPage({ params }: PageProps) {
 
         {/* Gaffes Component */}
         <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <CandidateGaffes candidateSlug={params.slug} limit={50} showTitle={true} />
+          <CandidateGaffes candidateSlug={resolvedParams.slug} limit={50} showTitle={true} />
         </div>
 
         {/* Footer Info */}
