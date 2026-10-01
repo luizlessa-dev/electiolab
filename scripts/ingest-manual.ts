@@ -11633,6 +11633,48 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Indira Xavier", percentage: 0.2 },
     ],
   },
+
+  // ─── Real Time Big Data · Presidente · 26-30 set 2026 · BR-09503/2026 · n=2.000 · mista (telefone + IA) ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-presidente-outubro-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-10-01",
+    fieldwork_start: "2026-09-26",
+    fieldwork_end: "2026-09-30",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "mista",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/real-time-big-data-presidente-outubro-2026/",
+    tse_protocolo: "BR-09503/2026",
+    results: [
+      { candidate_name: "Lula",            percentage: 46 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 41 },
+      { candidate_name: "Augusto Cury",    percentage:  5 },
+      { candidate_name: "Caiado",          percentage:  3 },
+      { candidate_name: "Zema",            percentage:  1 },
+    ],
+  },
+
+  // ─── Real Time Big Data · Governador Rio de Janeiro · 25-29 set 2026 · RJ-08712/2026 · n=2.000 · telefônica ──
+  // Fonte: https://exame.com/brasil/real-time-big-data-paes-tem-37-e-ruas-31-no-1o-turno-no-rio-de-janeiro/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador RJ 2026 - 1º Turno",
+    publication_date: "2026-09-30",
+    fieldwork_start: "2026-09-25",
+    fieldwork_end: "2026-09-29",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://exame.com/brasil/real-time-big-data-paes-tem-37-e-ruas-31-no-1o-turno-no-rio-de-janeiro/",
+    tse_protocolo: "RJ-08712/2026",
+    results: [
+      { candidate_name: "Eduardo Paes",      percentage: 37 },
+      { candidate_name: "Douglas Ruas",      percentage: 31 },
+      { candidate_name: "Anthony Garotinho", percentage:  7 },
+    ],
+  },
 ];
 
 async function main() {
