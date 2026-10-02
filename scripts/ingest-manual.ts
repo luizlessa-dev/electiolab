@@ -11675,6 +11675,111 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Anthony Garotinho", percentage:  7 },
     ],
   },
+
+  // ─── Datafolha · Governador São Paulo · 28 set-1 out 2026 · SP-01367/2026 · n=1.610 · presencial ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-governador-sao-paulo-outubro-2026/
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador SP 2026 - 1º Turno",
+    publication_date: "2026-10-01",
+    fieldwork_start: "2026-09-28",
+    fieldwork_end: "2026-10-01",
+    sample_size: 1610,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-governador-sao-paulo-outubro-2026/",
+    tse_protocolo: "SP-01367/2026",
+    results: [
+      { candidate_name: "Tarcísio", percentage: 56 },
+      { candidate_name: "Haddad",   percentage: 37 },
+    ],
+  },
+
+  // ─── Datafolha · Governador Minas Gerais · 28 set-1 out 2026 · MG-09729/2026 · n=1.204 · presencial ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-governador-senado-minas-gerais-outubro-2026/
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador MG 2026 - 1º Turno",
+    publication_date: "2026-10-01",
+    fieldwork_start: "2026-09-28",
+    fieldwork_end: "2026-10-01",
+    sample_size: 1204,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-governador-senado-minas-gerais-outubro-2026/",
+    tse_protocolo: "MG-09729/2026",
+    results: [
+      { candidate_name: "Cleitinho",      percentage: 49 },
+      { candidate_name: "Patrus Ananias", percentage: 20 },
+      { candidate_name: "Alexandre Kalil", percentage: 13 },
+      { candidate_name: "Mateus Simões",  percentage:  5 },
+      { candidate_name: "Flávio Roscoe",  percentage:  5 },
+    ],
+  },
+
+  // ─── Datafolha · Governador Rio de Janeiro · 28 set-1 out 2026 · RJ-02070/2026 · n=1.204 · presencial ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-governador-senador-rio-de-janeiro-outubro-2026/
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador RJ 2026 - 1º Turno",
+    publication_date: "2026-10-01",
+    fieldwork_start: "2026-09-28",
+    fieldwork_end: "2026-10-01",
+    sample_size: 1204,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-governador-senador-rio-de-janeiro-outubro-2026/",
+    tse_protocolo: "RJ-02070/2026",
+    results: [
+      { candidate_name: "Eduardo Paes",      percentage: 42 },
+      { candidate_name: "Douglas Ruas",      percentage: 31 },
+      { candidate_name: "Anthony Garotinho", percentage:  7 },
+    ],
+  },
+
+  // ─── Datafolha · Governador Pernambuco · 28 set-1 out 2026 · PE-06822/2026 · n=1.204 · presencial ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-governador-senador-pernambuco-outubro-2026/
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador PE 2026 - 1º Turno",
+    publication_date: "2026-10-01",
+    fieldwork_start: "2026-09-28",
+    fieldwork_end: "2026-10-01",
+    sample_size: 1204,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-governador-senador-pernambuco-outubro-2026/",
+    tse_protocolo: "PE-06822/2026",
+    results: [
+      { candidate_name: "Raquel Lyra", percentage: 46 },
+      { candidate_name: "João Campos", percentage: 44 },
+    ],
+  },
+
+  // ─── Datafolha · Governador Distrito Federal · 28 set-1 out 2026 · DF-00905/2026 · n=910 · presencial ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-governador-senador-distrito-federal-outubro-2026/
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador Distrito Federal 2026",
+    publication_date: "2026-10-01",
+    fieldwork_start: "2026-09-28",
+    fieldwork_end: "2026-10-01",
+    sample_size: 910,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-governador-senador-distrito-federal-outubro-2026/",
+    tse_protocolo: "DF-00905/2026",
+    results: [
+      { candidate_name: "Celina Leão",             percentage: 46 },
+      { candidate_name: "Leandro Grass",           percentage: 22 },
+      { candidate_name: "Paula Belmonte",          percentage:  9 },
+      { candidate_name: "Ricardo Cappelli",        percentage:  3 },
+      { candidate_name: "Kiko Caputo",             percentage:  3 },
+      { candidate_name: "Professor Robson",        percentage:  1 },
+      { candidate_name: "Professora Samara Mineiro", percentage: 1 },
+      { candidate_name: "Elisson",                 percentage:  1 },
+    ],
+  },
 ];
 
 async function main() {
