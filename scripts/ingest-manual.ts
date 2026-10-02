@@ -11465,6 +11465,322 @@ const PENDING_POLLS: Array<{
       { candidate_name: "NÃO SABE", percentage: 3 },
     ],
   },
+
+  // ─── Atlas Intel · Presidencial · 23-28 set 2026 · BR-04391/2026 · n=5.005 · online ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-presidente-setembro-2026-4/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-29",
+    fieldwork_start: "2026-09-23",
+    fieldwork_end: "2026-09-28",
+    sample_size: 5005,
+    margin_of_error: 3.0,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-presidente-setembro-2026-4/",
+    tse_protocolo: "BR-04391/2026",
+    results: [
+      { candidate_name: "Lula", percentage: 46.2 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 43.1 },
+      { candidate_name: "Renan Santos", percentage: 5.3 },
+      { candidate_name: "Augusto Cury", percentage: 2.1 },
+      { candidate_name: "Caiado", percentage: 1.8 },
+      { candidate_name: "Zema", percentage: 0.9 },
+    ],
+  },
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-29",
+    fieldwork_start: "2026-09-23",
+    fieldwork_end: "2026-09-28",
+    sample_size: 5005,
+    margin_of_error: 3.0,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-presidente-setembro-2026-4/",
+    tse_protocolo: "BR-04391/2026",
+    scenario_label: "Lula vs Flavio Bolsonaro",
+    results: [
+      { candidate_name: "Lula", percentage: 50.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 50.0 },
+    ],
+  },
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-29",
+    fieldwork_start: "2026-09-23",
+    fieldwork_end: "2026-09-28",
+    sample_size: 5005,
+    margin_of_error: 3.0,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-presidente-setembro-2026-4/",
+    tse_protocolo: "BR-04391/2026",
+    scenario_label: "Lula vs Zema",
+    results: [
+      { candidate_name: "Lula", percentage: 53.5 },
+      { candidate_name: "Zema", percentage: 46.5 },
+    ],
+  },
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-29",
+    fieldwork_start: "2026-09-23",
+    fieldwork_end: "2026-09-28",
+    sample_size: 5005,
+    margin_of_error: 3.0,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-presidente-setembro-2026-4/",
+    tse_protocolo: "BR-04391/2026",
+    scenario_label: "Lula vs Caiado",
+    results: [
+      { candidate_name: "Lula", percentage: 51.4 },
+      { candidate_name: "Caiado", percentage: 48.6 },
+    ],
+  },
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-29",
+    fieldwork_start: "2026-09-23",
+    fieldwork_end: "2026-09-28",
+    sample_size: 5005,
+    margin_of_error: 3.0,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-presidente-setembro-2026-4/",
+    tse_protocolo: "BR-04391/2026",
+    scenario_label: "Lula vs Augusto Cury",
+    results: [
+      { candidate_name: "Lula", percentage: 56.1 },
+      { candidate_name: "Augusto Cury", percentage: 43.9 },
+    ],
+  },
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-29",
+    fieldwork_start: "2026-09-23",
+    fieldwork_end: "2026-09-28",
+    sample_size: 5005,
+    margin_of_error: 3.0,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-presidente-setembro-2026-4/",
+    tse_protocolo: "BR-04391/2026",
+    scenario_label: "Lula vs Renan Santos",
+    results: [
+      { candidate_name: "Lula", percentage: 61.6 },
+      { candidate_name: "Renan Santos", percentage: 38.4 },
+    ],
+  },
+
+  // ─── Nexus/BTG Pactual · Presidencial · 25-27 set 2026 · BR-07557/2026 · n=2.000 · telefônica ──
+  // Fonte: https://www.nexus.fsb.com.br/estudos-divulgados/pesquisa-btg-nexus-de-intencao-de-votos-para-presidente-do-brasil-28-de-setembro-de-2026/
+  {
+    institute_name: "Nexus",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-28",
+    fieldwork_start: "2026-09-25",
+    fieldwork_end: "2026-09-27",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.nexus.fsb.com.br/estudos-divulgados/pesquisa-btg-nexus-de-intencao-de-votos-para-presidente-do-brasil-28-de-setembro-de-2026/",
+    tse_protocolo: "BR-07557/2026",
+    results: [
+      { candidate_name: "Lula", percentage: 42.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 37.0 },
+      { candidate_name: "Augusto Cury", percentage: 5.0 },
+      { candidate_name: "Caiado", percentage: 5.0 },
+      { candidate_name: "Renan Santos", percentage: 4.0 },
+      { candidate_name: "Zema", percentage: 1.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 3.0 },
+      { candidate_name: "NÃO SABE", percentage: 2.0 },
+    ],
+  },
+  {
+    institute_name: "Nexus",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-28",
+    fieldwork_start: "2026-09-25",
+    fieldwork_end: "2026-09-27",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.nexus.fsb.com.br/estudos-divulgados/pesquisa-btg-nexus-de-intencao-de-votos-para-presidente-do-brasil-28-de-setembro-de-2026/",
+    tse_protocolo: "BR-07557/2026",
+    scenario_label: "Lula vs Flavio Bolsonaro",
+    results: [
+      { candidate_name: "Lula", percentage: 46.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 44.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 8.0 },
+      { candidate_name: "NÃO SABE", percentage: 1.0 },
+    ],
+  },
+
+  // ─── Vox Brasil Pesquisas · Presidencial · 26-28 set 2026 · BR-00895/2026 · n=2.100 · presencial ──
+  // Fonte: https://exame.com/brasil/pesquisa-vox-brasil-flavio-bolsonaro-tem-452-e-lula-447-no-2o-turno/ (1º turno; 2º turno não inserido — Exame e CNN Brasil divergem: 45,2x44,7 vs 45,1x44,5)
+  {
+    institute_name: "Vox Brasil Pesquisas",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-29",
+    fieldwork_start: "2026-09-26",
+    fieldwork_end: "2026-09-28",
+    sample_size: 2100,
+    margin_of_error: 2.15,
+    methodology: "presencial",
+    source_url: "https://exame.com/brasil/pesquisa-vox-brasil-flavio-bolsonaro-tem-452-e-lula-447-no-2o-turno/",
+    tse_protocolo: "BR-00895/2026",
+    results: [
+      { candidate_name: "Lula", percentage: 41.1 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 37.8 },
+    ],
+  },
+
+  // ─── GERP · Presidencial · 24-28 set 2026 · BR-03929/2026 · n=2.400 · telefônica ──
+  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/gerp-presidente-setembro-2026-3/
+  {
+    institute_name: "GERP",
+    election_name: "Presidencial 2026 - 1º Turno",
+    publication_date: "2026-09-29",
+    fieldwork_start: "2026-09-24",
+    fieldwork_end: "2026-09-28",
+    sample_size: 2400,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/gerp-presidente-setembro-2026-3/",
+    tse_protocolo: "BR-03929/2026",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 44.0 },
+      { candidate_name: "Lula", percentage: 42.0 },
+      { candidate_name: "Augusto Cury", percentage: 5.0 },
+      { candidate_name: "Caiado", percentage: 3.0 },
+      { candidate_name: "Renan Santos", percentage: 3.0 },
+    ],
+  },
+  {
+    institute_name: "GERP",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-09-29",
+    fieldwork_start: "2026-09-24",
+    fieldwork_end: "2026-09-28",
+    sample_size: 2400,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/gerp-presidente-setembro-2026-3/",
+    tse_protocolo: "BR-03929/2026",
+    scenario_label: "Lula vs Flavio Bolsonaro",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 50.0 },
+      { candidate_name: "Lula", percentage: 43.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 5.0 },
+      { candidate_name: "NÃO SABE", percentage: 1.0 },
+    ],
+  },
+
+  // ─── Real Time Big Data · Governador PR · 24-28 set 2026 · PR-04181/2026 · n=1.600 · telefônica ──
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/moro-a-frente-na-disputa-ao-governo-do-parana-diz-real-time-big-data/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Parana 2026",
+    publication_date: "2026-09-29",
+    fieldwork_start: "2026-09-24",
+    fieldwork_end: "2026-09-28",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/moro-a-frente-na-disputa-ao-governo-do-parana-diz-real-time-big-data/",
+    tse_protocolo: "PR-04181/2026",
+    results: [
+      { candidate_name: "Sergio Moro", percentage: 36.0 },
+      { candidate_name: "Sandro Alex", percentage: 28.0 },
+      { candidate_name: "Requiao Filho", percentage: 23.0 },
+    ],
+  },
+
+  // ─── Real Time Big Data · Governador SP · 24-28 set 2026 · SP-06293/2026 · n=2.000 · telefônica ──
+  // Fonte: https://www.metropoles.com/sao-paulo/real-time-big-data-com-53-tarcisio-lidera-em-sp-contra-haddad-39
+  // (Gazeta do Povo traz 57x42 pro mesmo instituto/estado no mesmo período, mas sem citar o protocolo —
+  //  usando a versão que cita explicitamente SP-06293/2026 pra evitar mesclar com outro registro TSE)
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador SP 2026 - 1º Turno",
+    publication_date: "2026-09-29",
+    fieldwork_start: "2026-09-24",
+    fieldwork_end: "2026-09-28",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.metropoles.com/sao-paulo/real-time-big-data-com-53-tarcisio-lidera-em-sp-contra-haddad-39",
+    tse_protocolo: "SP-06293/2026",
+    results: [
+      { candidate_name: "Tarcísio", percentage: 53.0 },
+      { candidate_name: "Haddad", percentage: 39.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 4.0 },
+      { candidate_name: "NÃO SABE", percentage: 3.0 },
+    ],
+  },
+
+  // ─── Real Time Big Data · Governador RS · 24-28 set 2026 · RS-05412/2026 · n=1.600 · telefônica ──
+  // Fonte: https://www.cartacapital.com.br/politica/real-time-mostra-zucco-na-lideranca-da-disputa-pelo-governo-do-rs/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador RS 2026 - 1º Turno",
+    publication_date: "2026-09-29",
+    fieldwork_start: "2026-09-24",
+    fieldwork_end: "2026-09-28",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.cartacapital.com.br/politica/real-time-mostra-zucco-na-lideranca-da-disputa-pelo-governo-do-rs/",
+    tse_protocolo: "RS-05412/2026",
+    results: [
+      { candidate_name: "Luciano Zucco", percentage: 41.0 },
+      { candidate_name: "Juliana Brizola", percentage: 36.0 },
+      { candidate_name: "Gabriel Souza", percentage: 20.0 },
+    ],
+  },
+
+  // ─── Real Time Big Data · Governador DF · 24-28 set 2026 · DF-04637/2026 · n=1.600 · telefônica ──
+  // Fonte: https://ncnews.com.br/2026/09/29/pesquisa-real-time-governador-df/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador Distrito Federal 2026",
+    publication_date: "2026-09-29",
+    fieldwork_start: "2026-09-24",
+    fieldwork_end: "2026-09-28",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://ncnews.com.br/2026/09/29/pesquisa-real-time-governador-df/",
+    tse_protocolo: "DF-04637/2026",
+    results: [
+      { candidate_name: "Celina Leao", percentage: 52.0 },
+      { candidate_name: "Leandro Grass", percentage: 29.0 },
+      { candidate_name: "Paula Belmonte", percentage: 12.0 },
+      { candidate_name: "Ricardo Cappelli", percentage: 4.0 },
+      { candidate_name: "Kiko Caputo", percentage: 1.0 },
+    ],
+  },
+
+  // ─── Ipespe · Governador PE · 23-26 set 2026 · PE-04196/2026 · n=1.000 · presencial ──
+  // Fonte: https://waldineypassos.com.br/ipespe-mostra-joao-campos-numericamente-a-frente-de-raquel-lyra-na-disputa-pelo-governo-de-pernambuco/
+  {
+    institute_name: "Ipespe",
+    election_name: "Governador PE 2026 - 1º Turno",
+    publication_date: "2026-09-28",
+    fieldwork_start: "2026-09-23",
+    fieldwork_end: "2026-09-26",
+    sample_size: 1000,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://waldineypassos.com.br/ipespe-mostra-joao-campos-numericamente-a-frente-de-raquel-lyra-na-disputa-pelo-governo-de-pernambuco/",
+    tse_protocolo: "PE-04196/2026",
+    results: [
+      { candidate_name: "João Campos", percentage: 46.0 },
+      { candidate_name: "Raquel Lyra", percentage: 45.0 },
+    ],
+  },
 ];
 
 async function main() {
