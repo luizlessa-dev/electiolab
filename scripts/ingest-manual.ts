@@ -11756,31 +11756,6 @@ const PENDING_POLLS: Array<{
     ],
   },
 
-  // ─── Datafolha · Governador Distrito Federal · 28 set-1 out 2026 · DF-00905/2026 · n=910 · presencial ──
-  // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-governador-senador-distrito-federal-outubro-2026/
-  {
-    institute_name: "Datafolha",
-    election_name: "Governador Distrito Federal 2026",
-    publication_date: "2026-10-01",
-    fieldwork_start: "2026-09-28",
-    fieldwork_end: "2026-10-01",
-    sample_size: 910,
-    margin_of_error: 3.0,
-    methodology: "presencial",
-    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/datafolha-governador-senador-distrito-federal-outubro-2026/",
-    tse_protocolo: "DF-00905/2026",
-    results: [
-      { candidate_name: "Celina Leão",             percentage: 46 },
-      { candidate_name: "Leandro Grass",           percentage: 22 },
-      { candidate_name: "Paula Belmonte",          percentage:  9 },
-      { candidate_name: "Ricardo Cappelli",        percentage:  3 },
-      { candidate_name: "Kiko Caputo",             percentage:  3 },
-      { candidate_name: "Professor Robson",        percentage:  1 },
-      { candidate_name: "Professora Samara Mineiro", percentage: 1 },
-      { candidate_name: "Elisson",                 percentage:  1 },
-    ],
-  },
-
   // ─── Atlas Intel · Presidencial · 23-28 set 2026 · BR-04391/2026 · n=5.005 · online ──
   // Fonte: https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-presidente-setembro-2026-4/
   {
@@ -12094,6 +12069,141 @@ const PENDING_POLLS: Array<{
     results: [
       { candidate_name: "João Campos", percentage: 46.0 },
       { candidate_name: "Raquel Lyra", percentage: 45.0 },
+    ],
+  },
+
+  // ─── Quaest (véspera, encomenda Globo) · 2-3 out 2026 · presencial · % de VOTOS VÁLIDOS ──
+  // Atenção: as pesquisas Quaest de 25-28 set acima estão em votos totais; estas cinco foram
+  // divulgadas só em votos válidos (CNN Brasil, 03/10). Não decompostas em totais — não especulado.
+  // Candidatos com "<1%" ou "não pontuou" omitidos.
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/quaest-tarcisio-tem-60-no-1o-turno-em-sp-haddad-36/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador SP 2026 - 1º Turno",
+    publication_date: "2026-10-03",
+    fieldwork_start: "2026-10-02",
+    fieldwork_end: "2026-10-03",
+    sample_size: 3702,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/quaest-tarcisio-tem-60-no-1o-turno-em-sp-haddad-36/",
+    tse_protocolo: "SP-04726/2026",
+    results: [
+      { candidate_name: "Tarcísio", percentage: 60.0 },
+      { candidate_name: "Haddad", percentage: 36.0 },
+      { candidate_name: "Vera Lúcia", percentage: 2.0 },
+      { candidate_name: "Vivian Mendes", percentage: 2.0 },
+    ],
+  },
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/quaest-mg-cleitinho-tem-54-dos-votos-validos-patrus-23-kalil-10/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador MG 2026 - 1º Turno",
+    publication_date: "2026-10-03",
+    fieldwork_start: "2026-10-02",
+    fieldwork_end: "2026-10-03",
+    sample_size: 3204,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/quaest-mg-cleitinho-tem-54-dos-votos-validos-patrus-23-kalil-10/",
+    tse_protocolo: "MG-06889/2026",
+    results: [
+      { candidate_name: "Cleitinho", percentage: 54.0 },
+      { candidate_name: "Patrus Ananias", percentage: 23.0 },
+      { candidate_name: "Alexandre Kalil", percentage: 10.0 },
+      { candidate_name: "Flávio Roscoe", percentage: 6.0 },
+      { candidate_name: "Mateus Simões", percentage: 4.0 },
+      { candidate_name: "Gabriel Azevedo", percentage: 2.0 },
+      { candidate_name: "Ben Mendes", percentage: 1.0 },
+    ],
+  },
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/quaest-eduardo-paes-tem-49-no-1o-turno-no-rj-douglas-ruas-40/
+  // Garotinho (6%) está is_active=false na base → cai em "não resolvido" no ingest.
+  {
+    institute_name: "Quaest",
+    election_name: "Governador RJ 2026 - 1º Turno",
+    publication_date: "2026-10-03",
+    fieldwork_start: "2026-10-02",
+    fieldwork_end: "2026-10-03",
+    sample_size: 3204,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/quaest-eduardo-paes-tem-49-no-1o-turno-no-rj-douglas-ruas-40/",
+    tse_protocolo: "RJ-03032/2026",
+    results: [
+      { candidate_name: "Eduardo Paes", percentage: 49.0 },
+      { candidate_name: "Douglas Ruas", percentage: 40.0 },
+      { candidate_name: "Anthony Garotinho", percentage: 6.0 },
+      { candidate_name: "William Siri", percentage: 3.0 },
+      { candidate_name: "André Marinho", percentage: 1.0 },
+      { candidate_name: "Coronel Busnello", percentage: 1.0 },
+    ],
+  },
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/quaest-pe-lyra-tem-52-dos-votos-validos-no-1o-turno-joao-campos-47/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador PE 2026 - 1º Turno",
+    publication_date: "2026-10-03",
+    fieldwork_start: "2026-10-02",
+    fieldwork_end: "2026-10-03",
+    sample_size: 2652,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/quaest-pe-lyra-tem-52-dos-votos-validos-no-1o-turno-joao-campos-47/",
+    tse_protocolo: "PE-09665/2026",
+    results: [
+      { candidate_name: "Raquel Lyra", percentage: 52.0 },
+      { candidate_name: "João Campos", percentage: 47.0 },
+    ],
+  },
+  // Fonte: https://www.cnnbrasil.com.br/eleicoes/quaest-celina-tem-53-dos-votos-validos-pelo-governo-do-df-grass-32/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador Distrito Federal 2026",
+    publication_date: "2026-10-03",
+    fieldwork_start: "2026-10-02",
+    fieldwork_end: "2026-10-03",
+    sample_size: 2652,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.cnnbrasil.com.br/eleicoes/quaest-celina-tem-53-dos-votos-validos-pelo-governo-do-df-grass-32/",
+    tse_protocolo: "DF-04089/2026",
+    results: [
+      { candidate_name: "Celina Leao", percentage: 53.0 },
+      { candidate_name: "Leandro Grass", percentage: 32.0 },
+      { candidate_name: "Paula Belmonte", percentage: 10.0 },
+      { candidate_name: "Ricardo Cappelli", percentage: 2.0 },
+      { candidate_name: "Kiko Caputo", percentage: 2.0 },
+      { candidate_name: "Professora Samara Mineiro", percentage: 1.0 },
+    ],
+  },
+
+  // ─── Datafolha · 28 set-1 out 2026 · presencial · votos TOTAIS (mesma base das Datafolha anteriores) ──
+  // Os votos válidos divulgados no mesmo release (DF 53/26) não são usados. PE, MG e RJ desta rodada foram corrigidos via migration 20261003150000.
+  // Arruda (PSD) saiu da disputa por impedimento da Justiça Eleitoral — pesquisa já sem ele.
+  // Fonte: https://datafolha.folha.uol.com.br/eleicoes/2026/10/sem-arruda-celina-leao-pp-tem-53-dos-validos-e-pode-vencer-no-1o-turno.shtml
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador Distrito Federal 2026",
+    publication_date: "2026-10-02",
+    fieldwork_start: "2026-09-28",
+    fieldwork_end: "2026-09-30",
+    sample_size: 910,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://datafolha.folha.uol.com.br/eleicoes/2026/10/sem-arruda-celina-leao-pp-tem-53-dos-validos-e-pode-vencer-no-1o-turno.shtml",
+    tse_protocolo: "DF-00905/2026",
+    results: [
+      { candidate_name: "Celina Leao", percentage: 46.0 },
+      { candidate_name: "Leandro Grass", percentage: 22.0 },
+      { candidate_name: "Paula Belmonte", percentage: 9.0 },
+      { candidate_name: "Ricardo Cappelli", percentage: 3.0 },
+      { candidate_name: "Kiko Caputo", percentage: 3.0 },
+      { candidate_name: "Professor Robson", percentage: 1.0 },
+      { candidate_name: "Professora Samara Mineiro", percentage: 1.0 },
+      { candidate_name: "Elisson", percentage: 1.0 },
+      { candidate_name: "BRANCO/NULO", percentage: 9.0 },
+      { candidate_name: "NÃO SABE", percentage: 5.0 },
     ],
   },
 ];
