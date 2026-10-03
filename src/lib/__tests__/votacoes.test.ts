@@ -40,6 +40,12 @@ describe("resumoCamara", () => {
     expect(r.presencaNaoCalculada).toMatch(/período de exercício/);
   });
 
+  it("deputado sem partido não tem alinhamento com a bancada", () => {
+    expect(resumoCamara(agg({ concordancia_partido: "100" }), 57, "S.PART.").concordanciaPartido).toBeNull();
+    expect(resumoCamara(agg({ concordancia_partido: "100" }), 57, "Sem partido").concordanciaPartido).toBeNull();
+    expect(resumoCamara(agg({ concordancia_partido: "69.47" }), 57, "PL").concordanciaPartido).toBe(69.47);
+  });
+
   it("janela de outra legislatura não vale para esta", () => {
     expect(resumoCamara(agg({ id_legislatura: 58 }), 57).pctPresenca).toBeNull();
   });
