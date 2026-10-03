@@ -1,7 +1,4 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
-import { headers } from "next/headers";
-import { createClient } from "@/lib/supabase/server";
 
 /**
  * Metadata-level noindex pra todo o segmento (dashboard).
@@ -22,21 +19,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function DashboardGroupLayout({
+/**
+ * Sem gate aqui de propósito: o dashboard é público e gratuito (plano Free em
+ * /precos). Um redirect de login neste layout o fechou por engano em 13/06
+ * (b9f8c2f). As áreas restritas se protegem por conta própria: alertas e api
+ * (login), drafts/planos-* (admin) e admin/ (layout próprio).
+ */
+export default function DashboardGroupLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    const headersList = await headers();
-    const pathname = headersList.get("x-pathname") ?? "/dashboard";
-    redirect(`/auth/login?next=${encodeURIComponent(pathname)}`);
-  }
-
   return children;
 }
