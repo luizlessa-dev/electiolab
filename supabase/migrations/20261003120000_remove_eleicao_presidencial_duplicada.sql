@@ -16,7 +16,7 @@
 
 delete from public.elections e
 where e.id = '7c61acc8-35cd-499c-bfef-a56d08bbea49'
-  and e.name = 'Eleições Presidenciais 2026'
+  and e.name = U&'Elei\00e7\00f5es Presidenciais 2026'  -- "Eleições", escapado: imune a locale/pbcopy
   and not exists (select 1 from public.polls p where p.election_id = e.id)
   and not exists (select 1 from public.candidates c where c.election_id = e.id)
   and not exists (select 1 from public.election_results r where r.election_id = e.id);
