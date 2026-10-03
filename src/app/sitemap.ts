@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { createClient } from "@supabase/supabase-js";
 import { electionSegment } from "@/lib/queries";
+import { buscarAjustesPorPessoa } from "@/lib/politicians-sitemap-data";
 
 const SITE_URL = "https://electiolab.com";
 
@@ -211,10 +212,23 @@ async function getCandidatesForSitemap(): Promise<{
       };
     };
 
-    const paginas = filtered.map((c) => ({
+    let paginas: CandidatoSitemap[] = filtered.map((c) => ({
       slug: c.slug as string,
       ...ultimaMod(c),
     }));
+
+    // Rota por pessoa (ROTA_POLITICIANS=1): sitemap não lista URL que redireciona e passa a
+    // listar as páginas novas. Qualquer falha aqui mantém o sitemap como era: uma falha
+    // transitória nunca pode tirar URL do índice.
+    if (process.env.ROTA_POLITICIANS === "1") {
+      try {
+        const ajustes = await buscarAjustesPorPessoa(rows, new Set(paginas.map((p) => p.slug)));
+        paginas = paginas.filter((p) => !ajustes.remover.has(p.slug));
+        for (const slug of ajustes.adicionar) paginas.push({ slug, lastModified: FALLBACK_DATE, volatil: false });
+      } catch {
+        // sem ajustes
+      }
+    }
 
     return { paginas, subrotas: await montarSubRotas(supabase, rows, ultimaMod) };
   } catch {
