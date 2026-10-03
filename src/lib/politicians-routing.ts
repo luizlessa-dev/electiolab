@@ -19,8 +19,8 @@ export type OpcaoEleicao = {
  * - A linha é de OUTRA eleição da pessoa (existe como opção não primária): vai
  *   para /candidato/<pessoa>/<segmento>, para o visitante continuar vendo a
  *   eleição que pediu e não ser jogado na principal.
- * - Qualquer outro caso (linha duplicada na mesma eleição, ou irmã que o seletor
- *   filtra por inativa): vai para a página base da pessoa, que sempre existe.
+ * - Qualquer outro caso (linha duplicada na mesma eleição da principal, ou irmã que
+ *   o seletor filtra por inativa): vai para a página base da pessoa, que sempre existe.
  */
 export function destinoCanonico(args: {
   slugPedido: string;
@@ -32,6 +32,11 @@ export function destinoCanonico(args: {
   if (!pessoaSlug || pessoaSlug === slugPedido) return null;
 
   const opcao = opcoesDaPessoa.find((o) => o.candidateId === candidateId);
-  if (opcao && !opcao.isPrimary) return `/candidato/${pessoaSlug}/${opcao.segment}`;
+  const primaria = opcoesDaPessoa.find((o) => o.isPrimary);
+  // Linha duplicada da MESMA eleição da principal (ex.: "Renan" e "Renan Calheiros", ambas
+  // senador-2026-1t) tem o mesmo segmento dela: vai para a base, não para um segmento repetido.
+  if (opcao && !opcao.isPrimary && opcao.segment !== primaria?.segment) {
+    return `/candidato/${pessoaSlug}/${opcao.segment}`;
+  }
   return `/candidato/${pessoaSlug}`;
 }

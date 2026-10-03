@@ -109,6 +109,12 @@ const numOuNull = (x: unknown): number | null => {
   return Number.isFinite(n) ? n : null;
 };
 
+/** "S.PART." / "Sem partido": não há bancada, então "alinhamento com o partido" não tem sentido. */
+function semPartido(partido: string | null): boolean {
+  const p = (partido ?? "").trim().toUpperCase().replace(/[^A-Z]/g, "");
+  return p === "SPART" || p === "SEMPARTIDO";
+}
+
 /** Linha de `plen_deputado_agg` (TF). */
 export type AggCamaraRow = {
   id_legislatura: number | null;
@@ -130,7 +136,11 @@ export type AggCamaraRow = {
  * janela conhecida a presença não é calculada e a base passa a ser só as
  * votações em que o parlamentar votou.
  */
-export function resumoCamara(agg: AggCamaraRow, janelaLegislatura: number | null): ResumoVotacoes {
+export function resumoCamara(
+  agg: AggCamaraRow,
+  janelaLegislatura: number | null,
+  partido: string | null = null,
+): ResumoVotacoes {
   const janelaConhecida =
     janelaLegislatura !== null && agg.id_legislatura !== null && janelaLegislatura === agg.id_legislatura;
   return {
@@ -145,7 +155,7 @@ export function resumoCamara(agg: AggCamaraRow, janelaLegislatura: number | null
     pctFaltasNaoJustificadas: null,
     ausenciasJustificadas: null,
     votacoesSecretas: null,
-    concordanciaPartido: numOuNull(agg.concordancia_partido),
+    concordanciaPartido: semPartido(partido) ? null : numOuNull(agg.concordancia_partido),
     presencaNaoCalculada: janelaConhecida
       ? null
       : "O período de exercício deste mandato (suplência ou licença) não está identificado na fonte; por isso a presença não é calculada.",

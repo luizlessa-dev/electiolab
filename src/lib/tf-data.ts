@@ -295,7 +295,10 @@ export async function getVotacoesParlamentar(p: Parlamentar): Promise<VotacoesPa
       getVotosRecentes("camara", p.id_camara),
     ]);
     if (!aggRows[0]) return null;
-    return { resumo: resumoCamara(aggRows[0], janelaRows[0]?.id_legislatura ?? null), recentes };
+    return {
+      resumo: resumoCamara(aggRows[0], janelaRows[0]?.id_legislatura ?? null, p.partido_atual ?? p.partido),
+      recentes,
+    };
   }
 
   return null;

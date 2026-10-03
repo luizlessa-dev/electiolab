@@ -26,6 +26,16 @@ describe("destinoCanonico", () => {
     );
   });
 
+  it("linha duplicada da MESMA eleição da principal vai para a base, não para um segmento repetido", () => {
+    const comDuplicada: OpcaoEleicao[] = [
+      ...opcoes,
+      { candidateId: "duplicada-mesma-eleicao", segment: "senador-2026-1t", isPrimary: false },
+    ];
+    expect(destinoCanonico({ ...base, candidateId: "duplicada-mesma-eleicao", opcoesDaPessoa: comDuplicada })).toBe(
+      "/candidato/renan-calheiros",
+    );
+  });
+
   it("linha duplicada ou filtrada pelo seletor cai na página base, que sempre existe", () => {
     expect(destinoCanonico({ ...base, candidateId: "duplicada-fora-das-opcoes" })).toBe("/candidato/renan-calheiros");
     expect(destinoCanonico({ ...base, candidateId: "qualquer", opcoesDaPessoa: [] })).toBe("/candidato/renan-calheiros");
