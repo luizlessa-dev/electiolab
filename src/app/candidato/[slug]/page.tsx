@@ -96,6 +96,8 @@ export async function generateMetadata({
         openGraph: { title, description },
         twitter: { title, description, card: "summary" },
         alternates: { canonical: `https://electiolab.com/candidato/${slug}` },
+        // Sem votações nem CEAP a página só tem o cabeçalho: não vale indexar (e o sitemap não a lista).
+        ...(!pessoa.votacoes && !pessoa.ceap ? { robots: { index: false, follow: true } } : {}),
       };
     }
     return { title: "Candidato não encontrado" };

@@ -303,3 +303,21 @@ export async function getVotacoesParlamentar(p: Parlamentar): Promise<VotacoesPa
 
   return null;
 }
+
+/**
+ * Ids de parlamentares com algo para mostrar na página da pessoa (votações ou CEAP),
+ * em 3 consultas em lote. Alimenta o sitemap: página sem dado nenhum não deve ser listada.
+ * Como tfFetch devolve [] em erro, uma falha aqui resulta em "ninguém tem dados" e o
+ * sitemap simplesmente não adiciona páginas (nunca remove).
+ */
+export async function getIdsComDadosNoTf(): Promise<{ camara: Set<number>; senado: Set<number> }> {
+  const [agg, ceap, sen] = await Promise.all([
+    tfFetch<Array<{ deputado_id: number }>>("plen_deputado_agg?select=deputado_id&limit=2000"),
+    tfFetch<Array<{ deputado_id_externo: number | string }>>("ceap_resumo_deputado?select=deputado_id_externo&limit=2000"),
+    tfFetch<Array<{ cod_parlamentar: number }>>("mv_voto_resumo_senador?select=cod_parlamentar&limit=2000"),
+  ]);
+  return {
+    camara: new Set([...agg.map((r) => Number(r.deputado_id)), ...ceap.map((r) => Number(r.deputado_id_externo))]),
+    senado: new Set(sen.map((r) => Number(r.cod_parlamentar))),
+  };
+}
