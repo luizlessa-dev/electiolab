@@ -4,7 +4,8 @@
  *
  * TF é um Supabase project separado (`redggdtakzmsabwvjzhb`) que indexa:
  *   - parlamentares (Câmara + Senado, com cpf e id_tse_candidato)
- *   - ceaps_brutas (Cota Parlamentar Câmara — 557k+ rows)
+ *   - ceaps_brutas (Cota Parlamentar Câmara — 1,4 mi linhas; RLS SEM policy: o anon NÃO lê.
+ *     O site usa só os agregados públicos `ceap_resumo_deputado` e `ceaps_ranking`)
  *   - parlamentar_sancoes_cache (sanções aplicadas)
  *   - parlamentar_contratos_cache (contratos com governo)
  *   - parlamentar_financiamento_cache (financiamento de campanha histórico)
@@ -63,72 +64,42 @@ export async function getParlamentarByCpf(cpf: string): Promise<Parlamentar | nu
 // ─────────────────────────────────────────────────────────────────
 // CEAP — Cota Parlamentar (Câmara apenas)
 // ─────────────────────────────────────────────────────────────────
-export type CeapExpense = {
-  ano: number;
-  tipo_despesa: string;
-  nome_fornecedor: string | null;
-  cnpj_cpf_fornecedor: string | null;
-  valor_liquido: number;
-  data_documento: string | null;
-  url_documento: string | null;
-};
-
+// Lê a view materializada `ceap_resumo_deputado` (TF), já agregada por deputado
+// numa janela de 24 meses. Nunca consultar `ceaps_brutas` daqui: a tabela tem RLS
+// sem policy para o anon e devolve `[]` sem erro (foi assim que a seção sumiu).
+// Migration: supabase/migrations/20260926130000_tf_ceap_resumo_deputado.sql
 export type CeapSummary = {
-  total: number;
+  total: number; // últimos 24 meses
   totalRecente: number; // últimos 12 meses
   byType: Array<{ tipo: string; total: number; count: number }>;
   topFornecedores: Array<{ fornecedor: string; cnpj: string | null; total: number; count: number }>;
-  recent: CeapExpense[];
+};
+
+type CeapResumoRow = {
+  total_24m: number | string;
+  total_12m: number | string;
+  por_tipo: Array<{ tipo: string; total: number | string; count: number }> | null;
+  top_fornecedores: Array<{ fornecedor: string; cnpj: string | null; total: number | string; count: number }> | null;
 };
 
 export async function getCeapByCamaraId(idCamara: number | null): Promise<CeapSummary | null> {
   if (!idCamara) return null;
-  // Pega últimos 24 meses (carga manageable). Ano atual = 2026.
-  const data = await tfFetch<CeapExpense[]>(
-    `ceaps_brutas?deputado_id_externo=eq.${idCamara}&select=ano,tipo_despesa,nome_fornecedor,cnpj_cpf_fornecedor,valor_liquido,data_documento,url_documento&order=data_documento.desc&limit=2000`
+  const rows = await tfFetch<CeapResumoRow[]>(
+    `ceap_resumo_deputado?deputado_id_externo=eq.${idCamara}&select=total_24m,total_12m,por_tipo,top_fornecedores&limit=1`
   );
-  if (!data || data.length === 0) return null;
-
-  const total = data.reduce((s, e) => s + Number(e.valor_liquido ?? 0), 0);
-  const cutoff = new Date();
-  cutoff.setMonth(cutoff.getMonth() - 12);
-  const totalRecente = data
-    .filter((e) => e.data_documento && new Date(e.data_documento) >= cutoff)
-    .reduce((s, e) => s + Number(e.valor_liquido ?? 0), 0);
-
-  // Agregar por tipo
-  const byTypeMap = new Map<string, { total: number; count: number }>();
-  for (const e of data) {
-    const k = e.tipo_despesa || "OUTROS";
-    const cur = byTypeMap.get(k) ?? { total: 0, count: 0 };
-    cur.total += Number(e.valor_liquido ?? 0);
-    cur.count++;
-    byTypeMap.set(k, cur);
-  }
-  const byType = Array.from(byTypeMap.entries())
-    .map(([tipo, v]) => ({ tipo, ...v }))
-    .sort((a, b) => b.total - a.total);
-
-  // Top fornecedores
-  const fornMap = new Map<string, { cnpj: string | null; total: number; count: number }>();
-  for (const e of data) {
-    const k = (e.nome_fornecedor || "DESCONHECIDO").trim();
-    const cur = fornMap.get(k) ?? { cnpj: e.cnpj_cpf_fornecedor, total: 0, count: 0 };
-    cur.total += Number(e.valor_liquido ?? 0);
-    cur.count++;
-    fornMap.set(k, cur);
-  }
-  const topFornecedores = Array.from(fornMap.entries())
-    .map(([fornecedor, v]) => ({ fornecedor, ...v }))
-    .sort((a, b) => b.total - a.total)
-    .slice(0, 10);
+  const r = rows[0];
+  if (!r) return null;
 
   return {
-    total,
-    totalRecente,
-    byType: byType.slice(0, 10),
-    topFornecedores,
-    recent: data.slice(0, 20),
+    total: Number(r.total_24m ?? 0),
+    totalRecente: Number(r.total_12m ?? 0),
+    byType: (r.por_tipo ?? []).map((t) => ({ tipo: t.tipo, total: Number(t.total), count: t.count })),
+    topFornecedores: (r.top_fornecedores ?? []).map((f) => ({
+      fornecedor: f.fornecedor,
+      cnpj: f.cnpj,
+      total: Number(f.total),
+      count: f.count,
+    })),
   };
 }
 
@@ -228,21 +199,16 @@ export type CeapTopRow = {
 };
 
 export async function getTopCeapSpenders(ano = 2025, limit = 50): Promise<CeapTopRow[]> {
-  // PostgREST não tem aggregate fácil, mas podemos usar RPC. Fallback: pega tudo do ano e agrega no client.
-  // Pra manageable, limitamos a 5000 rows do ano (top spenders se concentram).
-  const all = await tfFetch<Array<{ deputado_id_externo: string; ano: number; valor_liquido: number }>>(
-    `ceaps_brutas?ano=eq.${ano}&select=deputado_id_externo,ano,valor_liquido&limit=5000&order=valor_liquido.desc`
+  // `ceaps_ranking` já vem agregada por deputado/ano e ordenada (posicao 1 = maior gasto).
+  // O total bate com a soma de ceaps_brutas no ano (2025: R$ 256.581.818 / 515 deputados).
+  const rows = await tfFetch<Array<{ deputado_id_externo: string; ano: number; total_liquido: number | string }>>(
+    `ceaps_ranking?ano=eq.${ano}&select=deputado_id_externo,ano,total_liquido&order=posicao.asc&limit=${limit}`
   );
-  const map = new Map<string, { ano: number; total: number }>();
-  for (const r of all) {
-    const cur = map.get(r.deputado_id_externo) ?? { ano: r.ano, total: 0 };
-    cur.total += Number(r.valor_liquido ?? 0);
-    map.set(r.deputado_id_externo, cur);
-  }
-  const sorted = Array.from(map.entries())
-    .map(([id, v]) => ({ deputado_id_externo: id, ano: v.ano, total_liquido: v.total }))
-    .sort((a, b) => b.total_liquido - a.total_liquido)
-    .slice(0, limit);
+  const sorted = rows.map((r) => ({
+    deputado_id_externo: r.deputado_id_externo,
+    ano: r.ano,
+    total_liquido: Number(r.total_liquido ?? 0),
+  }));
 
   // Resolve parlamentares em batch
   const ids = sorted.map((r) => r.deputado_id_externo).join(",");

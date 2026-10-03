@@ -2,6 +2,9 @@ import { createClient } from "@/lib/supabase/server";
 import { authenticate, applyRateLimitHeaders } from "@/lib/api-auth";
 import { NextResponse } from "next/server";
 import { PROVENIENCIA_PUBLICA } from "@/lib/poll-provenance";
+import { PollsQuerySchema } from "@/lib/validation/api-schemas";
+import { checkDistributedRateLimit, getRateLimitIdentifier } from "@/lib/middleware/distributed-rate-limit";
+import { z } from "zod";
 
 type PollRow = {
   id: string;
@@ -70,10 +73,40 @@ export async function GET(request: Request) {
   const auth = await authenticate(request);
   if (!auth.ok) return auth.response;
 
+  // Rate limiting: 50 requests per minute
+  const identifier = getRateLimitIdentifier(request);
+  const rateLimit = await checkDistributedRateLimit(identifier, 50, 60);
+
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: "Rate limit exceeded", retryAfter: rateLimit.retryAfter },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(rateLimit.retryAfter),
+        }
+      }
+    );
+  }
+
   const { searchParams } = new URL(request.url);
-  const electionId = searchParams.get("election_id");
-  const format = searchParams.get("format") ?? "json";
-  const limit = Math.min(parseInt(searchParams.get("limit") ?? "50"), 100);
+
+  // Validar query parameters com Zod
+  let params: z.infer<typeof PollsQuerySchema>;
+  try {
+    params = PollsQuerySchema.parse({
+      election_id: searchParams.get("election_id"),
+      format: searchParams.get("format"),
+      limit: searchParams.get("limit"),
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Invalid query parameters", details: error instanceof z.ZodError ? error.issues : [] },
+      { status: 400 }
+    );
+  }
+
+  const { election_id: electionId, format, limit } = params;
 
   const supabase = await createClient();
 

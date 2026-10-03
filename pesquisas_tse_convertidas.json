@@ -1,0 +1,13 @@
+{
+  "metadata": {
+    "converted_at": "2026-09-29T03:25:45.304Z",
+    "source_file": "pesquisa_eleitoral_2026_BRASIL.csv",
+    "total_records": 3465,
+    "converted": 0,
+    "skipped": 3465,
+    "deduplicated": [],
+    "final_count": 0,
+    "coverage_by_office": {}
+  },
+  "polls": []
+}

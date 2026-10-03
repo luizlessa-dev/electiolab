@@ -4,23 +4,38 @@ import { NextRequest, NextResponse } from "next/server";
  * Portão das rotas /api/debug/*.
  *
  * Todas elas instanciam o client com SUPABASE_SERVICE_ROLE_KEY, que ignora RLS.
- * Estavam respondendo 200 para qualquer visitante em produção — leitura
- * arbitrária de schema, contagem de linhas e amostras de dados sem nenhuma
- * credencial.
+ * CRÍTICO: Nunca expor essas rotas em produção sem autenticação forte.
  *
- * Responde 404 (não 401) quando barra: um 401 confirma que a rota existe.
+ * Estratégia:
+ * - Em produção: BLOQUEADO sempre (retorna 404, não 401 para não revelar existência)
+ * - Em desenvolvimento: Requer DEBUG_TOKEN ou CRON_SECRET
+ *
+ * Responde 404 (não 401) quando barra: um 401 confirmaria que a rota existe.
  */
 export function debugBloqueado(req: NextRequest): NextResponse | null {
-  // Fora de produção são o que dizem ser: ferramentas de inspeção local.
-  if (process.env.NODE_ENV !== "production") return null;
+  // Em produção: SEMPRE BLOQUEADO
+  if (process.env.NODE_ENV === "production") {
+    // Log silencioso para monitoramento
+    const token = req.headers.get("authorization")?.slice(0, 20);
+    console.warn("[debug-guard] Tentativa de acesso em produção com token:", token);
+    return new NextResponse("Not Found", { status: 404 });
+  }
 
+  // Em desenvolvimento: Requer DEBUG_TOKEN ou CRON_SECRET
   const esperado = process.env.DEBUG_TOKEN ?? process.env.CRON_SECRET;
   const token = req.headers
     .get("authorization")
     ?.replace(/^Bearer\s+/i, "")
     .trim();
 
-  if (esperado && token === esperado) return null;
+  if (!esperado) {
+    console.warn("[debug-guard] DEBUG_TOKEN e CRON_SECRET não configurados");
+    return new NextResponse("Debug endpoints require DEBUG_TOKEN or CRON_SECRET", {
+      status: 503,
+    });
+  }
 
-  return new NextResponse("Not Found", { status: 404 });
+  if (token === esperado) return null;
+
+  return new NextResponse("Unauthorized", { status: 401 });
 }
