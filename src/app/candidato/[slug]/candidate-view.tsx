@@ -2,7 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { getCandidateBySlug, getNewsForCandidate, type CandidateElectionOption } from "@/lib/queries";
 import { getCandidateEditorial } from "@/lib/marketing-data";
-import { getParlamentarByCpf, getCeapByCamaraId, crossCeapWithCeis } from "@/lib/tf-data";
+import { getParlamentarByCpf, getCeapByCamaraId, getVotacoesParlamentar, crossCeapWithCeis } from "@/lib/tf-data";
+import { temConteudo } from "@/lib/votacoes";
+import { VotacoesParlamentar } from "@/components/votacoes-parlamentar";
 import {
   ArrowLeft,
   Newspaper,
@@ -100,6 +102,12 @@ export async function CandidateView({ c, slug, canonicalPath, elections }: Candi
   const candidateCpf = c.cpf;
   const parlamentar = candidateCpf ? await getParlamentarByCpf(candidateCpf) : null;
   const ceap = parlamentar?.id_camara ? await getCeapByCamaraId(parlamentar.id_camara) : null;
+
+  // Votações de plenário (Câmara e Senado) pela ponte de CPF. Atrás de feature flag:
+  // a página é ISR de 7 dias, então ligar/desligar exige revalidar (POST /api/revalidate).
+  const votacoesAtivas = process.env.FICHA_VOTACOES === "1";
+  const votacoesRaw = votacoesAtivas && parlamentar ? await getVotacoesParlamentar(parlamentar) : null;
+  const votacoes = temConteudo(votacoesRaw) ? votacoesRaw : null;
 
   // Cruzamento CEAP × CEIS — alerta se algum fornecedor está sancionado
   const ceisMatches = ceap?.topFornecedores
@@ -932,8 +940,13 @@ export async function CandidateView({ c, slug, canonicalPath, elections }: Candi
           </section>
         )}
 
-        {/* Atividade legislativa — agrupada por tópico */}
-        {votes.length > 0 && (
+        {/* Votações de plenário (fonte oficial via TF, ligadas por CPF) */}
+        {votacoes && <VotacoesParlamentar dados={votacoes} />}
+
+        {/* Atividade legislativa — agrupada por tópico. Legado: votos ligados por NOME
+            (legislative_votes). Some quando o bloco acima aparece, para não exibir duas
+            listas de votos que podem divergir. */}
+        {votes.length > 0 && !votacoes && (
           <section>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
