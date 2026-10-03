@@ -76,6 +76,8 @@ export interface OpcoesConfig {
   ambiente: Ambiente;
   /** Códigos de eleição no escopo. Vazio/ausente = todas as do `ele-c.json`. */
   eleicoesNoEscopo?: number[];
+  /** Ciclo a processar (ex.: `ele2026`). O `ele-c.json` oficial traz também 2024 e outros. */
+  ciclo?: string;
   /** Códigos de cargo fora do escopo (ex.: 25, Conselheiro Distrital). */
   cargosForaDoEscopo?: number[];
   env?: VariaveisAmbiente;
@@ -132,6 +134,7 @@ export async function carregarConfig(
   const eleicoes: EleicaoConfig[] = [];
 
   for (const pleito of arquivo.pl ?? []) {
+    if (opcoes.ciclo && pleito.c !== opcoes.ciclo) continue;
     for (const e of pleito.e ?? []) {
       const codigoEleicao = inteiro(e.cd);
       if (codigoEleicao === null) continue;
