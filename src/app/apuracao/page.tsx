@@ -232,6 +232,33 @@ export default async function ApuracaoPage() {
         </section>
 
         <section>
+          <h2 className="text-xl font-bold tracking-tight mb-3">Deputados</h2>
+          <Link
+            href="/apuracao/camara"
+            className="block rounded-lg border border-border bg-card px-4 py-3 mb-3 hover:bg-muted/30 transition-colors"
+          >
+            <span className="text-sm font-semibold">Câmara dos Deputados</span>
+            <span className="block text-xs text-muted-foreground">
+              Projeção da bancada federal (cálculo ElectioLab, a partir da apuração do TSE)
+            </span>
+          </Link>
+          <p className="text-xs text-muted-foreground mb-2">
+            Deputado federal, estadual e distrital, por UF:
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {porUf.map(([uf]) => (
+              <Link
+                key={uf}
+                href={`/apuracao/${uf}`}
+                className="rounded-md border border-border bg-card px-3 py-1.5 text-xs font-mono font-semibold uppercase hover:bg-muted/30 transition-colors"
+              >
+                {uf}
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section>
           <h2 className="text-xl font-bold tracking-tight mb-3">Governador e Senado, por UF</h2>
           <div className="rounded-lg border border-border bg-card overflow-hidden">
             <div className="hidden md:flex items-center px-4 py-3 text-xs uppercase tracking-wider text-muted-foreground border-b border-border bg-muted/30">
