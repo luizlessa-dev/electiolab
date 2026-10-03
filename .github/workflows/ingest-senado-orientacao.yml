@@ -1,0 +1,93 @@
+name: Ingest Senado orientação de bancada
+
+# Orientação de bancada do Senado (API oficial) → senado_orientacao no projeto TF
+# (scripts/ingest-senado-orientacao.ts). Contexto: docs/BASTIDORES-POS-ELEICAO.md §8.2.
+#
+# SÓ MANUAL por enquanto (workflow_dispatch). Para agendar:
+#   1. criar os secrets TF_SUPABASE_URL e TF_SUPABASE_SERVICE_ROLE_KEY (projeto transparencia-federal);
+#   2. descomentar o bloco `schedule`. Roda DEPOIS da carga de votações do Senado do TF e do
+#      refresh do pg_cron (mv_senador_alinhamento atualiza às 09:55 UTC), por isso 10:30 UTC.
+# Sem os secrets um schedule só geraria falha todo dia.
+
+on:
+  # schedule:
+  #   - cron: "30 10 * * *" # diário 10:30 UTC (07:30 BRT)
+  workflow_dispatch:
+    inputs:
+      from:
+        description: "Ano inicial (default: ano anterior, ingestão incremental). Use 2019 para recarregar tudo."
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Ingest orientação de bancada do Senado
+        env:
+          TF_SUPABASE_URL: ${{ secrets.TF_SUPABASE_URL }}
+          TF_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.TF_SUPABASE_SERVICE_ROLE_KEY }}
+          FROM_INPUT: ${{ inputs.from }} # via env, nunca interpolado no shell
+        run: |
+          FROM="$FROM_INPUT"
+          case "$FROM" in ''|*[!0-9]*) FROM=$(( $(date +%Y) - 1 )) ;; esac
+          npx tsx scripts/ingest-senado-orientacao.ts --apply --from="$FROM"
+
+      - name: Open issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const title = "🚨 Ingest orientação do Senado falhou";
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              labels: "cron-failure",
+              per_page: 50,
+            });
+            const existing = issues.find((i) => i.title.includes("Ingest orientação do Senado falhou"));
+            const body = [
+              `Workflow **Ingest Senado orientação de bancada** falhou.`,
+              ``,
+              `**Run:** ${runUrl}`,
+              `**Quando:** ${new Date().toISOString()}`,
+              `**Disparo:** ${context.eventName}`,
+              ``,
+              `Rodar manual:`,
+              "```bash",
+              `gh workflow run ingest-senado-orientacao.yml`,
+              "```",
+            ].join("\n");
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body: `Nova falha — ${runUrl}`,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ["cron-failure"],
+              });
+            }
