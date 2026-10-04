@@ -119,8 +119,13 @@ async function triggerRecalculateAverages(): Promise<void> {
   console.log(res.ok ? "  ✅ recalculate-averages" : `  ❌ recalculate-averages: HTTP ${res.status} ${res.body ?? ""}`);
 }
 
+/** Token vai no header, não na query: o REVALIDATE_TOKEN tem `+` e `=` (base64), e na query o `+`
+ *  vira espaço e a rota responde 401 — foi o que fez a revalidação falhar em silêncio em 2026-10-03. */
 async function triggerRevalidatePath(p: string, token: string): Promise<boolean> {
-  const res = await safeFetch(`${SITE_URL}/api/revalidate?path=${encodeURIComponent(p)}&token=${token}`, { method: "POST" });
+  const res = await safeFetch(`${SITE_URL}/api/revalidate?path=${encodeURIComponent(p)}`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+  });
   return res.ok;
 }
 
