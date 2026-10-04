@@ -62,6 +62,7 @@ type Candidato = {
   nome_urna: string;
   partido_sigla: string | null;
   votos_apurados: number;
+  pct_tse: number | null;
   situacao: string | null;
 };
 type Agrupamento = {
@@ -101,7 +102,8 @@ async function getDadosUf(uf: string) {
   if (disputaList.length === 0) return null;
   const disputaIds = disputaList.map((d) => d.id);
 
-  const candidatosSelect = "id, disputa_id, numero, nome_urna, partido_sigla, votos_apurados, situacao";
+  const candidatosSelect =
+    "id, disputa_id, numero, nome_urna, partido_sigla, votos_apurados, pct_tse, situacao";
 
   // Uma query por disputa (não uma só `.in(disputaIds)`): um UF grande (deputados
   // proporcionais) passa de 3 mil candidatos somados, e o limite padrão de 1000 linhas
@@ -220,8 +222,12 @@ export default async function ApuracaoUfPage({
             <section key={s.disputaId}>
               <div className="flex items-baseline justify-between mb-1">
                 <h2 className="text-xl font-bold tracking-tight">{s.cargo.nome}</h2>
-                <span className={`text-xs ${badge.cls}`}>
-                  {badge.label} · {fmtPct(s.situacao?.pct_secoes_totalizadas)}
+                <span className={`text-sm ${badge.cls}`}>
+                  {badge.label} ·{" "}
+                  <span className="font-mono tabular-nums font-semibold text-foreground">
+                    {fmtPct(s.situacao?.pct_secoes_totalizadas)}
+                  </span>{" "}
+                  das seções
                 </span>
               </div>
 
@@ -244,6 +250,7 @@ export default async function ApuracaoUfPage({
                   <span className="flex-1">Candidato (mais votados)</span>
                   <span className="w-16">Partido</span>
                   <span className="w-24 text-right">Votos</span>
+                  <span className="w-20 text-right">%</span>
                   <span className="w-24 text-right">Situação</span>
                 </div>
                 {s.maisVotados.map((c) => (
@@ -260,6 +267,9 @@ export default async function ApuracaoUfPage({
                     </span>
                     <span className="md:w-24 md:text-right font-mono tabular-nums">
                       {fmtNum(c.votos_apurados)}
+                    </span>
+                    <span className="md:w-20 md:text-right font-mono tabular-nums">
+                      {fmtPct(c.pct_tse)}
                     </span>
                     <span className={`md:w-24 md:text-right text-xs ${badgeCandidato(c.situacao)}`}>
                       {c.situacao ?? "—"}
