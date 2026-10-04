@@ -246,9 +246,9 @@ export default async function ApuracaoUfPage({
 
               <div className="rounded-lg border border-border bg-card overflow-hidden mb-4">
                 <div className="hidden md:flex items-center px-4 py-3 text-xs uppercase tracking-wider text-muted-foreground border-b border-border bg-muted/30">
-                  <span className="w-10">Nº</span>
+                  <span className="w-20 shrink-0">Nº</span>
                   <span className="flex-1">Candidato (mais votados)</span>
-                  <span className="w-16">Partido</span>
+                  <span className="w-28">Partido</span>
                   <span className="w-24 text-right">Votos</span>
                   <span className="w-20 text-right">%</span>
                   <span className="w-24 text-right">Situação</span>
@@ -258,11 +258,11 @@ export default async function ApuracaoUfPage({
                     key={c.id}
                     className="flex flex-col md:flex-row md:items-center px-4 py-2.5 text-sm border-b border-border/30 last:border-0"
                   >
-                    <span className="md:w-10 font-mono tabular-nums text-muted-foreground">
+                    <span className="md:w-20 md:shrink-0 font-mono tabular-nums text-muted-foreground">
                       {c.numero}
                     </span>
                     <span className="flex-1">{c.nome_urna}</span>
-                    <span className="md:w-16 text-xs text-muted-foreground">
+                    <span className="md:w-28 text-xs text-muted-foreground">
                       {c.partido_sigla ?? "—"}
                     </span>
                     <span className="md:w-24 md:text-right font-mono tabular-nums">
