@@ -196,6 +196,13 @@ export default async function ApuracaoPage() {
             {fmtPct(totalizacaoPresidente?.pct_secoes_totalizadas)} das seções totalizadas
           </p>
 
+          {!Number(totalizacaoPresidente?.pct_secoes_totalizadas) && (
+            <p className="text-xs text-muted-foreground mb-4 rounded-md border border-border bg-muted/30 px-3 py-2">
+              Os números oficiais, inclusive os do voto no exterior, são divulgados pelo TSE a
+              partir das 17h (horário de Brasília). Esta página mostra apenas dados do TSE.
+            </p>
+          )}
+
           <div className="rounded-lg border border-border bg-card overflow-hidden">
             <div className="hidden md:flex items-center px-4 py-3 text-xs uppercase tracking-wider text-muted-foreground border-b border-border bg-muted/30">
               <span className="w-10">Nº</span>
