@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
 // ═══════════════════════════════════════════════════════════════════
@@ -15,30 +16,30 @@ export class AuthError extends Error {
 }
 
 /**
- * Validate API key from environment or request headers
+ * Validate API key from request headers against WAVE4_API_KEY.
  * API keys should be passed as: Authorization: Bearer <key> or X-API-Key: <key>
+ *
+ * Fails CLOSED: if WAVE4_API_KEY is not configured, every request is denied
+ * (it used to allow everything, which left /api/admin/* open in production).
+ * Only NODE_ENV=development skips the check, for local work.
  */
 export function validateApiKey(request: NextRequest): boolean {
   const apiKey = process.env.WAVE4_API_KEY;
   if (!apiKey) {
-    console.warn('WAVE4_API_KEY not configured - authentication disabled');
-    return true; // Allow if not configured (dev mode)
+    if (process.env.NODE_ENV === 'development') return true;
+    console.error('WAVE4_API_KEY not configured - denying request');
+    return false;
   }
 
-  // Try Authorization header first (Bearer token)
   const authHeader = request.headers.get('authorization');
-  if (authHeader?.startsWith('Bearer ')) {
-    const token = authHeader.slice(7);
-    return token === apiKey;
-  }
+  const provided = authHeader?.startsWith('Bearer ')
+    ? authHeader.slice(7)
+    : request.headers.get('x-api-key');
+  if (!provided) return false;
 
-  // Try X-API-Key header
-  const apiKeyHeader = request.headers.get('x-api-key');
-  if (apiKeyHeader) {
-    return apiKeyHeader === apiKey;
-  }
-
-  return false;
+  const a = Buffer.from(provided);
+  const b = Buffer.from(apiKey);
+  return a.length === b.length && timingSafeEqual(a, b);
 }
 
 /**
