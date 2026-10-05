@@ -2,6 +2,8 @@ import {
   VOTO_LABEL,
   VOTO_TOM,
   formatPct,
+  montarDivergencias,
+  normalizarSimNao,
   normalizarVoto,
   resumoCamara,
   resumoSenado,
@@ -162,5 +164,71 @@ describe("rotuloResultado", () => {
     expect(rotuloResultado(null)).toBeNull();
     expect(rotuloResultado("  ")).toBeNull();
     expect(rotuloResultado("Prejudicada")).toBe("prejudicada");
+  });
+});
+
+describe("normalizarSimNao", () => {
+  it("aceita as grafias do banco e ignora acento e caixa", () => {
+    expect(normalizarSimNao("Sim")).toBe("sim");
+    expect(normalizarSimNao("Não")).toBe("nao");
+    expect(normalizarSimNao("NÃO")).toBe("nao");
+    expect(normalizarSimNao("Nao")).toBe("nao");
+    expect(normalizarSimNao("  sim ")).toBe("sim");
+  });
+  it("o que não é Sim ou Não vira null (abstenção, ausência, liberado, obstrução)", () => {
+    for (const v of ["Abstenção", "P-NRV", "AP", "Liberado", "Obstrução", "", null, undefined]) {
+      expect(normalizarSimNao(v as string | null | undefined)).toBeNull();
+    }
+  });
+});
+
+describe("montarDivergencias", () => {
+  const linha = (over: Record<string, unknown> = {}) => ({
+    id_sve: 4321,
+    voto_real: "Sim",
+    orientacao_partido: "Não",
+    data_sessao: "2025-09-02",
+    descricao: "Votação nominal do PLP nº 192/2023.",
+    sigla_materia: "PLP",
+    numero_materia: "192",
+    ano_materia: 2023,
+    ...over,
+  });
+
+  it("converte a linha e usa os totais do banco, não o tamanho da lista cortada", () => {
+    const r = montarDivergencias([linha()], 14, 0);
+    expect(r.total).toBe(14);
+    expect(r.ultimos12m).toBe(0);
+    expect(r.recentes).toEqual([
+      {
+        votacaoId: "4321",
+        data: "2025-09-02",
+        descricao: "Votação nominal do PLP nº 192/2023.",
+        materia: "PLP 192/2023",
+        voto: "sim",
+        orientacao: "nao",
+      },
+    ]);
+  });
+
+  it("descarta linha que não seja Sim/Não contra Sim/Não (o texto da ficha só vale para esse par)", () => {
+    const r = montarDivergencias(
+      [linha({ voto_real: "Abstenção" }), linha({ orientacao_partido: "Liberado" }), linha({ voto_real: "Sim", orientacao_partido: "Sim" }), linha({ id_sve: 1 })],
+      4,
+      1,
+    );
+    expect(r.recentes.map((d) => d.votacaoId)).toEqual(["1"]);
+    expect(r.total).toBe(4);
+  });
+
+  it("matéria ausente fica null e total negativo ou lixo vira zero", () => {
+    const r = montarDivergencias([linha({ sigla_materia: null })], -3, Number.NaN);
+    expect(r.recentes[0].materia).toBeNull();
+    expect(r.total).toBe(0);
+    expect(r.ultimos12m).toBe(0);
+  });
+
+  it("senador sem nenhuma divergência: lista vazia e total zero (a ficha mostra 'nenhuma divergência')", () => {
+    expect(montarDivergencias([], 0, 0)).toEqual({ total: 0, ultimos12m: 0, recentes: [] });
   });
 });

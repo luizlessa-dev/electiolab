@@ -15,12 +15,14 @@
  */
 
 import {
+  montarDivergencias,
   normalizarVoto,
   resumoCamara,
   rotuloResultado,
   resumoSenado,
   type AggCamaraRow,
   type AlinhamentoSenadorRow,
+  type DissidenciaRow,
   type ResumoSenadorRow,
   type VotacoesParlamentar,
   type VotoRecente,
@@ -44,6 +46,25 @@ async function tfFetch<T>(path: string): Promise<T> {
     return [] as unknown as T;
   }
   return res.json();
+}
+
+/**
+ * Como tfFetch, mas devolve também o TOTAL exato (cabeçalho content-range do PostgREST), para listar
+ * poucos itens e ainda dizer "são N". Em erro devolve vazio, igual ao tfFetch.
+ */
+async function tfFetchComTotal<T>(path: string): Promise<{ rows: T[]; total: number }> {
+  const url = `${TF_URL}/rest/v1/${path}`;
+  const res = await fetch(url, {
+    headers: { apikey: TF_KEY, Authorization: `Bearer ${TF_KEY}`, "Accept-Profile": "public", Prefer: "count=exact" },
+    next: { revalidate: 3600 },
+  });
+  if (!res.ok) {
+    console.error(`TF fetch failed ${res.status} ${url}`);
+    return { rows: [], total: 0 };
+  }
+  const rows = (await res.json()) as T[];
+  const total = Number(res.headers.get("content-range")?.split("/")[1]);
+  return { rows, total: Number.isFinite(total) ? total : rows.length };
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -273,6 +294,29 @@ async function getVotosRecentes(casa: "camara" | "senado", idExterno: number): P
   }));
 }
 
+const DIVERGENCIAS_NA_FICHA = 10;
+
+/**
+ * Votações em que o senador votou Sim/Não contra a orientação Sim/Não do partido (view
+ * `senado_dissidencia`, migration 20261003150000). Total e janela de 12 meses vêm da contagem exata.
+ */
+async function getDivergenciasSenador(codParlamentar: number) {
+  const desde = new Date();
+  desde.setFullYear(desde.getFullYear() - 1);
+  const desde12m = desde.toISOString().slice(0, 10);
+  const [lista, ultimos] = await Promise.all([
+    tfFetchComTotal<DissidenciaRow>(
+      `senado_dissidencia?cod_parlamentar=eq.${codParlamentar}` +
+        `&select=id_sve,voto_real,orientacao_partido,data_sessao,descricao,sigla_materia,numero_materia,ano_materia` +
+        `&order=data_sessao.desc,id_sve.desc&limit=${DIVERGENCIAS_NA_FICHA}`,
+    ),
+    tfFetchComTotal<{ id_sve: number }>(
+      `senado_dissidencia?cod_parlamentar=eq.${codParlamentar}&data_sessao=gte.${desde12m}&select=id_sve&limit=1`,
+    ),
+  ]);
+  return montarDivergencias(lista.rows, lista.total, ultimos.total);
+}
+
 export async function getVotacoesParlamentar(p: Parlamentar): Promise<VotacoesParlamentar | null> {
   if (p.casa_legislativa === "senado" && p.id_senado) {
     const [resumoRows, alinhamentoRows, recentes] = await Promise.all([
@@ -284,7 +328,10 @@ export async function getVotacoesParlamentar(p: Parlamentar): Promise<VotacoesPa
       getVotosRecentes("senado", p.id_senado),
     ]);
     if (!resumoRows[0]) return null;
-    return { resumo: resumoSenado(resumoRows[0], alinhamentoRows[0] ?? null), recentes };
+    const resumo = resumoSenado(resumoRows[0], alinhamentoRows[0] ?? null);
+    // Só mostra divergências quando há orientação ingerida para este senador; sem ela, "0" seria falso.
+    const divergencias = resumo.votacoesComOrientacao ? await getDivergenciasSenador(p.id_senado) : null;
+    return { resumo, recentes, divergencias };
   }
 
   if (p.casa_legislativa === "camara" && p.id_camara) {

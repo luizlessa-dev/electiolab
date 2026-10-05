@@ -30,7 +30,7 @@ function Card({ titulo, children }: { titulo: string; children: React.ReactNode 
  * Server component, sem estado. Dados e regras: src/lib/votacoes.ts.
  */
 export function VotacoesParlamentar({ dados }: { dados: VotacoesParlamentar }) {
-  const { resumo: r, recentes } = dados;
+  const { resumo: r, recentes, divergencias } = dados;
   const camara = r.casa === "camara";
   const fonte = camara
     ? `Câmara dos Deputados${r.legislatura ? ` · ${r.legislatura}ª legislatura` : ""}`
@@ -46,7 +46,7 @@ export function VotacoesParlamentar({ dados }: { dados: VotacoesParlamentar }) {
         <span className="text-xs text-muted-foreground">{fonte}</span>
       </div>
 
-      <div className={`grid gap-3 ${!camara && r.pctAlinhamento !== null ? "md:grid-cols-4" : "md:grid-cols-3"}`}>
+      <div className={`grid gap-3 ${!camara && divergencias ? "md:grid-cols-4" : "md:grid-cols-3"}`}>
         <Card titulo="Presença">
           <p className="text-2xl font-mono font-bold tabular-nums">{formatPct(r.pctPresenca)}</p>
           <p className="text-[11px] text-muted-foreground mt-1">
@@ -97,11 +97,12 @@ export function VotacoesParlamentar({ dados }: { dados: VotacoesParlamentar }) {
           </Card>
         )}
 
-        {!camara && r.pctAlinhamento !== null && (
-          <Card titulo="Alinhamento com o partido">
-            <p className="text-2xl font-mono font-bold tabular-nums">{formatPct(r.pctAlinhamento)}</p>
+        {!camara && divergencias && (
+          <Card titulo="Votou contra a bancada">
+            <p className="text-2xl font-mono font-bold tabular-nums">{fmtInt(divergencias.total)}</p>
             <p className="text-[11px] text-muted-foreground mt-1">
-              em <strong>{fmtInt(r.votacoesComOrientacao ?? 0)}</strong> votações em que o partido orientou Sim ou Não
+              de <strong>{fmtInt(r.votacoesComOrientacao ?? 0)}</strong> votações em que o partido orientou Sim ou Não
+              {" · "}últimos 12 meses: <strong>{fmtInt(divergencias.ultimos12m)}</strong>
             </p>
           </Card>
         )}
@@ -111,6 +112,41 @@ export function VotacoesParlamentar({ dados }: { dados: VotacoesParlamentar }) {
         <p className="text-xs text-muted-foreground mt-3 rounded-md border border-border bg-muted/20 px-3 py-2">
           {r.presencaNaoCalculada}
         </p>
+      )}
+
+      {!camara && divergencias && (
+        <div className="rounded-lg border border-border bg-card overflow-hidden mt-3">
+          <div className="px-4 py-2 border-b border-border bg-muted/30">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
+              Quando divergiu da orientação do partido
+            </p>
+          </div>
+          {divergencias.recentes.length === 0 ? (
+            <p className="px-4 py-3 text-sm text-muted-foreground">
+              Nenhuma divergência registrada nas votações em que o partido orientou Sim ou Não.
+            </p>
+          ) : (
+            <div className="divide-y divide-border/30 text-sm">
+              {divergencias.recentes.map((d) => (
+                <div key={d.votacaoId} className="flex items-start gap-3 px-4 py-2.5">
+                  <span className="text-xs font-mono text-muted-foreground w-20 shrink-0">{fmtData(d.data)}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="line-clamp-2">{d.descricao ?? d.materia ?? "Votação nominal"}</p>
+                    {d.materia && <p className="text-[10px] text-muted-foreground">{d.materia}</p>}
+                  </div>
+                  <span className="text-xs font-mono px-1.5 py-0.5 rounded shrink-0 bg-muted/30 text-muted-foreground text-right">
+                    votou {VOTO_LABEL[d.voto]} · partido orientou {VOTO_LABEL[d.orientacao]}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+          {divergencias.total > divergencias.recentes.length && (
+            <p className="px-4 py-2 border-t border-border/30 text-[11px] text-muted-foreground">
+              Mostrando as {divergencias.recentes.length} mais recentes de {fmtInt(divergencias.total)}.
+            </p>
+          )}
+        </div>
       )}
 
       {recentes.length > 0 && (
@@ -147,8 +183,8 @@ export function VotacoesParlamentar({ dados }: { dados: VotacoesParlamentar }) {
         {camara
           ? " Presença = votações em que votou ÷ votações nominais no período de exercício."
           : " Presença = votações com voto ou presença registrada ÷ todas as votações nominais; ausência justificada reduz a presença, mas não é falta."}
-        {!camara && r.pctAlinhamento !== null &&
-          " Alinhamento: só votações em que a liderança do partido registrou orientação Sim ou Não (cobertura parcial); abstenção conta como não alinhada."}
+        {!camara && divergencias &&
+          " Divergência: votou Sim ou Não contra a orientação Sim ou Não registrada pela liderança do partido (cobertura parcial: só parte das votações tem orientação registrada); abstenção não conta como divergência. A orientação é a do partido na data da votação."}
       </p>
     </section>
   );
