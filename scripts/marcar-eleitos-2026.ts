@@ -171,40 +171,51 @@ async function main() {
   // 3. Perfis por tse_id. Quando o mesmo tse_id está em mais de um perfil, fica o da
   // eleição de 2026: perfis antigos (ex.: presidente 2022 de Tebet, Soraya e Ciro)
   // herdaram o carimbo de 2026 do bug do mapa global do ingest de candidaturas — ver
-  // scripts/fix-tse-candidate-stamps.ts. Mais de um perfil 2026 com o mesmo tse_id
-  // continua ambíguo e é pulado.
+  // scripts/fix-tse-candidate-stamps.ts. Se sobrar mais de um perfil 2026 (o finalista
+  // de governador/presidente tem um perfil por turno, com o mesmo tse_id), fica o do
+  // turno que está sendo marcado. Persistindo o empate, é ambíguo e é pulado.
   const sqcands = [...new Set(registros.map((r) => r.cand.sqcand).filter(Boolean))];
-  type Perfil = { id: string; cpf: string | null; slug: string | null; ano: number | null };
+  type Perfil = {
+    id: string;
+    cpf: string | null;
+    slug: string | null;
+    ano: number | null;
+    turno: number | null;
+  };
   const perfisPorSq = new Map<string, Perfil[]>();
   for (let i = 0; i < sqcands.length; i += 200) {
     const { data, error } = await pub
       .from("candidates")
-      .select("id, cpf, slug, tse_id, elections(year)")
+      .select("id, cpf, slug, tse_id, elections(year, round)")
       .in("tse_id", sqcands.slice(i, i + 200));
     erro("candidates", error);
     for (const c of data ?? []) {
       const sq = String(c.tse_id);
-      const eleicao = c.elections as unknown as { year: number } | null;
+      const eleicao = c.elections as unknown as { year: number; round: number | null } | null;
       const lista = perfisPorSq.get(sq) ?? [];
-      lista.push({ id: c.id, cpf: c.cpf, slug: c.slug, ano: eleicao?.year ?? null });
+      lista.push({ id: c.id, cpf: c.cpf, slug: c.slug, ano: eleicao?.year ?? null, turno: eleicao?.round ?? null });
       perfisPorSq.set(sq, lista);
     }
   }
-  const perfilPorSq = new Map<string, Perfil>();
-  const multiplos = new Set<string>();
   let desempatados = 0;
-  for (const [sq, lista] of perfisPorSq) {
-    if (lista.length === 1) {
-      perfilPorSq.set(sq, lista[0]);
-      continue;
-    }
+  const desempatadosSq = new Set<string>();
+  /** Perfil do candidato para o turno que está sendo marcado; `undefined` = sem perfil,
+   * `"ambiguo"` = mais de um perfil e nenhum critério decide. */
+  function resolverPerfil(sq: string, turno: number): Perfil | "ambiguo" | undefined {
+    const lista = perfisPorSq.get(sq);
+    if (!lista || lista.length === 0) return undefined;
+    if (lista.length === 1) return lista[0];
     const de2026 = lista.filter((p) => p.ano === ANO);
     if (de2026.length === 1) {
-      perfilPorSq.set(sq, de2026[0]);
-      desempatados++;
-    } else {
-      multiplos.add(sq);
+      desempatadosSq.add(sq);
+      return de2026[0];
     }
+    const doTurno = de2026.filter((p) => p.turno === turno);
+    if (doTurno.length === 1) {
+      desempatadosSq.add(sq);
+      return doTurno[0];
+    }
+    return "ambiguo";
   }
 
   // 4. Linhas a gravar.
@@ -218,21 +229,22 @@ async function main() {
       cont.semSituacao++;
       continue;
     }
-    if (multiplos.has(cand.sqcand)) {
+    const cargo = cargoPorId.get(disputa.cargo_id)!;
+    const turno = turnoPorEleicao.get(cargo.eleicao_id)!;
+    const perfil = resolverPerfil(cand.sqcand, turno);
+    if (perfil === "ambiguo") {
       cont.ambiguo++;
       continue;
     }
-    const perfil = perfilPorSq.get(cand.sqcand);
     if (!perfil) {
       cont.semPerfil++;
       continue;
     }
-    const cargo = cargoPorId.get(disputa.cargo_id)!;
     linhas.push({
       candidate_id: perfil.id,
       cpf_clean: perfil.cpf ? perfil.cpf.replace(/\D/g, "") : null,
       year: ANO,
-      round: turnoPorEleicao.get(cargo.eleicao_id)!,
+      round: turno,
       election_type: CARGO[cargo.codigo],
       state: cargo.codigo === 1 ? "BR" : (disputa.uf ?? "").toUpperCase(),
       city: null,
@@ -250,7 +262,8 @@ async function main() {
   console.log(
     `   pulados: ${cont.semSituacao} sem situação no TSE · ${cont.semPerfil} sem perfil (tse_id) · ${cont.ambiguo} tse_id em mais de um perfil 2026`,
   );
-  if (desempatados) console.log(`   ${desempatados} tse_id repetido em perfil de outro ano — usado o perfil 2026`);
+  desempatados = desempatadosSq.size;
+  if (desempatados) console.log(`   ${desempatados} tse_id repetido em mais de um perfil — usado o perfil 2026 do turno`);
 
   if (!APPLY) {
     console.log("\n(dry-run: nada gravado. Rode com --apply para gravar.)");
