@@ -168,20 +168,42 @@ async function main() {
     }
   }
 
-  // 3. Perfis por tse_id.
+  // 3. Perfis por tse_id. Quando o mesmo tse_id está em mais de um perfil, fica o da
+  // eleição de 2026: perfis antigos (ex.: presidente 2022 de Tebet, Soraya e Ciro)
+  // herdaram o carimbo de 2026 do bug do mapa global do ingest de candidaturas — ver
+  // scripts/fix-tse-candidate-stamps.ts. Mais de um perfil 2026 com o mesmo tse_id
+  // continua ambíguo e é pulado.
   const sqcands = [...new Set(registros.map((r) => r.cand.sqcand).filter(Boolean))];
-  const perfilPorSq = new Map<string, { id: string; cpf: string | null; slug: string | null }>();
-  const multiplos = new Set<string>();
+  type Perfil = { id: string; cpf: string | null; slug: string | null; ano: number | null };
+  const perfisPorSq = new Map<string, Perfil[]>();
   for (let i = 0; i < sqcands.length; i += 200) {
     const { data, error } = await pub
       .from("candidates")
-      .select("id, cpf, slug, tse_id")
+      .select("id, cpf, slug, tse_id, elections(year)")
       .in("tse_id", sqcands.slice(i, i + 200));
     erro("candidates", error);
     for (const c of data ?? []) {
       const sq = String(c.tse_id);
-      if (perfilPorSq.has(sq)) multiplos.add(sq);
-      perfilPorSq.set(sq, { id: c.id, cpf: c.cpf, slug: c.slug });
+      const eleicao = c.elections as unknown as { year: number } | null;
+      const lista = perfisPorSq.get(sq) ?? [];
+      lista.push({ id: c.id, cpf: c.cpf, slug: c.slug, ano: eleicao?.year ?? null });
+      perfisPorSq.set(sq, lista);
+    }
+  }
+  const perfilPorSq = new Map<string, Perfil>();
+  const multiplos = new Set<string>();
+  let desempatados = 0;
+  for (const [sq, lista] of perfisPorSq) {
+    if (lista.length === 1) {
+      perfilPorSq.set(sq, lista[0]);
+      continue;
+    }
+    const de2026 = lista.filter((p) => p.ano === ANO);
+    if (de2026.length === 1) {
+      perfilPorSq.set(sq, de2026[0]);
+      desempatados++;
+    } else {
+      multiplos.add(sq);
     }
   }
 
@@ -226,8 +248,9 @@ async function main() {
   console.log(`👥 ${registros.length} candidatos nas disputas finalizadas`);
   console.log(`   → ${linhas.length} perfis a marcar: ${JSON.stringify(porStatus)}`);
   console.log(
-    `   pulados: ${cont.semSituacao} sem situação no TSE · ${cont.semPerfil} sem perfil (tse_id) · ${cont.ambiguo} tse_id em mais de um perfil`,
+    `   pulados: ${cont.semSituacao} sem situação no TSE · ${cont.semPerfil} sem perfil (tse_id) · ${cont.ambiguo} tse_id em mais de um perfil 2026`,
   );
+  if (desempatados) console.log(`   ${desempatados} tse_id repetido em perfil de outro ano — usado o perfil 2026`);
 
   if (!APPLY) {
     console.log("\n(dry-run: nada gravado. Rode com --apply para gravar.)");
