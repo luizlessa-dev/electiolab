@@ -160,7 +160,7 @@ export async function GET(request: NextRequest) {
   try {
     // Verify authorization
     const isValid = validateApiKey(request);
-    if (!isValid && process.env.WAVE4_API_KEY) {
+    if (!isValid) {
       return new NextResponse(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401 }
