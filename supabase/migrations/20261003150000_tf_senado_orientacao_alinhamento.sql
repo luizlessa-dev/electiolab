@@ -15,7 +15,8 @@
 --      carregados ela listaria como "dissidente" quem FALTOU (AP, LS, MIS...) ou ficou
 --      P-NRV contra uma orientação "Sim": a regra antiga só excluía Abstenção, P-OD e NCom
 --      do voto. Agora só conta voto Sim/Não contra orientação Sim/Não. Mesmas colunas, mesma
---      ordem; nada no código nem no banco depende dela (verificado em 2026-10-03).
+--      ordem (12 colunas, conferidas contra a view em produção, incluindo sigla_uf); nada no código
+--      nem no banco depende dela (verificado em 2026-10-03).
 --   2. CRIA `mv_senador_alinhamento`: alinhamento de cada senador com a orientação do partido.
 --   3. Agenda o refresh diário (pg_cron), depois do `mv_voto_resumo_senador` (09:45 UTC).
 --
@@ -39,6 +40,7 @@ select v.id_sve,
        v.cod_parlamentar,
        v.nome_parlamentar,
        v.sigla_partido,
+       v.sigla_uf,
        v.voto as voto_real,
        o.orientacao as orientacao_partido,
        vot.data_sessao,
