@@ -35,6 +35,28 @@ import { CandidateSchema } from "./candidate-schema";
 // real em src/lib/queries.ts — sem tipo manual duplicado pra manter em sincronia.
 export type CandidateDetail = NonNullable<Awaited<ReturnType<typeof getCandidateBySlug>>>;
 
+const cargoLabel: Record<string, string> = {
+  presidente: "Presidente",
+  governador: "Governador",
+  senador: "Senador",
+  prefeito: "Prefeito",
+  vereador: "Vereador",
+  deputado_federal: "Deputado Federal",
+  deputado_estadual: "Deputado Estadual",
+  deputado_distrital: "Deputado Distrital",
+  "vice-presidente": "Vice-Presidente",
+  "vice-governador": "Vice-Governador",
+  "vice-prefeito": "Vice-Prefeito",
+};
+const statusLabel: Record<string, string> = {
+  eleito: "Eleito",
+  nao_eleito: "Não eleito",
+  suplente: "Suplente",
+  "2t_disputou": "Disputou 2º turno",
+  renunciou: "Renunciou",
+  cassado: "Cassado",
+};
+
 export type CandidateViewProps = {
   /** A linha de `candidates` daquela eleição. */
   c: CandidateDetail;
@@ -114,6 +136,15 @@ export async function CandidateView({ c, slug, canonicalPath, elections }: Candi
   const priorResults = c.prior_election_results ?? [];
   const sortedPriorResults = [...priorResults]
     .sort((a, b) => (b.year - a.year) || ((b.total_votes ?? 0) - (a.total_votes ?? 0)));
+
+  // Resultado da eleição desta página, se já apurada (scripts/marcar-eleitos-2026.ts grava
+  // em prior_election_results). Com 2º turno, vale a linha do turno mais alto.
+  const resultadoAtual =
+    election?.year === 2026
+      ? sortedPriorResults
+          .filter((r) => r.year === 2026)
+          .sort((a, b) => (b.round ?? 1) - (a.round ?? 1))[0]
+      : undefined;
 
   // TSE situação (Ficha Limpa)
   const tseSit = c.tse_last_situation;
@@ -311,6 +342,14 @@ export async function CandidateView({ c, slug, canonicalPath, elections }: Candi
                   );
                 })}
               </nav>
+            )}
+            {resultadoAtual && (
+              <SeloResultado
+                status={resultadoAtual.result_status}
+                cargo={cargoLabel[resultadoAtual.election_type] ?? resultadoAtual.election_type}
+                round={resultadoAtual.round ?? 1}
+                votos={resultadoAtual.total_votes}
+              />
             )}
             <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mb-4">
               {c.party && (
@@ -620,27 +659,6 @@ export async function CandidateView({ c, slug, canonicalPath, elections }: Candi
                 const is2T = r.result_status === "2t_disputou";
                 const Icon = isElected ? Trophy : XCircleIcon;
                 const cor = isElected ? "text-positive" : is2T ? "text-warning" : "text-muted-foreground";
-                const cargoLabel: Record<string, string> = {
-                  presidente: "Presidente",
-                  governador: "Governador",
-                  senador: "Senador",
-                  prefeito: "Prefeito",
-                  vereador: "Vereador",
-                  deputado_federal: "Deputado Federal",
-                  deputado_estadual: "Deputado Estadual",
-                  deputado_distrital: "Deputado Distrital",
-                  "vice-presidente": "Vice-Presidente",
-                  "vice-governador": "Vice-Governador",
-                  "vice-prefeito": "Vice-Prefeito",
-                };
-                const statusLabel: Record<string, string> = {
-                  eleito: "Eleito",
-                  nao_eleito: "Não eleito",
-                  suplente: "Suplente",
-                  "2t_disputou": "Disputou 2º turno",
-                  renunciou: "Renunciou",
-                  cassado: "Cassado",
-                };
                 return (
                   <div
                     key={r.id}
@@ -684,7 +702,7 @@ export async function CandidateView({ c, slug, canonicalPath, elections }: Candi
               )}
             </div>
             <p className="text-xs text-muted-foreground mt-2">
-              Fonte: TSE — Votação por Município/Zona 2018, 2022, 2024 (totais agregados nacionalmente).
+              Fonte: TSE — Votação por Município/Zona 2018, 2022, 2024 (totais agregados nacionalmente) e apuração oficial de 2026.
             </p>
           </section>
         )}
@@ -1054,5 +1072,45 @@ export async function CandidateView({ c, slug, canonicalPath, elections }: Candi
         </footer>
       </main>
     </div>
+  );
+}
+
+/** Selo do topo do perfil com o resultado da eleição de 2026. */
+function SeloResultado({
+  status,
+  cargo,
+  round,
+  votos,
+}: {
+  status: string | null;
+  cargo: string;
+  round: number;
+  votos: number | null;
+}) {
+  const votosTxt = votos ? ` · ${votos.toLocaleString("pt-BR")} votos` : "";
+  if (status === "eleito") {
+    return (
+      <p className="inline-flex items-center gap-2 mb-3 px-3 py-1.5 rounded-md text-sm font-semibold bg-positive/15 text-positive border border-positive/30">
+        <Trophy className="h-4 w-4" /> Eleito {cargo} em 2026
+        {round > 1 ? " (2º turno)" : ""}
+        <span className="font-normal font-mono text-xs">{votosTxt}</span>
+      </p>
+    );
+  }
+  if (status === "2t_disputou") {
+    return (
+      <p className="inline-flex items-center gap-2 mb-3 px-3 py-1.5 rounded-md text-sm font-semibold bg-warning/15 text-warning border border-warning/30">
+        <Vote className="h-4 w-4" /> Disputa o 2º turno para {cargo} em 25/10
+        <span className="font-normal font-mono text-xs">{votosTxt}</span>
+      </p>
+    );
+  }
+  const label = status ? (statusLabel[status] ?? status) : "Resultado";
+  return (
+    <p className="inline-flex items-center gap-2 mb-3 px-3 py-1.5 rounded-md text-sm bg-muted/40 text-muted-foreground border border-border">
+      {label} para {cargo} em 2026
+      {round > 1 ? " (2º turno)" : ""}
+      <span className="font-mono text-xs">{votosTxt}</span>
+    </p>
   );
 }
