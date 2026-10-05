@@ -12,6 +12,9 @@ export const ALL_PATHS = [
   "/imprensa",
   "/pesquisas-presidenciais-2026",
   "/quem-vence-no-segundo-turno-presidencia-2026",
+  "/segundo-turno",
+  // 2º turno de governador (AC, AM, DF, ES, RJ, RN, TO)
+  ...["ac","am","df","es","rj","rn","to"].map((uf) => `/segundo-turno/${uf}`),
   "/instituto-mais-acurado-eleicoes-brasil",
   "/quanto-custa-campanha-eleitoral-google-ads-meta",
   "/relatorio/semana-17-2026",

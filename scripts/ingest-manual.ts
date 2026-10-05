@@ -59,6 +59,43 @@ function isSubsetOf(
   return a.every((r) => bKeys.has(`${r.candidate_id}:${Number(r.percentage).toFixed(2)}`));
 }
 
+/** Último dia do 1º turno 2026. Pesquisa de campo iniciada depois disso é de 2º turno. */
+const FIM_PRIMEIRO_TURNO_2026 = "2026-10-04";
+
+/**
+ * Pré-voo (antes de tocar o banco), BLOQUEANTE: impede pesquisa de 2º turno gravada na
+ * election errada. 1º e 2º turno são elections separadas (ver [[dedup-candidatos-criterio]]);
+ * o insert herda `polls.round` da election, então erro de nome aqui contamina médias e páginas.
+ *
+ *  A) election de 1º turno 2026 (Presidencial/Governador) com campo iniciado depois de
+ *     04/10 → é 2º turno; use "... - 2º Turno".
+ *  B) election "Governador XX 2026 - 2º Turno" com campo encerrado até 04/10 → é cenário
+ *     hipotético do 1º turno; fica na election de 1º turno com scenario_label.
+ *  C) election "Governador XX 2026 - 2º Turno" exige exatamente 2 candidatos (confronto real).
+ */
+function validarTurnos(polls: typeof PENDING_POLLS): string[] {
+  const erros: string[] = [];
+  for (const p of polls) {
+    const nome = p.election_name;
+    if (!/2026/.test(nome) || !/(Presidencial|Governador)/.test(nome)) continue;
+    const dia = p.fieldwork_start ?? p.fieldwork_end;
+    const ehSegundo = /2º Turno/.test(nome);
+    const rotulo = `${p.institute_name} · ${nome} · campo ${p.fieldwork_start ?? "?"}→${p.fieldwork_end}`;
+    if (!ehSegundo && dia > FIM_PRIMEIRO_TURNO_2026) {
+      erros.push(`[A] ${rotulo}: campo depois de 04/10 não pode ir pra election de 1º turno — use o "- 2º Turno" correspondente.`);
+    }
+    if (ehSegundo && /Governador/.test(nome)) {
+      if (p.fieldwork_end <= FIM_PRIMEIRO_TURNO_2026) {
+        erros.push(`[B] ${rotulo}: campo até 04/10 é cenário hipotético do 1º turno — mantenha na election de 1º turno com scenario_label.`);
+      }
+      if (p.results.length !== 2) {
+        erros.push(`[C] ${rotulo}: 2º turno de governador precisa de exatamente 2 candidatos (veio ${p.results.length}).`);
+      }
+    }
+  }
+  return erros;
+}
+
 /** Aviso pré-voo (antes de tocar o banco): mesma pesquisa em PENDING_POLLS aparecendo com
  *  scope='nacional' (ou omitido) E com um scope de UF — o padrão "scope-fantasma" que gerou
  *  9 dos 41 pares duplicados da auditoria de 2026-09-22 (alguém esqueceu de preencher `scope`
@@ -228,6 +265,20 @@ const PENDING_POLLS: Array<{
   scenario_label?: string;
   results: { candidate_name: string; percentage: number }[];
 }> = [
+  // ─── MODELO · pesquisa de 2º turno de governador (25/10/2026) ──────────────
+  // election_name: "Governador <Acre|Amazonas|DF|ES|RJ|RN|Tocantins> 2026 - 2º Turno"
+  //   (nomes exatos: Acre, Amazonas, DF, ES, RJ, RN, Tocantins). Só os 2 finalistas em results,
+  //   com o nome como está em candidates (ex.: "Douglas Ruas", "Eduardo Paes", "Cadu de Lula").
+  //   Campo iniciado depois de 04/10. validarTurnos() barra o resto antes de gravar.
+  // {
+  //   institute_name: "Quaest", election_name: "Governador RJ 2026 - 2º Turno",
+  //   publication_date: "2026-10-14", fieldwork_start: "2026-10-10", fieldwork_end: "2026-10-12",
+  //   sample_size: 1200, margin_of_error: 2.8, methodology: "presencial", scope: "RJ",
+  //   source_url: "https://...", tse_protocolo: "RJ-00000/2026",
+  //   results: [{ candidate_name: "Douglas Ruas", percentage: 0 }, { candidate_name: "Eduardo Paes", percentage: 0 }],
+  // },
+  // Presidente: election_name "Presidencial 2026 - 2º Turno", results Lula + "Flávio Bolsonaro".
+
   // ─── Meio/Ideia · 23-27 mai 2026 · TSE BR-02918/2026 · n=1.500 · telefônica ──
   // Fonte: https://www.brasildefato.com.br/2026/05/28/lula-lidera-todos-os-cenarios-e-abre-cinco-pontos-sobre-flavio-bolsonaro-no-2o-turno-aponta-pesquisa-meioideia/
   {
@@ -11644,6 +11695,12 @@ async function main() {
     return;
   }
 
+  const errosTurno = validarTurnos(PENDING_POLLS);
+  if (errosTurno.length > 0) {
+    console.error(`❌ ${errosTurno.length} pesquisa(s) na election errada de turno — nada foi gravado:\n  ` + errosTurno.join("\n  "));
+    process.exit(1);
+  }
+
   warnScopeFantasma(PENDING_POLLS);
 
   let inserted = 0;
@@ -11658,7 +11715,7 @@ async function main() {
     // Resolver IDs
     const { data: election } = await supabase
       .from("elections")
-      .select("id")
+      .select("id, round")
       .eq("name", poll.election_name)
       .single();
     if (!election) { console.log("❌ eleição não encontrada"); errors++; continue; }
@@ -11806,6 +11863,8 @@ async function main() {
       .from("polls")
       .insert({
         election_id: election.id,
+        // polls.round tem default 1; sem isto toda pesquisa de election de 2º turno nascia round=1.
+        round: election.round,
         institute_id: institute.id,
         publication_date: poll.publication_date,
         fieldwork_start: poll.fieldwork_start ?? null,
