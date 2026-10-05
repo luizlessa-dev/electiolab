@@ -157,7 +157,7 @@ fase de assinatura; manter só a ficha e a API.
 
 | Quando | Entrega |
 |---|---|
-| Até 25/10 | Segurar a operação do 2º turno. Aplicar a correção do log de e-mail. Entender os 5% de confirmação |
+| Até 25/10 | Segurar a operação do 2º turno. Aplicar a correção do log de e-mail. Parar o cadastro de teste de CI em produção e conferir a taxa de bounce no painel do Resend |
 | Nov | Botão falso na ficha + conversas + Radar manual (eventos 1 e 2). Produtores em dry-run |
 | Dez | **MVP**: `radar_*`, "Seguir" com conta, digest diário/semanal por e-mail, plano pago no Stripe |
 | Jan–Fev 2027 | Janela de posse: eventos 4 e 5, "seguir por UF", primeiros contratos B2B |
