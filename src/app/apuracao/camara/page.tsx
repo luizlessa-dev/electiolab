@@ -30,7 +30,9 @@ export default async function CamaraPage() {
     );
   }
 
-  const { ambiente, totalDisputas, totalVagas, vagasDistribuidas, bancadas } = projecao;
+  const { ambiente, totalDisputas, totalVagas, vagasDistribuidas, bancadas, disputasOficiais } = projecao;
+  const tudoOficial = disputasOficiais === totalDisputas;
+  const nadaOficial = disputasOficiais === 0;
   const maiorBancada = bancadas[0]?.vagas ?? 1;
 
   return (
@@ -48,15 +50,20 @@ export default async function CamaraPage() {
 
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
         <section>
-          <h1 className="text-2xl font-bold tracking-tight mb-1">Câmara dos Deputados — projeção Electiolab</h1>
+          <h1 className="text-2xl font-bold tracking-tight mb-1">
+            {tudoOficial ? "Câmara dos Deputados — bancadas eleitas" : "Câmara dos Deputados — projeção Electiolab"}
+          </h1>
           <p className="text-xs text-muted-foreground font-mono mb-1">
-            Cálculo Electiolab em tempo real — QE, QP e sobras (arts. 106-109 do Código Eleitoral) aplicados
-            aos votos já apurados, disputa a disputa. Não é o resultado oficial do TSE.
+            {tudoOficial
+              ? "Resultado oficial do TSE: vagas distribuídas pelo TSE nas 27 unidades da Federação."
+              : nadaOficial
+                ? "Cálculo Electiolab em tempo real — QE, QP e sobras (arts. 106-109 do Código Eleitoral) aplicados aos votos já apurados, disputa a disputa. Não é o resultado oficial do TSE."
+                : `Resultado misto: ${disputasOficiais} de ${totalDisputas} UFs já finalizadas pelo TSE (vagas oficiais); nas demais, cálculo Electiolab sobre os votos apurados até agora.`}
           </p>
           <p className="text-xs text-muted-foreground font-mono">
             {totalDisputas} disputas estaduais · {fmtNum(vagasDistribuidas)} de {fmtNum(totalVagas)} vagas
-            projetadas
-            {vagasDistribuidas !== totalVagas && (
+            {tudoOficial ? " distribuídas" : " projetadas"}
+            {vagasDistribuidas !== totalVagas && vagasDistribuidas > 0 && (
               <span className="text-warning"> (divergência: candidatos elegíveis insuficientes em alguma UF)</span>
             )}
           </p>
@@ -102,7 +109,9 @@ export default async function CamaraPage() {
 
       <footer className="border-t border-border py-6 mt-12">
         <div className="max-w-5xl mx-auto px-4 text-xs text-muted-foreground font-mono text-center">
-          Projeção Electiolab — cálculo em tempo real, não é dado oficial do TSE
+          {tudoOficial
+            ? "Fonte: TSE — dados oficiais sem alteração"
+            : "Projeção Electiolab nas UFs ainda em apuração — não é dado oficial do TSE"}
         </div>
       </footer>
     </div>

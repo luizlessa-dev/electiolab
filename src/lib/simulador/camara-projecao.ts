@@ -42,6 +42,12 @@ interface AgrupamentoRow {
   nome: string;
 }
 
+interface AgrupamentoOficialRow {
+  nome: string;
+  tipo: "i" | "c" | "f";
+  vagas_obtidas: number | null;
+}
+
 interface PartidoRow {
   agrupamento_numero: string | null;
   votos_nominais_validos: number | null;
@@ -144,7 +150,10 @@ export interface ProjecaoCamara {
    * alguma disputa ficar sem candidato elegível suficiente para preencher o cargo. */
   vagasDistribuidas: number;
   bancadas: BancadaPartido[];
-  porUf: { uf: string; vagas: number }[];
+  porUf: { uf: string; vagas: number; oficial: boolean }[];
+  /** Disputas já finalizadas pelo TSE (`andamento = 'f'`): nelas as vagas são as
+   * oficiais (`votacao_agrupamento.vagas_obtidas`), não o cálculo Electiolab. */
+  disputasOficiais: number;
 }
 
 /**
@@ -176,32 +185,58 @@ export async function carregarProjecaoCamara(): Promise<ProjecaoCamara | null> {
   );
   if (disputaList.length === 0) return null;
 
+  const { data: situacoes } = await cliente
+    .from("v_disputa_situacao")
+    .select("disputa_id, andamento")
+    .in("disputa_id", disputaList.map((d) => d.id));
+  const finalizadas = new Set(
+    ((situacoes ?? []) as { disputa_id: number; andamento: string | null }[])
+      .filter((s) => s.andamento === "f")
+      .map((s) => s.disputa_id),
+  );
+
+  // Por disputa: lista de (nome, tipo, vagas). Finalizada -> vagas oficiais do TSE;
+  // ainda em apuração -> `distribuirCadeiras` sobre os votos parciais.
   const porDisputa = await Promise.all(
     disputaList.map(async (disputa) => {
+      if (finalizadas.has(disputa.id)) {
+        const { data } = await cliente
+          .from("votacao_agrupamento")
+          .select("nome, tipo, vagas_obtidas")
+          .eq("disputa_id", disputa.id);
+        const linhas = (data ?? []) as AgrupamentoOficialRow[];
+        const vagas = linhas.map((a) => ({ nome: a.nome, tipo: a.tipo, vagas: a.vagas_obtidas ?? 0 }));
+        return { disputa, oficial: true, vagas };
+      }
       const { entrada, agrupamentoInfo } = await montarEntrada(cliente, disputa);
       const resultado = distribuirCadeiras(entrada);
-      return { disputa, resultado, agrupamentoInfo };
+      const vagas = resultado.agrupamentos.map((agr) => {
+        const info = agrupamentoInfo.get(agr.agrupamentoNumero);
+        return {
+          nome: info?.nome ?? agr.agrupamentoNumero,
+          tipo: info?.tipo ?? ("i" as const),
+          vagas: agr.vagasTotal,
+        };
+      });
+      return { disputa, oficial: false, vagas };
     }),
   );
 
   const bancadaPorNome = new Map<string, BancadaPartido>();
-  const porUf: { uf: string; vagas: number }[] = [];
+  const porUf: { uf: string; vagas: number; oficial: boolean }[] = [];
 
-  for (const { disputa, resultado, agrupamentoInfo } of porDisputa) {
+  for (const { disputa, oficial, vagas } of porDisputa) {
     const uf = disputa.uf.toUpperCase();
     let vagasUf = 0;
-    for (const agr of resultado.agrupamentos) {
-      vagasUf += agr.vagasTotal;
-      if (agr.vagasTotal === 0) continue;
-      const info = agrupamentoInfo.get(agr.agrupamentoNumero);
-      const nome = info?.nome ?? agr.agrupamentoNumero;
-      const tipo = info?.tipo ?? "i";
-      const atual = bancadaPorNome.get(nome) ?? { nome, tipo, vagas: 0, ufs: [] };
-      atual.vagas += agr.vagasTotal;
+    for (const agr of vagas) {
+      vagasUf += agr.vagas;
+      if (agr.vagas === 0) continue;
+      const atual = bancadaPorNome.get(agr.nome) ?? { nome: agr.nome, tipo: agr.tipo, vagas: 0, ufs: [] };
+      atual.vagas += agr.vagas;
       atual.ufs.push(uf);
-      bancadaPorNome.set(nome, atual);
+      bancadaPorNome.set(agr.nome, atual);
     }
-    porUf.push({ uf, vagas: vagasUf });
+    porUf.push({ uf, vagas: vagasUf, oficial });
   }
 
   const bancadas = [...bancadaPorNome.values()].sort(
@@ -217,5 +252,6 @@ export async function carregarProjecaoCamara(): Promise<ProjecaoCamara | null> {
     vagasDistribuidas,
     bancadas,
     porUf: porUf.sort((a, b) => a.uf.localeCompare(b.uf)),
+    disputasOficiais: finalizadas.size,
   };
 }
