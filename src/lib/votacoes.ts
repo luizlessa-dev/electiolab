@@ -97,9 +97,31 @@ export type ResumoVotacoes = {
   ultimaSessao: string | null;
 };
 
+export type SimNao = "sim" | "nao";
+
+/** Votação em que o senador votou Sim ou Não CONTRA a orientação Sim ou Não da liderança do partido. */
+export type Divergencia = {
+  votacaoId: string;
+  /** YYYY-MM-DD */
+  data: string;
+  descricao: string | null;
+  materia: string | null;
+  voto: SimNao;
+  orientacao: SimNao;
+};
+
+export type DivergenciasSenador = {
+  /** Total desde o início dos dados (todas, não só as listadas). */
+  total: number;
+  ultimos12m: number;
+  recentes: Divergencia[];
+};
+
 export type VotacoesParlamentar = {
   resumo: ResumoVotacoes;
   recentes: VotoRecente[];
+  /** Só Senado, e só quando a orientação do partido foi ingerida para este senador (senão "0" seria falso). */
+  divergencias?: DivergenciasSenador | null;
 };
 
 const num = (x: unknown): number => {
@@ -214,6 +236,55 @@ export function resumoSenado(r: ResumoSenadorRow, alinhamento: AlinhamentoSenado
     primeiraSessao: r.primeira_sessao,
     ultimaSessao: r.ultima_sessao,
   };
+}
+
+/** "Sim" / "Não" / "NÃO" / "Nao" → "sim" | "nao"; qualquer outra coisa (Abstenção, ausência, Liberado…) → null. */
+export function normalizarSimNao(v: string | null | undefined): SimNao | null {
+  const t = (v ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase();
+  return t === "sim" ? "sim" : t === "nao" ? "nao" : null;
+}
+
+/** Linha de `senado_dissidencia` (TF). */
+export type DissidenciaRow = {
+  id_sve: number | string;
+  voto_real: string | null;
+  orientacao_partido: string | null;
+  data_sessao: string;
+  descricao: string | null;
+  sigla_materia: string | null;
+  numero_materia: string | null;
+  ano_materia: number | string | null;
+};
+
+/**
+ * Monta o resumo de divergências. Linha que não seja Sim/Não contra Sim/Não é descartada em vez de
+ * exibida: o texto da ficha ("votou Não, o partido orientou Sim") só vale para esse par.
+ * Os totais vêm da contagem exata do banco, não do tamanho da lista (que é cortada).
+ */
+export function montarDivergencias(
+  rows: readonly DissidenciaRow[],
+  total: number,
+  ultimos12m: number,
+): DivergenciasSenador {
+  const recentes: Divergencia[] = [];
+  for (const r of rows) {
+    const voto = normalizarSimNao(r.voto_real);
+    const orientacao = normalizarSimNao(r.orientacao_partido);
+    if (!voto || !orientacao || voto === orientacao) continue;
+    recentes.push({
+      votacaoId: String(r.id_sve),
+      data: r.data_sessao,
+      descricao: r.descricao,
+      materia: r.sigla_materia ? `${r.sigla_materia} ${r.numero_materia ?? ""}/${r.ano_materia ?? ""}`.replace(" /", "/") : null,
+      voto,
+      orientacao,
+    });
+  }
+  return { total: Math.max(0, num(total)), ultimos12m: Math.max(0, num(ultimos12m)), recentes };
 }
 
 /** 83.4 → "83,4%"; null → "—". */
