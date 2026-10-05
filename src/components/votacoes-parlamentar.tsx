@@ -46,7 +46,7 @@ export function VotacoesParlamentar({ dados }: { dados: VotacoesParlamentar }) {
         <span className="text-xs text-muted-foreground">{fonte}</span>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-3">
+      <div className={`grid gap-3 ${!camara && r.pctAlinhamento !== null ? "md:grid-cols-4" : "md:grid-cols-3"}`}>
         <Card titulo="Presença">
           <p className="text-2xl font-mono font-bold tabular-nums">{formatPct(r.pctPresenca)}</p>
           <p className="text-[11px] text-muted-foreground mt-1">
@@ -96,6 +96,15 @@ export function VotacoesParlamentar({ dados }: { dados: VotacoesParlamentar }) {
             </p>
           </Card>
         )}
+
+        {!camara && r.pctAlinhamento !== null && (
+          <Card titulo="Alinhamento com o partido">
+            <p className="text-2xl font-mono font-bold tabular-nums">{formatPct(r.pctAlinhamento)}</p>
+            <p className="text-[11px] text-muted-foreground mt-1">
+              em <strong>{fmtInt(r.votacoesComOrientacao ?? 0)}</strong> votações em que o partido orientou Sim ou Não
+            </p>
+          </Card>
+        )}
       </div>
 
       {r.presencaNaoCalculada && (
@@ -138,6 +147,8 @@ export function VotacoesParlamentar({ dados }: { dados: VotacoesParlamentar }) {
         {camara
           ? " Presença = votações em que votou ÷ votações nominais no período de exercício."
           : " Presença = votações com voto ou presença registrada ÷ todas as votações nominais; ausência justificada reduz a presença, mas não é falta."}
+        {!camara && r.pctAlinhamento !== null &&
+          " Alinhamento: só votações em que a liderança do partido registrou orientação Sim ou Não (cobertura parcial); abstenção conta como não alinhada."}
       </p>
     </section>
   );

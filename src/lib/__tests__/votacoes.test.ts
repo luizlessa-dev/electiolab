@@ -87,6 +87,24 @@ describe("resumoSenado", () => {
     expect(r.presencaNaoCalculada).toBeNull();
   });
 
+  it("sem a view de alinhamento (orientação ainda não ingerida) não há cartão de alinhamento", () => {
+    const r = resumoSenado(sen());
+    expect(r.pctAlinhamento).toBeNull();
+    expect(r.votacoesComOrientacao).toBeNull();
+  });
+
+  it("com a view de alinhamento, repassa o percentual e a base", () => {
+    const r = resumoSenado(sen(), { votacoes_com_orientacao: "176", pct_alinhamento: "92.0" });
+    expect(r.pctAlinhamento).toBe(92);
+    expect(r.votacoesComOrientacao).toBe(176);
+  });
+
+  it("alinhamento sem nenhuma votação com orientação não vira 0%", () => {
+    const r = resumoSenado(sen(), { votacoes_com_orientacao: 0, pct_alinhamento: null });
+    expect(r.pctAlinhamento).toBeNull();
+    expect(r.votacoesComOrientacao).toBeNull();
+  });
+
   it("sem votações nominais: sem percentuais e com aviso", () => {
     const r = resumoSenado(sen({ votacoes_nominais: 0, pct_presenca: null, pct_faltas_nao_justificadas: null }));
     expect(r.pctPresenca).toBeNull();

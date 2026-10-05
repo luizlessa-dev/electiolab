@@ -20,6 +20,7 @@ import {
   rotuloResultado,
   resumoSenado,
   type AggCamaraRow,
+  type AlinhamentoSenadorRow,
   type ResumoSenadorRow,
   type VotacoesParlamentar,
   type VotoRecente,
@@ -274,12 +275,16 @@ async function getVotosRecentes(casa: "camara" | "senado", idExterno: number): P
 
 export async function getVotacoesParlamentar(p: Parlamentar): Promise<VotacoesParlamentar | null> {
   if (p.casa_legislativa === "senado" && p.id_senado) {
-    const [resumoRows, recentes] = await Promise.all([
+    const [resumoRows, alinhamentoRows, recentes] = await Promise.all([
       tfFetch<ResumoSenadorRow[]>(`mv_voto_resumo_senador?cod_parlamentar=eq.${p.id_senado}&select=*&limit=1`),
+      // Ainda não existe até a migration 20261003150000 ser aplicada; tfFetch devolve [] e o cartão some.
+      tfFetch<AlinhamentoSenadorRow[]>(
+        `mv_senador_alinhamento?cod_parlamentar=eq.${p.id_senado}&select=votacoes_com_orientacao,pct_alinhamento&limit=1`,
+      ),
       getVotosRecentes("senado", p.id_senado),
     ]);
     if (!resumoRows[0]) return null;
-    return { resumo: resumoSenado(resumoRows[0]), recentes };
+    return { resumo: resumoSenado(resumoRows[0], alinhamentoRows[0] ?? null), recentes };
   }
 
   if (p.casa_legislativa === "camara" && p.id_camara) {

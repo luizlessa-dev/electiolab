@@ -86,6 +86,9 @@ export type ResumoVotacoes = {
   votacoesSecretas: number | null;
   /** Só Câmara. */
   concordanciaPartido: number | null;
+  /** Só Senado: alinhamento com a orientação do partido, só em votações em que ele orientou Sim ou Não. */
+  pctAlinhamento: number | null;
+  votacoesComOrientacao: number | null;
   /** Por que a presença não foi calculada, para o aviso na tela. */
   presencaNaoCalculada: string | null;
   legislatura: number | null;
@@ -156,6 +159,8 @@ export function resumoCamara(
     ausenciasJustificadas: null,
     votacoesSecretas: null,
     concordanciaPartido: semPartido(partido) ? null : numOuNull(agg.concordancia_partido),
+    pctAlinhamento: null,
+    votacoesComOrientacao: null,
     presencaNaoCalculada: janelaConhecida
       ? null
       : "O período de exercício deste mandato (suplência ou licença) não está identificado na fonte; por isso a presença não é calculada.",
@@ -180,8 +185,15 @@ export type ResumoSenadorRow = {
   ultima_sessao: string | null;
 };
 
-export function resumoSenado(r: ResumoSenadorRow): ResumoVotacoes {
+/** Linha de `mv_senador_alinhamento` (TF). Ausente enquanto a orientação não foi ingerida. */
+export type AlinhamentoSenadorRow = {
+  votacoes_com_orientacao: number | string | null;
+  pct_alinhamento: number | string | null;
+};
+
+export function resumoSenado(r: ResumoSenadorRow, alinhamento: AlinhamentoSenadorRow | null = null): ResumoVotacoes {
   const nominais = num(r.votacoes_nominais);
+  const comOrientacao = alinhamento ? num(alinhamento.votacoes_com_orientacao) : 0;
   return {
     casa: "senado",
     votacoesNominais: nominais,
@@ -195,6 +207,8 @@ export function resumoSenado(r: ResumoSenadorRow): ResumoVotacoes {
     ausenciasJustificadas: num(r.ausencias_justificadas),
     votacoesSecretas: num(r.votacoes_secretas),
     concordanciaPartido: null,
+    pctAlinhamento: comOrientacao > 0 ? numOuNull(alinhamento?.pct_alinhamento) : null,
+    votacoesComOrientacao: comOrientacao > 0 ? comOrientacao : null,
     presencaNaoCalculada: nominais > 0 ? null : "Sem votações nominais registradas no período.",
     legislatura: null,
     primeiraSessao: r.primeira_sessao,

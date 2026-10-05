@@ -177,6 +177,12 @@ Verificado em 2026-10-03:
 
 Alternativa sem a API, mais barata mas menos justa: "concordância com a maioria do partido" calculada só com os votos que já temos. É útil como fallback e deve ter rótulo próprio (não chamar de "orientação").
 
+**Status (2026-10-03): implementado, aguardando aplicação.** Normalização e testes em `src/lib/senado-orientacao.ts`; ingestão em `scripts/ingest-senado-orientacao.ts` (dry-run por padrão); migration TF `20261003150000_tf_senado_orientacao_alinhamento.sql`; cartão "Alinhamento com o partido" na ficha do senador (some enquanto a view não existe). No dry-run: 2019–2026, **5.363 linhas** (Sim 3.994, Não 774, Liberado 587, Obstrução 8) e **nenhum rótulo de liderança desconhecido**. Cobertura de votações com orientação por ano: 25% a 64%, então o alinhamento é calculado só sobre o que foi orientado. 92 votações da API não estão em `senado_votacao` do TF (a maioria de 2021 e 2022) e são puladas pela FK; não afeta o alinhamento, que só compara votos existentes.
+
+Ordem de aplicação: (1) migration no TF, (2) `npx tsx scripts/ingest-senado-orientacao.ts --apply`, (3) `refresh materialized view public.mv_senador_alinhamento` (depois o pg_cron mantém). Conferência: o dry-run imprime o alinhamento de 5 senadores calculado em memória; a view tem que dar os mesmos valores.
+
+Defeito encontrado e corrigido na mesma migration: a view `senado_dissidencia` que o TF já tinha só excluía Abstenção, P-OD e NCom do voto; com orientação carregada ela listaria como dissidente quem faltou (AP, LS, MIS) ou ficou P-NRV. Agora só conta voto Sim/Não contra orientação Sim/Não. A view é pública (anon lê) e nada no código ou no banco dependia dela.
+
 ### 8.3 Troca de legislatura (posse em 1º de fevereiro de 2027)
 
 Manter os 81 atuais está correto, com um ajuste de conceito: **acrescentar, não substituir.**
