@@ -21,7 +21,7 @@ inteiro, e 2027 é o vale de demanda (a demanda municipal só esquenta a partir 
 | `cron_check_user_alerts()` | Roda a cada 30 min |
 | Entrega de e-mail | pg_cron → função plpgsql → `pg_net` → **Resend** (chave no Vault). Mesmo caminho do relatório Pro e do digest |
 | Relatório Pro semanal | 3 assinantes, todos Stripe. **Entrega funciona**, mas o log marca falha (ver §7) |
-| Usuários | 345 (223 com login nos últimos 30 dias, pico de eleição); newsletter 236 inscritos, **só 12 confirmados** |
+| Usuários | 345 (223 com login nos últimos 30 dias, pico de eleição). Newsletter: 236 registros, mas **221 são teste de CI**; **15 cadastros reais em 5 meses**, 12 confirmados (80%) |
 | Dado de político | Pronto no TF: votos Câmara (454 mil) e Senado (72 mil), orientação de bancada (após #79), CEAP, situação de mandato, proposições. Ponte por CPF no ElectioLab (`politicians`, 20.117) |
 | `watchlists` / `intelligence_alerts` no TF | Existem, **vazias**, presas ao auth do TF. Não usar |
 
@@ -95,9 +95,9 @@ O botão **"Acompanhar este político"** na ficha (que já mostra votos e presen
 tráfego orgânico das ~20 mil fichas → cadastro → Radar. Dois caminhos:
 
 - **Com conta**: simples, já temos login (345 usuários).
-- **Só e-mail** (sem conta): menos atrito, mas depende do **double opt-in**. Hoje só 12 de 236 inscritos da newsletter
-  estão confirmados (5%): **antes de apostar nesse caminho é preciso entender por que**, porque o Radar herda o mesmo
-  fluxo de confirmação.
+- **Só e-mail** (sem conta): menos atrito, e o double opt-in **funciona**: dos 15 cadastros reais, 12 confirmaram (80%),
+  em média 13,6 minutos depois do envio. O problema da newsletter não é a confirmação, é o **volume**: 15 cadastros em
+  cinco meses (cerca de 3 por mês, 2 nas últimas três semanas), apesar do pico de tráfego. Ver §7.2.
 
 ## 6. Planos (hipótese; preço a validar nas conversas de novembro)
 
@@ -120,7 +120,14 @@ significar duas coisas. Sugestão: uma coluna `entitlements` derivada do webhook
    tem 8 × `pg_sleep(4)`. Efeito: ninguém deixa de receber, mas não dá para medir entrega, o que é pré-requisito de um
    produto de alerta. *Observação:* o histórico do `pg_net` já expirou, então a causa foi lida do comentário da migration
    e da definição da função, não reconfirmada contra o Resend agora.
-2. **Confirmação de newsletter em 5%.** Ver §5.
+2. **A newsletter está poluída por teste de CI, e isso pode estar prejudicando o remetente.** 221 dos 236 registros
+   (94%) vêm de `source = 'smoke-test'`: o workflow `smoke-tests` roda **contra produção** em todo push e PR para `main`,
+   cadastra `smoke+<timestamp>@electiolab.dev` e dispara uma confirmação real pelo Resend. **`electiolab.dev` é NXDOMAIN**
+   (o domínio não existe), e o remetente é `noreply@electiolab.com`, o mesmo do relatório Pro e do digest. Cada rodada de CI
+   é, em princípio, um *hard bounce* na reputação do domínio que o Radar vai usar. *Verificado:* o cadastro do teste, o
+   NXDOMAIN e o remetente. *Não verificado:* a taxa de bounce no Resend (a chave local está inválida); conferir no painel.
+   Correção barata: endereço de teste do Resend (`delivered+smoke@resend.dev`) ou pular o passo no CI.
+   Os 3 reais pendentes (todos Gmail, 19, 43 e 76 dias) não dizem nada sobre entregabilidade com amostra tão pequena.
 3. **Escrita anônima**: o PR #81 fecha o que sobrou. As tabelas do Radar nascem com o default novo, mas devem ser criadas
    já com `revoke` explícito e RLS por `auth.uid()`.
 
