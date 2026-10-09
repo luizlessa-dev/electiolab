@@ -12096,6 +12096,30 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Raquel Lyra", percentage: 45.0 },
     ],
   },
+
+  // Datafolha · 02-03 out 2026 · TSE CE-09234/2026 · n=1.560 · presencial
+  // Fonte: https://diariodonordeste.verdesmares.com.br/pontopoder/datafolha-elmano-tem-50-e-ciro-47-nos-votos-validos-para-o-1-turno-eles-estao-em-empate-tecnico-1.3795958
+  // Nota: % sobre o total de entrevistados (não "votos válidos"). Demais candidatos ficaram
+  // em ~1% cada, sem percentual individual confirmado — não incluídos.
+  // Curado em 2026-10-09. ⚠️ ATENÇÃO: o insert em `polls` para esta pesquisa já foi feito por
+  // engano via execute_sql direto (fora do fluxo de migration) — ver
+  // supabase/migrations/20261009120000_curate_pesqele_polls_2026_10_09.sql para o reparo.
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador CE 2026 - 1º Turno",
+    publication_date: "2026-10-03",
+    fieldwork_start: "2026-10-02",
+    fieldwork_end: "2026-10-03",
+    sample_size: 1560,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://diariodonordeste.verdesmares.com.br/pontopoder/datafolha-elmano-tem-50-e-ciro-47-nos-votos-validos-para-o-1-turno-eles-estao-em-empate-tecnico-1.3795958",
+    tse_protocolo: "CE092342026",
+    results: [
+      { candidate_name: "Elmano de Freitas", percentage: 46.0 },
+      { candidate_name: "Ciro Gomes", percentage: 44.0 },
+    ],
+  },
 ];
 
 async function main() {
