@@ -12120,6 +12120,33 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Ciro Gomes", percentage: 44.0 },
     ],
   },
+
+  // ─── Curadoria 10/10/2026 — via fila pesqele_missing ──────────────────────
+
+  // Datafolha · Governador DF · 2º turno · 06-08 out 2026 · TSE DF-03365/2026 · n=910 · presencial
+  // Fonte: https://ohoje.com/2026/10/08/datafolha-celina-leao-tem-60-e-leandro-grass-40-no-2o-turno-do-df/
+  // Percentuais sobre o total de entrevistados (não "votos válidos", que seriam 60/40 —
+  // ver também https://trademap.com.br/noticias/news-8405159 para o corte 55/37).
+  // Curado em 2026-10-10. ⚠️ ATENÇÃO: o insert em `polls`+`poll_results` para esta pesquisa já
+  // foi feito por engano via execute_sql direto (fora do fluxo de migration), e com o
+  // percentual errado (votos válidos) — ver
+  // supabase/migrations/20261010120000_curate_pesqele_polls_2026_10_10.sql para o reparo.
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador DF 2026 - 2º Turno",
+    publication_date: "2026-10-08",
+    fieldwork_start: "2026-10-06",
+    fieldwork_end: "2026-10-08",
+    sample_size: 910,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://ohoje.com/2026/10/08/datafolha-celina-leao-tem-60-e-leandro-grass-40-no-2o-turno-do-df/",
+    tse_protocolo: "DF033652026",
+    results: [
+      { candidate_name: "Celina Leao", percentage: 55.0 },
+      { candidate_name: "Leandro Grass", percentage: 37.0 },
+    ],
+  },
 ];
 
 async function main() {
