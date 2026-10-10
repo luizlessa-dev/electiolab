@@ -123,9 +123,13 @@ export function validarEA20(
 
   // --- bloco de seções (s) e eleitorado (e): decomposições internas ---
   add("s.ts = s.st + s.snt", "bloqueante", n(s.ts), n(s.st) + n(s.snt));
-  add("s.si + s.sni = s.ts", "bloqueante", n(s.ts), n(s.si) + n(s.sni));
+  // `si`/`sni` (instaladas / não instaladas) só são preenchidos pelo TSE depois que as
+  // urnas abrem: no oficial pré-eleição vêm `0`/`0` com `ts` > 0. Por isso são aviso, não
+  // bloqueio (o simulado, sempre em 100%, não mostrava isso). A integridade das seções
+  // continua garantida por `s.ts = s.st + s.snt`.
+  add("s.si + s.sni = s.ts", "aviso", n(s.ts), n(s.si) + n(s.sni));
   add("e.te = e.est + e.esnt", "bloqueante", n(e.te), n(e.est) + n(e.esnt));
-  add("e.esi + e.esni = e.te", "bloqueante", n(e.te), n(e.esi) + n(e.esni));
+  add("e.esi + e.esni = e.te", "aviso", n(e.te), n(e.esi) + n(e.esni));
   // Abaixo de 100% não sabemos se `esi` já conta seções instaladas mas não totalizadas,
   // então esta fica como aviso (todas as amostras estão em and='f').
   add("e.c + e.a = e.esi", "aviso", n(e.esi), n(e.c) + n(e.a));

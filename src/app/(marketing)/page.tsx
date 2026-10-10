@@ -19,6 +19,7 @@ import {
   XCircle,
   Mail,
 } from "lucide-react";
+import { SegundoTurnoHomeDestaque } from "@/components/segundo-turno/home-destaque";
 import { NewsletterSignup } from "@/components/newsletter/signup-form";
 import { formatCount, getHomeStats, getInstitutesRanking, getLatestPresidentialPoll } from "@/lib/marketing-data";
 
@@ -288,6 +289,7 @@ export default async function HomePage() {
           </Link>
           <nav className="hidden md:flex items-center gap-6">
             {[
+              { href: "/segundo-turno", label: "2º turno" },
               { href: "/candidatos", label: "Candidatos" },
               { href: "/comparar", label: "Comparar" },
               { href: "/mapa", label: "Mapa" },
@@ -313,6 +315,7 @@ export default async function HomePage() {
       </header>
 
       <main>
+      <SegundoTurnoHomeDestaque />
       {/* Hero */}
       <section className="py-20 md:py-32 px-4 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />

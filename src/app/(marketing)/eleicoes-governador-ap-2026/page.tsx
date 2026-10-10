@@ -5,6 +5,7 @@ import { BarChart3, ArrowLeft, ExternalLink, HelpCircle, TrendingUp } from "luci
 import { getLatestStateGovPoll } from "@/lib/marketing-data";
 import { StatePollSnapshotCard } from "@/components/state-poll-snapshot";
 import { buildStateRaceDataset } from "@/lib/governor-dataset";
+import { PrimeiroTurnoBanner } from "@/components/segundo-turno/primeiro-turno-banner";
 
 export const revalidate = 3600;
 
@@ -87,6 +88,7 @@ export default async function GovernadorAP2026Page() {
         </div>
       </header>
       <main className="max-w-4xl mx-auto px-4 py-16 space-y-16">
+        <PrimeiroTurnoBanner uf="ap" />
         <div className="space-y-4">
           <p className="text-xs font-mono uppercase tracking-wider text-primary">Governador Amapá · Eleições 2026</p>
           <h1 className="text-3xl font-bold tracking-tight">Pesquisas Governador AP 2026 — Dr. Furlan 65,1% Domina</h1>

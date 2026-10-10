@@ -6,6 +6,7 @@ import { getLatestStateGovPoll, getStateRunoffScenarios, toRunoffTabs } from "@/
 import { StateRunoffTabs } from "@/components/state-runoff-tabs";
 import { StatePollSnapshotCard } from "@/components/state-poll-snapshot";
 import { buildStateRaceDataset } from "@/lib/governor-dataset";
+import { PrimeiroTurnoBanner } from "@/components/segundo-turno/primeiro-turno-banner";
 
 export const revalidate = 3600;
 
@@ -87,6 +88,7 @@ export default async function GovernadorSP2026Page() {
         </div>
       </header>
       <main className="max-w-4xl mx-auto px-4 py-16 space-y-16">
+        <PrimeiroTurnoBanner uf="sp" />
         <div className="space-y-4">
           <p className="text-xs font-mono uppercase tracking-wider text-primary">Governador São Paulo · Eleições 2026</p>
           <h1 className="text-3xl font-bold tracking-tight">Pesquisas Governador SP 2026 — Tarcísio Lidera com 46%</h1>
