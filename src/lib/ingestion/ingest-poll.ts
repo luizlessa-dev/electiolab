@@ -6,6 +6,63 @@
 import { createClient } from "@/lib/supabase/server";
 import type { PollIngestionPayload, IngestionResult } from "./types";
 
+type SupabaseClient = Awaited<ReturnType<typeof createClient>>;
+
+type CandidateResolution =
+  | { ok: true; resolved: Array<{ candidate_id: string; percentage: number }> }
+  | { ok: false; error: string };
+
+/**
+ * Resolve todos os candidatos de uma vez (uma query), antes de qualquer
+ * persistência. Rejeita nome não encontrado e nome ambíguo (match com mais
+ * de um candidato na mesma eleição) em vez de escolher um arbitrariamente —
+ * ver memória "candidatos-duplicados-mesma-eleicao" (mesma pessoa, 2 linhas,
+ * nomes iguais/CPF diferente, quebra ingestão silenciosamente).
+ */
+async function resolveCandidates(
+  supabase: SupabaseClient,
+  electionId: string,
+  results: PollIngestionPayload["results"]
+): Promise<CandidateResolution> {
+  const { data: candidates, error } = await supabase
+    .from("candidates")
+    .select("id, name")
+    .eq("election_id", electionId)
+    .eq("is_active", true);
+
+  if (error) {
+    return { ok: false, error: `Erro ao consultar candidatos: ${error.message}` };
+  }
+
+  const resolved: Array<{ candidate_id: string; percentage: number }> = [];
+  const problems: string[] = [];
+
+  for (const result of results) {
+    const target = result.candidate_name.trim().toLowerCase();
+    const matches = (candidates ?? []).filter(
+      (c) => c.name.trim().toLowerCase() === target
+    );
+
+    if (matches.length === 0) {
+      problems.push(`Candidato não encontrado: "${result.candidate_name}"`);
+    } else if (matches.length > 1) {
+      problems.push(
+        `Candidato ambíguo: "${result.candidate_name}" corresponde a ${matches.length} candidatos (ids: ${matches
+          .map((m) => m.id)
+          .join(", ")})`
+      );
+    } else {
+      resolved.push({ candidate_id: matches[0].id, percentage: result.percentage });
+    }
+  }
+
+  if (problems.length > 0) {
+    return { ok: false, error: problems.join("; ") };
+  }
+
+  return { ok: true, resolved };
+}
+
 export async function ingestPoll(payload: PollIngestionPayload): Promise<IngestionResult> {
   const supabase = await createClient();
 
@@ -50,7 +107,16 @@ export async function ingestPoll(payload: PollIngestionPayload): Promise<Ingesti
     };
   }
 
-  // 4. Inserir poll
+  // 4. Resolver TODOS os candidatos antes de criar qualquer registro —
+  // interrompe aqui (sem tocar em `polls`) se algum nome não for encontrado
+  // ou for ambíguo.
+  const resolution = await resolveCandidates(supabase, election.id, payload.results);
+
+  if (!resolution.ok) {
+    return { success: false, error: resolution.error };
+  }
+
+  // 5. Inserir poll
   const { data: poll, error: pollError } = await supabase
     .from("polls")
     .insert({
@@ -76,34 +142,48 @@ export async function ingestPoll(payload: PollIngestionPayload): Promise<Ingesti
     return { success: false, error: pollError?.message ?? "Erro ao inserir poll" };
   }
 
-  // 5. Resolver candidatos e inserir resultados
-  const errors: string[] = [];
+  // 6. Inserir poll_results em UM único insert — uma instrução SQL com
+  // múltiplas linhas é atômica no Postgres (tudo ou nada), ao contrário do
+  // loop anterior que inseria linha a linha e podia persistir parte dos
+  // resultados se uma falhasse no meio.
+  //
+  // Limitação conhecida: o Supabase JS client não expõe transação entre
+  // tabelas (polls + poll_results são duas chamadas HTTP separadas ao
+  // PostgREST), e não há função/RPC no projeto que faça esse insert
+  // combinado. Se o insert de poll_results falhar, fazemos um delete de
+  // compensação no poll recém-criado — não é uma garantia transacional real
+  // (existe uma janela entre as duas chamadas, e se o delete de compensação
+  // também falhar, o poll órfão fica registrado no erro para limpeza
+  // manual). Não inventamos uma garantia que o projeto não tem.
+  if (resolution.resolved.length > 0) {
+    const { error: resultsError } = await supabase.from("poll_results").insert(
+      resolution.resolved.map((r) => ({
+        poll_id: poll.id,
+        candidate_id: r.candidate_id,
+        percentage: r.percentage,
+      }))
+    );
 
-  for (const result of payload.results) {
-    const { data: candidate } = await supabase
-      .from("candidates")
-      .select("id")
-      .eq("election_id", election.id)
-      .ilike("name", result.candidate_name)
-      .limit(1)
-      .single();
+    if (resultsError) {
+      const { error: rollbackError } = await supabase.from("polls").delete().eq("id", poll.id);
 
-    if (!candidate) {
-      errors.push(`Candidato não encontrado: "${result.candidate_name}" — resultado ignorado`);
-      continue;
+      if (rollbackError) {
+        return {
+          success: false,
+          error: `Erro ao inserir poll_results: ${resultsError.message}. Rollback do poll ${poll.id} também falhou (${rollbackError.message}) — requer limpeza manual.`,
+        };
+      }
+
+      return {
+        success: false,
+        error: `Erro ao inserir poll_results: ${resultsError.message}`,
+      };
     }
-
-    await supabase.from("poll_results").insert({
-      poll_id: poll.id,
-      candidate_id: candidate.id,
-      percentage: result.percentage,
-    });
   }
 
   return {
     success: true,
     skipped: false,
     poll_id: poll.id,
-    ...(errors.length > 0 && { reason: errors.join("; ") }),
   };
 }
