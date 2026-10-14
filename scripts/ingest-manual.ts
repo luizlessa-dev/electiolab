@@ -12147,6 +12147,75 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Leandro Grass", percentage: 37.0 },
     ],
   },
+
+  // ─── Curadoria 14/10/2026 — via fila pesqele_missing ──────────────────────
+
+  // Datafolha · Governador MG · 1º turno · 02-03 out 2026 · TSE MG-06705/2026 · n=2.010 · presencial
+  // Fonte: https://www.dgabc.com.br/Noticia/4350632/em-minas-cleitinho-lidera-com-53-dos-votos-validos-diz-datafolha-patrus-tem-21-e-kalil-9
+  // Percentuais sobre o total de entrevistados (não "votos válidos", que seriam 53/21/9).
+  // Curado em 2026-10-14 via migration (supabase/migrations/20261014120000_curate_pesqele_polls_2026_10_14.sql) —
+  // insert feito corretamente pelo arquivo de migration, não via execute_sql direto.
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador MG 2026 - 1º Turno",
+    publication_date: "2026-10-03",
+    fieldwork_start: "2026-10-02",
+    fieldwork_end: "2026-10-03",
+    sample_size: 2010,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.dgabc.com.br/Noticia/4350632/em-minas-cleitinho-lidera-com-53-dos-votos-validos-diz-datafolha-patrus-tem-21-e-kalil-9",
+    tse_protocolo: "MG067052026",
+    results: [
+      { candidate_name: "Cleitinho", percentage: 44.0 },
+      { candidate_name: "Patrus Ananias", percentage: 18.0 },
+      { candidate_name: "Alexandre Kalil", percentage: 8.0 },
+    ],
+  },
+
+  // Datafolha · Governador SP · 1º turno · 02-03 out 2026 · TSE SP-09337/2026 · n=2.520 · presencial
+  // Fonte: https://tribunadejundiai.com.br/politica/eleicoes-2026/datafolha-tarcisio-tem-60-dos-votos-validos-e-haddad-35-em-sao-paulo/
+  // Percentuais sobre o total de entrevistados (não "votos válidos", que seriam 60/35).
+  // Curado em 2026-10-14 via migration (supabase/migrations/20261014120000_curate_pesqele_polls_2026_10_14.sql).
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador SP 2026 - 1º Turno",
+    publication_date: "2026-10-03",
+    fieldwork_start: "2026-10-02",
+    fieldwork_end: "2026-10-03",
+    sample_size: 2520,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://tribunadejundiai.com.br/politica/eleicoes-2026/datafolha-tarcisio-tem-60-dos-votos-validos-e-haddad-35-em-sao-paulo/",
+    tse_protocolo: "SP093372026",
+    results: [
+      { candidate_name: "Tarcísio", percentage: 55.0 },
+      { candidate_name: "Haddad", percentage: 32.0 },
+    ],
+  },
+
+  // Quaest · Governador DF · 2º turno · 08-11 out 2026 · TSE DF-08737/2026 · n=1.104 · presencial
+  // Fonte: https://sbtnews.sbt.com.br/noticia/politica/quaest-df-celina-leao-tem-53-e-leandro-grass-33
+  // Protocolo TSE não citado na matéria — casado por instituto+amostra+UF+data exatos (única
+  // rodada Quaest nessa janela de campo para o DF). Percentuais já são sobre o total de
+  // entrevistados (53 + 33 + 8% branco/nulo + 6% indeciso = 100%).
+  // Curado em 2026-10-14 via migration (supabase/migrations/20261014120000_curate_pesqele_polls_2026_10_14.sql).
+  {
+    institute_name: "Quaest",
+    election_name: "Governador DF 2026 - 2º Turno",
+    publication_date: "2026-10-12",
+    fieldwork_start: "2026-10-08",
+    fieldwork_end: "2026-10-11",
+    sample_size: 1104,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://sbtnews.sbt.com.br/noticia/politica/quaest-df-celina-leao-tem-53-e-leandro-grass-33",
+    tse_protocolo: "DF087372026",
+    results: [
+      { candidate_name: "Celina Leao", percentage: 53.0 },
+      { candidate_name: "Leandro Grass", percentage: 33.0 },
+    ],
+  },
 ];
 
 async function main() {
