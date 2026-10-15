@@ -12216,6 +12216,50 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Leandro Grass", percentage: 33.0 },
     ],
   },
+
+  // Quaest · Presidencial 2026 · 2º turno · 10-13 out 2026 · TSE BR-08729/2026 · n=2.154 · presencial
+  // Fonte: https://exame.com/brasil/pesquisa-para-presidente-quaest-flavio-bolsonaro-tem-46-e-lula-44/
+  // Percentuais sobre o total de entrevistados (não "votos válidos", que seriam Flávio 51/Lula 49).
+  // Curado em 2026-10-15 via migration (supabase/migrations/20261015120000_curate_pesqele_polls_2026_10_15.sql).
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-10-14",
+    fieldwork_start: "2026-10-10",
+    fieldwork_end: "2026-10-13",
+    sample_size: 2154,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://exame.com/brasil/pesquisa-para-presidente-quaest-flavio-bolsonaro-tem-46-e-lula-44/",
+    tse_protocolo: "BR087292026",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 46.0 },
+      { candidate_name: "Lula", percentage: 44.0 },
+    ],
+  },
+
+  // Nexus (BTG Pactual) · Presidencial 2026 · 2º turno · 10-12 out 2026 · TSE BR-07997/2026 · n=2.000 · telefonica
+  // Protocolo TSE citado explicitamente na matéria de registro da rodada. Fonte:
+  // https://www.dgabc.com.br/Noticia/4352364/flavio-bolsonaro-tem-48-e-lula-45-em-empate-tecnico-aponta-pesquisa-btg-nexus
+  // Percentuais sobre o total de entrevistados (não "votos válidos", que seriam Flávio 52/Lula 48);
+  // 5% recusa/branco/nulo + 2% não sabe/não respondeu completam os 100%.
+  // Curado em 2026-10-15 via migration (supabase/migrations/20261015120000_curate_pesqele_polls_2026_10_15.sql).
+  {
+    institute_name: "Nexus",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-10-13",
+    fieldwork_start: "2026-10-10",
+    fieldwork_end: "2026-10-12",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.dgabc.com.br/Noticia/4352364/flavio-bolsonaro-tem-48-e-lula-45-em-empate-tecnico-aponta-pesquisa-btg-nexus",
+    tse_protocolo: "BR079972026",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 48.0 },
+      { candidate_name: "Lula", percentage: 45.0 },
+    ],
+  },
 ];
 
 async function main() {
