@@ -14,6 +14,17 @@
  * Match com ElectioLab: por **CPF** ou **id_tse_candidato**.
  */
 
+import {
+  normalizarVoto,
+  resumoCamara,
+  rotuloResultado,
+  resumoSenado,
+  type AggCamaraRow,
+  type ResumoSenadorRow,
+  type VotacoesParlamentar,
+  type VotoRecente,
+} from "@/lib/votacoes";
+
 const TF_URL = process.env.TF_SUPABASE_URL ?? "https://redggdtakzmsabwvjzhb.supabase.co";
 const TF_KEY = process.env.TF_SUPABASE_ANON_KEY ?? "";
 
@@ -37,7 +48,7 @@ async function tfFetch<T>(path: string): Promise<T> {
 // ─────────────────────────────────────────────────────────────────
 // Lookup parlamentar por CPF
 // ─────────────────────────────────────────────────────────────────
-type Parlamentar = {
+export type Parlamentar = {
   id: string;
   cpf: string;
   nome: string;
@@ -222,4 +233,73 @@ export async function getTopCeapSpenders(ano = 2025, limit = 50): Promise<CeapTo
     ...r,
     parlamentar: byCamId.get(r.deputado_id_externo),
   }));
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Votações de plenário (Câmara e Senado)
+// ─────────────────────────────────────────────────────────────────
+// Câmara: `plen_votos`/`plen_votacoes` têm RLS sem policy (o anon recebe `[]`),
+// então a ficha lê só o agregado público `plen_deputado_agg` e a view
+// materializada `mv_votos_recentes_parlamentar`. A presença só é confiável com a
+// janela de exercício (`v_cam_janela_exercicio`): ver resumoCamara().
+// Senado: `mv_voto_resumo_senador`. Migrations:
+//   supabase/migrations/20261003130000_tf_votos_views_parlamentar.sql
+// Regras e limites: docs/BASTIDORES-POS-ELEICAO.md §8.
+
+const RECENTES_NA_FICHA = 10;
+
+type RecenteRow = {
+  votacao_id: string;
+  data: string;
+  descricao: string | null;
+  materia: string | null;
+  resultado: string | null;
+  voto: string | null;
+};
+
+async function getVotosRecentes(casa: "camara" | "senado", idExterno: number): Promise<VotoRecente[]> {
+  const rows = await tfFetch<RecenteRow[]>(
+    `mv_votos_recentes_parlamentar?casa=eq.${casa}&id_externo=eq.${idExterno}` +
+      `&select=votacao_id,data,descricao,materia,resultado,voto&order=data.desc,votacao_id.desc&limit=${RECENTES_NA_FICHA}`,
+  );
+  return rows.map((r) => ({
+    votacaoId: r.votacao_id,
+    data: r.data,
+    descricao: r.descricao,
+    materia: r.materia,
+    resultado: rotuloResultado(r.resultado),
+    voto: normalizarVoto(r.voto),
+  }));
+}
+
+export async function getVotacoesParlamentar(p: Parlamentar): Promise<VotacoesParlamentar | null> {
+  if (p.casa_legislativa === "senado" && p.id_senado) {
+    const [resumoRows, recentes] = await Promise.all([
+      tfFetch<ResumoSenadorRow[]>(`mv_voto_resumo_senador?cod_parlamentar=eq.${p.id_senado}&select=*&limit=1`),
+      getVotosRecentes("senado", p.id_senado),
+    ]);
+    if (!resumoRows[0]) return null;
+    return { resumo: resumoSenado(resumoRows[0]), recentes };
+  }
+
+  if (p.casa_legislativa === "camara" && p.id_camara) {
+    const [aggRows, janelaRows, recentes] = await Promise.all([
+      tfFetch<AggCamaraRow[]>(
+        `plen_deputado_agg?deputado_id=eq.${p.id_camara}` +
+          `&select=id_legislatura,total_votacoes,presencas,votos_sim,votos_nao,votos_abstencao,votos_obstrucao,pct_presenca,concordancia_partido` +
+          `&order=id_legislatura.desc&limit=1`,
+      ),
+      tfFetch<Array<{ id_legislatura: number }>>(
+        `v_cam_janela_exercicio?deputado_id=eq.${p.id_camara}&select=id_legislatura&order=id_legislatura.desc&limit=1`,
+      ),
+      getVotosRecentes("camara", p.id_camara),
+    ]);
+    if (!aggRows[0]) return null;
+    return {
+      resumo: resumoCamara(aggRows[0], janelaRows[0]?.id_legislatura ?? null, p.partido_atual ?? p.partido),
+      recentes,
+    };
+  }
+
+  return null;
 }

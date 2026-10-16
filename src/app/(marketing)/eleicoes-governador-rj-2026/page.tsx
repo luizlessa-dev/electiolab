@@ -4,6 +4,7 @@ import { BarChart3, ArrowLeft, HelpCircle, TrendingUp } from "lucide-react";
 import { getLatestStateGovPoll, getStateRunoffScenarios, toRunoffTabs } from "@/lib/marketing-data";
 import { StateRunoffTabs } from "@/components/state-runoff-tabs";
 import { StatePollSnapshotCard } from "@/components/state-poll-snapshot";
+import { PrimeiroTurnoBanner } from "@/components/segundo-turno/primeiro-turno-banner";
 
 export const revalidate = 3600;
 export const metadata: Metadata = {
@@ -36,6 +37,7 @@ export default async function GovernadorRJ2026Page() {
         </div>
       </header>
       <main className="max-w-4xl mx-auto px-4 py-16 space-y-16">
+        <PrimeiroTurnoBanner uf="rj" />
         <div className="space-y-4">
           <p className="text-xs font-mono uppercase tracking-wider text-primary">Governador Rio de Janeiro · Eleições 2026</p>
           <h1 className="text-3xl font-bold tracking-tight">Pesquisas Governador RJ 2026 — Eduardo Paes Lidera</h1>

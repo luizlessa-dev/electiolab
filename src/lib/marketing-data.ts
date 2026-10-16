@@ -553,9 +553,11 @@ export async function getHomeStats(): Promise<HomeStats> {
       .or(PROVENIENCIA_PUBLICA),
     supabase
       .from("candidates")
-      .select("id, election:elections!inner(type, year)", { count: "exact", head: true })
+      .select("id, election:elections!inner(type, year, round)", { count: "exact", head: true })
       .eq("is_active", true)
       .eq("election.year", 2026)
+      // round=1: os finalistas copiados pras elections de 2º turno são as mesmas pessoas.
+      .eq("election.round", 1)
       .in("election.type", ["governador", "senador"]),
     // 1 presidencial (nacional) + 27 governador + 27 senador (uma corrida por
     // UF) = 55 eleições em 2026, não "3" (isso contava tipos de cargo, não

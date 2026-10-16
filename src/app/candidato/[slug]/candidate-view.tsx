@@ -2,7 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { getCandidateBySlug, getNewsForCandidate, type CandidateElectionOption } from "@/lib/queries";
 import { getCandidateEditorial } from "@/lib/marketing-data";
-import { getParlamentarByCpf, getCeapByCamaraId, crossCeapWithCeis } from "@/lib/tf-data";
+import { getParlamentarByCpf, getCeapByCamaraId, getVotacoesParlamentar, crossCeapWithCeis } from "@/lib/tf-data";
+import { temConteudo } from "@/lib/votacoes";
+import { VotacoesParlamentar } from "@/components/votacoes-parlamentar";
+import { CeapParlamentar } from "@/components/ceap-parlamentar";
 import {
   ArrowLeft,
   Newspaper,
@@ -21,7 +24,6 @@ import {
   Home,
   Globe,
   Wallet,
-  Receipt,
   History,
   Trophy,
   XCircle as XCircleIcon,
@@ -122,6 +124,12 @@ export async function CandidateView({ c, slug, canonicalPath, elections }: Candi
   const candidateCpf = c.cpf;
   const parlamentar = candidateCpf ? await getParlamentarByCpf(candidateCpf) : null;
   const ceap = parlamentar?.id_camara ? await getCeapByCamaraId(parlamentar.id_camara) : null;
+
+  // Votações de plenário (Câmara e Senado) pela ponte de CPF. Atrás de feature flag:
+  // a página é ISR de 7 dias, então ligar/desligar exige revalidar (POST /api/revalidate).
+  const votacoesAtivas = process.env.FICHA_VOTACOES === "1";
+  const votacoesRaw = votacoesAtivas && parlamentar ? await getVotacoesParlamentar(parlamentar) : null;
+  const votacoes = temConteudo(votacoesRaw) ? votacoesRaw : null;
 
   // Cruzamento CEAP × CEIS — alerta se algum fornecedor está sancionado
   const ceisMatches = ceap?.topFornecedores
@@ -866,92 +874,15 @@ export async function CandidateView({ c, slug, canonicalPath, elections }: Candi
         )}
 
         {/* Cota Parlamentar (CEAP) — só aparece se candidato é deputado federal */}
-        {ceap && (
-          <section>
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <Receipt className="h-4 w-4 text-primary" />
-                <h2 className="text-xl font-bold">Cota Parlamentar (CEAP)</h2>
-              </div>
-              <span className="text-xs text-muted-foreground">
-                Câmara dos Deputados · últimos 24 meses
-              </span>
-            </div>
-            <div className="grid md:grid-cols-2 gap-3">
-              <div className="rounded-lg border border-border bg-card p-4">
-                <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-2">Total declarado</p>
-                <p className="text-2xl font-mono font-bold tabular-nums">{fmtBig(ceap.total)}</p>
-                <p className="text-[11px] text-muted-foreground mt-1">
-                  Últimos 12 meses: <strong>{fmtBig(ceap.totalRecente)}</strong>
-                </p>
-              </div>
-              <div className="rounded-lg border border-border bg-card p-4">
-                <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-2">Top categoria</p>
-                {ceap.byType[0] && (
-                  <>
-                    <p className="text-sm font-semibold truncate">{ceap.byType[0].tipo}</p>
-                    <p className="text-lg font-mono font-bold tabular-nums">{fmtBig(ceap.byType[0].total)}</p>
-                    <p className="text-[11px] text-muted-foreground">{ceap.byType[0].count} despesas</p>
-                  </>
-                )}
-              </div>
-            </div>
+        {ceap && <CeapParlamentar ceap={ceap} />}
 
-            {ceap.byType.length > 1 && (
-              <div className="rounded-lg border border-border bg-card overflow-hidden mt-3">
-                <div className="px-4 py-2 border-b border-border bg-muted/30">
-                  <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
-                    Distribuição por categoria
-                  </p>
-                </div>
-                <div className="divide-y divide-border/30 text-sm">
-                  {ceap.byType.slice(0, 8).map((t) => (
-                    <div key={t.tipo} className="flex items-center justify-between px-4 py-2.5">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs text-foreground truncate uppercase tracking-wide">{t.tipo}</p>
-                        <p className="text-[10px] text-muted-foreground">{t.count} despesas</p>
-                      </div>
-                      <span className="font-mono font-bold tabular-nums shrink-0">{fmtBig(t.total)}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+        {/* Votações de plenário (fonte oficial via TF, ligadas por CPF) */}
+        {votacoes && <VotacoesParlamentar dados={votacoes} />}
 
-            {ceap.topFornecedores.length > 0 && (
-              <div className="rounded-lg border border-border bg-card overflow-hidden mt-3">
-                <div className="px-4 py-2 border-b border-border bg-muted/30">
-                  <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
-                    Top 5 fornecedores
-                  </p>
-                </div>
-                <div className="divide-y divide-border/30 text-sm">
-                  {ceap.topFornecedores.slice(0, 5).map((f, i) => (
-                    <div key={`${f.fornecedor}-${i}`} className="flex items-center justify-between px-4 py-2.5">
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-xs truncate">{f.fornecedor}</p>
-                        <p className="text-[10px] font-mono text-muted-foreground">
-                          {f.cnpj ? `CNPJ ${f.cnpj}` : "—"} · {f.count} pagamentos
-                        </p>
-                      </div>
-                      <span className="font-mono font-bold tabular-nums shrink-0">{fmtBig(f.total)}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <p className="text-xs text-muted-foreground mt-3">
-              Fonte: Câmara dos Deputados — Cota Parlamentar via Transparência Federal.{" "}
-              <Link href="/cota-parlamentar" className="text-primary hover:underline">
-                Ver ranking completo →
-              </Link>
-            </p>
-          </section>
-        )}
-
-        {/* Atividade legislativa — agrupada por tópico */}
-        {votes.length > 0 && (
+        {/* Atividade legislativa — agrupada por tópico. Legado: votos ligados por NOME
+            (legislative_votes). Some quando o bloco acima aparece, para não exibir duas
+            listas de votos que podem divergir. */}
+        {votes.length > 0 && !votacoes && (
           <section>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">

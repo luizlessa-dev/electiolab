@@ -5,6 +5,7 @@ import { BarChart3, ArrowLeft, ExternalLink, HelpCircle, TrendingUp } from "luci
 import { getLatestStateGovPoll } from "@/lib/marketing-data";
 import { StatePollSnapshotCard } from "@/components/state-poll-snapshot";
 import { buildStateRaceDataset } from "@/lib/governor-dataset";
+import { PrimeiroTurnoBanner } from "@/components/segundo-turno/primeiro-turno-banner";
 
 export const revalidate = 3600;
 
@@ -87,6 +88,7 @@ export default async function GovernadorAL2026Page() {
         </div>
       </header>
       <main className="max-w-4xl mx-auto px-4 py-16 space-y-16">
+        <PrimeiroTurnoBanner uf="al" />
         <div className="space-y-4">
           <p className="text-xs font-mono uppercase tracking-wider text-primary">Governador Alagoas · Eleições 2026</p>
           <h1 className="text-3xl font-bold tracking-tight">Pesquisas Governador AL 2026 — JHC 47,6% vs Renan Filho 40,9%</h1>
