@@ -5,7 +5,7 @@
  *
  * Roda contra um BASE (default produção). Verifica:
  *  1. Sentry — força 500 em /api/test-sentry e checa se evento foi enviado.
- *  2. Newsletter — POST em /api/newsletter/subscribe com email descartável.
+ *  2. Newsletter — POST em /api/newsletter/subscribe com o endereço de teste do Resend (ver SMOKE_EMAIL).
  *  3. Stripe — GET em /api/stripe/checkout (com priceId test) deve retornar 200 + URL.
  *  4. API v1 — verifica /api/v1/elections (sem auth, anônimo).
  *  5. /openapi.yaml — confere que serve com Content-Type texto.
@@ -15,11 +15,21 @@
  *   npx tsx scripts/smoke-tests.ts --base=https://electiolab-xxx.vercel.app
  *   npx tsx scripts/smoke-tests.ts --skip=stripe,newsletter   # pular específicos
  *   SMOKE_EMAIL=test+a@gmail.com npx tsx scripts/smoke-tests.ts
+ *
+ * Este script roda CONTRA PRODUÇÃO (no CI, a cada push e PR para main) e o passo da newsletter
+ * dispara uma confirmação REAL pelo Resend, de noreply@electiolab.com (o mesmo remetente do
+ * relatório Pro e do digest). Por isso o endereço de teste precisa ser entregável:
+ *   - o padrão é o endereço de teste do Resend (delivered+...@resend.dev), que aceita o envio e não
+ *     gera bounce, e o rótulo é FIXO: o route faz upsert por e-mail, então todo run reaproveita UMA
+ *     linha em newsletter_subscribers em vez de criar uma nova (eram 221 linhas de lixo e 221 envios);
+ *   - NÃO usar domínio inventado: a versão anterior usava smoke+<timestamp>@electiolab.dev, domínio
+ *     que não existe (NXDOMAIN), e cada confirmação virava um hard bounce na reputação do remetente.
  */
 
 const BASE = process.argv.find((a) => a.startsWith("--base="))?.split("=")[1] ?? "https://electiolab.com";
 const SKIP = new Set((process.argv.find((a) => a.startsWith("--skip="))?.split("=")[1] ?? "").split(","));
-const SMOKE_EMAIL = process.env.SMOKE_EMAIL ?? `smoke+${Date.now()}@electiolab.dev`;
+const SMOKE_EMAIL = process.env.SMOKE_EMAIL ?? "delivered+ci-smoke@resend.dev";
+const DOMINIO_QUE_NAO_EXISTE = /@electiolab\.dev$/i; // NXDOMAIN: cada envio vira hard bounce
 
 let passCount = 0, failCount = 0;
 let results: { name: string; ok: boolean; status?: number; note: string }[] = [];
@@ -64,6 +74,12 @@ async function check(name: string, fn: () => Promise<{ ok: boolean; status?: num
 
   // 2. Newsletter: POST com email descartável
   await check("newsletter subscribe", async () => {
+    if (DOMINIO_QUE_NAO_EXISTE.test(SMOKE_EMAIL)) {
+      return {
+        ok: false,
+        note: `${SMOKE_EMAIL}: electiolab.dev não existe (NXDOMAIN) e o envio viraria bounce; use o padrão (resend.dev) ou um e-mail real`,
+      };
+    }
     const res = await fetch(`${BASE}/api/newsletter/subscribe`, {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -75,7 +91,7 @@ async function check(name: string, fn: () => Promise<{ ok: boolean; status?: num
       ok,
       status: res.status,
       note: ok
-        ? `confere inbox de ${SMOKE_EMAIL} pra email de confirmação (Resend)`
+        ? `confirmação enviada a ${SMOKE_EMAIL} (um cadastro por endereço; repetir não cria linha nova)`
         : `body: ${body.slice(0, 200)}`,
     };
   });
