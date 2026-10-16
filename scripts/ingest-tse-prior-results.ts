@@ -342,5 +342,12 @@ async function ingestYear(ano: number, ourCpfs: Map<string, string>) {
     await ingestYear(ano, ourCpfs);
   }
 
+  if (APPLY) {
+    console.log("🔄 Refresh historic_election_state_summary...");
+    const { error } = await sb.rpc("refresh_historic_election_state_summary");
+    if (error) console.error(`  ❌ refresh falhou: ${error.message}`);
+    else console.log("  ✅ view atualizada");
+  }
+
   console.log("\n✅ Concluído");
 })();

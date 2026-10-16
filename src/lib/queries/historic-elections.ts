@@ -1,9 +1,16 @@
 /**
- * Queries para páginas históricas de eleição (`/eleicao-2018`, `/eleicao-2022`).
+ * Queries para páginas históricas de eleição (`/eleicao-2018`, `/eleicao-2022`
+ * e `/eleicao-2018/[uf]`, `/eleicao-2022/[uf]`).
  *
- * Estratégia: faz uma única leitura paginada de `prior_election_results` para
- * o ano em questão e agrega por (candidato × cargo × UF) em memória. Cacheado
- * pelo ISR da rota chamadora (revalidate = 86400).
+ * getHistoricElectionData: usada pelas páginas de UF — lê `prior_election_results`
+ * já filtrada por estado (rápido graças a idx_prior_election_results_year_round_state)
+ * e agrega por (candidato × cargo) em memória.
+ *
+ * getHistoricElectionSummary: usada pelas páginas-índice (sem UF, todas as
+ * 27 UFs de uma vez) — lê da materialized view `historic_election_state_summary`,
+ * já pré-agregada, em vez de paginar `prior_election_results` inteira.
+ *
+ * Ambas cacheadas pelo ISR da rota chamadora (revalidate = 86400).
  */
 import { createClient } from "@supabase/supabase-js";
 
@@ -104,6 +111,58 @@ export async function getHistoricElectionData(year: number, stateFilter?: string
 
   // Ordena por votos desc dentro de cargo
   const all = [...map.values()].sort((a, b) => b.total_votes - a.total_votes);
+
+  const byOffice: Record<string, HistoricResult[]> = {};
+  const byOfficeAndState: Record<string, Record<string, HistoricResult[]>> = {};
+  let electedCount = 0;
+
+  for (const r of all) {
+    if (!byOffice[r.election_type]) byOffice[r.election_type] = [];
+    byOffice[r.election_type].push(r);
+
+    if (!byOfficeAndState[r.election_type]) byOfficeAndState[r.election_type] = {};
+    if (!byOfficeAndState[r.election_type][r.state]) byOfficeAndState[r.election_type][r.state] = [];
+    byOfficeAndState[r.election_type][r.state].push(r);
+
+    if (r.result_status === "eleito") electedCount++;
+  }
+
+  return {
+    year,
+    totalRows: rows.length,
+    byOffice,
+    byOfficeAndState,
+    electedCount,
+  };
+}
+
+/**
+ * Igual a getHistoricElectionData, mas para as páginas-índice (sem UF): lê
+ * da materialized view historic_election_state_summary em vez de paginar
+ * prior_election_results inteira (que sem filtro de estado é ~1M+ linhas
+ * por ano). A view já vem agregada 1 linha por (year, election_type,
+ * state, candidate_id) — ver supabase/migrations/20260926110000_historic_election_state_summary_view.sql
+ * — então só falta ordenar por votos e agrupar, sem round/candidate dedup
+ * (isso já foi feito na view).
+ */
+export async function getHistoricElectionSummary(year: number): Promise<HistoricElectionData> {
+  const sb = publicClient();
+  const PAGE = 1000;
+  const rows: HistoricResult[] = [];
+
+  for (let from = 0; ; from += PAGE) {
+    const { data, error } = await sb
+      .from("historic_election_state_summary")
+      .select("candidate_id, candidate_name, candidate_slug, election_type, state, party, total_votes, result_status")
+      .eq("year", year)
+      .range(from, from + PAGE - 1);
+    if (error) throw error;
+    if (!data?.length) break;
+    rows.push(...(data as HistoricResult[]));
+    if (data.length < PAGE) break;
+  }
+
+  const all = [...rows].sort((a, b) => b.total_votes - a.total_votes);
 
   const byOffice: Record<string, HistoricResult[]> = {};
   const byOfficeAndState: Record<string, Record<string, HistoricResult[]>> = {};

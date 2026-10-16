@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import { getHistoricElectionData } from "@/lib/queries/historic-elections";
+import { getHistoricElectionSummary } from "@/lib/queries/historic-elections";
 import { HistoricElectionPage, buildJsonLd } from "@/components/historic-election/page-template";
 
-// force-dynamic: mesma razão da página /eleicao-2018 (ver esse arquivo) —
-// getHistoricElectionData(2022) sem filtro de estado pagina ~1.85M linhas
-// de prior_election_results por build.
-export const dynamic = "force-dynamic";
+// Mesma razão da página /eleicao-2018 (ver esse arquivo): lê da
+// materialized view em vez de paginar prior_election_results inteira.
+export const revalidate = 86400; // 24h
 
 export const metadata: Metadata = {
   title: "Eleição 2022 — Resultados Completos do TSE",
@@ -22,7 +21,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const data = await getHistoricElectionData(2022);
+  const data = await getHistoricElectionSummary(2022);
   return (
     <>
       <script
