@@ -12260,6 +12260,99 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Lula", percentage: 45.0 },
     ],
   },
+
+  // Quaest · Governador BA · 1º turno · 02-03 out 2026 · TSE BA-02224/2026 · n=2.004 · presencial
+  // Fonte: https://bahiaeconomica.com.br/wp/2026/10/03/pesquisa-quaest-coloca-jeronimo-e-acm-neto-empatados-mas-governador-seria-reeleito-em-1o-turno/
+  // Percentuais sobre o total de entrevistados (não "votos válidos", que seriam Jerônimo 52/ACM
+  // Neto 48); branco-nulo 6% + indeciso 5% completam os 100% junto com Ronaldo Mansur 1%.
+  // Curado em 2026-10-17 via migration (supabase/migrations/20261017120000_curate_pesqele_polls_2026_10_17.sql).
+  {
+    institute_name: "Quaest",
+    election_name: "Governador BA 2026 - 1º Turno",
+    publication_date: "2026-10-03",
+    fieldwork_start: "2026-10-02",
+    fieldwork_end: "2026-10-03",
+    sample_size: 2004,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://bahiaeconomica.com.br/wp/2026/10/03/pesquisa-quaest-coloca-jeronimo-e-acm-neto-empatados-mas-governador-seria-reeleito-em-1o-turno/",
+    tse_protocolo: "BA022242026",
+    results: [
+      { candidate_name: "Jeronimo Rodrigues", percentage: 46.0 },
+      { candidate_name: "ACM Neto", percentage: 42.0 },
+      { candidate_name: "Ronaldo Mansur", percentage: 1.0 },
+    ],
+  },
+
+  // Quaest · Governador Santa Catarina · 1º turno · 02-03 out 2026 · TSE SC-07346/2026 · n=1.800 · presencial
+  // Fonte: https://www.nsctotal.com.br/politica/pesquisa-quaest-nsc-jorginho-mello-pl-lidera-com-71-dos-votos-validos-na-vespera-da-eleicao-veja-numeros
+  // Percentuais sobre o total de entrevistados (não "votos válidos", que seriam Mello 71/Rodrigues
+  // 14/Merísio 12).
+  // Curado em 2026-10-17 via migration (supabase/migrations/20261017120000_curate_pesqele_polls_2026_10_17.sql).
+  {
+    institute_name: "Quaest",
+    election_name: "Governador Santa Catarina 2026",
+    publication_date: "2026-10-03",
+    fieldwork_start: "2026-10-02",
+    fieldwork_end: "2026-10-03",
+    sample_size: 1800,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.nsctotal.com.br/politica/pesquisa-quaest-nsc-jorginho-mello-pl-lidera-com-71-dos-votos-validos-na-vespera-da-eleicao-veja-numeros",
+    tse_protocolo: "SC073462026",
+    results: [
+      { candidate_name: "Jorginho Mello", percentage: 57.0 },
+      { candidate_name: "Joao Rodrigues", percentage: 12.0 },
+      { candidate_name: "Gelson Merisio", percentage: 9.0 },
+    ],
+  },
+
+  // Quaest · Governador Paraná · 1º turno · 02-03 out 2026 · TSE PR-05119/2026 · n=2.004 · presencial
+  // Protocolo TSE citado explicitamente na matéria. Fonte:
+  // https://www.bemparana.com.br/eleicoes-2026/pesquisa-quaest-moro-lidera-com-43-sandro-tem-29-e-requiao-27-para-o-governo-do-parana/
+  // Percentuais sobre o total de entrevistados (não "votos válidos", que seriam Moro 43/Sandro
+  // Alex 29/Requião 27).
+  // Curado em 2026-10-17 via migration (supabase/migrations/20261017120000_curate_pesqele_polls_2026_10_17.sql).
+  {
+    institute_name: "Quaest",
+    election_name: "Governador Parana 2026",
+    publication_date: "2026-10-03",
+    fieldwork_start: "2026-10-02",
+    fieldwork_end: "2026-10-03",
+    sample_size: 2004,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.bemparana.com.br/eleicoes-2026/pesquisa-quaest-moro-lidera-com-43-sandro-tem-29-e-requiao-27-para-o-governo-do-parana/",
+    tse_protocolo: "PR051192026",
+    results: [
+      { candidate_name: "Sergio Moro", percentage: 36.0 },
+      { candidate_name: "Sandro Alex", percentage: 25.0 },
+      { candidate_name: "Requiao Filho", percentage: 23.0 },
+    ],
+  },
+
+  // Quaest · Governador CE · 1º turno · 02-03 out 2026 · TSE CE-04790/2026 · n=2.004 · presencial
+  // Protocolo TSE citado explicitamente na matéria. Fonte:
+  // https://diariodonordeste.verdesmares.com.br/pontopoder/pesquisa-quaest-ceara-elmano-50-e-ciro-49-estao-tecnicamente-empatados-nos-votos-validos--1.3795945
+  // Percentuais sobre o total de entrevistados (não "votos válidos", que seriam Elmano 50/Ciro
+  // 49); branco-nulo 6% + indeciso 10% completam os 100%.
+  // Curado em 2026-10-17 via migration (supabase/migrations/20261017120000_curate_pesqele_polls_2026_10_17.sql).
+  {
+    institute_name: "Quaest",
+    election_name: "Governador CE 2026 - 1º Turno",
+    publication_date: "2026-10-03",
+    fieldwork_start: "2026-10-02",
+    fieldwork_end: "2026-10-03",
+    sample_size: 2004,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://diariodonordeste.verdesmares.com.br/pontopoder/pesquisa-quaest-ceara-elmano-50-e-ciro-49-estao-tecnicamente-empatados-nos-votos-validos--1.3795945",
+    tse_protocolo: "CE047902026",
+    results: [
+      { candidate_name: "Elmano de Freitas", percentage: 42.0 },
+      { candidate_name: "Ciro Gomes", percentage: 41.0 },
+    ],
+  },
 ];
 
 async function main() {
