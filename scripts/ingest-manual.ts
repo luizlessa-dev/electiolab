@@ -12353,6 +12353,99 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Ciro Gomes", percentage: 41.0 },
     ],
   },
+
+  // Real Time Big Data · Governador DF · 2º turno · 09-13 out 2026 · TSE DF-01170/2026 · n=1.600 · telefonica
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/celina-leao-tem-53-contra-36-de-grass-diz-pesquisa/
+  // Percentuais sobre o total de entrevistados (não "votos válidos", que seriam Celina 60/Grass 40).
+  // Curado em 2026-10-18 via migration (supabase/migrations/20261018120000_curate_pesqele_polls_2026_10_18.sql).
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador DF 2026 - 2º Turno",
+    publication_date: "2026-10-14",
+    fieldwork_start: "2026-10-09",
+    fieldwork_end: "2026-10-13",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/celina-leao-tem-53-contra-36-de-grass-diz-pesquisa/",
+    tse_protocolo: "DF011702026",
+    results: [
+      { candidate_name: "Celina Leao", percentage: 53.0 },
+      { candidate_name: "Leandro Grass", percentage: 36.0 },
+    ],
+  },
+
+  // Atlas Intel · Governador Distrito Federal · 1º turno · 27 set-02 out 2026 · TSE DF-04297/2026 · n=1.200 · online
+  // Fonte: https://veronoticias.com/politica/celina-chega-a-453-e-amplia-vantagem-sobre-grass-no-df-diz-pesquisa-atlasintel/
+  // Percentuais sobre o total de entrevistados (não "votos válidos", que seriam Celina 45,3/Grass
+  // 34/Belmonte 11,7); branco-nulo 3,1% + não sabe 2,4% completam os 100%.
+  // Curado em 2026-10-18 via migration (supabase/migrations/20261018120000_curate_pesqele_polls_2026_10_18.sql).
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador Distrito Federal 2026",
+    publication_date: "2026-10-04",
+    fieldwork_start: "2026-09-27",
+    fieldwork_end: "2026-10-02",
+    sample_size: 1200,
+    margin_of_error: 3.0,
+    methodology: "online",
+    source_url: "https://veronoticias.com/politica/celina-chega-a-453-e-amplia-vantagem-sobre-grass-no-df-diz-pesquisa-atlasintel/",
+    tse_protocolo: "DF042972026",
+    results: [
+      { candidate_name: "Celina Leao", percentage: 42.8 },
+      { candidate_name: "Leandro Grass", percentage: 32.1 },
+      { candidate_name: "Paula Belmonte", percentage: 11.0 },
+      { candidate_name: "Ricardo Cappelli", percentage: 5.1 },
+      { candidate_name: "Kiko Caputo", percentage: 1.9 },
+    ],
+  },
+
+  // Atlas Intel · Governador Bahia · 1º turno · 27 set-02 out 2026 · TSE BA-05671/2026 · n=2.199 · online
+  // Protocolo TSE citado explicitamente na matéria. Fonte:
+  // https://www.metropoles.com/brasil/jeronimo-marca-51-contra-47-de-acm-neto-na-bahia-diz-atlasintel
+  // Percentuais sobre o total de entrevistados (não "votos válidos", que seriam Jerônimo 51,5/ACM
+  // Neto 47,4).
+  // Curado em 2026-10-18 via migration (supabase/migrations/20261018120000_curate_pesqele_polls_2026_10_18.sql).
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador BA 2026 - 1º Turno",
+    publication_date: "2026-10-03",
+    fieldwork_start: "2026-09-27",
+    fieldwork_end: "2026-10-02",
+    sample_size: 2199,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://www.metropoles.com/brasil/jeronimo-marca-51-contra-47-de-acm-neto-na-bahia-diz-atlasintel",
+    tse_protocolo: "BA056712026",
+    results: [
+      { candidate_name: "Jeronimo Rodrigues", percentage: 51.0 },
+      { candidate_name: "ACM Neto", percentage: 47.0 },
+    ],
+  },
+
+  // Atlas Intel · Governador Pará · 1º turno · 27 set-02 out 2026 · TSE PA-04872/2026 · n=1.206 · online
+  // Fonte: https://www.band.com.br/politica/eleicoes/atlas-governo-do-para-hana-ghassan-tem-504-contra-444-de-dr-daniel
+  // Percentuais sobre o total de entrevistados (não "votos válidos", que seriam Hana 52,5/Dr.
+  // Daniel 46,3); branco-nulo-indeciso 3,8% completam os 100%.
+  // Curado em 2026-10-18 via migration (supabase/migrations/20261018120000_curate_pesqele_polls_2026_10_18.sql).
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador PA 2026 - 1º Turno",
+    publication_date: "2026-10-03",
+    fieldwork_start: "2026-09-27",
+    fieldwork_end: "2026-10-02",
+    sample_size: 1206,
+    margin_of_error: 3.0,
+    methodology: "online",
+    source_url: "https://www.band.com.br/politica/eleicoes/atlas-governo-do-para-hana-ghassan-tem-504-contra-444-de-dr-daniel",
+    tse_protocolo: "PA068722026",
+    results: [
+      { candidate_name: "Hana Ghassan", percentage: 50.4 },
+      { candidate_name: "Dr Daniel", percentage: 44.4 },
+      { candidate_name: "Araceli Lemos", percentage: 0.9 },
+      { candidate_name: "Gal Leite", percentage: 0.4 },
+    ],
+  },
 ];
 
 async function main() {
