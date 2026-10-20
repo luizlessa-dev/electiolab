@@ -12572,6 +12572,31 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Lula", percentage: 46 },
     ],
   },
+
+  // Atlas Intel · Presidencial 2º turno · 13-18 out 2026 · TSE BR-02418/2026 · n=4.998 (TSE
+  // registra 5.000, matéria fala 4.998 — diferença de arredondamento) · online
+  // Protocolo TSE citado explicitamente na matéria. Fontes:
+  // https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-presidente-outubro-2026-segundo-turno-2/
+  // e https://www.mixvale.com.br/2026/10/19/pesquisa-atlasintel-mostra-flavio-bolsonaro-com-498-e-lula-com-476-no-segundo-turno-nas-eleicoes-2026/
+  // Percentuais sobre o total de entrevistados (votos válidos seriam Flávio 51,1/Lula 48,9).
+  // Curado em 2026-10-20 via migration (supabase/migrations/20261020120000_curate_pesqele_polls_2026_10_20.sql).
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-10-19",
+    fieldwork_start: "2026-10-13",
+    fieldwork_end: "2026-10-18",
+    sample_size: 4998,
+    margin_of_error: 1.0,
+    methodology: "online",
+    source_url: "https://www.gazetadopovo.com.br/eleicoes/2026/pesquisa-eleitoral-2026/atlasintel-presidente-outubro-2026-segundo-turno-2/",
+    tse_protocolo: "BR024182026",
+    scenario_label: "Lula vs Flavio Bolsonaro",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 49.8 },
+      { candidate_name: "Lula", percentage: 47.6 },
+    ],
+  },
 ];
 
 async function main() {
