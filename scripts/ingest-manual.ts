@@ -12597,6 +12597,78 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Lula", percentage: 47.6 },
     ],
   },
+
+  // ─── Curadoria 23/10/2026 — pesqele_missing ──
+  // As 3 pesquisas abaixo (BR-08535, DF-01691, BR-06396) tinham sido descartadas na rodada de
+  // 2026-10-20 por falta de matéria no momento — o campo tinha acabado de terminar e a
+  // divulgação ainda não tinha saído. Matérias publicadas em 20-21/out confirmam agora.
+  // Gravação em `polls`/`poll_results` feita via migration .sql (NÃO via execute_sql direto —
+  // ver nota de desvio de processo acima sobre as 5 pesquisas de 2026-10-19, que não deve se
+  // repetir): supabase/migrations/20261023120000_curate_pesqele_polls_2026_10_23.sql.
+
+  // Quaest · Presidencial 2º turno · 17-20 out 2026 · TSE BR-08535/2026 · n=2.154 · presencial
+  // Percentuais sobre o total de entrevistados (com brancos e nulos).
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/flavio-tem-45-contra-44-de-lula-no-2o-turno-diz-quaest/
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-10-21",
+    fieldwork_start: "2026-10-17",
+    fieldwork_end: "2026-10-20",
+    sample_size: 2154,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/flavio-tem-45-contra-44-de-lula-no-2o-turno-diz-quaest/",
+    tse_protocolo: "BR-08535/2026",
+    scenario_label: "Lula vs Flavio Bolsonaro",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 45.0 },
+      { candidate_name: "Lula", percentage: 44.0 },
+    ],
+  },
+
+  // Real Time Big Data · Governador DF 2º turno · 15-19 out 2026 · TSE DF-01691/2026 · n=1.600 ·
+  // telefônica · Percentuais sobre o total de entrevistados (votos válidos seriam Celina 59/
+  // Grass 41). Fonte: https://soubrasilia.com/celina-59-grass-41-real-time-big-data-gdf-segundo-turno-df-01691-2026/
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Governador DF 2026 - 2º Turno",
+    publication_date: "2026-10-20",
+    fieldwork_start: "2026-10-15",
+    fieldwork_end: "2026-10-19",
+    sample_size: 1600,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://soubrasilia.com/celina-59-grass-41-real-time-big-data-gdf-segundo-turno-df-01691-2026/",
+    tse_protocolo: "DF-01691/2026",
+    scope: "DF",
+    scenario_label: "Celina Leao vs Leandro Grass",
+    results: [
+      { candidate_name: "Celina Leao", percentage: 53.0 },
+      { candidate_name: "Leandro Grass", percentage: 37.0 },
+    ],
+  },
+
+  // Instituto Veritá · Presidencial 2º turno · 15-19 out 2026 · TSE BR-06396/2026 · n=15.554 ·
+  // telefônica · Percentuais sobre o total de entrevistados (empate técnico).
+  // Fonte: https://midiamax.com.br/brasil/2026/flavio-bolsonaro-tem-507-intencoes-voto-lula-493-diz-verita/
+  {
+    institute_name: "Instituto Veritá",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-10-21",
+    fieldwork_start: "2026-10-15",
+    fieldwork_end: "2026-10-19",
+    sample_size: 15554,
+    margin_of_error: 1.0,
+    methodology: "telefonica",
+    source_url: "https://midiamax.com.br/brasil/2026/flavio-bolsonaro-tem-507-intencoes-voto-lula-493-diz-verita/",
+    tse_protocolo: "BR-06396/2026",
+    scenario_label: "Lula vs Flavio Bolsonaro",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 50.7 },
+      { candidate_name: "Lula", percentage: 49.3 },
+    ],
+  },
 ];
 
 async function main() {
