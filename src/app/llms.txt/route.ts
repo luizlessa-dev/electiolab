@@ -259,7 +259,8 @@ Wikipedia não é usada como fonte em nenhuma etapa.
 - [Rejeição dos candidatos a presidente 2026](${SITE}/rejeicao-candidatos-presidente-2026)
 - [Glossário de pesquisa eleitoral](${SITE}/glossario-pesquisa-eleitoral)
 - [Qual instituto acerta mais](${SITE}/instituto-mais-acurado-eleicoes-brasil)
-- [Quem vence no 2º turno](${SITE}/quem-vence-no-segundo-turno-presidencia-2026)
+- [2º turno 2026: presidente e 7 governos estaduais](${SITE}/segundo-turno)
+- [2º turno Presidência: Lula × Flávio Bolsonaro](${SITE}/quem-vence-no-segundo-turno-presidencia-2026)
 - [Dinheiro e Votos — FEFC 2026](${SITE}/dinheiro-e-votos-pesquisas-2026)
 - [Quanto custa uma campanha em ads digitais](${SITE}/quanto-custa-campanha-eleitoral-google-ads-meta)
 

@@ -194,6 +194,68 @@ function mesmaPessoa(a: IdentidadePessoa, b: IdentidadePessoa): boolean {
   return Boolean(a.tseId && b.tseId && a.tseId === b.tseId);
 }
 
+type LinhaCandidatoBruta = {
+  id: unknown;
+  tse_id?: unknown;
+  cpf?: unknown;
+  is_active?: unknown;
+  election?: unknown;
+};
+
+/**
+ * Ordena linhas de `candidates` pelo desempate canônico (year DESC, tem tse_id,
+ * round DESC, cargo, id): a primeira é a que a página serve. Extraída de
+ * resolveCandidateRowsBySlug para a rota por pessoa escolher a candidatura
+ * principal pelo MESMO critério e não por uma cópia que pudesse divergir.
+ */
+export function rankCandidateRows(rows: LinhaCandidatoBruta[]) {
+  return rows
+    .map((c) => {
+      const e = normalizeElection(c.election);
+      return {
+        id: c.id as string,
+        tseId: (c.tse_id as string | null) ?? null,
+        cpf: (c.cpf as string | null) ?? null,
+        isActive: Boolean(c.is_active),
+        election: e,
+        year: e?.year ?? 0,
+        hasTse: c.tse_id ? 1 : 0,
+        round: e?.round ?? 0,
+        prio: TYPE_PRIORITY[e?.type ?? ""] ?? 0,
+      };
+    })
+    .sort((a, b) =>
+      (b.year - a.year) ||
+      (b.hasTse - a.hasTse) ||
+      (b.round - a.round) ||
+      (b.prio - a.prio) ||
+      a.id.localeCompare(b.id)
+    );
+}
+
+/**
+ * Candidatura principal de uma pessoa a partir dos ids das linhas dela (ligadas
+ * por CPF em politician_links). Prefere linha ativa; sem nenhuma ativa, usa o
+ * histórico, igual ao fallback do slug.
+ */
+export async function getPrimaryCandidateIdAmong(ids: string[]): Promise<string | null> {
+  if (!ids.length) return null;
+  const { data, error } = await supabase
+    .from("candidates")
+    .select("id, tse_id, cpf, is_active, election:elections(id, name, type, state, year, round)")
+    .in("id", ids);
+  if (error) throw error;
+  const rows = data ?? [];
+  const ativas = rows.filter((r) => r.is_active);
+  const ranked = rankCandidateRows(ativas.length ? ativas : rows);
+  return ranked[0]?.id ?? null;
+}
+
+/** Página completa de uma candidatura pelo id (usada quando a pessoa é resolvida por politicians). */
+export async function getCandidateById(candidateId: string) {
+  return fetchCandidateDetail(candidateId);
+}
+
 /**
  * Linhas de `candidates` que respondem por um slug, já ordenadas pelo desempate
  * canônico. A primeira é a que /candidato/<slug> serve.
@@ -240,32 +302,7 @@ async function resolveCandidateRowsBySlug(slug: string) {
   // #3-4 seguem valendo pro caso Roberto Claudio/Rogério Marinho — mesma
   // pessoa concorrendo a governador E senador no mesmo ciclo, ambos com
   // tse_id (empate em #2), desempatados por round e depois por cargo.
-  const TYPE_PRIORITY: Record<string, number> = {
-    presidente: 5, governador: 4, senador: 3,
-    deputado_federal: 2, deputado_estadual: 1, deputado_distrital: 1,
-  };
-  return rows
-    .map((c) => {
-      const e = normalizeElection(c.election);
-      return {
-        id: c.id as string,
-        tseId: (c.tse_id as string | null) ?? null,
-        cpf: (c.cpf as string | null) ?? null,
-        isActive: Boolean(c.is_active),
-        election: e,
-        year: e?.year ?? 0,
-        hasTse: c.tse_id ? 1 : 0,
-        round: e?.round ?? 0,
-        prio: TYPE_PRIORITY[e?.type ?? ""] ?? 0,
-      };
-    })
-    .sort((a, b) =>
-      (b.year - a.year) ||
-      (b.hasTse - a.hasTse) ||
-      (b.round - a.round) ||
-      (b.prio - a.prio) ||
-      a.id.localeCompare(b.id)
-    );
+  return rankCandidateRows(rows);
 }
 
 export type CandidateElectionOption = {
