@@ -12669,6 +12669,75 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Lula", percentage: 49.3 },
     ],
   },
+
+  // ─── Curadoria 27/10/2026 — pesqele_missing ──
+  // Gravação em `polls`/`poll_results` feita via migration .sql (Supabase MCP deste projeto é
+  // somente leitura — Luiz aplica manualmente no SQL Editor antes do merge, conforme CLAUDE.md):
+  // supabase/migrations/20261027120000_curate_pesqele_polls_2026_10_27.sql.
+
+  // Quaest · Presidencial 2º turno · 23-24 out 2026 · TSE BR-09158/2026 · n=3.702 · presencial
+  // Percentuais sobre o total de entrevistados (votos válidos seriam Flávio 51/Lula 49).
+  // Fonte: https://sbtnews.sbt.com.br/noticia/politica/quaest-flavio-tem-51-e-lula-49-na-vespera-do-2-turno
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-10-24",
+    fieldwork_start: "2026-10-23",
+    fieldwork_end: "2026-10-24",
+    sample_size: 3702,
+    methodology: "presencial",
+    source_url: "https://sbtnews.sbt.com.br/noticia/politica/quaest-flavio-tem-51-e-lula-49-na-vespera-do-2-turno",
+    tse_protocolo: "BR-09158/2026",
+    scenario_label: "Lula vs Flavio Bolsonaro",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 46.0 },
+      { candidate_name: "Lula", percentage: 45.0 },
+    ],
+  },
+
+  // Real Time Big Data · Presidencial 2º turno · 19-22 out 2026 · TSE BR-09670/2026 · n=2.000 ·
+  // telefônica · Percentuais sobre o total de entrevistados (votos válidos seriam Flávio 52/
+  // Lula 48; brancos/nulos 5%, não sabe 1%).
+  // Fonte: https://www.dgabc.com.br/Noticia/4354455/flavio-e-lula-mantem-empate-tecnico-95-dizem-ter-voto-definido
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-10-23",
+    fieldwork_start: "2026-10-19",
+    fieldwork_end: "2026-10-22",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.dgabc.com.br/Noticia/4354455/flavio-e-lula-mantem-empate-tecnico-95-dizem-ter-voto-definido",
+    tse_protocolo: "BR-09670/2026",
+    scenario_label: "Lula vs Flavio Bolsonaro",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 49.0 },
+      { candidate_name: "Lula", percentage: 45.0 },
+    ],
+  },
+
+  // Vox Brasil Pesquisas · Presidencial 2º turno · 20-22 out 2026 · TSE BR-03259/2026 · n=2.100 ·
+  // presencial · Percentuais sobre o total de entrevistados (votos válidos seriam Lula 50,6/
+  // Flávio 49,4; brancos/nulos/nenhum 6%, indecisos 4,3%).
+  // Fonte: https://diariodopara.com.br/eleicoes-2026/vox-lula-tem-506-contra-494-de-flavio-bolsonaro-e-disputa-presidencial-esta-empatada-a-dois-dias-da-eleicao/
+  {
+    institute_name: "Vox Brasil Pesquisas",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-10-23",
+    fieldwork_start: "2026-10-20",
+    fieldwork_end: "2026-10-22",
+    sample_size: 2100,
+    margin_of_error: 2.15,
+    methodology: "presencial",
+    source_url: "https://diariodopara.com.br/eleicoes-2026/vox-lula-tem-506-contra-494-de-flavio-bolsonaro-e-disputa-presidencial-esta-empatada-a-dois-dias-da-eleicao/",
+    tse_protocolo: "BR-03259/2026",
+    scenario_label: "Lula vs Flavio Bolsonaro",
+    results: [
+      { candidate_name: "Lula", percentage: 45.4 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 44.3 },
+    ],
+  },
 ];
 
 async function main() {
