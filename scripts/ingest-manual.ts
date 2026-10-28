@@ -12738,6 +12738,83 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Flávio Bolsonaro", percentage: 44.3 },
     ],
   },
+
+  // ─── Curadoria 28/10/2026 — pesqele_missing ──
+  // Gravação em `polls`/`poll_results` feita via migration .sql (Supabase MCP deste projeto é
+  // somente leitura — Luiz aplica manualmente no SQL Editor antes do merge, conforme CLAUDE.md):
+  // supabase/migrations/20261028120000_curate_pesqele_polls_2026_10_28.sql.
+  //
+  // BR-09709/2026 e DF-01738/2026 tinham sido descartados em rodadas anteriores por falta de
+  // matéria (ver comentário na migration 2026-10-23) — matéria saiu depois, confirmando agora.
+
+  // Datafolha · Presidencial 2º turno · 20-22 out 2026 · TSE BR-09709/2026 · n=2.520 · presencial
+  // Percentuais sobre o total de entrevistados (votos válidos seriam Flávio 50/Lula 50; brancos/
+  // nulos/nenhum 5%, indecisos 2%). Protocolo TSE citado explicitamente em matéria da CartaCapital
+  // antes da divulgação; percentuais confirmados pelo SBT News na divulgação de 22/10.
+  // Fonte: https://sbtnews.sbt.com.br/noticia/eleicoes/datafolha-flavio-bolsonaro-e-lula-empatam-em-50-no-2-turno
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-10-22",
+    fieldwork_start: "2026-10-20",
+    fieldwork_end: "2026-10-22",
+    sample_size: 2520,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://sbtnews.sbt.com.br/noticia/eleicoes/datafolha-flavio-bolsonaro-e-lula-empatam-em-50-no-2-turno",
+    tse_protocolo: "BR-09709/2026",
+    scenario_label: "Lula vs Flavio Bolsonaro",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 47.0 },
+      { candidate_name: "Lula", percentage: 46.0 },
+    ],
+  },
+
+  // Datafolha · Governador DF 2º turno · 20-22 out 2026 · TSE DF-01738/2026 · n=910 · presencial ·
+  // Percentuais sobre o total de entrevistados (votos válidos seriam Celina ~59/Grass ~41).
+  // Fonte: https://www.brasildefato.com.br/2026/10/22/datafolha-no-df-celina-leao-tem-54-e-leandro-grass-37-a-tres-dias-do-segundo-turno/
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador DF 2026 - 2º Turno",
+    publication_date: "2026-10-22",
+    fieldwork_start: "2026-10-20",
+    fieldwork_end: "2026-10-22",
+    sample_size: 910,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.brasildefato.com.br/2026/10/22/datafolha-no-df-celina-leao-tem-54-e-leandro-grass-37-a-tres-dias-do-segundo-turno/",
+    tse_protocolo: "DF-01738/2026",
+    scope: "DF",
+    scenario_label: "Celina Leao vs Leandro Grass",
+    results: [
+      { candidate_name: "Celina Leao", percentage: 54.0 },
+      { candidate_name: "Leandro Grass", percentage: 37.0 },
+    ],
+  },
+
+  // Instituto Veritá · Presidencial 2º turno · 19-23 out 2026 (divulgada sáb. 24/out) · TSE
+  // BR-03181/2026 · n=15.554 · telefônica · Percentuais sobre o total de entrevistados (votos
+  // válidos seriam Flávio 51,56/Lula 48,44 — confere matematicamente: 49,44/(49,44+46,46)=51,57%).
+  // Instituto com histórico de pesquisas suspensas pela Justiça Eleitoral em 2026 por vício
+  // metodológico — curada normalmente por ter fonte real e protocolo batendo.
+  // Fonte: https://midiamax.com.br/politica/2026/pesquisa-verita-traz-flavio-5156-votos-validos-2o-turno-lula-4844/
+  {
+    institute_name: "Instituto Veritá",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-10-24",
+    fieldwork_start: "2026-10-19",
+    fieldwork_end: "2026-10-23",
+    sample_size: 15554,
+    margin_of_error: 1.0,
+    methodology: "telefonica",
+    source_url: "https://midiamax.com.br/politica/2026/pesquisa-verita-traz-flavio-5156-votos-validos-2o-turno-lula-4844/",
+    tse_protocolo: "BR-03181/2026",
+    scenario_label: "Lula vs Flavio Bolsonaro",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 49.44 },
+      { candidate_name: "Lula", percentage: 46.46 },
+    ],
+  },
 ];
 
 async function main() {
