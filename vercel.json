@@ -1,14 +1,4 @@
 {
-  "crons": [
-    {
-      "path": "/api/cron/check-polls",
-      "schedule": "7 12 * * 1"
-    },
-    {
-      "path": "/api/cron/security-alerts",
-      "schedule": "*/5 * * * *"
-    }
-  ],
   "functions": {
     "src/app/api/**": {
       "maxDuration": 60

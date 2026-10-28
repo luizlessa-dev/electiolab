@@ -39,7 +39,32 @@ function temSessaoSupabase(request: NextRequest): boolean {
   return request.cookies.getAll().some((c) => c.name.startsWith("sb-"));
 }
 
+/**
+ * Modo manutenção: site fora do ar para reformulação. Quando true, toda request
+ * coberta pelo matcher vai para /em-reconstrucao (API responde 503). Para voltar,
+ * troque para false e publique de novo.
+ */
+const MAINTENANCE = true;
+
+function manutencaoResp(request: NextRequest): NextResponse | null {
+  if (!MAINTENANCE) return null;
+
+  const { pathname } = request.nextUrl;
+  if (pathname.startsWith("/api/")) {
+    return NextResponse.json(
+      { error: "Serviço em reformulação. Volte em breve." },
+      { status: 503, headers: { "Retry-After": "86400" } }
+    );
+  }
+  if (pathname === "/em-reconstrucao") return null;
+
+  return NextResponse.rewrite(new URL("/em-reconstrucao", request.url));
+}
+
 export async function proxy(request: NextRequest) {
+  const manutencao = manutencaoResp(request);
+  if (manutencao) return manutencao;
+
   const authResp = basicAuthGate(request);
   if (authResp) return authResp;
 
