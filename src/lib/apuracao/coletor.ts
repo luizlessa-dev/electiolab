@@ -126,6 +126,7 @@ export async function executarCiclo(opcoes: OpcoesCiclo): Promise<ResultadoCiclo
     const configCompleta = await carregarConfig(cliente, repo, {
       ambiente: opcoes.ambiente,
       cargosForaDoEscopo: CARGOS_FORA_DO_ESCOPO,
+      ciclo: `ele${opcoes.ano ?? 2026}`,
     });
 
     // Só as eleições que têm algum cargo da onda: evita pedir o EA14 de eleição

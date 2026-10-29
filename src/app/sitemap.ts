@@ -35,6 +35,8 @@ const FAMILIAS_UF: Array<{ prefixo: string; priority: number; freq: "weekly" | "
  * propósito — não são conteúdo indexável.
  */
 const PAGINAS_EDITORIAIS: Array<{ path: string; priority: number }> = [
+  { path: "segundo-turno", priority: 1.0 },
+  ...["ac", "am", "df", "es", "rj", "rn", "to"].map((uf) => ({ path: `segundo-turno/${uf}`, priority: 0.9 })),
   { path: "metodologia", priority: 0.9 },
   { path: "eleicoes-governador-2026", priority: 0.9 },
   { path: "pesquisas", priority: 0.8 },

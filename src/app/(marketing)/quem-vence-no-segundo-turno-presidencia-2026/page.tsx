@@ -1,21 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@supabase/supabase-js";
-import { ArrowLeft, BarChart3 } from "lucide-react";
+import { ArrowLeft, BarChart3, Info } from "lucide-react";
+import { diasParaSegundoTurno, getPresidenteSegundoTurno } from "@/lib/segundo-turno";
+import { Matchup, fmtData } from "@/components/segundo-turno/matchup";
 
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Quem vence no 2º turno da Presidência 2026?",
+  title: "2º turno Presidência 2026: Lula × Flávio Bolsonaro, pesquisas e média",
   description:
-    "Cenários simulados de 2º turno 2026: Lula vs Flávio, Caiado, Zema e Renan Santos. Datafolha, Quaest, Atlas e Paraná Pesquisas comparados.",
+    "Lula × Flávio Bolsonaro no 2º turno de 25/10/2026: resultado do 1º turno, média das pesquisas e histórico de cenários testados antes da eleição.",
   alternates: {
     canonical: "https://electiolab.com/quem-vence-no-segundo-turno-presidencia-2026",
   },
   openGraph: {
-    title: "Quem vence no 2º turno da Presidência 2026?",
+    title: "2º turno Presidência 2026: Lula × Flávio Bolsonaro",
     description:
-      "Cenários simulados Lula vs Bolsonaro/Caiado/Zema com base nas últimas pesquisas Datafolha e Quaest.",
+      "Resultado do 1º turno, média das pesquisas e cenários de 2º turno para presidente.",
     url: "https://electiolab.com/quem-vence-no-segundo-turno-presidencia-2026",
     images: [{ url: "https://electiolab.com/opengraph-image", width: 1200, height: 630 }],
   },
@@ -295,7 +297,8 @@ function findCommonCandidate(blocks: ScenarioBlock[]): string | null {
 // ─── Página ────────────────────────────────────────────────────────────
 
 export default async function Quem2TurnoPage() {
-  const { blocks, updated } = await getData();
+  const [{ blocks, updated }, pres] = await Promise.all([getData(), getPresidenteSegundoTurno()]);
+  const dias = diasParaSegundoTurno();
   const commonSlug = findCommonCandidate(blocks);
 
   // Linhas da tabela: 1 por adversário (não-comum), ordenadas pela % do adversário desc
@@ -376,13 +379,57 @@ export default async function Quem2TurnoPage() {
             <span>Análise · Eleições 2026</span>
           </div>
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-            Quem vence no 2º turno da Presidência 2026?
+            2º turno da Presidência 2026: Lula × Flávio Bolsonaro
           </h1>
           <p className="text-base text-muted-foreground leading-relaxed mb-6">
-            Cada linha abaixo é um <strong>cenário independente</strong> de pesquisa:
-            os institutos perguntam &quot;se o 2º turno for {commonName} × adversário X&quot;.
-            Os adversários nunca foram testados entre si — por isso a tabela mostra um
-            par por linha, com {commonName} como oponente comum.
+            O 1º turno de 04/10 definiu o confronto. A votação decisiva é em 25 de outubro
+            {dias > 0 ? ` (faltam ${dias} ${dias === 1 ? "dia" : "dias"})` : ""}.
+          </p>
+
+          <section className="rounded-xl border border-border bg-card p-5 mb-10 space-y-5">
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-3">
+                <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Resultado do 1º turno</p>
+                {pres.primeiroTurno && (
+                  <Matchup
+                    lados={[
+                      { nome: "Flávio Bolsonaro", partido: "PL", pct: pres.primeiroTurno.flavio, cor: "#2563eb" },
+                      { nome: "Lula", partido: "PT", pct: pres.primeiroTurno.lula, cor: "#dc2626" },
+                    ]}
+                  />
+                )}
+              </div>
+              <div className="space-y-3">
+                <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                  Média das pesquisas{pres.novasPosPrimeiroTurno === 0 ? " (anteriores ao 1º turno)" : ""}
+                </p>
+                {pres.lula && pres.flavio && (
+                  <Matchup
+                    lados={[
+                      { nome: "Flávio Bolsonaro", partido: "PL", pct: pres.flavio.pct, cor: "#2563eb" },
+                      { nome: "Lula", partido: "PT", pct: pres.lula.pct, cor: "#dc2626" },
+                    ]}
+                  />
+                )}
+                <p className="text-xs text-muted-foreground">
+                  {pres.pollsNaMedia} pesquisas na média
+                  {pres.ultimaPesquisa ? ` · última publicada em ${fmtData(pres.ultimaPesquisa)}` : ""}
+                </p>
+              </div>
+            </div>
+            {pres.novasPosPrimeiroTurno === 0 && (
+              <p className="text-xs text-muted-foreground flex gap-2 border-t border-border pt-3">
+                <Info className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                Ainda não há pesquisa de 2º turno publicada depois de 04/10. A média usa confrontos
+                Lula × Flávio testados antes do 1º turno e é recalculada a cada nova pesquisa registrada.
+              </p>
+            )}
+          </section>
+
+          <h2 className="text-xl font-bold mb-2">Cenários testados antes do 1º turno</h2>
+          <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+            Arquivo: cada linha é um <strong>cenário independente</strong> (&quot;se o 2º turno for
+            {" "}{commonName} × adversário X&quot;). Só o confronto com Flávio Bolsonaro se confirmou.
           </p>
 
           {rows.length === 0 ? (
