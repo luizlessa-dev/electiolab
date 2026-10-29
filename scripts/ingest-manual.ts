@@ -12815,6 +12815,117 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Lula", percentage: 46.46 },
     ],
   },
+
+  // ─── DF · Datafolha · 20-22 out 2026 · TSE DF-01738/2026 · n=910 · presencial ──
+  // Fonte: https://www.congressoemfoco.com.br/noticia/123123/pesquisa-datafolha-celina-tem-60-e-grass-40-dos-votos-validos-no-df
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador DF 2026 - 2º Turno",
+    publication_date: "2026-10-22",
+    fieldwork_start: "2026-10-20",
+    fieldwork_end: "2026-10-22",
+    sample_size: 910,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    source_url: "https://www.congressoemfoco.com.br/noticia/123123/pesquisa-datafolha-celina-tem-60-e-grass-40-dos-votos-validos-no-df",
+    tse_protocolo: "DF017382026",
+    results: [
+      { candidate_name: "Celina Leao",  percentage: 60 },
+      { candidate_name: "Leandro Grass", percentage: 40 },
+    ],
+  },
+
+  // ─── DF · Quaest · 23-24 out 2026 · TSE DF-00368/2026 · n=2.652 · presencial ──
+  // Fonte: https://www.polemicaparaiba.com.br/politica/quaest-no-df-celina-tem-61-dos-votos-validos-contra-39-de-leandro-grass/
+  {
+    institute_name: "Quaest",
+    election_name: "Governador DF 2026 - 2º Turno",
+    publication_date: "2026-10-24",
+    fieldwork_start: "2026-10-23",
+    fieldwork_end: "2026-10-24",
+    sample_size: 2652,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.polemicaparaiba.com.br/politica/quaest-no-df-celina-tem-61-dos-votos-validos-contra-39-de-leandro-grass/",
+    tse_protocolo: "DF003682026",
+    results: [
+      { candidate_name: "Celina Leao",  percentage: 61 },
+      { candidate_name: "Leandro Grass", percentage: 39 },
+    ],
+  },
+
+  // ─── DF · Datafolha · 23-24 out 2026 · TSE DF-03453/2026 · n=1.620 · presencial ──
+  // Fonte: https://soubrasilia.com/datafolha-quaest-celina-leao-59-61-por-cento-grass-segundo-turno-df-vespera-24-outubro-2026/
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador DF 2026 - 2º Turno",
+    publication_date: "2026-10-24",
+    fieldwork_start: "2026-10-23",
+    fieldwork_end: "2026-10-24",
+    sample_size: 1620,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://soubrasilia.com/datafolha-quaest-celina-leao-59-61-por-cento-grass-segundo-turno-df-vespera-24-outubro-2026/",
+    tse_protocolo: "DF034532026",
+    results: [
+      { candidate_name: "Celina Leao",  percentage: 59 },
+      { candidate_name: "Leandro Grass", percentage: 41 },
+    ],
+  },
+
+  // ─── DF · AtlasIntel · 18-23 out 2026 · TSE DF-08658/2026 · n=1.807 · online ──
+  // Fonte: https://www.poder360.com.br/poder-eleicoes-2026/celina-tem-579-dos-votos-validos-e-grass-421-diz-atlasintel/
+  {
+    institute_name: "Atlas Intel",
+    election_name: "Governador DF 2026 - 2º Turno",
+    publication_date: "2026-10-24",
+    fieldwork_start: "2026-10-18",
+    fieldwork_end: "2026-10-23",
+    sample_size: 1807,
+    margin_of_error: 2.0,
+    methodology: "online",
+    source_url: "https://www.poder360.com.br/poder-eleicoes-2026/celina-tem-579-dos-votos-validos-e-grass-421-diz-atlasintel/",
+    tse_protocolo: "DF086582026",
+    results: [
+      { candidate_name: "Celina Leao",  percentage: 57.9 },
+      { candidate_name: "Leandro Grass", percentage: 42.1 },
+    ],
+  },
+
+  // ─── SP · Datafolha · véspera do 1º turno, divulgada 3 out 2026 · TSE SP-09337/2026 · presencial ──
+  // Fonte: https://tribunadejundiai.com.br/politica/eleicoes-2026/datafolha-tarcisio-tem-60-dos-votos-validos-e-haddad-35-em-sao-paulo/
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador SP 2026 - 1º Turno",
+    publication_date: "2026-10-03",
+    fieldwork_end: "2026-10-03",
+    sample_size: 2520,
+    methodology: "presencial",
+    source_url: "https://tribunadejundiai.com.br/politica/eleicoes-2026/datafolha-tarcisio-tem-60-dos-votos-validos-e-haddad-35-em-sao-paulo/",
+    tse_protocolo: "SP093372026",
+    results: [
+      { candidate_name: "Tarcísio", percentage: 60 },
+      { candidate_name: "Haddad",   percentage: 35 },
+    ],
+  },
+
+  // ─── RJ · Datafolha · 28 set-3 out 2026 · TSE RJ-01334/2026 · n=2.010 · presencial ──
+  // Fonte: https://static.poder360.com.br/uploads/2026/10/datafolha-governo-rj-outubro.pdf
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador RJ 2026 - 1º Turno",
+    publication_date: "2026-10-03",
+    fieldwork_start: "2026-09-28",
+    fieldwork_end: "2026-10-03",
+    sample_size: 2010,
+    methodology: "presencial",
+    source_url: "https://static.poder360.com.br/uploads/2026/10/datafolha-governo-rj-outubro.pdf",
+    tse_protocolo: "RJ013342026",
+    results: [
+      { candidate_name: "Eduardo Paes",  percentage: 46 },
+      { candidate_name: "Douglas Ruas",  percentage: 38 },
+    ],
+  },
 ];
 
 async function main() {
