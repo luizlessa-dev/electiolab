@@ -12926,6 +12926,66 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Douglas Ruas",  percentage: 38 },
     ],
   },
+
+  // ─── Curadoria 30/10/2026 — via fila pesqele_missing ──────────────────────
+  // Itens priorizados (Presidente/Governador, UFs grandes, institutos reputados) tentados
+  // e descartados nesta rodada por falta de matéria confirmando protocolo+percentual: GO-00674/2026
+  // e PA-04580/2026 (Quaest, Governador GO/PA, campo 02-03/out — a "última rodada" Quaest de
+  // 25 estados+DF do dia 03/out só foi encontrada na imprensa pra PR e RS dessa leva; GO e PA
+  // não circularam) · DF-00402/2026 (Quaest, Governador DF, campo até 20/out — não encontrado)
+  // · DF-08808/2026 (Instituto Veritá, Governador DF 2º turno, campo até 22/out — nenhuma
+  // matéria citando essa pesquisa específica; Veritá teve pesquisas suspensas pela Justiça
+  // Eleitoral por vício metodológico em 2026, várias nunca chegam a circular). Seguem na fila.
+
+  // Datafolha · Governador PE · 1º turno · 02-03 out 2026 · TSE PE-02404/2026 · n=1.650 · presencial
+  // Fonte: https://www.diariodepernambuco.com.br/politica/2026/10/11725677-datafolha-raquel-lyra-tem-49-e-joao-campos-48-dos-votos-validos-para-primeiro-turnoo.html
+  // Percentuais "dos votos válidos" (não achei o recorte sobre o total de entrevistados pra
+  // essa rodada específica, diferente de MG/SP acima). Mesma amostra (n=1.650) e janela de
+  // campo (02-03/out) do registro TSE PE-02404/2026 — a tentativa de curadoria de 14/10/2026
+  // (ver migration 20261014120000) não tinha achado matéria pra esse item ainda.
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador PE 2026 - 1º Turno",
+    publication_date: "2026-10-03",
+    fieldwork_start: "2026-10-02",
+    fieldwork_end: "2026-10-03",
+    sample_size: 1650,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.diariodepernambuco.com.br/politica/2026/10/11725677-datafolha-raquel-lyra-tem-49-e-joao-campos-48-dos-votos-validos-para-primeiro-turnoo.html",
+    tse_protocolo: "PE024042026",
+    results: [
+      { candidate_name: "Raquel Lyra", percentage: 49 },
+      { candidate_name: "João Campos", percentage: 48 },
+      { candidate_name: "Ivan Moraes", percentage: 1 },
+      { candidate_name: "Renan",       percentage: 1 },
+    ],
+  },
+
+  // Quaest · Governador RS · 1º turno · 02-03 out 2026 · TSE RS-08922/2026 · n=2.004 · presencial
+  // Fonte: https://prensamercosur.org/2026/10/04/quaest-no-rs-zucco-tem-52-dos-votos-validos-e-juliana-brizola-35/
+  // Percentuais "dos votos válidos" (não achei o recorte sobre o total de entrevistados).
+  // Mesma amostra (n=2.004) e janela de campo (02-03/out) do registro TSE RS-08922/2026 —
+  // parte da mesma "última rodada" Quaest de 25 estados+DF do dia 03/out que já confirmou
+  // BA/SC/PR/CE (ver migration 20261017120000).
+  {
+    institute_name: "Quaest",
+    election_name: "Governador RS 2026 - 1º Turno",
+    publication_date: "2026-10-03",
+    fieldwork_start: "2026-10-02",
+    fieldwork_end: "2026-10-03",
+    sample_size: 2004,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://prensamercosur.org/2026/10/04/quaest-no-rs-zucco-tem-52-dos-votos-validos-e-juliana-brizola-35/",
+    tse_protocolo: "RS089222026",
+    results: [
+      { candidate_name: "Luciano Zucco",     percentage: 52 },
+      { candidate_name: "Juliana Brizola",   percentage: 35 },
+      { candidate_name: "Gabriel Souza",     percentage: 12 },
+      { candidate_name: "Marcelo Maranata",  percentage: 1 },
+    ],
+  },
 ];
 
 async function main() {
