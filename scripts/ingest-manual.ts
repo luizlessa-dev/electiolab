@@ -12927,6 +12927,39 @@ const PENDING_POLLS: Array<{
     ],
   },
 
+  // ─── Curadoria 31/10/2026 — via fila pesqele_missing ──────────────────────
+  // Nenhuma pesquisa nova confirmada nesta rodada (0 inserts, nenhuma migration nova gerada).
+  // Itens priorizados (Presidente/Governador, UFs grandes, institutos reputados) e descartados:
+  //   • DF-03453/2026 (Datafolha), DF-00368/2026 (Quaest), DF-08658/2026 (AtlasIntel),
+  //     DF-01738/2026 (Datafolha), RJ-01334/2026 (Datafolha), BA-02224/2026 (Quaest),
+  //     CE-04790/2026 (Quaest) — já tinham fonte+percentuais curados em rodadas anteriores
+  //     (ver migrations 20261017120000 e 20261028120000); nenhuma pesquisa nova, só
+  //     reconfirmação. Continuam em pesqele_missing porque a migration ainda não foi aplicada
+  //     no banco (ver achado abaixo).
+  //   • DF-08808/2026 (Instituto Veritá, Governador DF 2º turno, campo até 22/out) — nenhuma
+  //     matéria encontrada (tentativa repetida; Veritá tem pesquisas suspensas pela Justiça
+  //     Eleitoral por vício metodológico em 2026, várias nunca circulam).
+  //   • DF-00402/2026 (Quaest, Governador DF 2º turno, campo até 20/out) — ainda não encontrado;
+  //     achei outra pesquisa Quaest DF com amostra igual (1.104) mas protocolo e janela de campo
+  //     diferentes (DF-08737/2026, campo 08-11/out) — não confundir, mantido fora.
+  //   • DF-01691/2026 (Real Time Big Data, Governador DF 2º turno, campo até 19/out) — há indício
+  //     de uma rodada Real Time de 15-19/out "por estado", mas sem confirmação específica de que
+  //     incluiu o DF. Confiança insuficiente pra casar com este protocolo.
+  //   • RJ-07597/2026 (Quaest, Governador RJ 2º turno, campo até 11/out) — nenhuma matéria
+  //     encontrada (tentativa repetida).
+  //   • RJ-02766/2026 (Datafolha, Governador+Senador RJ, campo até 08/out), MG-05749/2026,
+  //     SP-07439/2026, PE-09774/2026 (Datafolha, Governador MG/SP/PE, campo até 08/out) — mesma
+  //     razão de rodadas anteriores: MG, SP, PE e RJ foram decididos no 1º turno (04/out), sem
+  //     2º turno de Governador cadastrado pra essas UFs, e nenhuma matéria de pesquisa pós-1º
+  //     turno foi encontrada pra essas janelas de campo específicas.
+  //
+  // ⚠️ ACHADO DESTA RODADA (reportado a Luiz): nenhuma das migrations
+  // curate_pesqele_polls_2026_10_* (01, 09, 10, 14, 15, 17, 18, 20, 23, 27, 28 e 30/out) consta
+  // como aplicada no histórico real do projeto Supabase (mcp list_migrations só mostra até
+  // 2026-09-23). É provável que seja por isso que pesqele_missing continua trazendo de volta
+  // protocolos que já têm fonte+resultado em PENDING_POLLS há dias — eles só saem da fila quando
+  // as migrations pendentes forem aplicadas manualmente no SQL Editor do Supabase.
+
   // ─── Curadoria 30/10/2026 — via fila pesqele_missing ──────────────────────
   // Itens priorizados (Presidente/Governador, UFs grandes, institutos reputados) tentados
   // e descartados nesta rodada por falta de matéria confirmando protocolo+percentual: GO-00674/2026
