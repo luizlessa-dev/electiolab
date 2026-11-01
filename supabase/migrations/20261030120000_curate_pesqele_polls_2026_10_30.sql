@@ -7,13 +7,20 @@
 -- PENDING_POLLS pela rodada de 2026-10-29 (commit 9e961e7) mas SEM migration gerada — esta
 -- migration completa o que faltava pra elas saírem de pesqele_missing quando aplicada.
 --
--- ⚠️ CONVENÇÃO DA BASE NÃO SEGUIDA NESTAS 5: as migrations anteriores (ver 2026-10-09 a
--- 2026-10-28) estabeleceram que poll_results.percentage deve ser o percentual sobre o TOTAL de
--- entrevistados (incluindo branco/nulo/indeciso/não sabe), não "votos válidos". Para as 5
--- pesquisas abaixo só encontrei (ou a rodada anterior só encontrou) o percentual "dos votos
--- válidos" manchetado pela imprensa — não achei o corte sobre o total pra nenhuma delas.
--- Luiz: considere revisar/corrigir os percentuais antes ou depois de aplicar, ou buscar o
+-- ⚠️ CONVENÇÃO DA BASE NÃO SEGUIDA EM 4 DESTAS 5 (atualizado em 2026-11-01): as migrations
+-- anteriores (ver 2026-10-09 a 2026-10-28) estabeleceram que poll_results.percentage deve ser o
+-- percentual sobre o TOTAL de entrevistados (incluindo branco/nulo/indeciso/não sabe), não "votos
+-- válidos". Para 4 das 5 pesquisas abaixo só encontrei (ou a rodada anterior só encontrou) o
+-- percentual "dos votos válidos" manchetado pela imprensa — não achei o corte sobre o total pra
+-- essas 4. Luiz: considere revisar/corrigir os percentuais antes ou depois de aplicar, ou buscar o
 -- corte "sobre o total" nas matérias originais se preferir manter a convenção.
+--
+-- ✅ CORRIGIDO em 2026-11-01 (curadoria do dia): o item 2 (Quaest, DF-00368/2026) foi atualizado —
+-- achei o corte "sobre o total" numa fonte melhor (dgabc.com.br/Noticia/4354109, mesmo
+-- instituto/janela/amostra): Celina Leão 50% / Leandro Grass 35% (brancos/nulos 9%, indecisos 6%,
+-- soma 100%), substituindo os 61%/39% de votos válidos que estavam aqui (fonte polemicaparaiba,
+-- mantida como alternativa citada mas não usada). scripts/ingest-manual.ts (PENDING_POLLS) também
+-- atualizado para o mesmo protocolo.
 --
 -- Itens tentados e descartados nesta rodada (sem matéria confirmando protocolo+percentual):
 --   • DF-00402/2026 (Quaest, Governador DF 2º turno, campo até 20/out) — ainda sem matéria,
@@ -86,7 +93,8 @@ join candidates c on c.election_id = e.id and c.is_active = true and c.name ilik
 
 -- ───────────────────────────────────────────────────────────────────────────
 -- 2) Quaest · Governador DF · 2º turno · 23-24 out 2026 · TSE DF-00368/2026 · n=2.652
---    Fonte: https://www.polemicaparaiba.com.br/politica/quaest-no-df-celina-tem-61-dos-votos-validos-contra-39-de-leandro-grass/
+--    Fonte: https://www.dgabc.com.br/Noticia/4354109/quaest-no-df-celina-leao-tem-50-e-leandro-grass-soma-35
+--    (percentual sobre o total de entrevistados; corrigido em 2026-11-01, ver nota no topo do arquivo)
 -- ───────────────────────────────────────────────────────────────────────────
 with new_poll_df_quaest_1024 as (
   insert into polls (
@@ -96,7 +104,7 @@ with new_poll_df_quaest_1024 as (
   )
   select e.id, i.id, '2026-10-24', '2026-10-23', '2026-10-24',
          2652, 2.0, 95, 'presencial', 'nacional', 'estimulada',
-         'https://www.polemicaparaiba.com.br/politica/quaest-no-df-celina-tem-61-dos-votos-validos-contra-39-de-leandro-grass/',
+         'https://www.dgabc.com.br/Noticia/4354109/quaest-no-df-celina-leao-tem-50-e-leandro-grass-soma-35',
          'DF-00368/2026', true
   from elections e, institutes i
   where e.name = 'Governador DF 2026 - 2º Turno'
@@ -111,8 +119,8 @@ select np.id, c.id, v.percentage
 from new_poll_df_quaest_1024 np
 join elections e on e.id = np.election_id
 cross join (values
-  ('Celina Leao', 61.0),
-  ('Leandro Grass', 39.0)
+  ('Celina Leao', 50.0),
+  ('Leandro Grass', 35.0)
 ) as v(candidate_name, percentage)
 join candidates c on c.election_id = e.id and c.is_active = true and c.name ilike v.candidate_name;
 

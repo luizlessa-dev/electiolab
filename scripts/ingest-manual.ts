@@ -12836,7 +12836,10 @@ const PENDING_POLLS: Array<{
   },
 
   // ─── DF · Quaest · 23-24 out 2026 · TSE DF-00368/2026 · n=2.652 · presencial ──
-  // Fonte: https://www.polemicaparaiba.com.br/politica/quaest-no-df-celina-tem-61-dos-votos-validos-contra-39-de-leandro-grass/
+  // Fonte: https://www.dgabc.com.br/Noticia/4354109/quaest-no-df-celina-leao-tem-50-e-leandro-grass-soma-35
+  // Percentual sobre o total de entrevistados (brancos/nulos 9%, indecisos 6%). Corrigido em
+  // 2026-11-01 — valor anterior (61/39) era recorte de votos válidos de outra fonte
+  // (polemicaparaiba.com.br); ver supabase/migrations/20261030120000_curate_pesqele_polls_2026_10_30.sql.
   {
     institute_name: "Quaest",
     election_name: "Governador DF 2026 - 2º Turno",
@@ -12846,11 +12849,11 @@ const PENDING_POLLS: Array<{
     sample_size: 2652,
     margin_of_error: 2.0,
     methodology: "presencial",
-    source_url: "https://www.polemicaparaiba.com.br/politica/quaest-no-df-celina-tem-61-dos-votos-validos-contra-39-de-leandro-grass/",
+    source_url: "https://www.dgabc.com.br/Noticia/4354109/quaest-no-df-celina-leao-tem-50-e-leandro-grass-soma-35",
     tse_protocolo: "DF003682026",
     results: [
-      { candidate_name: "Celina Leao",  percentage: 61 },
-      { candidate_name: "Leandro Grass", percentage: 39 },
+      { candidate_name: "Celina Leao",  percentage: 50 },
+      { candidate_name: "Leandro Grass", percentage: 35 },
     ],
   },
 
@@ -12992,6 +12995,31 @@ const PENDING_POLLS: Array<{
       { candidate_name: "João Campos", percentage: 48 },
       { candidate_name: "Ivan Moraes", percentage: 1 },
       { candidate_name: "Renan",       percentage: 1 },
+    ],
+  },
+
+  // Datafolha · Senador Pernambuco (mesma rodada do item Governador PE acima) · 02-03 out 2026 ·
+  // TSE PE-02404/2026 · n=1.650 · presencial — curadoria 2026-11-01 via fila pesqele_missing.
+  // Fonte: https://www.diariodepernambuco.com.br/politica/2026/10/11725699-datafolha-marilia-e-humberto-lideram-senado-com-29-mendonca-tem-16-e-eduardo-14.html
+  // (ver também https://sbtnews.sbt.com.br/noticia/eleicoes/datafolha-pe-marilia-e-humberto-costa-tem-29-para-o-senado)
+  // Mesmo protocolo TSE do item Governador PE acima (pesquisa única perguntou os dois cargos);
+  // esta entrada cobre só o recorte de Senado, que não tinha sido curado ainda.
+  {
+    institute_name: "Datafolha",
+    election_name: "Senador Pernambuco 2026",
+    publication_date: "2026-10-03",
+    fieldwork_start: "2026-10-02",
+    fieldwork_end: "2026-10-03",
+    sample_size: 1650,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.diariodepernambuco.com.br/politica/2026/10/11725699-datafolha-marilia-e-humberto-lideram-senado-com-29-mendonca-tem-16-e-eduardo-14.html",
+    tse_protocolo: "PE024042026",
+    results: [
+      { candidate_name: "Marilia Arraes",   percentage: 29 },
+      { candidate_name: "Humberto Costa",   percentage: 29 },
+      { candidate_name: "Mendonça Filho",   percentage: 16 },
+      { candidate_name: "Eduardo da Fonte", percentage: 14 },
     ],
   },
 
