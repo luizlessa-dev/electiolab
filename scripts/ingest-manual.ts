@@ -228,6 +228,29 @@ const PENDING_POLLS: Array<{
   scenario_label?: string;
   results: { candidate_name: string; percentage: number }[];
 }> = [
+  // ─── Real Time Big Data · 15-19 out 2026 · TSE BR-02952/2026 · n=2.000 · telefônica ─────
+  // Fonte: https://www.dgabc.com.br/Noticia/4353712/real-time-big-data-flavio-tem-52-dos-votos-validos-e-lula-48-em-empate-tecnico
+  // Percentual sobre o total de entrevistados (convenção da base): Flávio 48% / Lula 45%
+  // (vs. 52%/48% em votos válidos). Não confundir com a 2ª pesquisa RTBD de campo 19-22/10,
+  // divulgada 23/10, com os mesmos 52%/48% em votos válidos mas corte sobre o total diferente.
+  {
+    institute_name: "Real Time Big Data",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-10-20",
+    fieldwork_start: "2026-10-15",
+    fieldwork_end: "2026-10-19",
+    sample_size: 2000,
+    margin_of_error: 2.0,
+    methodology: "telefonica",
+    source_url: "https://www.dgabc.com.br/Noticia/4353712/real-time-big-data-flavio-tem-52-dos-votos-validos-e-lula-48-em-empate-tecnico",
+    tse_protocolo: "BR02952/2026",
+    scope: "nacional",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 48.0 },
+      { candidate_name: "Lula",             percentage: 45.0 },
+    ],
+  },
+
   // ─── Meio/Ideia · 23-27 mai 2026 · TSE BR-02918/2026 · n=1.500 · telefônica ──
   // Fonte: https://www.brasildefato.com.br/2026/05/28/lula-lidera-todos-os-cenarios-e-abre-cinco-pontos-sobre-flavio-bolsonaro-no-2o-turno-aponta-pesquisa-meioideia/
   {
