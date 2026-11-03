@@ -12839,25 +12839,6 @@ const PENDING_POLLS: Array<{
     ],
   },
 
-  // ─── DF · Datafolha · 20-22 out 2026 · TSE DF-01738/2026 · n=910 · presencial ──
-  // Fonte: https://www.congressoemfoco.com.br/noticia/123123/pesquisa-datafolha-celina-tem-60-e-grass-40-dos-votos-validos-no-df
-  {
-    institute_name: "Datafolha",
-    election_name: "Governador DF 2026 - 2º Turno",
-    publication_date: "2026-10-22",
-    fieldwork_start: "2026-10-20",
-    fieldwork_end: "2026-10-22",
-    sample_size: 910,
-    margin_of_error: 3.0,
-    methodology: "presencial",
-    source_url: "https://www.congressoemfoco.com.br/noticia/123123/pesquisa-datafolha-celina-tem-60-e-grass-40-dos-votos-validos-no-df",
-    tse_protocolo: "DF017382026",
-    results: [
-      { candidate_name: "Celina Leao",  percentage: 60 },
-      { candidate_name: "Leandro Grass", percentage: 40 },
-    ],
-  },
-
   // ─── DF · Quaest · 23-24 out 2026 · TSE DF-00368/2026 · n=2.652 · presencial ──
   // Fonte: https://www.dgabc.com.br/Noticia/4354109/quaest-no-df-celina-leao-tem-50-e-leandro-grass-soma-35
   // Percentual sobre o total de entrevistados (brancos/nulos 9%, indecisos 6%). Corrigido em
@@ -13070,6 +13051,33 @@ const PENDING_POLLS: Array<{
       { candidate_name: "Marcelo Maranata",  percentage: 1 },
     ],
   },
+
+  // ─── Curadoria 03/11/2026 — via fila pesqele_missing ──────────────────────
+  // Nenhuma pesquisa nova confirmada nesta rodada (0 inserts, nenhuma migration nova gerada).
+  // 14 itens priorizados (Presidente/Governador, UFs grandes, institutos reputados: Datafolha,
+  // Quaest, PoderData, AtlasIntel, Instituto Veritá) tentados — TODOS já tinham sido pesquisados
+  // em rodadas anteriores: BR-06396/2026, DF-03453/2026, BR-09709/2026 e DF-01738/2026 já têm
+  // fonte+percentuais curados (migrations 20261023120000, 20261030120000 e 20261028120000);
+  // BR-09158/2026, BR-09540/2026, BR-02828/2026 e BR-00339/2026 (Presidente, campo 23-24/out) já
+  // foram tentados e descartados por falta de matéria confirmando protocolo+amostra exatos
+  // (migrations 20261023120000 e 20261102120000); PE-09774/2026, RJ-02766/2026, MG-05749/2026,
+  // SP-07439/2026 e RJ-07597/2026 (Governador PE/RJ/MG/SP, campo até 08-11/out) seguem sem fonte
+  // — PE/MG/SP foram decididos no 1º turno (04/out), sem 2º turno cadastrado pra esses cargos.
+  //
+  // ⚠️ ACHADO 1 (reportado a Luiz): confirma o achado de 31/10 — nenhuma das migrations
+  // curate_pesqele_polls_2026_10_*/2026_11_* consta aplicada no banco real (os protocolos
+  // continuam voltando em pesqele_missing mesmo já tendo migration pendente gerada há dias).
+  //
+  // ⚠️ ACHADO 2 (bug corrigido nesta rodada): havia DUAS entradas em PENDING_POLLS pro mesmo
+  // protocolo DF-01738/2026 (Datafolha, Governador DF 2º turno) com percentuais conflitantes —
+  // a correta (Celina Leão 54% / Leandro Grass 37%, fonte Brasil de Fato, campo 20-22/out,
+  // convenção da base = corte sobre o total de entrevistados) e uma segunda, incorreta, com
+  // Celina 60%/Grass 40% atribuídos ao mesmo protocolo DF-01738/2026. Investigando a fonte dessa
+  // segunda entrada (congressoemfoco.com.br/noticia/123123/...): o artigo é real, mas descreve
+  // OUTRA pesquisa Datafolha (campo 06-07/out, divulgada 08/out, TSE DF-03365/2026 — já curada
+  // corretamente na migration 20261023120000) — os 60%/40% são o corte sobre votos válidos
+  // daquela pesquisa, não daquela do protocolo DF-01738/2026. Entrada incorreta removida.
+  // ─────────────────────────────────────────────────────────────────────────
 ];
 
 async function main() {
