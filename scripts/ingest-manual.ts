@@ -13078,6 +13078,54 @@ const PENDING_POLLS: Array<{
   // corretamente na migration 20261023120000) — os 60%/40% são o corte sobre votos válidos
   // daquela pesquisa, não daquela do protocolo DF-01738/2026. Entrada incorreta removida.
   // ─────────────────────────────────────────────────────────────────────────
+
+  // ─── Curadoria 04/11/2026 — via fila pesqele_missing ──────────────────────
+  // Nenhuma pesquisa nova confirmada nesta rodada (0 inserts, nenhuma migration nova gerada).
+  // 12 itens priorizados (Presidente/Governador, UFs grandes, institutos reputados) tentados,
+  // todos sem confirmação exata o suficiente pra curar:
+  //   • BR-01880/2026, BR-09856/2026, BR-08475/2026, BR-05815/2026, BR-02036/2026 (Datafolha,
+  //     Presidente, campo até 08/out, amostras 1.204/910/1.204/1.610/1.204 — 5 protocolos TSE
+  //     distintos no mesmo dia) — existe uma pesquisa Datafolha real dessa janela (campo 6-8/out,
+  //     divulgada 8-9/10, Flávio 49%/Lula 45% em votos totais, n=2.520 — oliberal.com,
+  //     bnewssaopaulo.com.br, imirante.com), mas n=2.520 não bate com NENHUM dos 5 protocolos
+  //     acima (prov. corresponde a outro registro TSE fora desta lista). Não curado — armadilha
+  //     de amostra não teria como ser resolvida com segurança.
+  //   • BR-05187/2026 (GERP, Presidente, campo até 16/out, n=2.400) — achei Gerp com n=2.400 exato
+  //     mas campo 8-12/out (divulgada 16/out) — data de campo não bate (TSE pede fim de campo,
+  //     não divulgação). Gerp tem outra rodada com protocolo BR-03835/2026 (campo 19-21/out,
+  //     Flávio 50/Lula 45) confirmando múltiplas rodadas próximas — não curado.
+  //   • BR-07193/2026 (PoderData/Aya, Presidente, campo até 11/out, n=1.200) — nenhuma rodada
+  //     PoderData de outubro com amostra de 1.200 encontrada (todas as achadas usam 2.400/3.000/
+  //     4.000). Não curado.
+  //   • BR-08134/2026 (PoderData/Aya, Presidente, campo até 07/out, n=3.000) — achei rodada com
+  //     campo 5-7/out (Flávio 53/Lula 47, divulgada 13/10, fonte dci.com.br) mas nenhuma fonte
+  //     confirma amostra de 3.000 pra essa rodada especificamente. Não curado.
+  //   • BR-09540/2026 (Datafolha, n=4.050) e BR-02828/2026 (PoderData, n=4.000) — Presidente,
+  //     campo até 24/out — reconfirmação: 2ª tentativa consecutiva (já descartados em
+  //     20261102120000), ainda sem matéria batendo exatamente amostra/campo.
+  //   • RJ-07597/2026 (Quaest, Governador RJ, campo até 11/out, n=1.302) e RJ-02766/2026
+  //     (Datafolha, Governador+Senador RJ, campo até 08/out, n=1.204) — mais uma tentativa
+  //     consecutiva sem sucesso (RJ tem 2º turno de Governador cadastrado, diferente de MG/SP/PE/
+  //     GO). RJ-02766: dois PDFs promissores em static.poder360.com.br não puderam ser abertos
+  //     (domínio bloqueado pela política de rede desta sessão) — limitação técnica, não
+  //     confirmação negativa; vale retentar numa sessão sem esse bloqueio.
+  //
+  // ⚠️ ACHADO (novo, nesta rodada): GO-05082/2026 e GO-05643/2026 (Instituto Gazeta, Governador
+  // GO, campo até 07/out) excluídos da curadoria pela mesma razão já aplicada a MG/SP/PE — Goiás
+  // também foi decidido no 1º turno (04/out), sem 2º turno de Governador cadastrado em `elections`.
+  //
+  // ⚠️ ACHADO (contexto p/ rodadas futuras): o 2º turno do Governador do RJ teve resultado
+  // invertido em relação à maioria das pesquisas pré-eleitorais — Douglas Ruas (PL) venceu
+  // Eduardo Paes (PSD) no 1º turno com 49,27% x 42,76% (fonte: tse.jus.br). Cuidado ao validar
+  // matérias antigas de pesquisa RJ que dão Paes como favorito — isso não invalida uma pesquisa
+  // (é só o retrato da intenção de voto na época), mas serve de lembrete pra não estranhar o
+  // resultado final ao cruzar fontes.
+  //
+  // Reconfirma achado de 31/10 e 03/11: nenhuma migration curate_pesqele_polls_2026_* consta
+  // aplicada no banco real (list_migrations só mostra histórico até 2026-09-23) — os protocolos
+  // já curados em PENDING_POLLS/migrations continuam voltando em pesqele_missing até Luiz aplicar
+  // manualmente no SQL Editor.
+  // ─────────────────────────────────────────────────────────────────────────
 ];
 
 async function main() {
