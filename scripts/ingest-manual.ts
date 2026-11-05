@@ -12740,6 +12740,58 @@ const PENDING_POLLS: Array<{
     ],
   },
 
+  // ─── Curadoria 05/11/2026 — pesqele_missing ──
+  // Gravação em `polls`/`poll_results` feita via migration .sql (Supabase MCP deste projeto é
+  // somente leitura — Luiz aplica manualmente no SQL Editor antes do merge, conforme CLAUDE.md):
+  // supabase/migrations/20261105120000_curate_pesqele_polls_2026_11_05.sql.
+  //
+  // BR-09540/2026 e BR-02828/2026 tinham sido descartados em rodadas anteriores (27/10, 28/10,
+  // 02/11) por falta de matéria — matéria circulou depois, confirmando agora.
+
+  // Datafolha · Presidencial 2º turno · 23-24 out 2026 · TSE BR-09540/2026 · n=4.050 · presencial
+  // Percentuais sobre o total de entrevistados (votos válidos seriam Flávio 51/Lula 49; branco/
+  // nulo 3%, NS/NR 2%). Protocolo TSE citado explicitamente na matéria.
+  // Fonte: https://www.oliberal.com/politica/pesquisa-datafolha-flavio-tem-51-e-lula-49-dos-votos-validos-na-vespera-do-2-turno-1.1186426
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-10-24",
+    fieldwork_start: "2026-10-23",
+    fieldwork_end: "2026-10-24",
+    sample_size: 4050,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.oliberal.com/politica/pesquisa-datafolha-flavio-tem-51-e-lula-49-dos-votos-validos-na-vespera-do-2-turno-1.1186426",
+    tse_protocolo: "BR-09540/2026",
+    scenario_label: "Lula vs Flavio Bolsonaro",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 48.0 },
+      { candidate_name: "Lula", percentage: 47.0 },
+    ],
+  },
+
+  // PoderData/Aya · Presidencial 2º turno · 23-24 out 2026 · TSE BR-02828/2026 · n=4.000 ·
+  // telefônica · Percentuais sobre o total de entrevistados (votos válidos seriam Flávio 51/
+  // Lula 49). 914 municípios, 27 UFs. Protocolo TSE citado na ficha técnica.
+  // Fonte (ficha técnica): https://static.poder360.com.br/uploads/2026/10/Relatorio-PoderData-Eleitoral-24out26-1.pdf
+  {
+    institute_name: "PoderData",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-10-24",
+    fieldwork_start: "2026-10-23",
+    fieldwork_end: "2026-10-24",
+    sample_size: 4000,
+    margin_of_error: 1.6,
+    methodology: "telefonica",
+    source_url: "https://static.poder360.com.br/uploads/2026/10/Relatorio-PoderData-Eleitoral-24out26-1.pdf",
+    tse_protocolo: "BR-02828/2026",
+    scenario_label: "Lula vs Flavio Bolsonaro",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 49.0 },
+      { candidate_name: "Lula", percentage: 47.0 },
+    ],
+  },
+
   // Vox Brasil Pesquisas · Presidencial 2º turno · 20-22 out 2026 · TSE BR-03259/2026 · n=2.100 ·
   // presencial · Percentuais sobre o total de entrevistados (votos válidos seriam Lula 50,6/
   // Flávio 49,4; brancos/nulos/nenhum 6%, indecisos 4,3%).
