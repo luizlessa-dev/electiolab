@@ -13178,6 +13178,54 @@ const PENDING_POLLS: Array<{
   // já curados em PENDING_POLLS/migrations continuam voltando em pesqele_missing até Luiz aplicar
   // manualmente no SQL Editor.
   // ─────────────────────────────────────────────────────────────────────────
+
+  // ─── Curadoria 06/11/2026 — via fila pesqele_missing ──────────────────────
+  // Nenhuma pesquisa nova confirmada nesta rodada (0 inserts, nenhuma migration nova gerada).
+  // 12 itens priorizados (Presidente/Governador, UFs grandes, institutos reputados: Datafolha,
+  // Quaest, AtlasIntel, PoderData, Nexus, GERP, Vox Brasil) tentados via 3 sub-agentes de busca
+  // em paralelo:
+  //   • BR-02828/2026 (PoderData, Presidente, campo até 24/out, n=4.000) — reconfirmação sem
+  //     sucesso (já tentado em rodadas anteriores).
+  //   • DF-03453/2026 (Datafolha, Governador DF 2º turno, campo até 24/out, n=1.620) — não
+  //     encontrado; os protocolos Datafolha/DF reais identificados na imprensa são outros
+  //     (DF-03365/2026, DF-01738/2026, DF-00905/2026 — já curados em migrations anteriores).
+  //   • BR-09327/2026 (GERP, Presidente, campo até 24/out, n=2.400) — não encontrado; GERP tem
+  //     rodada real com n=2.400 mas campo 19-21/out (divulgada 21/out), não 24/out.
+  //   • BR-05581/2026 (AtlasIntel, Presidente, campo até 23/out, n=1.800) — ambíguo; várias
+  //     rodadas nacionais da AtlasIntel com n=1.800 idêntico circularam na mesma semana. A rodada
+  //     real indexada p/ esse período tem n=4.990 e protocolo BR-06380/2026 (já curada antes) —
+  //     instituto certo, amostra/protocolo errados. Não curado.
+  //   • DF-08658/2026 (AtlasIntel, Governador DF 2º turno, campo até 23/out, n=1.800) — não
+  //     encontrado; só achei o PDF da rodada de 1º turno (campo 27/set-2/out).
+  //   • BR-03259/2026 (Vox Brasil, Presidente, campo até 22/out, n=2.100) — reconfirmação sem
+  //     sucesso (já descartado em 27/10); a rodada real de n=2.100 confirmada é de 29/set
+  //     (Flávio 48,2%/Lula 45,2%, votos válidos), data incompatível.
+  //   • RJ-07597/2026 (Quaest, Governador RJ, campo até 11/out, n=1.302) — reconfirmação sem
+  //     sucesso (situação RJ já documentada abaixo: 2º turno de Governador não ocorreu, Ruas
+  //     eleito no 1º turno).
+  //   • PE-09774/2026 (Datafolha, Governador PE, campo até 08/out, n=1.204) — não encontrado;
+  //     reforça achado anterior de que PE foi o único estado pesquisado SEM 2º turno (Poder360/
+  //     O Povo) — mesma regra de MG/SP/PE/GO (decidido no 1º turno, sem 2º turno cadastrado).
+  //   • SP-07439/2026 (Datafolha, Governador SP, campo até 08/out, n=1.610) — não encontrado;
+  //     SP decidido no 1º turno (regra já aplicada).
+  //   • MG-05749/2026 (Datafolha, Governador+Senador MG, campo até 08/out, n=1.204) — não
+  //     encontrado; o protocolo real da rodada Datafolha-MG dessa semana é MG-06705/2026 (já
+  //     curado em migration anterior) — confirma que MG-05749 é outro protocolo sem matéria.
+  //
+  // Reconfirmações de itens já pendentes (sem ação nova, só documentando):
+  //   • BR-09709/2026 (Datafolha, Presidente, campo 20-22/out, n=2.520) — JÁ CURADO em
+  //     20261028120000 (Flávio 47,0%/Lula 46,0% sobre o total). Reconfirmado hoje via Jornal
+  //     Opção/O Liberal/Diário de Pernambuco, que manchetam o corte de VÁLIDOS da mesma rodada
+  //     (Lula 50%/Flávio 50%, empate) — consistente com o já curado, nenhuma divergência.
+  //   • BR-08234/2026 (Nexus/BTG, Presidente, campo 23-24/out, n=2.000) — continua pendente desde
+  //     20261028120000/20261105120000 (só achados os cortes de válidos 50,5%/49,5% e prováveis
+  //     52,4%/47,6%, nunca o corte sobre o total). ⚠️ CUIDADO pra próxima rodada: uma busca de hoje
+  //     devolveu "Flávio 47,0%/Lula 46,0% sobre o total" para esta pesquisa, mas uma segunda busca
+  //     de verificação não reproduziu esse achado e não achou nenhuma matéria real com esses
+  //     números pra esta rodada — e 47,0/46,0 é exatamente o par já usado para BR-09709/2026
+  //     (Datafolha, acima), o que sugere que o resumo da busca confundiu as duas pesquisas. NÃO
+  //     usado — não curado, pra não arriscar inventar/misturar percentual de pesquisas diferentes.
+  // ─────────────────────────────────────────────────────────────────────────
 ];
 
 async function main() {
