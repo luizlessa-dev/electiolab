@@ -13226,6 +13226,41 @@ const PENDING_POLLS: Array<{
   //     (Datafolha, acima), o que sugere que o resumo da busca confundiu as duas pesquisas. NÃO
   //     usado — não curado, pra não arriscar inventar/misturar percentual de pesquisas diferentes.
   // ─────────────────────────────────────────────────────────────────────────
+
+  // ─── Curadoria 07/11/2026 — via fila pesqele_missing ──────────────────────
+  // Nenhuma pesquisa nova confirmada nesta rodada (0 inserts, nenhuma migration nova gerada).
+  //
+  // Mudança de método nesta rodada: antes de gastar orçamento de busca, cruzei
+  // programaticamente (script local, não comitado) todos os protocolos de
+  // `pesqele_missing` (days_since_fieldwork 0-30, 205 linhas) contra todo protocolo já
+  // citado em supabase/migrations/*.sql + neste arquivo. Resultado: TODOS os itens que
+  // batem o filtro de priorização do prompt (Presidente ou Governador de
+  // SP/MG/RJ/RS/BA/PR/PE/CE/GO/PA/SC/DF + instituto reputado) já constam tentados (achados
+  // ou descartados) em pelo menos uma rodada anterior (27/10 a 06/11) — zero itens novos
+  // nesse recorte. A fila pesqele_missing em si não mudou: o item mais recente continua
+  // sendo fieldwork_end 2026-10-30, mesmo de rodadas passadas (esperado — 2º turno foi
+  // 25/10, eleição encerrada, sem pesquisa nova entrando na fila).
+  //
+  // Reconfirmações (retry) dos 2 itens "pendente" mais promissores, pra ver se surgiu
+  // matéria nova com o corte certo nos últimos dias — sem sucesso em nenhum dos dois:
+  //   • BR-08234/2026 (Nexus/BTG, Presidente, campo 23-24/out, n=2.000) — busca de hoje só
+  //     achou cortes de válidos (50,3%/49,7%, 52%/48%) e rejeição/aprovação de governo,
+  //     nunca o corte sobre o total de entrevistados. Continua pendente.
+  //   • BR-07926/2026 (PoderData/Aya, Presidente, campo até 21/out, n=4.000) — mesma
+  //     situação: só achei rodadas de rejeição e outras datas de campo (16-18/out,
+  //     divulgada 22/out) da mesma dupla de institutos, nenhuma batendo
+  //     protocolo+data+corte-sobre-o-total exatos. Continua pendente.
+  //
+  // ⚠️ ACHADO IMPORTANTE (infraestrutura, não dado): `list_migrations` no projeto real
+  // (xoxztzologqeqbajlhya) mostra o histórico de migrations aplicadas parando em
+  // 2026-09-23 — confirma, mais uma vez, que NENHUMA das 15 migrations
+  // `curate_pesqele_polls_2026_*` geradas entre 01/10 e 05/11 foi aplicada no banco real
+  // ainda, incluindo as 2 pesquisas com fonte de imprensa já confirmada em 05/11
+  // (Datafolha BR-09540/2026 e PoderData BR-02828/2026, 2º turno presidencial). Luiz:
+  // esse backlog só cresce — vale rodar todas as migrations pendentes no SQL Editor numa
+  // sentada, já que `pesqele_missing` continua devolvendo os mesmos protocolos pra cada
+  // rodada futura enquanto elas não forem aplicadas.
+  // ─────────────────────────────────────────────────────────────────────────
 ];
 
 async function main() {
