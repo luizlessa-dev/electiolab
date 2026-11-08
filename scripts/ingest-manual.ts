@@ -13261,6 +13261,33 @@ const PENDING_POLLS: Array<{
   // sentada, já que `pesqele_missing` continua devolvendo os mesmos protocolos pra cada
   // rodada futura enquanto elas não forem aplicadas.
   // ─────────────────────────────────────────────────────────────────────────
+
+  // ─── Curadoria 08/11/2026 — via fila pesqele_missing ──────────────────────
+  // Nenhuma pesquisa nova confirmada nesta rodada (0 inserts, nenhuma migration nova gerada).
+  //
+  // Mudei o método pra verificação programática direta (em vez de rodar buscas soltas
+  // primeiro): rodei `select protocolo, uf, cargos, instituto, fieldwork_end, sample_size
+  // from pesqele_missing where days_since_fieldwork between 0 and 30` (300 linhas, mesmo
+  // teto de sempre) e cruzei programaticamente contra todo protocolo TSE já citado em
+  // supabase/migrations/*.sql + neste arquivo (467 protocolos únicos no formato UF-NNNNN/
+  // AAAA). Filtrando pelo recorte do prompt (Presidente nacional OU Governador de
+  // SP/MG/RJ/RS/BA/PR/PE/CE/GO/PA/SC/DF, institutos reputados: Datafolha, Quaest, AtlasIntel,
+  // PoderData, Real Time Big Data, Nexus, GERP, Índice Inteligência, Vox Brasil, Instituto
+  // Veritá) dá 49 linhas — e as 49 já tinham sido tentadas (achadas ou descartadas, com
+  // motivo documentado) em alguma rodada entre 27/10 e 07/11. Zero itens novos no recorte.
+  //
+  // Única fila que ainda não tinha sido cruzada byte-a-byte contra as migrations (só contra
+  // este arquivo, nas rodadas de 06/11 e 07/11) era justamente essa combinação arquivo+
+  // migrations — rodada de hoje fecha essa lacuna de verificação, não trouxe pesquisa nova.
+  //
+  // A fila pesqele_missing em si continua sem mudar (item mais recente ainda é
+  // fieldwork_end 2026-10-30 — esperado, 2º turno foi 25/10, eleição encerrada).
+  //
+  // Backlog de migrations pendentes de aplicação manual (já sinalizado em 07/11, sem
+  // mudança): `list_migrations` no projeto real (xoxztzologqeqbajlhya) ainda para em
+  // 2026-09-23 — nenhuma das migrations `curate_pesqele_polls_2026_*` (01/10 a 05/11) foi
+  // aplicada. Não repito o alerta a cada rodada; só seguindo documentado aqui pra auditoria.
+  // ─────────────────────────────────────────────────────────────────────────
 ];
 
 async function main() {
