@@ -13288,6 +13288,57 @@ const PENDING_POLLS: Array<{
   // 2026-09-23 — nenhuma das migrations `curate_pesqele_polls_2026_*` (01/10 a 05/11) foi
   // aplicada. Não repito o alerta a cada rodada; só seguindo documentado aqui pra auditoria.
   // ─────────────────────────────────────────────────────────────────────────
+
+  // ─── Curadoria 09/11/2026 — via fila pesqele_missing ──────────────────────
+  // Nenhuma pesquisa nova confirmada nesta rodada (0 inserts, nenhuma migration nova gerada).
+  //
+  // Rodei `select ... from pesqele_missing where days_since_fieldwork between 0 and 30 limit 300`
+  // e priorizei 15 itens (Presidente nacional + Governador DF/RJ, institutos reputados) via 3
+  // sub-agentes de busca em paralelo. "Achados" de hoje, todos na verdade já cobertos por
+  // migrations/PENDING_POLLS anteriores — sem ação nova:
+  //   • BR-02828/2026 (PoderData, n=4.000) — já na migration 20261105120000 (49%/47% s/ total).
+  //   • DF-01738/2026 (Datafolha/DF, n=910) — já na migration 20261028120000 (54%/37% s/ total).
+  //   • BR-03181/2026 (Instituto Veritá, n=15.554) — já na migration 20261028120000
+  //     (49,44%/46,46% s/ total).
+  //   • BR-09327/2026 (GERP, Presidente, campo até 24/out, n=2.400) — CONTRADIÇÃO entre fontes:
+  //     um sub-agente achou timesbrasil.com.br citando rodada "última antes da eleição" (24/out)
+  //     com evolução 50→49 (Flávio) e 45→46 (Lula) desde a rodada de 21/out, o que seria
+  //     compatível com um corte sobre o total pra essa data — mas a rodada de 11/06 já tinha
+  //     concluído "GERP tem rodada real com n=2.400 mas campo 19-21/out (divulgada 21/out), não
+  //     24/out" (ver linha ~13192). Não consegui confirmar amostra=2.400 nem protocolo TSE
+  //     explícito na matéria de 24/out (só resumo de busca, sem leitura do artigo completo —
+  //     ver achado de infra abaixo). Dado o histórico de 3 tentativas anteriores já descartando
+  //     esse protocolo especificamente (27/10, 28/10, 06/11) com motivo técnico claro, optei por
+  //     NÃO curar com base só no resumo de hoje — risco de confundir com a rodada de 19-21/out.
+  //     Continua pendente; se reaparecer, validar amostra exata antes de gravar.
+  //   • BR009572026/BR095402026/BR031122026 (AtlasIntel/Datafolha, vários protocolos BR 23-24/out)
+  //     — mesma armadilha de sempre (múltiplos protocolos do mesmo instituto na mesma semana com
+  //     amostras diferentes); nenhum achado bateu amostra exata. Não curados.
+  //   • RJ-07597/2026 (Quaest, Governador RJ, campo até 11/out) e BR-02875/2026 (Quaest,
+  //     Presidente, mesma data) — RJ não teve 2º turno de Governador (Ruas eleito no 1º turno,
+  //     ver achado de 04/11); continuam sem fonte, como esperado.
+  //   • BR-03259/2026 (Vox Brasil, n=2.100) — reconfirmação sem sucesso (já descartado em 27/10
+  //     e 06/11).
+  //
+  // ⚠️ ACHADO DE INFRAESTRUTURA (novo, nesta rodada): WebFetch falhou para TODOS os domínios de
+  // imprensa testados hoje (poder360.com.br, brasildefato.com.br, timesbrasil.com.br,
+  // jovempan.com.br, acritica.net, movimentoeconomico.com.br, ncnews.com.br — todos ENOTFOUND/
+  // bloqueados pela política de rede desta sessão cloud), não só domínios isolados como em
+  // rodadas anteriores. Toda a verificação de hoje veio de resumos do WebSearch, sem conseguir
+  // ler o artigo original/ficha técnica completa — isso reduz a confiança de qualquer "CONFIRMADO"
+  // reportado por sub-agentes nesta rodada e é o motivo direto de ter descartado BR-09327/2026
+  // acima por precaução. Luiz: se essa sessão cloud sempre bloquear WebFetch de domínios de
+  // imprensa, vale revisar a lista de domínios permitidos na política de rede, senão a curadoria
+  // via WebFetch (recomendada no prompt da rotina) nunca vai funcionar de fato, só WebSearch.
+  //
+  // Backlog de migrations pendentes de aplicação manual (mesma situação de 07/11 e 08/11, sem
+  // mudança): `list_migrations` no projeto real ainda para em 2026-09-23 — as 15 migrations
+  // `curate_pesqele_polls_2026_*` (01/10 a 05/11, 36 inserts de pesquisas) continuam não aplicadas.
+  // Esse backlog é provavelmente a causa raiz de `pesqele_missing` devolver os mesmos protocolos
+  // todo dia (GERP BR-09327, PoderData BR-02828, Veritá BR-03181 e Datafolha DF-01738 entre eles)
+  // — eles já têm fonte+percentual gravados em migration pendente, só falta Luiz aplicar no SQL
+  // Editor do Supabase pra saírem da fila de vez.
+  // ─────────────────────────────────────────────────────────────────────────
 ];
 
 async function main() {
