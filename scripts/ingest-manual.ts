@@ -228,6 +228,134 @@ const PENDING_POLLS: Array<{
   scenario_label?: string;
   results: { candidate_name: string; percentage: number }[];
 }> = [
+  // ─── Curadoria 2026-11-10 · 6 pesquisas confirmadas (todas 2º turno Presidencial) ─────
+
+  // GERP · 22-24 out 2026 · TSE BR-09327/2026 · n=2.400 · telefônica
+  // Fonte: https://timesbrasil.com.br/eleicoes-2026/gerp-ultima-antes-da-eleicao-instituto-que-acertou-primeiro-turno-da-52-para-flavio-e-48-para-lula-123/
+  // Percentual sobre votos válidos (fonte não divulgou corte sobre o total).
+  {
+    institute_name: "GERP",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-10-24",
+    fieldwork_start: "2026-10-22",
+    fieldwork_end: "2026-10-24",
+    sample_size: 2400,
+    methodology: "telefonica",
+    source_url: "https://timesbrasil.com.br/eleicoes-2026/gerp-ultima-antes-da-eleicao-instituto-que-acertou-primeiro-turno-da-52-para-flavio-e-48-para-lula-123/",
+    tse_protocolo: "BR09327/2026",
+    scope: "nacional",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 52.0 },
+      { candidate_name: "Lula",             percentage: 48.0 },
+    ],
+  },
+
+  // Nexus (BTG/Nexus) · 23-24 out 2026 · TSE BR-08234/2026 · n=2.000 · telefônica (CATI)
+  // Fonte (release oficial): https://www.nexus.fsb.com.br/?p=16785
+  // Percentual sobre o total de entrevistados (convenção da base): Flávio 47% / Lula 46%
+  // (vs. 52,4%/47,6% em votos válidos, modelo de eleitor provável).
+  {
+    institute_name: "Nexus",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-10-24",
+    fieldwork_start: "2026-10-23",
+    fieldwork_end: "2026-10-24",
+    sample_size: 2000,
+    methodology: "telefonica",
+    source_url: "https://www.nexus.fsb.com.br/?p=16785",
+    tse_protocolo: "BR08234/2026",
+    scope: "nacional",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 47.0 },
+      { candidate_name: "Lula",             percentage: 46.0 },
+    ],
+  },
+
+  // Vox Brasil Pesquisas · 20-22 out 2026 · TSE BR-03259/2026 · n=2.100 · presencial
+  // Fonte: https://www.oliberal.com/politica/em-votos-validos-lula-tem-50-6-contra-49-4-de-flavio-mostra-pesquisa-vox-brasil-1.1185727
+  // Percentual sobre o total de entrevistados (convenção da base): Lula 45,4% / Flávio 44,3%
+  // (vs. 50,6%/49,4% em votos válidos). Não confundir com outras rodadas Vox Brasil da mesma
+  // semana (TSE BR-04332/2026, campo 15-17/10, já na base).
+  {
+    institute_name: "Vox Brasil Pesquisas",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-10-23",
+    fieldwork_start: "2026-10-20",
+    fieldwork_end: "2026-10-22",
+    sample_size: 2100,
+    methodology: "presencial",
+    source_url: "https://www.oliberal.com/politica/em-votos-validos-lula-tem-50-6-contra-49-4-de-flavio-mostra-pesquisa-vox-brasil-1.1185727",
+    tse_protocolo: "BR03259/2026",
+    scope: "nacional",
+    results: [
+      { candidate_name: "Lula",             percentage: 45.4 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 44.3 },
+    ],
+  },
+
+  // Quaest (Genial/Quaest) · 23-24 out 2026 · TSE BR-09158/2026 · n=3.702 · presencial · ME ±2pp
+  // Fonte: https://www.correiodamanha.com.br/politica/2026/10/329651-quaest-flavio-tem-51-e-lula-49-dos-votos-validos.html
+  // Percentual sobre o total de entrevistados (convenção da base): Flávio 46% / Lula 45%
+  // (vs. 51%/49% em votos válidos). Pesquisa da véspera do 2º turno.
+  {
+    institute_name: "Quaest",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-10-24",
+    fieldwork_start: "2026-10-23",
+    fieldwork_end: "2026-10-24",
+    sample_size: 3702,
+    margin_of_error: 2.0,
+    methodology: "presencial",
+    source_url: "https://www.correiodamanha.com.br/politica/2026/10/329651-quaest-flavio-tem-51-e-lula-49-dos-votos-validos.html",
+    tse_protocolo: "BR09158/2026",
+    scope: "nacional",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 46.0 },
+      { candidate_name: "Lula",             percentage: 45.0 },
+    ],
+  },
+
+  // Datafolha · 23-24 out 2026 · TSE BR-09540/2026 · n=4.050 · presencial
+  // Fonte: https://exame.com/brasil/pesquisa-datafolha-flavio-bolsonaro-tem-51-e-lula-49-dos-votos-validos/
+  // Percentual sobre o total de entrevistados (convenção da base): Flávio 47% / Lula 45%
+  // (vs. 51%/49% em votos válidos).
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-10-24",
+    fieldwork_start: "2026-10-23",
+    fieldwork_end: "2026-10-24",
+    sample_size: 4050,
+    methodology: "presencial",
+    source_url: "https://exame.com/brasil/pesquisa-datafolha-flavio-bolsonaro-tem-51-e-lula-49-dos-votos-validos/",
+    tse_protocolo: "BR09540/2026",
+    scope: "nacional",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 47.0 },
+      { candidate_name: "Lula",             percentage: 45.0 },
+    ],
+  },
+
+  // Datafolha · 20-22 out 2026 · TSE BR-09709/2026 · n=2.520 · presencial
+  // Fonte: https://www.jornalopcao.com.br/ultimas-noticias/datafolha-lula-e-flavio-bolsonaro-empatam-com-50-dos-votos-validos-a-tres-dias-do-segundo-turno-881558/
+  // Fonte só divulgou votos válidos (empate técnico 50%/50%) — sem corte sobre o total.
+  {
+    institute_name: "Datafolha",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-10-22",
+    fieldwork_start: "2026-10-20",
+    fieldwork_end: "2026-10-22",
+    sample_size: 2520,
+    methodology: "presencial",
+    source_url: "https://www.jornalopcao.com.br/ultimas-noticias/datafolha-lula-e-flavio-bolsonaro-empatam-com-50-dos-votos-validos-a-tres-dias-do-segundo-turno-881558/",
+    tse_protocolo: "BR09709/2026",
+    scope: "nacional",
+    results: [
+      { candidate_name: "Lula",             percentage: 50.0 },
+      { candidate_name: "Flávio Bolsonaro", percentage: 50.0 },
+    ],
+  },
+
   // ─── Real Time Big Data · 15-19 out 2026 · TSE BR-02952/2026 · n=2.000 · telefônica ─────
   // Fonte: https://www.dgabc.com.br/Noticia/4353712/real-time-big-data-flavio-tem-52-dos-votos-validos-e-lula-48-em-empate-tecnico
   // Percentual sobre o total de entrevistados (convenção da base): Flávio 48% / Lula 45%
