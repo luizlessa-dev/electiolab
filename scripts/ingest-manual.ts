@@ -228,6 +228,72 @@ const PENDING_POLLS: Array<{
   scenario_label?: string;
   results: { candidate_name: string; percentage: number }[];
 }> = [
+  // ─── Curadoria 2026-11-11 · 3 pesquisas confirmadas (2º turno) ─────────────────────────
+
+  // PoderData/Aya · 16-18 out 2026 · TSE BR-02586/2026 · n=3.000 · telefônica (ligações automatizadas)
+  // Fonte: https://sbtnews.sbt.com.br/noticia/eleicoes/poder-data-aya-flavio-tem-52-e-lula-48-no-segundo-turno
+  // Percentual sobre o total de entrevistados (convenção da base): Flávio 49% / Lula 46%
+  // (vs. 52%/48% em votos válidos). Confirmado contra pesqele_registry (dt_inicio/dt_fim/qt_entrevistados).
+  {
+    institute_name: "PoderData",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-10-19",
+    fieldwork_start: "2026-10-16",
+    fieldwork_end: "2026-10-18",
+    sample_size: 3000,
+    methodology: "telefonica",
+    source_url: "https://sbtnews.sbt.com.br/noticia/eleicoes/poder-data-aya-flavio-tem-52-e-lula-48-no-segundo-turno",
+    tse_protocolo: "BR02586/2026",
+    scope: "nacional",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 49.0 },
+      { candidate_name: "Lula",             percentage: 46.0 },
+    ],
+  },
+
+  // PoderData/Aya · 19-21 out 2026 · TSE BR-07926/2026 · n=4.000 · telefônica (ligações automatizadas) · ME ±1,6pp
+  // Fonte: https://muitainformacao.com.br/eleicoes/flavio-bolsonaro-tem-51-e-lula-49-dos-votos-validos-aponta-poderdata-aya/
+  // Percentual sobre o total de entrevistados (convenção da base): Flávio 49% / Lula 48%
+  // (vs. 51%/49% em votos válidos). Confirmado contra pesqele_registry (dt_inicio/dt_fim/qt_entrevistados).
+  {
+    institute_name: "PoderData",
+    election_name: "Presidencial 2026 - 2º Turno",
+    publication_date: "2026-10-22",
+    fieldwork_start: "2026-10-19",
+    fieldwork_end: "2026-10-21",
+    sample_size: 4000,
+    margin_of_error: 1.6,
+    methodology: "telefonica",
+    source_url: "https://muitainformacao.com.br/eleicoes/flavio-bolsonaro-tem-51-e-lula-49-dos-votos-validos-aponta-poderdata-aya/",
+    tse_protocolo: "BR07926/2026",
+    scope: "nacional",
+    results: [
+      { candidate_name: "Flávio Bolsonaro", percentage: 49.0 },
+      { candidate_name: "Lula",             percentage: 48.0 },
+    ],
+  },
+
+  // Datafolha · 20-22 out 2026 · TSE DF-01738/2026 · n=910 · presencial · Governador DF, 2º turno
+  // Fonte: https://www.dgabc.com.br/Noticia/4354291/no-df-celina-leao-tem-54-das-intencoes-de-voto-grass-aparece-com-37-indica-datafolha
+  // Percentual sobre o total de entrevistados (intenções de voto). Confirmado contra
+  // pesqele_registry (dt_inicio/dt_fim/qt_entrevistados).
+  {
+    institute_name: "Datafolha",
+    election_name: "Governador DF 2026 - 2º Turno",
+    publication_date: "2026-10-22",
+    fieldwork_start: "2026-10-20",
+    fieldwork_end: "2026-10-22",
+    sample_size: 910,
+    methodology: "presencial",
+    source_url: "https://www.dgabc.com.br/Noticia/4354291/no-df-celina-leao-tem-54-das-intencoes-de-voto-grass-aparece-com-37-indica-datafolha",
+    tse_protocolo: "DF01738/2026",
+    scope: "DF",
+    results: [
+      { candidate_name: "Celina Leao",   percentage: 54.0 },
+      { candidate_name: "Leandro Grass", percentage: 37.0 },
+    ],
+  },
+
   // ─── Curadoria 2026-11-10 · 6 pesquisas confirmadas (todas 2º turno Presidencial) ─────
 
   // GERP · 22-24 out 2026 · TSE BR-09327/2026 · n=2.400 · telefônica
