@@ -13533,6 +13533,57 @@ const PENDING_POLLS: Array<{
   // — eles já têm fonte+percentual gravados em migration pendente, só falta Luiz aplicar no SQL
   // Editor do Supabase pra saírem da fila de vez.
   // ─────────────────────────────────────────────────────────────────────────
+
+  // ─── Curadoria 12/11/2026 — via fila pesqele_missing ──────────────────────
+  // 1 pesquisa nova confirmada (0 inseridas via SQL — fica em migration .sql pra Luiz aplicar,
+  // ver supabase/migrations/20261112120000_curate_pesqele_polls_2026_11_12.sql; essa entrada é
+  // só o registro auditável em código).
+  //
+  // Rodei `select ... from pesqele_missing where days_since_fieldwork between 0 and 30 limit 300`
+  // e priorizei 14 itens (Presidente nacional + Governador DF, institutos reputados) via 4
+  // sub-agentes de busca em paralelo (WebFetch bloqueado de novo pra quase todos os domínios de
+  // imprensa testados — mesma limitação de infra já reportada em 09/11 e 10/11; verificação
+  // majoritariamente via resumos do WebSearch).
+  //
+  // Confirmada: DF-00402/2026 (Quaest, Governador DF 2º turno) — Celina Leão 50%/Leandro Grass
+  // 35% sobre o total de entrevistados. Verificado byte-a-byte contra pesqele_registry
+  // (dt_inicio=17/10, dt_fim=20/10, dt_divulgacao=21/10, qt_entrevistados=1104, ds_metodologia
+  // confirma presencial) — não é só "achado de busca", bate exatamente com o registro TSE.
+  //
+  // Demais 13 itens tentados sem sucesso (detalhe completo na migration 20261112120000):
+  //   • BR-03112/2026, BR-02828/2026, DF-03453/2026, DF-00368/2026, BR-03181/2026, BR-06380/2026
+  //     — ou já cobertos por migration/PENDING_POLLS anterior sem necessidade de ação nova, ou
+  //     amostra/data não bateram com o que circulou na imprensa hoje.
+  //   • DF-08658/2026 (AtlasIntel/DF) e BR-00957/2026 (AtlasIntel nacional) — achados só em corte
+  //     de votos válidos (sem o corte sobre o total exigido pela convenção da base) e/ou com
+  //     risco de estar confundindo com outra rodada do mesmo instituto na mesma semana. Não
+  //     curados — mesma ressalva de DF-08658 já registrada em 05/11.
+  //   • DF-08808/2026 (Instituto Veritá, Governador DF) — pelo menos a 4ª rodada (23/10, 01/11,
+  //     09/11, hoje) sem achar nenhuma matéria; único Veritá-DF encontrado é de pesquisa de
+  //     MAIO/2026 suspensa por liminar do TRE-DF, protocolo diferente. Praticamente certo que
+  //     nunca vai circular.
+  //   • BR-00875/2026 (Datafolha), BR-03835/2026 (GERP), BR-08771/2026 (Vox Brasil),
+  //     BR-07337/2026 (Quaest) — nenhuma rodada do instituto com a amostra/janela de campo exata
+  //     do registro TSE; risco de confusão com rodada vizinha do mesmo instituto na mesma semana
+  //     (padrão já conhecido de rodadas anteriores). Não curados.
+  // ─────────────────────────────────────────────────────────────────────────
+  {
+    institute_name: "Quaest",
+    election_name: "Governador DF 2026 - 2º Turno",
+    publication_date: "2026-10-21",
+    fieldwork_start: "2026-10-17",
+    fieldwork_end: "2026-10-20",
+    sample_size: 1104,
+    margin_of_error: 3.0,
+    methodology: "presencial",
+    scope: "DF",
+    source_url: "https://soubrasilia.com/quaest-df-celina-50-grass-35-segundo-turno/",
+    tse_protocolo: "DF-00402/2026",
+    results: [
+      { candidate_name: "Celina Leao", percentage: 50.0 },
+      { candidate_name: "Leandro Grass", percentage: 35.0 },
+    ],
+  },
 ];
 
 async function main() {
