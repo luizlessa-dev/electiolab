@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { isAdminUser } from "@/lib/auth/is-admin";
 
 /**
  * GET /api/admin/security-alerts
@@ -18,7 +19,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const isAdmin = user.user_metadata?.role === "admin";
+  const isAdmin = isAdminUser(user);
   if (!isAdmin) {
     return NextResponse.json(
       { error: "Forbidden: admin role required" },
