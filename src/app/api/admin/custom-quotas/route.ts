@@ -15,6 +15,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { isAdminUser } from "@/lib/auth/is-admin";
 import { Resend } from "resend";
 
 const resend = process.env.RESEND_API_KEY
@@ -36,9 +37,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Verificar se é admin (app_metadata: só service_role pode alterar, ao contrário de user_metadata)
-    const { data: userData } = await supabase.auth.admin.getUserById(user.id);
-    const isAdmin = userData?.user?.app_metadata?.is_admin === true;
+    // Verificar se é admin (app_metadata, lido do JWT validado por getUser())
+    const isAdmin = isAdminUser(user);
 
     if (!isAdmin) {
       return NextResponse.json({ error: "Forbidden: admin role required" }, { status: 403 });
@@ -110,7 +110,7 @@ export async function POST(request: Request) {
       ? `${changeInfo.old_limit.toLocaleString("pt-BR")} (${tierLabel})`
       : "Padrão";
 
-    const { data: customerUser } = await supabase.auth.admin.getUserById(
+    const { data: customerUser } = await supabaseAdmin.auth.admin.getUserById(
       apiKey.user_id
     );
     const customerEmail = customerUser?.user?.email;
@@ -188,8 +188,7 @@ export async function GET(request: Request) {
     }
 
     // Verificar admin
-    const { data: userData } = await supabase.auth.admin.getUserById(user.id);
-    const isAdmin = userData?.user?.app_metadata?.is_admin === true;
+    const isAdmin = isAdminUser(user);
 
     if (!isAdmin) {
       return NextResponse.json({ error: "Forbidden: admin role required" }, { status: 403 });
@@ -231,8 +230,7 @@ export async function DELETE(request: Request) {
     }
 
     // Verificar admin
-    const { data: userData } = await supabase.auth.admin.getUserById(user.id);
-    const isAdmin = userData?.user?.app_metadata?.is_admin === true;
+    const isAdmin = isAdminUser(user);
 
     if (!isAdmin) {
       return NextResponse.json({ error: "Forbidden: admin role required" }, { status: 403 });

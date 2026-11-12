@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { logAuthFailure } from "@/lib/auth-failure-logger";
+import { isAdminUser } from "@/lib/auth/is-admin";
 
 export const metadata: Metadata = {
   robots: {
@@ -36,7 +37,7 @@ export default async function AdminLayout({
   }
 
   // Verificar se usuário é admin
-  const isAdmin = user.user_metadata?.role === "admin";
+  const isAdmin = isAdminUser(user);
   if (!isAdmin) {
     // Log unauthorized (non-admin) access attempt
     await logAuthFailure({
