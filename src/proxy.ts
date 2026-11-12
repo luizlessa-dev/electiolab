@@ -44,7 +44,7 @@ function temSessaoSupabase(request: NextRequest): boolean {
  * coberta pelo matcher vai para /em-reconstrucao (API responde 503). Para voltar,
  * troque para false e publique de novo.
  */
-const MAINTENANCE = true;
+const MAINTENANCE = false;
 
 function manutencaoResp(request: NextRequest): NextResponse | null {
   if (!MAINTENANCE) return null;
